@@ -1,0 +1,4 @@
+(executable
+ (public_name riscV_sim)
+ (name main)
+ (libraries riscV_sim))

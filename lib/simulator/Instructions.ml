@@ -48,7 +48,7 @@ module R_type = struct
     let (&&) x y = Int32.to_int (x && y) in
     { 
       funct7 = (func7_mask && code) >> 25;
-      funct3 = (func3_mask && code) >> 11;
+      funct3 = (func3_mask && code) >> 12;
       rs1 = (rs1_mask && code) >> 15;
       rs2 = (rs2_mask && code) >> 20;
       rd = (rd_mask && code) >> 7;
@@ -65,8 +65,10 @@ module R_type = struct
     | 0x5, 0x00 -> rs1 >>> rs2                  (* SRL   *)
     | 0x5, 0x20 -> rs1 >>  rs2                  (* SRA   *)
     | 0x2, 0x00 -> if rs1 < rs2 then 1l else 0l (* SLT   *)
-    | 0x3, 0x00 -> if rs1 <.rs2 then 1l else 0l (* SLTIU *)
-    | _, _ -> Error.r_invalide instruction.funct3 instruction.funct7
+    | 0x3, 0x00 -> if rs1 <.rs2 then 1l else 0l (* SLTU *)
+    | _, _ ->
+      Printf.eprintf "%d %d" instruction.funct3 instruction.funct7;
+      Error.r_invalide instruction.funct3 instruction.funct7
 end
 
 (* ----------------------------- I Instructions ----------------------------- *)
@@ -78,7 +80,7 @@ type t = { funct3: int; rs1: int; imm: Int32.t; rd: int }
     let (>>) = Int.shift_right_logical in
     let (&&) x y = Int32.to_int (x && y) in
     {
-      funct3 = (func3_mask && code) >> 11;
+      funct3 = (func3_mask && code) >> 12;
       rs1 = (rs1_mask && code) >> 15;
       imm = Int32.shift_right_logical (Int32.logand imm12_mask code) 20; 
       rd  = (rd_mask && code) >> 7;

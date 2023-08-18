@@ -1,0 +1,88 @@
+(* Instruction format :
+   31          25 24      20 19      15 14  12 11         7 6            0
+  +-----------------------------------------------------------------------+
+  | funct7       | rs2      | rs1      |funct3| rd         | opcode       | R
+  | imm[11:0]               | rs1      |funct3| rd         | opcode       | I
+  | imm[11:5]    | rs2      | rs1      |funct3| imm[4:0]   | opcode       | S
+  | imm[12|10:5] | rs2      | rs1      |funct3| imm[4:1|11]| opcode       | B
+  | imm[31:12]                                | rd         | opcode       | U
+  | imm[20|10:1|11|10:12]                     | rd         | opcode       | J
+  +-----------------------------------------------------------------------+
+*)
+
+let rd_mask     = Int32.of_int 0b00000000000000000000111110000000
+let func3_mask  = Int32.of_int 0b00000000000000000111000000000000
+let rs1_mask    = Int32.of_int 0b00000000000011111000000000000000
+let rs2_mask    = Int32.of_int 0b00000001111100000000000000000000
+let func7_mask  = Int32.of_int 0b11111110000000000000000000000000
+let imm12_mask  = Int32.of_int 0b11111111111100000000000000000000
+let imm20_mask  = Int32.of_int 0b11111111111111111111000000000000
+
+let (-)  = Int32.sub
+let (+)  = Int32.add
+let (^)  = Int32.logxor
+let (||) = Int32.logor
+let (&&) = Int32.logand
+
+let (<<) x y = Int32.shift_left x (Int32.to_int y)
+let (>>) x y = Int32.shift_right x (Int32.to_int y)
+let (>>>) x y = Int32.shift_right_logical x (Int32.to_int y)
+
+let (=) = Int32.equal
+let (<.) x y = Int32.unsigned_compare x y < 0
+let (<)  x y = Int32.compare          x y < 0
+
+module R_type = struct
+  type t = { funct7 : int; funct3: int;
+             rs1: int; rs2: int; rd: int; }
+
+  let decode code =
+    let (&&) x y = Int32.to_int (x && y) in
+    { 
+      funct7 = func7_mask && code; funct3 = func3_mask && code;
+      rs1 = rs1_mask && code; rs2 = rs2_mask && code; rd = rd_mask && code
+    }
+
+  let execute instruction rs1 rs2 =
+    match instruction.funct3, instruction.funct7 with
+    | 0x0, 0x00 -> rs1 +  rs2                   (* ADD   *)
+    | 0x0, 0x20 -> rs1 -  rs2                   (* SUB   *)
+    | 0x4, 0x00 -> rs1 ^  rs2                   (* XOR   *)
+    | 0x6, 0x00 -> rs1 || rs2                   (* OR    *)
+    | 0x7, 0x00 -> rs1 && rs2                   (* AND   *)
+    | 0x1, 0x00 -> rs1 << rs2                   (* SLL   *)
+    | 0x5, 0x00 -> rs1 >>> rs2                  (* SRL   *)
+    | 0x5, 0x20 -> rs1 >>  rs2                  (* SRA   *)
+    | 0x2, 0x00 -> if rs1 < rs2 then 1l else 0l (* SLT   *)
+    | 0x3, 0x00 -> if rs1 <.rs2 then 1l else 0l (* SLTIU *)
+    | _, _ -> Error.r_invalide instruction.funct3 instruction.funct7
+end
+
+module I_type = struct
+type t = { funct3: int; rs1: int; imm: Int32.t; rd: int }
+  
+  let decode code =
+    {
+      funct3 = Int32.to_int (func3_mask && code);
+      rs1 = Int32.to_int (rs2_mask && code);
+      imm = Int32.shift_right_logical (imm12_mask && code ) 20; 
+      rd  = Int32.to_int (rd_mask && code);
+    }
+
+  let execute_arith instruction rs1 =
+    let imm = instruction.imm in
+    (* if imm[5:11] = 0x20 or 0x00 for shift *)
+    let arith = Int32.shift_right_logical imm 5 = 0x20l in
+    let logic = Int32.shift_right_logical imm 5 = 0x00l in
+    match instruction.funct3 with
+    | 0x0 -> rs1 +  imm                   (* ADDI *)
+    | 0x4 -> rs1 ^  imm                   (* XORI *)
+    | 0x6 -> rs1 || imm                   (* ORI   *)
+    | 0x7 -> rs1 && imm                   (* ANDI  *)
+    | 0x1 when logic -> rs1 <<  imm       (* SLLI  *)
+    | 0x5 when logic -> rs1 >>> imm       (* SRLI  *)
+    | 0x5 when arith -> rs1 >>  imm       (* SRAI  *)
+    | 0x2 -> if rs1 < imm then 1l else 0l (* SLTI  *)
+    | 0x3 -> if rs1 <.imm then 1l else 0l (* SLTIU *)
+    | _ -> Error.i_invalide_arith instruction.funct3 instruction.imm
+end

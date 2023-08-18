@@ -1,3 +1,3 @@
 type t
 
-val make : int -> t
+val make : Int32.t -> t

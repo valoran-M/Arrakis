@@ -17,5 +17,8 @@ let make () = Bytes.make size '\x00'
 let get_byte = Bytes.get
 let set_byte = Bytes.set
 
+let get_int16 = Bytes.get_int16_le
+let set_int16 = Bytes.set_int16_le
+
 let get_int32 = Bytes.get_int32_le
 let set_int32 = Bytes.set_int32_le

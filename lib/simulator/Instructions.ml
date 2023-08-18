@@ -106,8 +106,8 @@ type t = { funct3: int; rs1: int; imm: Int32.t; rd: int }
   let execute_load instruction rs1 memory =
     let addr = rs1 + instruction.imm in
     match instruction.funct3 with
-    | 0x0 -> Utils.sign_extended (Memory.get_int32 memory addr) 8  (* LB  *)
-    | 0x1 -> Utils.sign_extended (Memory.get_int32 memory addr) 16 (* LH  *)
+    | 0x0 -> Utils.sign_extended (Memory.get_byte memory addr) 8   (* LB  *)
+    | 0x1 -> Utils.sign_extended (Memory.get_int16 memory addr) 16 (* LH  *)
     | 0x2 -> Utils.sign_extended (Memory.get_int32 memory addr) 32 (* LW  *)
     | 0x4 -> Memory.get_byte memory addr                           (* LBU *)
     | 0x5 -> Memory.get_int16 memory addr                          (* LHU *)

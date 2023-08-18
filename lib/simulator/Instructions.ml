@@ -88,7 +88,6 @@ type t = { funct3: int; rs1: int; imm: Int32.t; rd: int }
 
   let execute_arith instruction rs1 =
     let imm = Utils.sign_extended instruction.imm 12 in
-    Printf.printf "%s %d\n" (Int32.to_string imm) (instruction.rd);
     (* if imm[5:11] = 0x20 or 0x00 for shift *)
     let arith = Int32.shift_right_logical imm 5 = 0x20l in
     let logic = Int32.shift_right_logical imm 5 = 0x00l in

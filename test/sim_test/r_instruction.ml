@@ -4,10 +4,9 @@ let cpu = Cpu.make 0l
 let memory = Memory.make ()
 
 let test () =
-  (* ADD *)
+  (* ADD x3, x1, x2*)
   Cpu.set_reg cpu 1 10l;
   Cpu.set_reg cpu 2 15l;
-  (* ADD x3, x1, x2*)
   Cpu.exec 0b0000000_00010_00001_000_00011_0110011l cpu memory;
   Alcotest.check Alcotest.int32 "ADD" 25l (Cpu.get_reg cpu 3);
   (* SUB x1, x3, x2 *)

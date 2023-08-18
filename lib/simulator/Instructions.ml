@@ -1,3 +1,5 @@
+(* -------------------------- Instructions format --------------------------- *)
+
 (* Instruction format :
    31          25 24      20 19      15 14  12 11         7 6            0
   +-----------------------------------------------------------------------+
@@ -18,6 +20,9 @@ let func7_mask  = Int32.of_int 0b11111110000000000000000000000000
 let imm12_mask  = Int32.of_int 0b11111111111100000000000000000000
 let imm20_mask  = Int32.of_int 0b11111111111111111111000000000000
 
+(* ----------------------------- Int 32 operator ---------------------------- *)
+
+
 let (-)  = Int32.sub
 let (+)  = Int32.add
 let (^)  = Int32.logxor
@@ -31,6 +36,8 @@ let (>>>) x y = Int32.shift_right_logical x (Int32.to_int y)
 let (=) = Int32.equal
 let (<.) x y = Int32.unsigned_compare x y < 0
 let (<)  x y = Int32.compare          x y < 0
+
+(* ----------------------------- R Instructions ----------------------------- *)
 
 module R_type = struct
   type t = { funct7 : int; funct3: int;
@@ -57,6 +64,8 @@ module R_type = struct
     | 0x3, 0x00 -> if rs1 <.rs2 then 1l else 0l (* SLTIU *)
     | _, _ -> Error.r_invalide instruction.funct3 instruction.funct7
 end
+
+(* ----------------------------- I Instructions ----------------------------- *)
 
 module I_type = struct
 type t = { funct3: int; rs1: int; imm: Int32.t; rd: int }
@@ -85,4 +94,14 @@ type t = { funct3: int; rs1: int; imm: Int32.t; rd: int }
     | 0x2 -> if rs1 < imm then 1l else 0l (* SLTI  *)
     | 0x3 -> if rs1 <.imm then 1l else 0l (* SLTIU *)
     | _ -> Error.i_invalide_arith instruction.funct3 instruction.imm
+
+  let execute_load instruction rs1 memory =
+    let addr = rs1 + instruction.imm in
+    match instruction.funct3 with
+    | 0x0 -> Utils.sign_extended (Memory.get_int32 memory addr) 8  (* LB  *)
+    | 0x1 -> Utils.sign_extended (Memory.get_int32 memory addr) 16 (* LH  *)
+    | 0x2 -> Utils.sign_extended (Memory.get_int32 memory addr) 32 (* LW  *)
+    | 0x4 -> Memory.get_byte memory addr                           (* LBU *)
+    | 0x5 -> Memory.get_int16 memory addr                          (* LHU *)
+    | _ -> Error.i_invalide_load instruction.funct3
 end

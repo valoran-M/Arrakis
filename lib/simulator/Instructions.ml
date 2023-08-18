@@ -92,15 +92,15 @@ type t = { funct3: int; rs1: int; imm: Int32.t; rd: int }
     let arith = Int32.shift_right_logical imm 5 = 0x20l in
     let logic = Int32.shift_right_logical imm 5 = 0x00l in
     match instruction.funct3 with
-    | 0x0 -> rs1 +  imm                   (* ADDI *)
-    | 0x4 -> rs1 ^  imm                   (* XORI *)
-    | 0x6 -> rs1 || imm                   (* ORI   *)
-    | 0x7 -> rs1 && imm                   (* ANDI  *)
-    | 0x1 when logic -> rs1 <<  imm       (* SLLI  *)
-    | 0x5 when logic -> rs1 >>> imm       (* SRLI  *)
-    | 0x5 when arith -> rs1 >>  imm       (* SRAI  *)
-    | 0x2 -> if rs1 < imm then 1l else 0l (* SLTI  *)
-    | 0x3 -> if rs1 <.imm then 1l else 0l (* SLTIU *)
+    | 0x0 -> rs1 +  imm                           (* ADDI  *)
+    | 0x4 -> rs1 ^  imm                           (* XORI  *)
+    | 0x6 -> rs1 || imm                           (* ORI   *)
+    | 0x7 -> rs1 && imm                           (* ANDI  *)
+    | 0x1 when logic -> rs1 <<  imm               (* SLLI  *)
+    | 0x5 when logic -> rs1 >>> imm               (* SRLI  *)
+    | 0x5 when arith -> rs1 >>  (imm && 0b11111l) (* SRAI  *)
+    | 0x2 -> if rs1 < imm then 1l else 0l         (* SLTI  *)
+    | 0x3 -> if rs1 <.imm then 1l else 0l         (* SLTIU *)
     | _ -> Error.i_invalide_arith instruction.funct3 instruction.imm
 
   let execute_load instruction rs1 memory =

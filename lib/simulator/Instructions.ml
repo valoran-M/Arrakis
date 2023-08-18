@@ -44,10 +44,14 @@ module R_type = struct
              rs1: int; rs2: int; rd: int; }
 
   let decode code =
+    let (>>) = Int.shift_right_logical in
     let (&&) x y = Int32.to_int (x && y) in
     { 
-      funct7 = func7_mask && code; funct3 = func3_mask && code;
-      rs1 = rs1_mask && code; rs2 = rs2_mask && code; rd = rd_mask && code
+      funct7 = (func7_mask && code) >> 25;
+      funct3 = (func3_mask && code) >> 11;
+      rs1 = (rs1_mask && code) >> 15;
+      rs2 = (rs2_mask && code) >> 20;
+      rd = (rd_mask && code) >> 7;
     }
 
   let execute instruction rs1 rs2 =
@@ -71,15 +75,18 @@ module I_type = struct
 type t = { funct3: int; rs1: int; imm: Int32.t; rd: int }
   
   let decode code =
+    let (>>) = Int.shift_right_logical in
+    let (&&) x y = Int32.to_int (x && y) in
     {
-      funct3 = Int32.to_int (func3_mask && code);
-      rs1 = Int32.to_int (rs2_mask && code);
-      imm = Int32.shift_right_logical (imm12_mask && code ) 20; 
-      rd  = Int32.to_int (rd_mask && code);
+      funct3 = (func3_mask && code) >> 11;
+      rs1 = (rs1_mask && code) >> 15;
+      imm = Int32.shift_right_logical (Int32.logand imm12_mask code) 20; 
+      rd  = (rd_mask && code) >> 7;
     }
 
   let execute_arith instruction rs1 =
-    let imm = instruction.imm in
+    let imm = Utils.sign_extended instruction.imm 12 in
+    Printf.printf "%s %d\n" (Int32.to_string imm) (instruction.rd);
     (* if imm[5:11] = 0x20 or 0x00 for shift *)
     let arith = Int32.shift_right_logical imm 5 = 0x20l in
     let logic = Int32.shift_right_logical imm 5 = 0x00l in

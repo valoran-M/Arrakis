@@ -12,7 +12,7 @@ let text_begin    = 0x0000_0000
 
 type t = Bytes.t
 
-let make () = Bytes.make size '\x00'
+let make () = Bytes.create size
 
 let get_byte memory addr =
   Utils.char_to_int32 (Bytes.get memory (Int32.to_int addr))

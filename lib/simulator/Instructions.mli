@@ -11,5 +11,6 @@ module I_type : sig
 
   val decode : Int32.t -> t
   val execute_arith : t -> Int32.t -> Int32.t
+  val execute_load  : t -> Int32.t -> Memory.t -> Int32.t
 end
 

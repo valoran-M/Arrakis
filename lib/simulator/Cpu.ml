@@ -16,14 +16,16 @@ end = struct
     then Int32.zero
     else regs.(x_reg - 1)
 
-  let set regs x_reg value = regs.(x_reg - 1) <- value
+  let set regs x_reg value =
+    if 0 < x_reg && x_reg < 32
+    then regs.(x_reg - 1) <- value
 end
 
 type t = { mutable pc : Int32.t; regs: Regs.t }
 
 let make addr_start : t = { pc = addr_start; regs = Regs.make () }
 
-(* --------- get and set registers --------- *)
+(* ------------------------- get and set registers -------------------------- *)
 
 let get_pc  cpu    = cpu.pc
 let set_pc  cpu pc = cpu.pc <- pc
@@ -32,11 +34,11 @@ let next_pc cpu    = cpu.pc <- Int32.add cpu.pc (Int32.of_int 4)
 let get_reg cpu reg       = Regs.get cpu.regs reg
 let set_reg cpu reg value = Regs.set cpu.regs reg value
 
-(* ---------  execute instruction  --------- *)
+(* -------------------------  execute instruction  -------------------------- *)
 
 let opcode_mask = Int32.of_int 0b1111111
 
-let exec (instruction : Int32.t) cpu =
+let exec (instruction : Int32.t) cpu memory =
   let open Instructions in
   let opcode = Int32.to_int (Int32.logand opcode_mask instruction) in
   match opcode with
@@ -51,11 +53,16 @@ let exec (instruction : Int32.t) cpu =
   (* I type *)
   | 0b0010011 ->
     let decode = I_type.decode instruction in
-    let rs1 = Regs.get cpu .regs decode.rs1 in
+    let rs1 = Regs.get cpu.regs decode.rs1 in
     let return = I_type.execute_arith decode rs1 in
     Regs.set cpu.regs decode.rd return;
     next_pc cpu
-  | 0b0000011
+  | 0b0000011 ->
+    let decode = I_type.decode instruction in
+    let rs1 = Regs.get cpu.regs decode.rs1 in
+    let return = I_type.execute_load decode rs1 memory in
+    Regs.set cpu.regs decode.rd return;
+    next_pc cpu
   | 0b1100111
   | 0b1110011 -> Printf.printf "opcode I"
   (* S type *)

@@ -1,2 +1,3 @@
 (test
- (name riscV_sim))
+ (name riscV_sim)
+ (libraries alcotest))

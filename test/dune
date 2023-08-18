@@ -1,3 +1,3 @@
 (test
  (name riscV_sim)
- (libraries alcotest))
+ (libraries alcotest simulator_test))

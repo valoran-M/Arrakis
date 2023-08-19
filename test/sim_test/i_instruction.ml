@@ -102,4 +102,13 @@ let test_load () =
   Printf.printf "%s\n" (Int32.to_string (Memory.get_int16 memory 20l));
   Cpu.set_reg cpu 2 15l;
   Cpu.exec 0b000000000101_00010_101_00001_0000011l cpu memory;
-  Alcotest.check Alcotest.int32 "LHU 2" (0b1111111111111110l) (Cpu.get_reg cpu 1);
+  Alcotest.check Alcotest.int32 "LHU 2" (0b1111111111111110l) (Cpu.get_reg cpu 1)
+
+let test_jalr () =
+  Cpu.set_pc cpu 0l;
+  Cpu.set_reg cpu 1 14l;
+  Cpu.exec 0b000000000010_00001_000_00010_1100111l cpu memory;
+  Alcotest.check Alcotest.int32 "JALR pc" 16l (Cpu.get_pc cpu);
+  Alcotest.check Alcotest.int32 "JALR rd" 4l (Cpu.get_reg cpu 2)
+
+

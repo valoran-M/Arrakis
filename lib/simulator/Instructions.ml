@@ -8,7 +8,7 @@
   | imm[11:5]    | rs2      | rs1      |funct3| imm[4:0]   | opcode       | S
   | imm[12|10:5] | rs2      | rs1      |funct3| imm[4:1|11]| opcode       | B
   | imm[31:12]                                | rd         | opcode       | U
-  | imm[20|10:1|11|10:12]                     | rd         | opcode       | J
+  | imm[20|10:1|11|19:12]                     | rd         | opcode       | J
   +-----------------------------------------------------------------------+
 *)
 
@@ -250,13 +250,20 @@ module J_type = struct
 
   let decode code =
     (* Imm interval *)
-    let imm_31_20 = code && (func7_mask || rs2_mask) >> 20l in
+    let imm_31_20 = (code && (func7_mask || rs2_mask)) >> 20l in
     (* Imm's bits *)
     let imm19_12 = code && 0b11111111000000000000l in
     let imm11 = (imm_31_20 && 0b1l) << 11l in
     let imm10_1 = (imm_31_20 && 0b11111111110l) in
     let imm20 = (imm_31_20 && 0b100000000000l) in
-    let imm = Utils.sign_extended (imm20 || imm19_12 || imm11 || imm10_1) 20 in
+    Printf.printf "%d %d %d %d %d\n"
+        (Int32.to_int imm20)
+        (Int32.to_int imm19_12)
+        (Int32.to_int imm11)
+        (Int32.to_int imm10_1)
+        (Int32.to_int (imm20 || imm19_12 || imm11 || imm10_1))
+    ;
+    let imm = Utils.sign_extended (imm20 || imm19_12 || imm11 || imm10_1) 21 in
 
     let (>>) = Int.shift_right_logical in
     let (&&) x y = Int32.to_int (x && y) in

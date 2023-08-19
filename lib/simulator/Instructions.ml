@@ -22,7 +22,6 @@ let imm20_mask  = Int32.of_int 0b11111111111111111111000000000000
 
 (* ----------------------------- Int 32 operator ---------------------------- *)
 
-
 let (-)   = Int32.sub
 let (+)   = Int32.add
 let (^)   = Int32.logxor
@@ -32,13 +31,22 @@ let ( * ) = Int32.mul
 let (/)   = Int32.div
 let (/.)  = Int32.unsigned_div
 let (%)   = Int32.rem
-let (%.)  = Int32.unsigned_div
+let (%.)  = Int32.unsigned_rem
 
-let h x = Int64.to_int32 (Int64.shift_right x 32)
+let h x = Int64.to_int32 (Int64.shift_right_logical x 32)
+
 let mulh x y =
-  let x = Int64.of_int32 x in
-  let y = Int64.of_int32 y in
-  h (Int64.mul x y)
+  let open Int64 in
+  let x = of_int32 x in
+  let y = of_int32 y in
+  h (mul x y)
+
+let mulhu x y =
+  let open Int64 in
+  let t x = shift_right_logical (shift_left (of_int32 x) 32) 32 in
+  let x = t x in
+  let y = t y in
+  h (mul x y)
 
 let (<<) x y = Int32.shift_left x (Int32.to_int y)
 let (>>) x y = Int32.shift_right x (Int32.to_int y)
@@ -90,7 +98,7 @@ module R_type = struct
     | 0x0, 0x01 -> rs1 * rs2                    (* MUL   *)
     | 0x1, 0x01 -> mulh rs1 rs2                 (* MULH  *)
     | 0x2, 0x01 -> failwith "TODO"              (* MULSU *)
-    | 0x3, 0X01 -> failwith "TODO"              (* MULU  *)
+    | 0x3, 0X01 -> mulhu rs1 rs2                (* MULHU  *)
     | 0x4, 0x01 -> rs1 / rs2                    (* DIV   *)
     | 0x5, 0x01 -> rs1 /. rs2                   (* DIVU  *)
     | 0x6, 0x01 -> rs1 % rs2                    (* REM   *)

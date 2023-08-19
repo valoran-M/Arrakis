@@ -43,11 +43,11 @@ let mulh x y =
 
 let mulhu x y =
   let open Int64 in
-  let propage_sign x = 
+  let spreads_sign x = 
     shift_right_logical (shift_left (of_int32 x) 32) 32
   in
-  let x = propage_sign x in
-  let y = propage_sign y in
+  let x = spreads_sign x in
+  let y = spreads_sign y in
   hight (mul x y)
 
 let (<<) x y = Int32.shift_left x (Int32.to_int y)

@@ -84,29 +84,25 @@ module R_type = struct
   let execute instruction rs1 rs2 =
     match instruction.funct3, instruction.funct7 with
     (* RV32I *)
-    | 0x0, 0x00 -> rs1 +  rs2                   (* ADD   *)
-    | 0x0, 0x20 -> rs1 -  rs2                   (* SUB   *)
-    | 0x4, 0x00 -> rs1 ^  rs2                   (* XOR   *)
-    | 0x6, 0x00 -> rs1 || rs2                   (* OR    *)
-    | 0x7, 0x00 -> rs1 && rs2                   (* AND   *)
-    | 0x1, 0x00 -> rs1 << rs2                   (* SLL   *)
-    | 0x5, 0x00 -> rs1 >>> rs2                  (* SRL   *)
-    | 0x5, 0x20 -> rs1 >>  rs2                  (* SRA   *)
-    | 0x2, 0x00 -> if rs1 < rs2 then 1l else 0l (* SLT   *)
-    | 0x3, 0x00 -> if rs1 <.rs2 then 1l else 0l (* SLTU  *)
+    | 0x0, 0x00 -> rs1 +  rs2                   (* ADD    *)
+    | 0x0, 0x20 -> rs1 -  rs2                   (* SUB    *)
+    | 0x4, 0x00 -> rs1 ^  rs2                   (* XOR    *)
+    | 0x6, 0x00 -> rs1 || rs2                   (* OR     *)
+    | 0x7, 0x00 -> rs1 && rs2                   (* AND    *)
+    | 0x1, 0x00 -> rs1 << rs2                   (* SLL    *)
+    | 0x5, 0x00 -> rs1 >>> rs2                  (* SRL    *)
+    | 0x5, 0x20 -> rs1 >>  rs2                  (* SRA    *)
+    | 0x2, 0x00 -> if rs1 < rs2 then 1l else 0l (* SLT    *)
+    | 0x3, 0x00 -> if rs1 <.rs2 then 1l else 0l (* SLTU   *)
     (* RV32M *)
-    | 0x0, 0x01 -> rs1 * rs2                    (* MUL   *)
-    | 0x1, 0x01 -> mulh rs1 rs2                 (* MULH  *)
-    | 0x2, 0x01 -> failwith "TODO"              (* MULSU *)
+    | 0x0, 0x01 -> rs1 * rs2                    (* MUL    *)
+    | 0x1, 0x01 -> mulh rs1 rs2                 (* MULH   *)
+    | 0x2, 0x01 -> failwith "TODO"              (* MULHSU *)
     | 0x3, 0X01 -> mulhu rs1 rs2                (* MULHU  *)
     | 0x4, 0x01 -> rs1 / rs2                    (* DIV   *)
     | 0x5, 0x01 -> rs1 /. rs2                   (* DIVU  *)
     | 0x6, 0x01 -> rs1 % rs2                    (* REM   *)
     | 0x7, 0x01 -> rs1 %. rs2                   (* REMU  *)
-<<<<<<< HEAD
-=======
-
->>>>>>> 6f082cb (RV32M - Partial)
     | _, _ ->
       Printf.eprintf "%d %d" instruction.funct3 instruction.funct7;
       Error.r_invalid instruction.funct3 instruction.funct7
@@ -175,7 +171,6 @@ module S_type = struct
   let execute instruction rs1 rs2 memory =
     let addr = rs1 + instruction.imm in
     match instruction.funct3 with
-<<<<<<< HEAD
       | 0x0 -> Memory.set_byte  memory addr (rs2 && 0b11111111l)          (* SB *)
       | 0x1 -> Memory.set_int16 memory addr (rs2 && 0b1111111111111111l)  (* SH *)
       | 0x2 -> Memory.set_int32 memory addr rs2                           (* SW *)
@@ -217,10 +212,4 @@ module B_type = struct
     | 0x6 -> test (<=.) rs1 rs2         (* BLTU *)
     | 0x7 -> test (>=.) rs1 rs2         (* BGEU *)
     | _ -> Error.b_invalid instruction.funct3
-=======
-      | 0x0 -> Memory.set_byte  memory addr (rs2 && 0b11111111l)
-      | 0x1 -> Memory.set_int16 memory addr (rs2 && 0b1111111111111111l)
-      | 0x2 -> Memory.set_int32 memory addr rs2
-      | _ -> Error.s_invalid instruction.funct3
->>>>>>> 6f082cb (RV32M - Partial)
 end

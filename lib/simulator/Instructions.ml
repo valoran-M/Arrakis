@@ -23,11 +23,22 @@ let imm20_mask  = Int32.of_int 0b11111111111111111111000000000000
 (* ----------------------------- Int 32 operator ---------------------------- *)
 
 
-let (-)  = Int32.sub
-let (+)  = Int32.add
-let (^)  = Int32.logxor
-let (||) = Int32.logor
-let (&&) = Int32.logand
+let (-)   = Int32.sub
+let (+)   = Int32.add
+let (^)   = Int32.logxor
+let (||)  = Int32.logor
+let (&&)  = Int32.logand
+let ( * ) = Int32.mul
+let (/)   = Int32.div
+let (/.)  = Int32.unsigned_div
+let (%)   = Int32.rem
+let (%.)  = Int32.unsigned_div
+
+let h x = Int64.to_int32 (Int64.shift_right x 32)
+let mulh x y =
+  let x = Int64.of_int32 x in
+  let y = Int64.of_int32 y in
+  h (Int64.mul x y)
 
 let (<<) x y = Int32.shift_left x (Int32.to_int y)
 let (>>) x y = Int32.shift_right x (Int32.to_int y)
@@ -49,8 +60,7 @@ let (>=)  x y = Int32.compare          x y >= 0
 (* ----------------------------- R Instructions ----------------------------- *)
 
 module R_type = struct
-  type t = { funct7 : int; funct3: int;
-             rs1: int; rs2: int; rd: int; }
+  type t = { funct7 : int; funct3: int; rs1: int; rs2: int; rd: int; }
 
   let decode code =
     let (>>) = Int.shift_right_logical in
@@ -65,6 +75,7 @@ module R_type = struct
 
   let execute instruction rs1 rs2 =
     match instruction.funct3, instruction.funct7 with
+    (* RV32I *)
     | 0x0, 0x00 -> rs1 +  rs2                   (* ADD   *)
     | 0x0, 0x20 -> rs1 -  rs2                   (* SUB   *)
     | 0x4, 0x00 -> rs1 ^  rs2                   (* XOR   *)
@@ -74,7 +85,16 @@ module R_type = struct
     | 0x5, 0x00 -> rs1 >>> rs2                  (* SRL   *)
     | 0x5, 0x20 -> rs1 >>  rs2                  (* SRA   *)
     | 0x2, 0x00 -> if rs1 < rs2 then 1l else 0l (* SLT   *)
-    | 0x3, 0x00 -> if rs1 <.rs2 then 1l else 0l (* SLTU *)
+    | 0x3, 0x00 -> if rs1 <.rs2 then 1l else 0l (* SLTU  *)
+    (* RV32M *)
+    | 0x0, 0x01 -> rs1 * rs2                    (* MUL   *)
+    | 0x1, 0x01 -> mulh rs1 rs2                 (* MULH  *)
+    | 0x2, 0x01 -> failwith "TODO"              (* MULSU *)
+    | 0x3, 0X01 -> failwith "TODO"              (* MULU  *)
+    | 0x4, 0x01 -> rs1 / rs2                    (* DIV   *)
+    | 0x5, 0x01 -> rs1 /. rs2                   (* DIVU  *)
+    | 0x6, 0x01 -> rs1 % rs2                    (* REM   *)
+    | 0x7, 0x01 -> rs1 %. rs2                   (* REMU  *)
     | _, _ ->
       Printf.eprintf "%d %d" instruction.funct3 instruction.funct7;
       Error.r_invalid instruction.funct3 instruction.funct7
@@ -140,13 +160,13 @@ module S_type = struct
               (Int32.shift_right_logical (Int32.logand code rd_mask) 7);
     }
 
-let execute instruction rs1 rs2 memory =
-  let addr = rs1 + instruction.imm in
-  match instruction.funct3 with
-    | 0x0 -> Memory.set_byte  memory addr (rs2 && 0b11111111l)          (* SB *)
-    | 0x1 -> Memory.set_int16 memory addr (rs2 && 0b1111111111111111l)  (* SH *)
-    | 0x2 -> Memory.set_int32 memory addr rs2                           (* SW *)
-    | _ -> Error.s_invalid instruction.funct3
+  let execute instruction rs1 rs2 memory =
+    let addr = rs1 + instruction.imm in
+    match instruction.funct3 with
+      | 0x0 -> Memory.set_byte  memory addr (rs2 && 0b11111111l)          (* SB *)
+      | 0x1 -> Memory.set_int16 memory addr (rs2 && 0b1111111111111111l)  (* SH *)
+      | 0x2 -> Memory.set_int32 memory addr rs2                           (* SW *)
+      | _ -> Error.s_invalid instruction.funct3
 end
 
 (* ----------------------------- B Instructions ----------------------------- *)

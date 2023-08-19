@@ -52,3 +52,5 @@ let test_arith () =
   Cpu.exec 0b000000000100_00010_011_00001_0010011l cpu memory;
   Alcotest.check Alcotest.int32 "SLTIU 4 0" 1l (Cpu.get_reg cpu 1);
 
+let test_load () =
+  Memory.set_byte

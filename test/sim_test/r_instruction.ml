@@ -76,5 +76,6 @@ let test () =
   Cpu.set_reg cpu 2 1l;
   Cpu.set_reg cpu 3 2l;
   Cpu.exec 0b0000000_00011_00010_011_00001_0110011l cpu memory;
-  Alcotest.check Alcotest.int32 "SLTU 1" 1l (Cpu.get_reg cpu 1);
+  Alcotest.check Alcotest.int32 "SLTU 1" 1l (Cpu.get_reg cpu 1)
 
+let test_mul () = ()

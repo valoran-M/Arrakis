@@ -64,7 +64,14 @@ let exec (instruction : Int32.t) cpu memory =
     let return = I_type.execute_load decode rs1 memory in
     Regs.set cpu.regs decode.rd return;
     next_pc cpu
-  | 0b1100111
+  | 0b1100111 ->
+    let decode = I_type.decode instruction in
+    let rs1 = Regs.get cpu.regs decode.rs1 in
+    (match decode.funct3 with
+     | 0x0 ->
+        set_reg cpu decode.rd (Int32.add (get_pc cpu) 4l);
+        set_pc cpu (Int32.add rs1 decode.imm)
+     | _ -> Error.i_invalid decode.funct3 opcode decode.imm)
   | 0b1110011 -> Printf.printf "opcode I"
 (* S type *)
   | 0b0100011 ->
@@ -81,8 +88,14 @@ let exec (instruction : Int32.t) cpu memory =
     let imm = B_type.execute decode rs1 rs2 in
     add_pc cpu imm
 (* U type *)
-  | 0b0110111
-  | 0b0010111 -> Printf.printf "opcode U"
+  | 0b0110111 ->
+    let decode = U_type.decode instruction in
+    set_reg cpu decode.rd decode.imm_shift;
+    next_pc cpu
+  | 0b0010111 ->
+    let decode = U_type.decode instruction in
+    set_reg cpu decode.rd (Int32.add (get_pc cpu) decode.imm_shift);
+    next_pc cpu
 (* J Type *)
   | 0b1101111 -> Printf.printf "opcode J"
   | _ -> Error.opcode_invalid opcode

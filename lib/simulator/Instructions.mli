@@ -47,3 +47,13 @@ module B_type : sig
         [rs1] [rs2] register value return value
         added to pc *)
 end
+
+module U_type : sig
+  type t = { rd: int; imm_shift: int32; }
+
+  val decode : int32 -> t
+    (** [decode code] decode U instruction [code] *)
+
+  val execute : t -> int -> int32 -> int32
+    (** [execute inst opcode p]c execute U [inst] *)
+end

@@ -227,3 +227,24 @@ module B_type = struct
     | 0x7 -> test (>=.) rs1 rs2         (* BGEU *)
     | _ -> Error.b_invalid instruction.funct3
 end
+
+(* ----------------------------- U Instructions ----------------------------- *)
+
+module U_type = struct
+  type t = { rd: int; imm_shift : int32; }
+
+  let decode code =
+    let (>>) = Int.shift_right_logical in
+    let (&&) x y = Int32.to_int (x && y) in
+    {
+      rd = (code && rd_mask) >> 7;
+      imm_shift = Int32.logand code imm20_mask;
+    }
+
+  let execute instruction opcode pc =
+    match opcode with
+    | 0b0110111 -> instruction.imm_shift
+    | 0b0010111 -> pc + instruction.imm_shift
+    | _ -> Error.u_invalid opcode
+
+end

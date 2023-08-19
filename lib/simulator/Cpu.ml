@@ -43,7 +43,7 @@ let exec (instruction : Int32.t) cpu memory =
   let open Instructions in
   let opcode = Int32.to_int (Int32.logand opcode_mask instruction) in
   match opcode with
-  (* R type *)
+(* R type *)
   | 0b0110011 ->
     let decode = R_type.decode instruction in
     let rs1 = Regs.get cpu.regs decode.rs1 in
@@ -51,7 +51,7 @@ let exec (instruction : Int32.t) cpu memory =
     let return = R_type.execute decode rs1 rs2 in
     Regs.set cpu.regs decode.rd return;
     next_pc cpu
-  (* I type *)
+(* I type *)
   | 0b0010011 ->
     let decode = I_type.decode instruction in
     let rs1 = Regs.get cpu.regs decode.rs1 in
@@ -66,24 +66,24 @@ let exec (instruction : Int32.t) cpu memory =
     next_pc cpu
   | 0b1100111
   | 0b1110011 -> Printf.printf "opcode I"
-  (* S type *)
+(* S type *)
   | 0b0100011 ->
     let decode = S_type.decode instruction in
     let rs1 = Regs.get cpu.regs decode.rs1 in
     let rs2 = Regs.get cpu.regs decode.rs2 in
     S_type.execute decode rs1 rs2 memory;
     next_pc cpu
-  (* B type *)
+(* B type *)
   | 0b1100011 ->
     let decode = B_type.decode instruction in
     let rs1 = Regs.get cpu.regs decode.rs1 in
     let rs2 = Regs.get cpu.regs decode.rs2 in
     let imm = B_type.execute decode rs1 rs2 in
     add_pc cpu imm
-  (* U type *)
+(* U type *)
   | 0b0110111
   | 0b0010111 -> Printf.printf "opcode U"
-  (* J Type *)
+(* J Type *)
   | 0b1101111 -> Printf.printf "opcode J"
   | _ -> Error.opcode_invalid opcode
 

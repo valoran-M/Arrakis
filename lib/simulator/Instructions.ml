@@ -33,20 +33,20 @@ let (/.)  = Int32.unsigned_div
 let (%)   = Int32.rem
 let (%.)  = Int32.unsigned_rem
 
-let h x = Int64.to_int32 (Int64.shift_right_logical x 32)
+let hight x = Int64.to_int32 (Int64.shift_right_logical x 32)
 
 let mulh x y =
   let open Int64 in
   let x = of_int32 x in
   let y = of_int32 y in
-  h (mul x y)
+  hight (mul x y)
 
 let mulhu x y =
   let open Int64 in
   let t x = shift_right_logical (shift_left (of_int32 x) 32) 32 in
   let x = t x in
   let y = t y in
-  h (mul x y)
+  hight (mul x y)
 
 let (<<) x y = Int32.shift_left x (Int32.to_int y)
 let (>>) x y = Int32.shift_right x (Int32.to_int y)

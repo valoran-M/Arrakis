@@ -241,10 +241,4 @@ module U_type = struct
       imm_shift = Int32.logand code imm20_mask;
     }
 
-  let execute instruction opcode pc =
-    match opcode with
-    | 0b0110111 -> instruction.imm_shift
-    | 0b0010111 -> pc + instruction.imm_shift
-    | _ -> Error.u_invalid opcode
-
 end

@@ -53,7 +53,4 @@ module U_type : sig
 
   val decode : int32 -> t
     (** [decode code] decode U instruction [code] *)
-
-  val execute : t -> int -> int32 -> int32
-    (** [execute inst opcode p]c execute U [inst] *)
 end

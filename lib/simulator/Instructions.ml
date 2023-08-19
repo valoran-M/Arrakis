@@ -113,3 +113,4 @@ type t = { funct3: int; rs1: int; imm: Int32.t; rd: int }
     | 0x5 -> Memory.get_int16 memory addr                          (* LHU *)
     | _ -> Error.i_invalide_load instruction.funct3
 end
+

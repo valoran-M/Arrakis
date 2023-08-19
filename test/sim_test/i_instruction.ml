@@ -50,7 +50,56 @@ let test_arith () =
   (* SLTIU x1, x2, 4 *)
   Cpu.set_reg cpu 2 2l;
   Cpu.exec 0b000000000100_00010_011_00001_0010011l cpu memory;
-  Alcotest.check Alcotest.int32 "SLTIU 4 0" 1l (Cpu.get_reg cpu 1);
+  Alcotest.check Alcotest.int32 "SLTIU 4 0" 1l (Cpu.get_reg cpu 1)
 
 let test_load () =
-  Memory.set_byte
+  (* LB *)
+  Memory.set_byte memory 10l 10l;
+  Cpu.exec 0b000000001010_00000_000_00001_0000011l cpu memory;
+  Alcotest.check Alcotest.int32 "LB 1" 10l (Cpu.get_reg cpu 1);
+
+  Memory.set_byte memory 10l (0b11111111l);
+  Cpu.set_reg cpu 2 5l;
+  Cpu.exec 0b000000000101_00010_000_00001_0000011l cpu memory;
+  Alcotest.check Alcotest.int32 "LB 2" (-1l) (Cpu.get_reg cpu 1);
+
+  (* LH *)
+  Memory.set_int16 memory 10l 10l;
+  Cpu.exec 0b000000001010_00000_001_00001_0000011l cpu memory;
+  Alcotest.check Alcotest.int32 "LH 1" 10l (Cpu.get_reg cpu 1);
+
+  Memory.set_int16 memory 10l (0b1111111111111110l);
+  Cpu.set_reg cpu 2 5l;
+  Cpu.exec 0b000000000101_00010_001_00001_0000011l cpu memory;
+  Alcotest.check Alcotest.int32 "LH 2" (-2l) (Cpu.get_reg cpu 1);
+
+  (* LW *)
+  Memory.set_int32 memory 10l 300l;
+  Cpu.exec 0b000000001010_00000_010_00001_0000011l cpu memory;
+  Alcotest.check Alcotest.int32 "LW 1" 300l (Cpu.get_reg cpu 1);
+
+  Memory.set_int32 memory 13l (-4l);
+  Cpu.set_reg cpu 2 8l;
+  Cpu.exec 0b000000000101_00010_010_00001_0000011l cpu memory;
+  Alcotest.check Alcotest.int32 "LW 2" (-4l) (Cpu.get_reg cpu 1);
+
+  (* LBU *)
+  Memory.set_byte memory 10l 10l;
+  Cpu.exec 0b000000001010_00000_100_00001_0000011l cpu memory;
+  Alcotest.check Alcotest.int32 "LBU 1" 10l (Cpu.get_reg cpu 1);
+
+  Memory.set_byte memory 10l (0b11111111l);
+  Cpu.set_reg cpu 2 5l;
+  Cpu.exec 0b000000000101_00010_100_00001_0000011l cpu memory;
+  Alcotest.check Alcotest.int32 "LBU 2" (0b11111111l) (Cpu.get_reg cpu 1);
+
+  (* LHU *)
+  Memory.set_int16 memory 10l 10l;
+  Cpu.exec 0b000000001010_00000_101_00001_0000011l cpu memory;
+  Alcotest.check Alcotest.int32 "LHU 1" 10l (Cpu.get_reg cpu 1);
+
+  Memory.set_int16 memory 20l (0b1111111111111110l);
+  Printf.printf "%s\n" (Int32.to_string (Memory.get_int16 memory 20l));
+  Cpu.set_reg cpu 2 15l;
+  Cpu.exec 0b000000000101_00010_101_00001_0000011l cpu memory;
+  Alcotest.check Alcotest.int32 "LHU 2" (0b1111111111111110l) (Cpu.get_reg cpu 1);

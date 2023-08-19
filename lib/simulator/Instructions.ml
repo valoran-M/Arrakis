@@ -38,6 +38,10 @@ let (%.)  = Int32.unsigned_rem
 
 let high x = Int64.to_int32 (Int64.shift_right_logical x 32)
 
+let uint32_to_i64 x =
+  let open Int64 in
+  shift_right_logical (shift_left (of_int32 x) 32) 32
+
 let mulh x y =
   let open Int64 in
   let x = of_int32 x in
@@ -46,8 +50,13 @@ let mulh x y =
 
 let mulhu x y =
   let open Int64 in
-  let uint32_to_i64 x = shift_right_logical (shift_left (of_int32 x) 32) 32 in
   let x = uint32_to_i64 x in
+  let y = uint32_to_i64 y in
+  high (mul x y)
+
+let mulhsu x y =
+  let open Int64 in
+  let x = of_int32 x in
   let y = uint32_to_i64 y in
   high (mul x y)
 
@@ -102,7 +111,7 @@ module R_type = struct
     (* RV32M *)
     | 0x0, 0x01 -> rs1 * rs2                    (* MUL    *)
     | 0x1, 0x01 -> mulh rs1 rs2                 (* MULH   *)
-    | 0x2, 0x01 -> failwith "TODO"              (* MULHSU *)
+    | 0x2, 0x01 -> mulhsu rs1 rs2               (* MULHSU *)
     | 0x3, 0X01 -> mulhu rs1 rs2                (* MULHU  *)
     | 0x4, 0x01 -> rs1 / rs2                    (* DIV    *)
     | 0x5, 0x01 -> rs1 /. rs2                   (* DIVU   *)

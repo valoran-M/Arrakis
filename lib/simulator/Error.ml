@@ -7,16 +7,16 @@ type t =
 
 exception Simulator_error of t
 
-let opcode_invalide code = raise (Simulator_error (Invalid_opcode code))
+let opcode_invalid code = raise (Simulator_error (Invalid_opcode code))
 
-let r_invalide funct3 funct4 =
+let r_invalid funct3 funct4 =
   raise (Simulator_error (Invalid_R (funct3, funct4)))
 
-let i_invalide_arith funct3 imm =
+let i_invalid_arith funct3 imm =
   raise (Simulator_error (Invalid_I_arith (funct3, imm)))
 
-let i_invalide_load funct3 =
+let i_invalid_load funct3 =
   raise (Simulator_error (Invalid_I_load funct3))
 
-let s_invalide funct3 =
+let s_invalid funct3 =
   raise (Simulator_error (Invalid_S funct3))

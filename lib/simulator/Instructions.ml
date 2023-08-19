@@ -46,7 +46,7 @@ module R_type = struct
   let decode code =
     let (>>) = Int.shift_right_logical in
     let (&&) x y = Int32.to_int (x && y) in
-    { 
+    {
       funct7 = (func7_mask && code) >> 25;
       funct3 = (func3_mask && code) >> 12;
       rs1 = (rs1_mask && code) >> 15;
@@ -68,21 +68,21 @@ module R_type = struct
     | 0x3, 0x00 -> if rs1 <.rs2 then 1l else 0l (* SLTU *)
     | _, _ ->
       Printf.eprintf "%d %d" instruction.funct3 instruction.funct7;
-      Error.r_invalide instruction.funct3 instruction.funct7
+      Error.r_invalid instruction.funct3 instruction.funct7
 end
 
 (* ----------------------------- I Instructions ----------------------------- *)
 
 module I_type = struct
   type t = { funct3: int; rs1: int; imm: Int32.t; rd: int }
-  
+
   let decode code =
     let (>>) = Int.shift_right_logical in
     let (&&) x y = Int32.to_int (x && y) in
     {
       funct3 = (func3_mask && code) >> 12;
       rs1 = (rs1_mask && code) >> 15;
-      imm = Int32.shift_right_logical (Int32.logand imm12_mask code) 20; 
+      imm = Int32.shift_right_logical (Int32.logand imm12_mask code) 20;
       rd  = (rd_mask && code) >> 7;
     }
 
@@ -101,7 +101,7 @@ module I_type = struct
     | 0x5 when arith -> rs1 >>  (imm && 0b11111l) (* SRAI  *)
     | 0x2 -> if rs1 < imm then 1l else 0l         (* SLTI  *)
     | 0x3 -> if rs1 <.imm then 1l else 0l         (* SLTIU *)
-    | _ -> Error.i_invalide_arith instruction.funct3 instruction.imm
+    | _ -> Error.i_invalid_arith instruction.funct3 instruction.imm
 
   let execute_load instruction rs1 memory =
     let addr = rs1 + instruction.imm in
@@ -111,7 +111,7 @@ module I_type = struct
     | 0x2 -> Utils.sign_extended (Memory.get_int32 memory addr) 32 (* LW  *)
     | 0x4 -> Memory.get_byte memory addr                           (* LBU *)
     | 0x5 -> Memory.get_int16 memory addr                          (* LHU *)
-    | _ -> Error.i_invalide_load instruction.funct3
+    | _ -> Error.i_invalid_load instruction.funct3
 end
 
 (* ----------------------------- S Instructions ----------------------------- *)
@@ -126,7 +126,7 @@ module S_type = struct
       funct3 = (code && func3_mask) >> 12;
       rs1 = (code && rs1_mask) >> 15;
       rs2 = (code && rs2_mask) >> 20;
-      imm = Int32.logor 
+      imm = Int32.logor
               (Int32.shift_right_logical (Int32.logand code func7_mask) 20)
               (Int32.shift_right_logical (Int32.logand code rd_mask) 7);
     }
@@ -137,5 +137,5 @@ let execute instruction rs1 rs2 memory =
     | 0x0 -> Memory.set_byte  memory addr (rs2 && 0b11111111l)
     | 0x1 -> Memory.set_int16 memory addr (rs2 && 0b1111111111111111l)
     | 0x2 -> Memory.set_int32 memory addr rs2
-    | _ -> Error.s_invalide instruction.funct3 
+    | _ -> Error.s_invalid instruction.funct3
 end

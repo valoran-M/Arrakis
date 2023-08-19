@@ -20,5 +20,5 @@ val set_reg : t -> int -> Int32.t -> unit
   (** [set_reg cpu i val] set [val] in x[i] register *)
 
 val exec : Int32.t -> t -> Memory.t -> unit
-(** [exec code cpu memory] execute [code] with [cpu] and 
+(** [exec code cpu memory] execute [code] with [cpu] and
     [memory] *)

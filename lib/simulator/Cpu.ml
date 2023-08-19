@@ -11,7 +11,7 @@ end = struct
 
   let make () = Array.init 31 (fun _ -> Int32.zero)
 
-  let get regs x_reg = 
+  let get regs x_reg =
     if x_reg = 0
     then Int32.zero
     else regs.(x_reg - 1)
@@ -79,5 +79,5 @@ let exec (instruction : Int32.t) cpu memory =
   | 0b0010111 -> Printf.printf "opcode U"
   (* J Type *)
   | 0b1101111 -> Printf.printf "opcode J"
-  | _ -> Error.opcode_invalide opcode
+  | _ -> Error.opcode_invalid opcode
 

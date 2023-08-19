@@ -1,9 +1,10 @@
 type t =
   | Invalid_opcode of int
   | Invalid_R of int * int
-  | Invalid_I_arith of int * Int32.t
+  | Invalid_I_arith of int * int32
   | Invalid_I_load of int
   | Invalid_S of int
+  | Invalid_B of int
 
 exception Simulator_error of t
 
@@ -20,3 +21,6 @@ let i_invalid_load funct3 =
 
 let s_invalid funct3 =
   raise (Simulator_error (Invalid_S funct3))
+
+let b_invalid funct3 =
+  raise (Simulator_error (Invalid_B funct3))

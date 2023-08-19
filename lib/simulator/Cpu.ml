@@ -3,11 +3,11 @@ module Regs : sig
 
   val make : unit -> t
 
-  val get : t -> int -> Int32.t
-  val set : t -> int -> Int32.t -> unit
+  val get : t -> int -> int32
+  val set : t -> int -> int32 -> unit
 
 end = struct
-  type t = Int32.t Array.t
+  type t = int32 Array.t
 
   let make () = Array.init 31 (fun _ -> Int32.zero)
 
@@ -21,15 +21,16 @@ end = struct
     then regs.(x_reg - 1) <- value
 end
 
-type t = { mutable pc : Int32.t; regs: Regs.t }
+type t = { mutable pc : int32; regs: Regs.t }
 
 let make addr_start : t = { pc = addr_start; regs = Regs.make () }
 
 (* ------------------------- get and set registers -------------------------- *)
 
-let get_pc  cpu    = cpu.pc
-let set_pc  cpu pc = cpu.pc <- pc
-let next_pc cpu    = cpu.pc <- Int32.add cpu.pc (Int32.of_int 4)
+let get_pc  cpu     = cpu.pc
+let set_pc  cpu pc  = cpu.pc <- pc
+let next_pc cpu     = cpu.pc <- Int32.add cpu.pc (Int32.of_int 4)
+let add_pc  cpu imm = cpu.pc <- Int32.add cpu.pc imm
 
 let get_reg cpu reg       = Regs.get cpu.regs reg
 let set_reg cpu reg value = Regs.set cpu.regs reg value
@@ -73,7 +74,12 @@ let exec (instruction : Int32.t) cpu memory =
     S_type.execute decode rs1 rs2 memory;
     next_pc cpu
   (* B type *)
-  | 0b1100011 -> Printf.printf "opcode B"
+  | 0b1100011 ->
+    let decode = B_type.decode instruction in
+    let rs1 = Regs.get cpu.regs decode.rs1 in
+    let rs2 = Regs.get cpu.regs decode.rs2 in
+    let imm = B_type.execute decode rs1 rs2 in
+    add_pc cpu imm
   (* U type *)
   | 0b0110111
   | 0b0010111 -> Printf.printf "opcode U"

@@ -34,8 +34,17 @@ let (>>) x y = Int32.shift_right x (Int32.to_int y)
 let (>>>) x y = Int32.shift_right_logical x (Int32.to_int y)
 
 let (=) = Int32.equal
-let (<.) x y = Int32.unsigned_compare x y < 0
-let (<)  x y = Int32.compare          x y < 0
+let (<>)  x y = not (Int32.equal x y)
+
+let (<.)  x y = Int32.unsigned_compare x y <  0
+let (<)   x y = Int32.compare          x y <  0
+let (<=.) x y = Int32.unsigned_compare x y <= 0
+let (<=)  x y = Int32.compare          x y <= 0
+
+let (>.)  x y = Int32.unsigned_compare x y >  0
+let (>)   x y = Int32.compare          x y >  0
+let (>=.) x y = Int32.unsigned_compare x y >= 0
+let (>=)  x y = Int32.compare          x y >= 0
 
 (* ----------------------------- R Instructions ----------------------------- *)
 
@@ -74,7 +83,7 @@ end
 (* ----------------------------- I Instructions ----------------------------- *)
 
 module I_type = struct
-  type t = { funct3: int; rs1: int; imm: Int32.t; rd: int }
+  type t = { funct3: int; rs1: int; imm: int32; rd: int }
 
   let decode code =
     let (>>) = Int.shift_right_logical in
@@ -117,7 +126,7 @@ end
 (* ----------------------------- S Instructions ----------------------------- *)
 
 module S_type = struct
-  type t = { funct3: int; rs1: int; rs2: int; imm: Int32.t; }
+  type t = { funct3: int; rs1: int; rs2: int; imm: int32; }
 
   let decode code =
     let (>>) = Int.shift_right_logical in
@@ -138,4 +147,41 @@ let execute instruction rs1 rs2 memory =
     | 0x1 -> Memory.set_int16 memory addr (rs2 && 0b1111111111111111l)  (* SH *)
     | 0x2 -> Memory.set_int32 memory addr rs2                           (* SW *)
     | _ -> Error.s_invalid instruction.funct3
+end
+
+(* ----------------------------- B Instructions ----------------------------- *)
+
+module B_type = struct
+  type t = { funct3: int; rs1: int; rs2: int; imm: int32; }
+
+  let decode code =
+    (* Imm interval *)
+    let imm_7 = (code && func7_mask) >> 25l in
+    let imm_5 = (code && rd_mask) >> 7l in
+    (* Imm's bits *)
+    let imm12   = (imm_7 && 0b1000000l) << 6l in
+    let imm10_5 = (imm_7 && 0b0111111l) << 5l in
+    let imm11   = (imm_5 && 0b00001l) << 11l in
+    let imm4_1  = imm_5 && 0b11110l in
+    let imm = Utils.sign_extended (imm12 || imm11 || imm10_5 || imm4_1) 13 in
+
+    let (>>) = Int.shift_right_logical in
+    let (&&) x y = Int32.to_int (x && y) in
+    {
+      funct3 = (code && func3_mask) >> 12;
+      rs1 = (code && rs1_mask) >> 15;
+      rs2 = (code && rs2_mask) >> 20;
+      imm = imm;
+    }
+
+  let execute instruction rs1 rs2 =
+    let test f x y = if f x y then instruction.imm else 4l in
+    match instruction.funct3 with
+    | 0x0 -> test (=)   rs1 rs2         (* BEQ  *)
+    | 0x1 -> test (<>)  rs1 rs2         (* BNE  *)
+    | 0x4 -> test (<=)  rs1 rs2         (* BLT  *)
+    | 0x5 -> test (>=)  rs1 rs2         (* BGE  *)
+    | 0x6 -> test (<=.) rs1 rs2         (* BLTU *)
+    | 0x7 -> test (>=.) rs1 rs2         (* BGEU *)
+    | _ -> Error.b_invalid instruction.funct3
 end

@@ -207,9 +207,9 @@ module B_type = struct
     match instruction.funct3 with
     | 0x0 -> test (=)   rs1 rs2         (* BEQ  *)
     | 0x1 -> test (<>)  rs1 rs2         (* BNE  *)
-    | 0x4 -> test (<=)  rs1 rs2         (* BLT  *)
+    | 0x4 -> test (<)  rs1 rs2          (* BLT  *)
     | 0x5 -> test (>=)  rs1 rs2         (* BGE  *)
-    | 0x6 -> test (<=.) rs1 rs2         (* BLTU *)
+    | 0x6 -> test (<.) rs1 rs2          (* BLTU *)
     | 0x7 -> test (>=.) rs1 rs2         (* BGEU *)
     | _ -> Error.b_invalid instruction.funct3
 end

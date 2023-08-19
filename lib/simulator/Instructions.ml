@@ -95,6 +95,10 @@ module R_type = struct
     | 0x5, 0x01 -> rs1 /. rs2                   (* DIVU  *)
     | 0x6, 0x01 -> rs1 % rs2                    (* REM   *)
     | 0x7, 0x01 -> rs1 %. rs2                   (* REMU  *)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6f082cb (RV32M - Partial)
     | _, _ ->
       Printf.eprintf "%d %d" instruction.funct3 instruction.funct7;
       Error.r_invalid instruction.funct3 instruction.funct7
@@ -163,6 +167,7 @@ module S_type = struct
   let execute instruction rs1 rs2 memory =
     let addr = rs1 + instruction.imm in
     match instruction.funct3 with
+<<<<<<< HEAD
       | 0x0 -> Memory.set_byte  memory addr (rs2 && 0b11111111l)          (* SB *)
       | 0x1 -> Memory.set_int16 memory addr (rs2 && 0b1111111111111111l)  (* SH *)
       | 0x2 -> Memory.set_int32 memory addr rs2                           (* SW *)
@@ -204,4 +209,10 @@ module B_type = struct
     | 0x6 -> test (<=.) rs1 rs2         (* BLTU *)
     | 0x7 -> test (>=.) rs1 rs2         (* BGEU *)
     | _ -> Error.b_invalid instruction.funct3
+=======
+      | 0x0 -> Memory.set_byte  memory addr (rs2 && 0b11111111l)
+      | 0x1 -> Memory.set_int16 memory addr (rs2 && 0b1111111111111111l)
+      | 0x2 -> Memory.set_int32 memory addr rs2
+      | _ -> Error.s_invalid instruction.funct3
+>>>>>>> 6f082cb (RV32M - Partial)
 end

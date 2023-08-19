@@ -38,7 +38,7 @@ let (%.)  = Int32.unsigned_rem
 
 let high x = Int64.to_int32 (Int64.shift_right_logical x 32)
 
-let uint32_to_i64 x =
+let u32_to_i64 x =
   let open Int64 in
   shift_right_logical (shift_left (of_int32 x) 32) 32
 
@@ -50,14 +50,14 @@ let mulh x y =
 
 let mulhu x y =
   let open Int64 in
-  let x = uint32_to_i64 x in
-  let y = uint32_to_i64 y in
+  let x = u32_to_i64 x in
+  let y = u32_to_i64 y in
   high (mul x y)
 
 let mulhsu x y =
   let open Int64 in
   let x = of_int32 x in
-  let y = uint32_to_i64 y in
+  let y = u32_to_i64 y in
   high (mul x y)
 
 (* logical base *)

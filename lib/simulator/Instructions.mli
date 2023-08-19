@@ -6,8 +6,8 @@ module R_type : sig
     (** [decode code] decode R instruction [code] *)
 
   val execute : t -> Int32.t -> Int32.t -> Int32.t
-  (** [execute inst rs1 rs2] execute [inst] with [rs1] [rs2]
-      register value *)
+    (** [execute inst rs1 rs2] execute [inst] with [rs1] [rs2]
+        register value *)
 end
 
 module I_type : sig
@@ -17,11 +17,21 @@ module I_type : sig
     (** [decode code] decode I instruction [code] *)
 
   val execute_arith : t -> Int32.t -> Int32.t
-  (** [execute_arith inst rs1] execute arith I [inst]
-      with [rs1] register value *)
+    (** [execute_arith inst rs1] execute arith I [inst]
+        with [rs1] register value *)
 
   val execute_load  : t -> Int32.t -> Memory.t -> Int32.t
-  (** [execute_load inst rs1 mem] execute load I [inst]
-      with [rs1] register value *)
+    (** [execute_load inst rs1 mem] execute load I [inst]
+        with [rs1] register value *)
 end
 
+module S_type : sig
+  type t = { funct3: int; rs1: int; rs2: int; imm: Int32.t; }
+
+  val decode : Int32.t -> t
+    (** [decode code] decode S instruction [code] *)
+
+  val execute : t -> int32 -> int32 -> Memory.t -> unit
+  (** [execute inst rs1 rs2 mem] execute S [inst] with 
+      [rs1] [rs2] register value *)
+end

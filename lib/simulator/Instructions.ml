@@ -74,7 +74,7 @@ end
 (* ----------------------------- I Instructions ----------------------------- *)
 
 module I_type = struct
-type t = { funct3: int; rs1: int; imm: Int32.t; rd: int }
+  type t = { funct3: int; rs1: int; imm: Int32.t; rd: int }
   
   let decode code =
     let (>>) = Int.shift_right_logical in
@@ -114,3 +114,28 @@ type t = { funct3: int; rs1: int; imm: Int32.t; rd: int }
     | _ -> Error.i_invalide_load instruction.funct3
 end
 
+(* ----------------------------- S Instructions ----------------------------- *)
+
+module S_type = struct
+  type t = { funct3: int; rs1: int; rs2: int; imm: Int32.t; }
+
+  let decode code =
+    let (>>) = Int.shift_right_logical in
+    let (&&) x y = Int32.to_int (x && y) in
+    {
+      funct3 = (code && func3_mask) >> 12;
+      rs1 = (code && rs1_mask) >> 15;
+      rs2 = (code && rs2_mask) >> 20;
+      imm = Int32.logor 
+              (Int32.shift_right_logical (Int32.logand code func7_mask) 20)
+              (Int32.shift_right_logical (Int32.logand code rd_mask) 7);
+    }
+
+let execute instruction rs1 rs2 memory =
+  let addr = rs1 + instruction.imm in
+  match instruction.funct3 with
+    | 0x0 -> Memory.set_byte  memory addr (rs2 && 0b11111111l)
+    | 0x1 -> Memory.set_int16 memory addr (rs2 && 0b1111111111111111l)
+    | 0x2 -> Memory.set_int32 memory addr rs2
+    | _ -> Error.s_invalide instruction.funct3 
+end

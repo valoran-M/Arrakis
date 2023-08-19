@@ -66,7 +66,12 @@ let exec (instruction : Int32.t) cpu memory =
   | 0b1100111
   | 0b1110011 -> Printf.printf "opcode I"
   (* S type *)
-  | 0b0100011 -> Printf.printf "opcode S"
+  | 0b0100011 ->
+    let decode = S_type.decode instruction in
+    let rs1 = Regs.get cpu.regs decode.rs1 in
+    let rs2 = Regs.get cpu.regs decode.rs2 in
+    S_type.execute decode rs1 rs2 memory;
+    next_pc cpu
   (* B type *)
   | 0b1100011 -> Printf.printf "opcode B"
   (* U type *)

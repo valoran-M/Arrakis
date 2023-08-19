@@ -22,6 +22,7 @@ let imm20_mask  = Int32.of_int 0b11111111111111111111000000000000
 
 (* ----------------------------- Int 32 operator ---------------------------- *)
 
+(* arithmetic base *)
 let (-)   = Int32.sub
 let (+)   = Int32.add
 let (^)   = Int32.logxor
@@ -32,6 +33,8 @@ let (/)   = Int32.div
 let (/.)  = Int32.unsigned_div
 let (%)   = Int32.rem
 let (%.)  = Int32.unsigned_rem
+
+(* mul *)
 
 let hight x = Int64.to_int32 (Int64.shift_right_logical x 32)
 
@@ -49,6 +52,8 @@ let mulhu x y =
   let x = spreads_sign x in
   let y = spreads_sign y in
   hight (mul x y)
+
+(* logical base *)
 
 let (<<) x y = Int32.shift_left x (Int32.to_int y)
 let (>>) x y = Int32.shift_right x (Int32.to_int y)
@@ -101,10 +106,10 @@ module R_type = struct
     | 0x1, 0x01 -> mulh rs1 rs2                 (* MULH   *)
     | 0x2, 0x01 -> failwith "TODO"              (* MULHSU *)
     | 0x3, 0X01 -> mulhu rs1 rs2                (* MULHU  *)
-    | 0x4, 0x01 -> rs1 / rs2                    (* DIV   *)
-    | 0x5, 0x01 -> rs1 /. rs2                   (* DIVU  *)
-    | 0x6, 0x01 -> rs1 % rs2                    (* REM   *)
-    | 0x7, 0x01 -> rs1 %. rs2                   (* REMU  *)
+    | 0x4, 0x01 -> rs1 / rs2                    (* DIV    *)
+    | 0x5, 0x01 -> rs1 /. rs2                   (* DIVU   *)
+    | 0x6, 0x01 -> rs1 % rs2                    (* REM    *)
+    | 0x7, 0x01 -> rs1 %. rs2                   (* REMU   *)
     | _, _ ->
       Printf.eprintf "%d %d" instruction.funct3 instruction.funct7;
       Error.r_invalid instruction.funct3 instruction.funct7
@@ -173,9 +178,9 @@ module S_type = struct
   let execute instruction rs1 rs2 memory =
     let addr = rs1 + instruction.imm in
     match instruction.funct3 with
-      | 0x0 -> Memory.set_byte  memory addr (rs2 && 0b11111111l)          (* SB *)
-      | 0x1 -> Memory.set_int16 memory addr (rs2 && 0b1111111111111111l)  (* SH *)
-      | 0x2 -> Memory.set_int32 memory addr rs2                           (* SW *)
+      | 0x0 -> Memory.set_byte  memory addr (rs2 && 0b11111111l)        (* SB *)
+      | 0x1 -> Memory.set_int16 memory addr (rs2 && 0b1111111111111111l)(* SH *)
+      | 0x2 -> Memory.set_int32 memory addr rs2                         (* SW *)
       | _ -> Error.s_invalid instruction.funct3
 end
 

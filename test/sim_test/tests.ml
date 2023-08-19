@@ -5,4 +5,5 @@ let tests : unit Alcotest.test list =
       test_case "R_instruction" `Quick R_instruction.test;
       test_case "I_instruction_arith" `Quick I_instruction.test_arith;
       test_case "I_instruction_load"  `Quick I_instruction.test_load;
+      test_case "S_instruction"  `Quick S_instruction.test;
   ] ]

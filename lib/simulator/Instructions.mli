@@ -54,3 +54,11 @@ module U_type : sig
   val decode : int32 -> t
     (** [decode code] decode U instruction [code] *)
 end
+
+module J_type : sig
+  type t = { rd: int; imm : int32; }
+
+  val decode : int32 -> t
+    (** [decode code] decode J instruction [code] *)
+end
+

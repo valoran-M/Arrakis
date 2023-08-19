@@ -68,7 +68,7 @@ let exec (instruction : Int32.t) cpu memory =
     let decode = I_type.decode instruction in
     let rs1 = Regs.get cpu.regs decode.rs1 in
     (match decode.funct3 with
-     | 0x0 ->
+     | 0x0 ->                                       (* JALR *)
         set_reg cpu decode.rd (Int32.add (get_pc cpu) 4l);
         set_pc cpu (Int32.add rs1 decode.imm)
      | _ -> Error.i_invalid decode.funct3 opcode decode.imm)
@@ -97,6 +97,9 @@ let exec (instruction : Int32.t) cpu memory =
     set_reg cpu decode.rd (Int32.add (get_pc cpu) decode.imm_shift);
     next_pc cpu
 (* J Type *)
-  | 0b1101111 -> Printf.printf "opcode J"
+  | 0b1101111 ->                                    (* JAL *)
+    let decode = J_type.decode instruction in
+    set_reg cpu decode.rd (Int32.add (get_pc cpu) 4l);
+    add_pc cpu decode.imm
   | _ -> Error.opcode_invalid opcode
 

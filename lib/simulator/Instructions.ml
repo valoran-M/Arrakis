@@ -36,22 +36,20 @@ let (%.)  = Int32.unsigned_rem
 
 (* mul *)
 
-let hight x = Int64.to_int32 (Int64.shift_right_logical x 32)
+let high x = Int64.to_int32 (Int64.shift_right_logical x 32)
 
 let mulh x y =
   let open Int64 in
   let x = of_int32 x in
   let y = of_int32 y in
-  hight (mul x y)
+  high (mul x y)
 
 let mulhu x y =
   let open Int64 in
-  let spreads_sign x = 
-    shift_right_logical (shift_left (of_int32 x) 32) 32
-  in
-  let x = spreads_sign x in
-  let y = spreads_sign y in
-  hight (mul x y)
+  let uint32_to_i64 x = shift_right_logical (shift_left (of_int32 x) 32) 32 in
+  let x = uint32_to_i64 x in
+  let y = uint32_to_i64 y in
+  high (mul x y)
 
 (* logical base *)
 

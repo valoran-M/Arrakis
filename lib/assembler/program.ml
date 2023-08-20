@@ -5,6 +5,11 @@ type r_instruction =
   | XOR | OR  | AND
   | SLL | SRL | SRA
   | SLT | SLTU
+  (* RISCV M *)
+  | MUL    | MULH
+  | MULHSU | MULU
+  | DIV    | DIVU
+  | REM    | REMU
 
 type i_instruction =
   (* arit *)

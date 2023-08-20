@@ -57,8 +57,6 @@ type instruction =
   | J of j_instruction * int * imm
 
 type program =
-  | Seq   of program * program
-  | Inst  of int * instruction
-  | Label of string
-
+  | Seq   of int * instruction * program
+  | Label of string * program
 

@@ -48,18 +48,18 @@ type imm =
   | Imm   of int32
 
 type instruction =
-                      (* rd    rs1   rs2 *)
-  | R of r_instruction * int * int * int
-                      (* rd    rs1   imm *)
-  | I of i_instruction * int * int * imm
-                      (* rs2   rs1   imm *)
-  | S of s_instruction * int * int * imm
-                      (* rs1   rs2   imm *)
-  | B of b_instruction * int * int * imm
-                      (* rd    imm *)
-  | U of u_instruction * int * imm
-                      (* rd    imm *)
-  | J of j_instruction * int * imm
+                      (* rd      rs1     rs2 *)
+  | R of r_instruction * int32 * int32 * int32
+                      (* rd      rs1     imm *)
+  | I of i_instruction * int32 * int32 * imm
+                      (* rs2     rs1     imm *)
+  | S of s_instruction * int32 * int32 * imm
+                      (* rs1     rs2     imm *)
+  | B of b_instruction * int32 * int32 * imm
+                      (* rd      imm *)
+  | U of u_instruction * int32 * imm
+                      (* rd      imm *)
+  | J of j_instruction * int32 * imm
 
 type program_line =
           (* line nb *)

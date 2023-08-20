@@ -1,4 +1,5 @@
 open Simulator
+open Lexer
 
 let translate code =
   let _mem = Memory.make () in

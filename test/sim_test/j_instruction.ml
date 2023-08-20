@@ -4,6 +4,7 @@ let cpu = Cpu.make 0l
 let mem = Memory.make ()
 
 let test () =
+
   (* JAL *)
   Cpu.set_pc cpu 8l;
   Cpu.exec 0b0_0101010101_1_10101010_00001_1101111l cpu mem;

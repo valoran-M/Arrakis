@@ -143,20 +143,20 @@ let alpha = ['a'-'z']
 let ident = alpha (alpha | digit)*
 let label = '.' ident
 
-rule prog = parse
+rule prog i = parse
   | '\n'
-    { new_line lexbuf; prog lexbuf }
+    { new_line lexbuf; prog (i+1) lexbuf }
   | eof
     { Nil }
   | _
     {
-      let l = parse_line lexbuf in
-      Seq(l, prog lexbuf)
+      let l = parse_line i lexbuf in
+      Seq(l, prog i lexbuf)
     }
 
-and parse_line = parse
+and parse_line i = parse
   | ' ' | '\t'
-    { parse_line lexbuf }
+    { parse_line i lexbuf }
   | label as lbl
     { Label lbl }
   | ident as id
@@ -210,7 +210,7 @@ and parse_line = parse
             J(r, rd, imm)
           )
         else (raise (Lexing_error id))
-      in Instr(0, instr) (* TODO : Line nb. *)
+      in Instr(i, instr)
     }
   | _ as c
     {

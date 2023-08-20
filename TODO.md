@@ -2,10 +2,10 @@
 
 ## Simulateur
 
-- [ ] CPU
-- [ ] Mémoire
-- [ ] Instruction
-- [ ] Code machine
+- [x] CPU
+- [x] Mémoire
+- [x] Instruction
+- [x] Code machine
 
 ## Assembleur
 

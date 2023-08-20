@@ -1,4 +1,4 @@
 (executable
  (public_name riscV_sim)
  (name main)
- (libraries riscV_sim simulator))
+ (libraries riscV_sim simulator assembler))

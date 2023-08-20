@@ -1,2 +1,3 @@
 (library
+ (libraries riscV_sim simulator)
  (name assembler))

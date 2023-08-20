@@ -128,6 +128,12 @@
       "t5",   32;
       "t6",   33;
     ]
+
+  let () =
+    for i = 0 to 31 do
+      Hashtbl.add regs ("x" ^ (Int.to_string i)) i
+    done
+
 }
 
 let digit   = ['0'-'9']
@@ -141,40 +147,83 @@ rule prog = parse
   | '\n'
     { new_line lexbuf; prog lexbuf }
   | eof
-    { None }
+    { Nil }
   | _
     {
       let l = parse_line lexbuf in
-      Some (l)
+      Seq(l, prog lexbuf)
     }
 
 and parse_line = parse
-  | ' '
+  | ' ' | '\t'
     { parse_line lexbuf }
+  | label as lbl
+    { Label lbl }
   | ident as id
     {
-      if Hashtbl.mem r_instructions id then
-        (
-          let r = Hashtbl.find r_instructions id in
-          let rd  = parse_reg lexbuf in
-          let rs1 = parse_reg lexbuf in
-          let rs2 = parse_reg lexbuf in
-          R(r, rd, rs1, rs2)
-        )
-      else failwith "lexing error"
+      let open Hashtbl in
+      let instr =
+        if mem r_instructions id then
+          (
+            let r = find r_instructions id in
+            let rd  = parse_reg lexbuf in
+            let rs1 = parse_reg lexbuf in
+            let rs2 = parse_reg lexbuf in
+            R(r, rd, rs1, rs2)
+          )
+        else if mem i_instructions id then
+          (
+            let r = find i_instructions id in
+            let rd = parse_reg lexbuf in
+            let rs1 = parse_reg lexbuf in
+            let imm = Imm(0l) in (* TODO *)
+            I(r, rd, rs1, imm)
+          )
+        else if mem s_instructions id then
+          (
+            let r = find s_instructions id in
+            let rs2 = parse_reg lexbuf in
+            let rs1 = parse_reg lexbuf in
+            let imm = Imm(0l) in (* TODO *)
+            S(r, rs2, rs1, imm)
+          )
+        else if mem b_instructions id then
+          (
+            let r = find b_instructions id in
+            let rs1 = parse_reg lexbuf in
+            let rs2 = parse_reg lexbuf in
+            let imm = Imm(0l) in (* TODO *)
+            B(r, rs1, rs2, imm)
+          )
+        else if mem u_instructions id then
+          (
+            let r = find u_instructions id in
+            let rd = parse_reg lexbuf in
+            let imm = Imm(0l) in (* TODO *)
+            U(r, rd, imm)
+          )
+        else if mem j_instructions id then
+          (
+            let r = find j_instructions id in
+            let rd = parse_reg lexbuf in
+            let imm = Imm(0l) in (* TODO *)
+            J(r, rd, imm)
+          )
+        else (raise (Lexing_error id))
+      in Instr(0, instr) (* TODO : Line nb. *)
     }
-  | _
+  | _ as c
     {
-      failwith "lexing error"
+      raise (Lexing_error (String.make 1 c))
     }
 
 and parse_reg = parse
-  | ' '
+  | ' ' | '\t'
     { parse_reg lexbuf }
   | ident as id
     {
       try Hashtbl.find regs id
-      with Not_found -> failwith "lexing error"
+      with Not_found -> raise (Lexing_error id)
     }
-  | _
-    { failwith "lexing error" }
+  | _ as c
+    { raise (Lexing_error (String.make 1 c)) }

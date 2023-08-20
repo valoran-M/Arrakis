@@ -61,7 +61,11 @@ type instruction =
                       (* rd    imm *)
   | J of j_instruction * int * imm
 
+type program_line =
+          (* line nb *)
+  | Instr of int     * instruction
+  | Label of string
+
 type program =
+  | Seq   of program_line * program
   | Nil
-  | Seq   of int * instruction * program
-  | Label of string * program

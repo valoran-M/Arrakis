@@ -7,7 +7,7 @@ type r_instruction =
   | SLT | SLTU
   (* RISCV M *)
   | MUL    | MULH
-  | MULHSU | MULU
+  | MULHSU | MULHU
   | DIV    | DIVU
   | REM    | REMU
 
@@ -41,10 +41,10 @@ type u_instruction =
 type j_instruction =
   | JAL
 
-(* ------------------------------- Programme -------------------------------- *)
+(* ------------------------------ Program ----------------------------------- *)
 
 type imm =
-  | Label of string 
+  | Label of string
   | Imm   of int32
 
 type instruction =
@@ -64,4 +64,3 @@ type instruction =
 type program =
   | Seq   of int * instruction * program
   | Label of string * program
-

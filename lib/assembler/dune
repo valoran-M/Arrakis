@@ -1,3 +1,5 @@
+(ocamllex lexer)
+
 (library
- (libraries riscV_sim simulator)
+ (libraries simulator)
  (name assembler))

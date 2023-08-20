@@ -1,8 +1,6 @@
 open Simulator
+open Lexer
 
 let translate code =
   let _mem = Memory.make () in
-  let lines = String.split_on_char '\n' code in
-  List.iter (fun _line ->
-    ()
-  ) lines
+  Lexer.prog 0 (Lexing.from_string code)

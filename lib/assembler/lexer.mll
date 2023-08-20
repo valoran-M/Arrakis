@@ -137,7 +137,7 @@
 }
 
 let digit   = ['0'-'9']
-let integer = digit+
+let integer = ('-')? digit+
 
 let alpha = ['a'-'z']
 let ident = alpha (alpha | digit)*
@@ -166,47 +166,47 @@ and parse_line i = parse
         if mem r_instructions id then
           (
             let r = find r_instructions id in
-            let rd  = parse_reg lexbuf in
-            let rs1 = parse_reg lexbuf in
-            let rs2 = parse_reg lexbuf in
+            let rd  = parse_reg lexbuf     in
+            let rs1 = parse_reg lexbuf     in
+            let rs2 = parse_reg lexbuf     in
             R(r, rd, rs1, rs2)
           )
         else if mem i_instructions id then
           (
             let r = find i_instructions id in
-            let rd = parse_reg lexbuf in
-            let rs1 = parse_reg lexbuf in
-            let imm = Imm(0l) in (* TODO *)
+            let rd  = parse_reg lexbuf     in
+            let rs1 = parse_reg lexbuf     in
+            let imm = parse_imm lexbuf     in
             I(r, rd, rs1, imm)
           )
         else if mem s_instructions id then
           (
             let r = find s_instructions id in
-            let rs2 = parse_reg lexbuf in
-            let rs1 = parse_reg lexbuf in
-            let imm = Imm(0l) in (* TODO *)
+            let rs2 = parse_reg lexbuf     in
+            let rs1 = parse_reg lexbuf     in
+            let imm = parse_imm lexbuf     in
             S(r, rs2, rs1, imm)
           )
         else if mem b_instructions id then
           (
-            let r = find b_instructions id in
-            let rs1 = parse_reg lexbuf in
-            let rs2 = parse_reg lexbuf in
-            let imm = Imm(0l) in (* TODO *)
+            let r = find b_instructions id  in
+            let rs1 = parse_reg lexbuf      in
+            let rs2 = parse_reg lexbuf      in
+            let imm = parse_imm lexbuf      in
             B(r, rs1, rs2, imm)
           )
         else if mem u_instructions id then
           (
-            let r = find u_instructions id in
-            let rd = parse_reg lexbuf in
-            let imm = Imm(0l) in (* TODO *)
+            let r   = find u_instructions id  in
+            let rd  = parse_reg lexbuf        in
+            let imm = parse_imm lexbuf        in
             U(r, rd, imm)
           )
         else if mem j_instructions id then
           (
-            let r = find j_instructions id in
-            let rd = parse_reg lexbuf in
-            let imm = Imm(0l) in (* TODO *)
+            let r  = find j_instructions id in
+            let rd  = parse_reg lexbuf      in
+            let imm = parse_imm lexbuf      in
             J(r, rd, imm)
           )
         else (raise (Lexing_error id))
@@ -225,5 +225,13 @@ and parse_reg = parse
       try Hashtbl.find regs id
       with Not_found -> raise (Lexing_error id)
     }
+  | _ as c
+    { raise (Lexing_error (String.make 1 c)) }
+
+and parse_imm = parse
+  | integer as i
+    { Imm(Int32.of_string i) }
+  | label as lbl
+    { Label(lbl) }
   | _ as c
     { raise (Lexing_error (String.make 1 c)) }

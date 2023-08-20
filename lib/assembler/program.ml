@@ -18,6 +18,7 @@ type i_instruction =
   (* other *)
   | JALR
   | ECALL
+  | LI (* Peudo instruction if she add label in imm *)
 
 type s_instruction =
   (* store *)
@@ -57,7 +58,7 @@ type instruction =
 
 type program =
   | Seq   of program * program
-  | Inst  of instruction
+  | Inst  of int * instruction
   | Label of string
 
 

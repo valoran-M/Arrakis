@@ -19,8 +19,8 @@ let rec write_in_memory prog mem addr =
   match prog with
   | Nil -> ()
   | Seq (Instr (_, R (inst, rd,  rs1, rs2)), l) ->
-    write_in_memory l mem 
-      (addr + R_instruction.write_in_memory mem addr inst rd rs1 rs2)
+    write_in_memory l mem
+      (addr + Inst_R.write_in_memory mem addr inst rd rs1 rs2)
   | Seq (Instr (_, I (_inst, _rd,  _rs1, _imm)), _l) -> failwith "TODO"
   | Seq (Instr (_, S (_inst, _rs2, _rs1, _imm)), _l) -> failwith "TODO"
   | Seq (Instr (_, B (_inst, _rs1, _rs2, _imm)), _l) -> failwith "TODO"

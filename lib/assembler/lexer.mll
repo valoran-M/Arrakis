@@ -84,7 +84,7 @@ and parse_line i = parse
     {
       let open Hashtbl in
       let instr =
-        if mem r_instructions id then
+        if mem r_inst id then
           (
             let r   = find r_inst id    in
             let rd  = parse_reg lexbuf  in
@@ -92,7 +92,7 @@ and parse_line i = parse
             let rs2 = parse_reg lexbuf  in
             R(r, rd, rs1, rs2)
           )
-        else if mem i_instructions id then
+        else if mem i_inst id then
           (
             let r   = find i_inst id   in
             let rd  = parse_reg lexbuf in
@@ -100,7 +100,7 @@ and parse_line i = parse
             let imm = parse_imm lexbuf in
             I(r, rd, rs1, imm)
           )
-        else if mem s_instructions id then
+        else if mem s_inst id then
           (
             let r   = find s_inst id   in
             let rs2 = parse_reg lexbuf in
@@ -108,7 +108,7 @@ and parse_line i = parse
             let imm = parse_imm lexbuf in
             S(r, rs2, rs1, imm)
           )
-        else if mem b_instructions id then
+        else if mem s_inst id then
           (
             let r   = find b_inst id   in
             let rs1 = parse_reg lexbuf in
@@ -116,14 +116,14 @@ and parse_line i = parse
             let imm = parse_imm lexbuf in
             B(r, rs1, rs2, imm)
           )
-        else if mem u_instructions id then
+        else if mem u_inst id then
           (
             let r   = find u_inst id   in
             let rd  = parse_reg lexbuf in
             let imm = parse_imm lexbuf in
             U(r, rd, imm)
           )
-        else if mem j_instructions id then
+        else if mem j_inst id then
           (
             let r   = find j_inst id   in
             let rd  = parse_reg lexbuf in

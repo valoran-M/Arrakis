@@ -96,6 +96,10 @@ and parse_line i = parse
     { parse_line i lexbuf }
   | label as lbl
     { Label lbl }
+  | _
+    { Instr(i, parse_inst lexbuf) }
+
+and parse_inst = parse
   | inst_b as id
     {
       let open Hashtbl in
@@ -103,7 +107,7 @@ and parse_line i = parse
       let rs1 = parse_reg lexbuf in
       let rs2 = parse_reg lexbuf in
       let imm = parse_imm lexbuf in
-      Instr(i, B(r, rs1, rs2, imm))
+      B(r, rs1, rs2, imm)
     }
   | inst_i as id
     {
@@ -112,7 +116,7 @@ and parse_line i = parse
       let rd  = parse_reg lexbuf in
       let rs1 = parse_reg lexbuf in
       let imm = parse_imm lexbuf in
-      Instr(i, I(r, rd, rs1, imm))
+      I(r, rd, rs1, imm)
     }
   | inst_j as id
     {
@@ -120,7 +124,7 @@ and parse_line i = parse
       let r   = find j_inst id   in
       let rd  = parse_reg lexbuf in
       let imm = parse_imm lexbuf in
-      Instr(i, J(r, rd, imm))
+      J(r, rd, imm)
     }
   | inst_r as id
     {
@@ -129,7 +133,7 @@ and parse_line i = parse
       let rd  = parse_reg lexbuf  in
       let rs1 = parse_reg lexbuf  in
       let rs2 = parse_reg lexbuf  in
-      Instr(i, R(r, rd, rs1, rs2))
+      R(r, rd, rs1, rs2)
     }
   | inst_s as id
     {
@@ -138,7 +142,7 @@ and parse_line i = parse
       let rs2 = parse_reg lexbuf in
       let rs1 = parse_reg lexbuf in
       let imm = parse_imm lexbuf in
-      Instr(i, S(r, rs2, rs1, imm))
+      S(r, rs2, rs1, imm)
     }
   | inst_u as id
     {
@@ -146,12 +150,10 @@ and parse_line i = parse
       let r   = find u_inst id   in
       let rd  = parse_reg lexbuf in
       let imm = parse_imm lexbuf in
-      Instr(i, U(r, rd, imm))
+      U(r, rd, imm)
     }
   | _ as c
-    {
-      raise (Lexing_error (String.make 1 c))
-    }
+    { raise (Lexing_error (String.make 1 c)) }
 
 and parse_reg = parse
   | ' ' | '\t'

@@ -4,12 +4,12 @@
 
   exception Lexing_error of string
 
-  let r_instructions = R_instruction.harvest_str ()
-  let i_instructions = I_instruction.harvest_str ()
-  let s_instructions = S_instruction.harvest_str ()
-  let b_instructions = B_instruction.harvest_str ()
-  let u_instructions = U_instruction.harvest_str ()
-  let j_instructions = J_instruction.harvest_str ()
+  let r_inst = Inst_R.harvest_str
+  let i_inst = Inst_I.harvest_str
+  let s_inst = Inst_S.harvest_str
+  let b_inst = Inst_B.harvest_str
+  let u_inst = Inst_U.harvest_str
+  let j_inst = Inst_J.harvest_str
 
   let regs = Hashtbl.create 63
   let () =
@@ -86,48 +86,48 @@ and parse_line i = parse
       let instr =
         if mem r_instructions id then
           (
-            let r   = find r_instructions id in
-            let rd  = parse_reg lexbuf     in
-            let rs1 = parse_reg lexbuf     in
-            let rs2 = parse_reg lexbuf     in
+            let r   = find r_inst id    in
+            let rd  = parse_reg lexbuf  in
+            let rs1 = parse_reg lexbuf  in
+            let rs2 = parse_reg lexbuf  in
             R(r, rd, rs1, rs2)
           )
         else if mem i_instructions id then
           (
-            let r   = find i_instructions id in
-            let rd  = parse_reg lexbuf     in
-            let rs1 = parse_reg lexbuf     in
-            let imm = parse_imm lexbuf     in
+            let r   = find i_inst id   in
+            let rd  = parse_reg lexbuf in
+            let rs1 = parse_reg lexbuf in
+            let imm = parse_imm lexbuf in
             I(r, rd, rs1, imm)
           )
         else if mem s_instructions id then
           (
-            let r   = find s_instructions id in
-            let rs2 = parse_reg lexbuf     in
-            let rs1 = parse_reg lexbuf     in
-            let imm = parse_imm lexbuf     in
+            let r   = find s_inst id   in
+            let rs2 = parse_reg lexbuf in
+            let rs1 = parse_reg lexbuf in
+            let imm = parse_imm lexbuf in
             S(r, rs2, rs1, imm)
           )
         else if mem b_instructions id then
           (
-            let r   = find b_instructions id  in
-            let rs1 = parse_reg lexbuf      in
-            let rs2 = parse_reg lexbuf      in
-            let imm = parse_imm lexbuf      in
+            let r   = find b_inst id   in
+            let rs1 = parse_reg lexbuf in
+            let rs2 = parse_reg lexbuf in
+            let imm = parse_imm lexbuf in
             B(r, rs1, rs2, imm)
           )
         else if mem u_instructions id then
           (
-            let r   = find u_instructions id  in
-            let rd  = parse_reg lexbuf        in
-            let imm = parse_imm lexbuf        in
+            let r   = find u_inst id   in
+            let rd  = parse_reg lexbuf in
+            let imm = parse_imm lexbuf in
             U(r, rd, imm)
           )
         else if mem j_instructions id then
           (
-            let r   = find j_instructions id in
-            let rd  = parse_reg lexbuf      in
-            let imm = parse_imm lexbuf      in
+            let r   = find j_inst id   in
+            let rd  = parse_reg lexbuf in
+            let imm = parse_imm lexbuf in
             J(r, rd, imm)
           )
         else (raise (Lexing_error id))

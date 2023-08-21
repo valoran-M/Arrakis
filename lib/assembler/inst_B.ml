@@ -14,7 +14,7 @@ let () =
       BGEU,  (0b1100011, 0x7,   "bgeu"  );
     ]
 
-let harvest_str () =
+let harvest_str =
   let open Hashtbl in
   let b = create (length b_instructions) in
   iter (fun v (_,_,k) -> add b k v) b_instructions;

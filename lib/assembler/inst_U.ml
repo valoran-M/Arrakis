@@ -10,7 +10,7 @@ let () =
       AUIPC, (0b0010111, "auipc" );
     ]
 
-let harvest_str () =
+let harvest_str =
   let open Hashtbl in
   let u = create (length u_instructions) in
   iter (fun v (_,k) -> add u k v) u_instructions;

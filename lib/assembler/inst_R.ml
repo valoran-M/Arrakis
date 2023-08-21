@@ -28,7 +28,7 @@ let () =
       REMU,   (0b0110011l, 0x7l,  0x01l, "remu"   );
     ]
 
-let harvest_str () =
+let harvest_str =
   let s = Hashtbl.create (Hashtbl.length r_instructions) in
   Hashtbl.iter (fun v (_,_,_,k) -> Hashtbl.add s k v) r_instructions;
   s

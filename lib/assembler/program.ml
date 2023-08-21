@@ -1,18 +1,19 @@
 (* ---------------------------- All instructions ---------------------------- *)
 
 type r_instruction =
+  (* RV32I *)
   | ADD | SUB
   | XOR | OR  | AND
   | SLL | SRL | SRA
   | SLT | SLTU
-  (* RISCV M *)
+  (* RV32M *)
   | MUL    | MULH
   | MULHSU | MULHU
   | DIV    | DIVU
   | REM    | REMU
 
 type i_instruction =
-  (* arit *)
+  (* arit immediate *)
   | ADDI
   | XORI | ORI  | ANDI
   | SLLI | SRLI | SARI

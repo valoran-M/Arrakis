@@ -6,8 +6,8 @@ let () =
   List.iter (fun (k, v) -> Hashtbl.add u_instructions k v)
     [
   (*  inst   Opcode       str    *)
-      LUI,   (0b0110111, "lui"   );
-      AUIPC, (0b0010111, "auipc" );
+      LUI,   (0b0110111l, "lui"   );
+      AUIPC, (0b0010111l, "auipc" );
     ]
 
 let harvest_str =

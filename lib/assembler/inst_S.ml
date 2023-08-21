@@ -6,9 +6,9 @@ let () =
   List.iter (fun (k, v) -> Hashtbl.add s_instructions k v)
     [
   (*  inst Opcode       funct3 str  *)
-      SB,  (0b0100011,  0x0,   "sb" );
-      SH,  (0b0100011,  0x1,   "sh" );
-      SW,  (0b0100011,  0x2,   "sw" );
+      SB,  (0b0100011l,  0x0l,   "sb" );
+      SH,  (0b0100011l,  0x1l,   "sh" );
+      SW,  (0b0100011l,  0x2l,   "sw" );
     ]
 
 let harvest_str =

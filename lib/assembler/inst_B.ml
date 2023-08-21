@@ -5,13 +5,13 @@ let b_instructions = Hashtbl.create 6
 let () =
   List.iter (fun (k, v) -> Hashtbl.add b_instructions k v)
     [
-  (*  inst   Opcode      funct3 str    *)
-      BEQ,   (0b1100011, 0x0,   "beq"  );
-      BNE,   (0b1100011, 0x1,   "bne"  );
-      BLT,   (0b1100011, 0x4,   "blt"  );
-      BGE,   (0b1100011, 0x5,   "bge"  );
-      BLTU,  (0b1100011, 0x6,   "bltu" );
-      BGEU,  (0b1100011, 0x7,   "bgeu" );
+  (*  inst   Opcode       funct3  str    *)
+      BEQ,   (0b1100011l, 0x0l,   "beq"  );
+      BNE,   (0b1100011l, 0x1l,   "bne"  );
+      BLT,   (0b1100011l, 0x4l,   "blt"  );
+      BGE,   (0b1100011l, 0x5l,   "bge"  );
+      BLTU,  (0b1100011l, 0x6l,   "bltu" );
+      BGEU,  (0b1100011l, 0x7l,   "bgeu" );
     ]
 
 let harvest_str =

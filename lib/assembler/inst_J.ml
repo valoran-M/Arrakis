@@ -6,7 +6,7 @@ let () =
   List.iter (fun (k, v) -> Hashtbl.add j_instructions k v)
     [
   (*  inst   Opcode      str   *)
-      JAL,   (0b1101111, "jal" );
+      JAL,   (0b1101111l, "jal" );
     ]
 
 let harvest_str =

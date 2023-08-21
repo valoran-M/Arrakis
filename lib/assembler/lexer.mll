@@ -64,6 +64,22 @@ let alpha = ['a'-'z']
 let ident = alpha (alpha | digit)*
 let label = '.' ident
 
+let inst_b = "beq"  | "bne" | "blt" | "bge" | "bltu" | "bgeu"
+
+let inst_i = "addi" | "xori" | "ori" | "andi" | "slli" | "srli" | "sari"
+           | "slti" | "slti" | "lb"   | "lh"  | "lw"   | "lbu"  | "lhu"
+           | "jalr" | "ecal" | "ebreak"
+
+let inst_j = "jal"
+
+let inst_r = "add"  | "sub"  | "xor"  | "or"  | "and"  | "sll"    | "srl"
+           | "sra"  | "slt"  | "sltu" | "mul" | "mulh" | "mulhsu" | "mulhu"
+           | "div"  | "divu" | "rem"  | "remu"
+
+let inst_s = "sb" | "sh" | "sw"
+
+let inst_u = "lui" | "auipc"
+
 rule prog i = parse
   | '\n'
     { new_line lexbuf; prog (i+1) lexbuf }
@@ -80,58 +96,57 @@ and parse_line i = parse
     { parse_line i lexbuf }
   | label as lbl
     { Label lbl }
-  | ident as id
+  | inst_b as id
     {
       let open Hashtbl in
-      let instr =
-        if mem r_inst id then
-          (
-            let r   = find r_inst id    in
-            let rd  = parse_reg lexbuf  in
-            let rs1 = parse_reg lexbuf  in
-            let rs2 = parse_reg lexbuf  in
-            R(r, rd, rs1, rs2)
-          )
-        else if mem i_inst id then
-          (
-            let r   = find i_inst id   in
-            let rd  = parse_reg lexbuf in
-            let rs1 = parse_reg lexbuf in
-            let imm = parse_imm lexbuf in
-            I(r, rd, rs1, imm)
-          )
-        else if mem s_inst id then
-          (
-            let r   = find s_inst id   in
-            let rs2 = parse_reg lexbuf in
-            let rs1 = parse_reg lexbuf in
-            let imm = parse_imm lexbuf in
-            S(r, rs2, rs1, imm)
-          )
-        else if mem s_inst id then
-          (
-            let r   = find b_inst id   in
-            let rs1 = parse_reg lexbuf in
-            let rs2 = parse_reg lexbuf in
-            let imm = parse_imm lexbuf in
-            B(r, rs1, rs2, imm)
-          )
-        else if mem u_inst id then
-          (
-            let r   = find u_inst id   in
-            let rd  = parse_reg lexbuf in
-            let imm = parse_imm lexbuf in
-            U(r, rd, imm)
-          )
-        else if mem j_inst id then
-          (
-            let r   = find j_inst id   in
-            let rd  = parse_reg lexbuf in
-            let imm = parse_imm lexbuf in
-            J(r, rd, imm)
-          )
-        else (raise (Lexing_error id))
-      in Instr(i, instr)
+      let r   = find b_inst id   in
+      let rs1 = parse_reg lexbuf in
+      let rs2 = parse_reg lexbuf in
+      let imm = parse_imm lexbuf in
+      Instr(i, B(r, rs1, rs2, imm))
+    }
+  | inst_i as id
+    {
+      let open Hashtbl in
+      let r   = find i_inst id   in
+      let rd  = parse_reg lexbuf in
+      let rs1 = parse_reg lexbuf in
+      let imm = parse_imm lexbuf in
+      Instr(i, I(r, rd, rs1, imm))
+    }
+  | inst_j as id
+    {
+      let open Hashtbl in
+      let r   = find j_inst id   in
+      let rd  = parse_reg lexbuf in
+      let imm = parse_imm lexbuf in
+      Instr(i, J(r, rd, imm))
+    }
+  | inst_r as id
+    {
+      let open Hashtbl in
+      let r   = find r_inst id    in
+      let rd  = parse_reg lexbuf  in
+      let rs1 = parse_reg lexbuf  in
+      let rs2 = parse_reg lexbuf  in
+      Instr(i, R(r, rd, rs1, rs2))
+    }
+  | inst_s as id
+    {
+      let open Hashtbl in
+      let r   = find s_inst id   in
+      let rs2 = parse_reg lexbuf in
+      let rs1 = parse_reg lexbuf in
+      let imm = parse_imm lexbuf in
+      Instr(i, S(r, rs2, rs1, imm))
+    }
+  | inst_u as id
+    {
+      let open Hashtbl in
+      let r   = find u_inst id   in
+      let rd  = parse_reg lexbuf in
+      let imm = parse_imm lexbuf in
+      Instr(i, U(r, rd, imm))
     }
   | _ as c
     {

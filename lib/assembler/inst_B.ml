@@ -10,8 +10,8 @@ let () =
       BNE,   (0b1100011, 0x1,   "bne"  );
       BLT,   (0b1100011, 0x4,   "blt"  );
       BGE,   (0b1100011, 0x5,   "bge"  );
-      BLTU,  (0b1100011, 0x6,   "bltu"  );
-      BGEU,  (0b1100011, 0x7,   "bgeu"  );
+      BLTU,  (0b1100011, 0x6,   "bltu" );
+      BGEU,  (0b1100011, 0x7,   "bgeu" );
     ]
 
 let harvest_str =

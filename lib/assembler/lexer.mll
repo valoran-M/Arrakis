@@ -13,44 +13,18 @@
 
   let regs = Hashtbl.create 63
   let () =
-    List.iter (fun (x, y) -> Hashtbl.add regs x y)
+    List.iteri (fun x i -> Hashtbl.add regs x (Int32.of_int i))
     [
-      "zero", 0l;
-      "ra",   1l;
-      "sp",   2l;
-      "gp",   3l;
-      "tp",   4l;
-      "t0",   5l;
-      "t1",   6l;
-      "t2",   7l;
-      "fp",   8l;
-      "s0",   8l;
-      "s1",   9l;
-      "a0",   10l;
-      "a1",   11l;
-      "a2",   12l;
-      "a3",   13l;
-      "a4",   14l;
-      "a5",   15l;
-      "a6",   16l;
-      "a7",   17l;
-      "s2",   18l;
-      "s3",   19l;
-      "s4",   20l;
-      "s5",   21l;
-      "s6",   22l;
-      "s7",   23l;
-      "s8",   24l;
-      "s9",   25l;
-      "s10",  26l;
-      "s11",  27l;
-      "t3",   28l;
-      "t4",   29l;
-      "t5",   30l;
-      "t6",   31l;
-    ]
-
-  let () =
+      "zero";
+      "ra"  ; "sp"  ; "gp"  ; "tp"  ;
+      "t0"  ; "t1"  ; "t2"  ;
+      "s0"  ; "s1"  ;
+      "a0"  ; "a1"  ; "a2"  ; "a3"  ; "a4"  ; "a5"  ; "a6"  ; "a7"  ;
+      "s2"  ; "s3"  ; "s4"  ; "s5"  ; "s6"  ; "s7"  ; "s8"  ; "s9"  ;
+      "s10" ; "s11" ;
+      "t3"  ; "t4"  ; "t5"  ; "t6"  ;
+    ];
+    Hashtbl.add "fp" 8l;
     for i = 0 to 31 do
       Hashtbl.add regs ("x" ^ (Int.to_string i)) (Int32.of_int i)
     done

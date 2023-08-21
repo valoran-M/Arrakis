@@ -39,5 +39,5 @@ let write_in_memory mem addr instruction rd rs1 rs2 =
   let (opcode, funct3, funct7, _) = Hashtbl.find r_instructions instruction in
   let code = (funct7 << 25) || (rs2 << 20) || (rs1 << 15) || (funct3 << 12) ||
              (rd << 7) || opcode in
-  Memory.set_int32 mem addr code;
-  4l
+  Memory.set_int32 mem addr code
+

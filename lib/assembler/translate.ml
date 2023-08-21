@@ -9,7 +9,6 @@ let label_address = Hashtbl.create 16
 let rec get_label_address prog addr =
   match prog with
   | Nil -> ()
-  | Seq (Instr (_, I (LI, _, _, _)), l) -> get_label_address l (addr + 0x8l)
   | Seq (Instr (_, _), l)               -> get_label_address l (addr + 0x4l)
   | Seq (Label label, l)  ->
     Hashtbl.add label_address label addr;
@@ -23,18 +22,20 @@ let rec write_in_memory prog mem addr =
   match prog with
   | Nil -> ()
   | Seq (Instr (_, R (inst, rd, rs1, rs2)), l) ->
-    write_in_memory l mem
-      (addr + Inst_R.write_in_memory mem addr inst rd rs1 rs2)
+    Inst_R.write_in_memory mem addr inst rd rs1 rs2;
+    write_in_memory l mem (addr + 4l)
   | Seq (Instr (_, I (inst, rd, rs1, imm)), l) ->
-    write_in_memory l mem
-      (addr + Inst_I.write_in_memory mem addr inst rd rs1 (imm_to_int32 imm))
+    Inst_I.write_in_memory mem addr inst rd rs1 (imm_to_int32 imm);
+    write_in_memory l mem (addr + 4l)
   | Seq (Instr (_, S (inst, rs2, rs1, imm)), l) ->
-    write_in_memory l mem
-        (addr + Inst_S.write_in_memory mem addr inst rs2 rs1 (imm_to_int32 imm))
-  | Seq (Instr (_, B (_inst, _rs1, _rs2, _imm)), _l) -> failwith "TODO"
+    Inst_S.write_in_memory mem addr inst rs2 rs1 (imm_to_int32 imm);
+    write_in_memory l mem (addr + 4l)
+  | Seq (Instr (_, B (inst, rs1, rs2, imm)), l) ->
+    Inst_B.write_in_mem mem addr inst rs1 rs2 (imm_to_int32 imm);
+    write_in_memory l mem (addr + 4l)
   | Seq (Instr (_, U (inst, rd, imm)), l) ->
-    write_in_memory l mem
-        (addr + Inst_U.write_in_memory mem addr inst rd (imm_to_int32 imm))
+    Inst_U.write_in_memory mem addr inst rd (imm_to_int32 imm);
+    write_in_memory l mem (addr + 4l)
   | Seq (Instr (_, J (_inst, _rd,  _imm)), _l) -> failwith "TODO"
   | Seq (Label _, l) -> write_in_memory l mem addr
 

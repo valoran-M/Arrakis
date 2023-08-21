@@ -19,3 +19,17 @@ let str_table =
   let b = create (length b_instructions) in
   iter (fun v (_,_,k) -> add b k v) b_instructions;
   b
+
+let write_in_mem mem addr instruction rs1 rs2 imm =
+  let (<<) = Int32.shift_left in
+  let (||) = Int32.logor in
+  let (opcode, funct3, _) = Hashtbl.find b_instructions instruction in
+  let imm12   = Utils.get_interval imm 12 12 in
+  let imm11   = Utils.get_interval imm 11 11 in
+  let imm10_5 = Utils.get_interval imm 10 5  in
+  let imm4_1  = Utils.get_interval imm 4  1  in
+  let code = (imm12 << 31) || (imm10_5 << 25) || (rs2 << 20)   ||
+             (rs1 << 15)   || (funct3 << 12)  || (imm4_1 << 8) ||
+             (imm11 << 7)  || opcode in
+  Simulator.Memory.set_int32 mem addr code
+

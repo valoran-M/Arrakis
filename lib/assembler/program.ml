@@ -24,7 +24,6 @@ type i_instruction =
   (* other *)
   | JALR
   | ECALL| EBREAK
-  | LI (* Peudo instruction if she add label in imm *)
 
 type s_instruction =
   (* store *)

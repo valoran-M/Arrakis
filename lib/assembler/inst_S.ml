@@ -26,5 +26,5 @@ let write_in_memory mem addr instruction rs2 rs1 imm =
   let code = ((imm && 0b1111111_00000l) << 25) ||
              (rs2 << 20) || (rs1 << 15) || (funct3 << 12) ||
              ((imm && 0b11111l) << 7) || opcode in
-  Memory.set_int32 mem addr code;
-  4l
+  Memory.set_int32 mem addr code
+

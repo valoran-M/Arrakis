@@ -28,7 +28,9 @@ let rec write_in_memory prog mem addr =
   | Seq (Instr (_, I (inst, rd, rs1, imm)), l) ->
     write_in_memory l mem
       (addr + Inst_I.write_in_memory mem addr inst rd rs1 (imm_to_int32 imm))
-  | Seq (Instr (_, S (_inst, _rs2, _rs1, _imm)), _l) -> failwith "TODO"
+  | Seq (Instr (_, S (inst, rs2, rs1, imm)), l) ->
+    write_in_memory l mem
+        (addr + Inst_S.write_in_memory mem addr inst rs2 rs1 (imm_to_int32 imm))
   | Seq (Instr (_, B (_inst, _rs1, _rs2, _imm)), _l) -> failwith "TODO"
   | Seq (Instr (_, U (inst, rd, imm)), l) ->
     write_in_memory l mem

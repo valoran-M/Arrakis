@@ -22,7 +22,7 @@ type i_instruction =
   | LBU | LHU
   (* other *)
   | JALR
-  | ECALL
+  | ECALL| EBREAK
   | LI (* Peudo instruction if she add label in imm *)
 
 type s_instruction =

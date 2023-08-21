@@ -62,8 +62,8 @@ let mulhsu x y =
 
 (* logical base *)
 
-let (<<) x y = Int32.shift_left x (Int32.to_int y)
-let (>>) x y = Int32.shift_right x (Int32.to_int y)
+let (<<)  x y = Int32.shift_left x (Int32.to_int y)
+let (>>)  x y = Int32.shift_right x (Int32.to_int y)
 let (>>>) x y = Int32.shift_right_logical x (Int32.to_int y)
 
 let (=) = Int32.equal

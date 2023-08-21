@@ -4,95 +4,16 @@
 
   exception Lexing_error of string
 
-  let qadd t = List.iter (fun (x, y) -> Hashtbl.add t x y)
-
-  let r_instructions = Hashtbl.create 128
-  let () =
-    qadd r_instructions
-    [
-      "add",    ADD;
-      "sub",    SUB;
-      "xor",    XOR;
-      "or",     OR;
-      "and",    AND;
-      "sll",    SLL;
-      "srl",    SRL;
-      "sra",    SRA;
-      "slt",    SLT;
-      "sltu",   SLTU;
-      (* RV32M *)
-      "mul",    MUL;
-      "mulh",   MULH;
-      "mulhsu", MULHSU;
-      "mulhu",  MULHU;
-      "div",    DIV;
-      "divu",   DIVU;
-      "rem",    REM;
-      "remu",   REMU
-    ]
-
-  let i_instructions = Hashtbl.create 128
-  let () =
-    qadd i_instructions
-    [
-      "addi",   ADDI;
-      "xori",   XORI;
-      "ori",    ORI;
-      "andi",   ANDI;
-      "slli",   SLLI;
-      "srli",   SRLI;
-      "sari",   SARI;
-      "slti",   SLTI;
-      "sltiu",  SLTIU;
-      "lb",     LB;
-      "lh",     LH;
-      "lw",     LW;
-      "lbu",    LBU;
-      "lhu",    LHU;
-      "jalr",   JALR;
-      "ecall",  ECALL;
-      "li",     LI
-    ]
-
-  let s_instructions = Hashtbl.create 3
-  let () =
-    qadd s_instructions
-    [
-      "sb", SB;
-      "sh", SH;
-      "sw", SW
-    ]
-
-  let b_instructions = Hashtbl.create 6
-  let () =
-    qadd b_instructions
-    [
-      "beq",  BEQ;
-      "bne",  BNE;
-      "blt",  BLT;
-      "bge",  BGE;
-      "bltu", BLTU;
-      "bgeu", BGEU
-    ]
-
-  let u_instructions = Hashtbl.create 2
-  let () =
-    qadd u_instructions
-    [
-      "lui",   LUI;
-      "auipc", AUIPC
-    ]
-
-  let j_instructions = Hashtbl.create 1
-  let () =
-    qadd j_instructions
-    [
-      "jal", JAL;
-    ]
+  let r_instructions = R_instruction.harvest_str ()
+  let i_instructions = I_instruction.harvest_str ()
+  let s_instructions = S_instruction.harvest_str ()
+  let b_instructions = B_instruction.harvest_str ()
+  let u_instructions = U_instruction.harvest_str ()
+  let j_instructions = J_instruction.harvest_str ()
 
   let regs = Hashtbl.create 34
   let () =
-    qadd regs
+    List.iter (fun (x, y) -> Hashtbl.add regs x y)
     [
       "zero", 0l;
       "ra",   1l;
@@ -165,7 +86,7 @@ and parse_line i = parse
       let instr =
         if mem r_instructions id then
           (
-            let r = find r_instructions id in
+            let r   = find r_instructions id in
             let rd  = parse_reg lexbuf     in
             let rs1 = parse_reg lexbuf     in
             let rs2 = parse_reg lexbuf     in
@@ -173,7 +94,7 @@ and parse_line i = parse
           )
         else if mem i_instructions id then
           (
-            let r = find i_instructions id in
+            let r   = find i_instructions id in
             let rd  = parse_reg lexbuf     in
             let rs1 = parse_reg lexbuf     in
             let imm = parse_imm lexbuf     in
@@ -181,7 +102,7 @@ and parse_line i = parse
           )
         else if mem s_instructions id then
           (
-            let r = find s_instructions id in
+            let r   = find s_instructions id in
             let rs2 = parse_reg lexbuf     in
             let rs1 = parse_reg lexbuf     in
             let imm = parse_imm lexbuf     in
@@ -189,7 +110,7 @@ and parse_line i = parse
           )
         else if mem b_instructions id then
           (
-            let r = find b_instructions id  in
+            let r   = find b_instructions id  in
             let rs1 = parse_reg lexbuf      in
             let rs2 = parse_reg lexbuf      in
             let imm = parse_imm lexbuf      in
@@ -204,7 +125,7 @@ and parse_line i = parse
           )
         else if mem j_instructions id then
           (
-            let r  = find j_instructions id in
+            let r   = find j_instructions id in
             let rd  = parse_reg lexbuf      in
             let imm = parse_imm lexbuf      in
             J(r, rd, imm)

@@ -19,11 +19,9 @@ let harvest_str =
 
 let write_in_memory mem addr instruction rd imm =
   let (<<) = Int32.shift_left in
-  let (&&) = Int32.logand in
   let (||) = Int32.logor in
   let (opcode, _) = Hashtbl.find u_instructions instruction in
-  let code = (imm && 0b11111111111111111111_000000000000l) || 
-             (rd << 7) || opcode in
+  let code = (imm << 12) || (rd << 7) || opcode in
   Memory.set_int32 mem addr code;
   4l
 

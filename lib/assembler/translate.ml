@@ -24,16 +24,18 @@ let imm_to_int32 (imm : imm) =
 let rec write_in_memory prog mem addr =
   match prog with
   | Nil -> ()
-  | Seq (Instr (_, R (inst, rd,  rs1, rs2)), l) ->
+  | Seq (Instr (_, R (inst, rd, rs1, rs2)), l) ->
     write_in_memory l mem
       (addr + Inst_R.write_in_memory mem addr inst rd rs1 rs2)
-  | Seq (Instr (_, I (inst, rd,  rs1, imm)), l) ->
+  | Seq (Instr (_, I (inst, rd, rs1, imm)), l) ->
     write_in_memory l mem
       (addr + Inst_I.write_in_memory mem addr inst rd rs1 (imm_to_int32 imm))
   | Seq (Instr (_, S (_inst, _rs2, _rs1, _imm)), _l) -> failwith "TODO"
   | Seq (Instr (_, B (_inst, _rs1, _rs2, _imm)), _l) -> failwith "TODO"
-  | Seq (Instr (_, U (_inst, _rd,  _imm)),      _l) -> failwith "TODO"
-  | Seq (Instr (_, J (_inst, _rd,  _imm)),      _l) -> failwith "TODO"
+  | Seq (Instr (_, U (inst, rd, imm)), l) ->
+    write_in_memory l mem
+        (addr + Inst_U.write_in_memory mem addr inst rd (imm_to_int32 imm))
+  | Seq (Instr (_, J (_inst, _rd,  _imm)), _l) -> failwith "TODO"
   | Seq (Label _, l) -> write_in_memory l mem addr
 
 let translate code =

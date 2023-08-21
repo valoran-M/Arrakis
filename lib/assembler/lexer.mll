@@ -11,7 +11,7 @@
   let u_instructions = U_instruction.harvest_str ()
   let j_instructions = J_instruction.harvest_str ()
 
-  let regs = Hashtbl.create 34
+  let regs = Hashtbl.create 63
   let () =
     List.iter (fun (x, y) -> Hashtbl.add regs x y)
     [
@@ -45,9 +45,9 @@
       "s10",  26l;
       "s11",  27l;
       "t3",   28l;
-      "t4",   30l;
-      "t5",   32l;
-      "t6",   33l;
+      "t4",   29l;
+      "t5",   30l;
+      "t6",   31l;
     ]
 
   let () =

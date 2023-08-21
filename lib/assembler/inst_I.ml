@@ -32,16 +32,18 @@ let harvest_str =
   iter (fun v (_,_,k) -> add i k v) i_instructions;
   i
 
-let write_in_memory mem addr instruction rd rs1 imm =
+let rec write_in_memory mem addr instruction rd rs1 imm =
   let (<<) = Int32.shift_left in
   let (||) = Int32.logor in
   match instruction with
-  | LI -> failwith "TODO"
-  | _ ->
+  | LI ->
+    ignore (Inst_U.write_in_memory mem addr AUIPC rd imm);
+    ignore (write_in_memory mem addr ADDI rd 0l imm);
+    8l
+  | _  ->
     let (opcode, funct3, _) = Hashtbl.find i_instructions instruction in
     let code = (imm << 20) || (rs1 << 15) || (funct3 << 12) ||
                (rd << 7) || opcode in
     Memory.set_int32 mem addr code;
     4l
-
 

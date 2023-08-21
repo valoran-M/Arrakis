@@ -11,7 +11,7 @@ let () =
       AUIPC, (0b0010111l, "auipc" );
     ]
 
-let harvest_str =
+let str_table =
   let open Hashtbl in
   let u = create (length u_instructions) in
   iter (fun v (_,k) -> add u k v) u_instructions;
@@ -24,4 +24,3 @@ let write_in_memory mem addr instruction rd imm =
   let code = (imm << 12) || (rd << 7) || opcode in
   Memory.set_int32 mem addr code;
   4l
-

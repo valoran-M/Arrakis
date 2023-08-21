@@ -4,12 +4,12 @@
 
   exception Lexing_error of string
 
-  let r_inst = Inst_R.harvest_str
-  let i_inst = Inst_I.harvest_str
-  let s_inst = Inst_S.harvest_str
-  let b_inst = Inst_B.harvest_str
-  let u_inst = Inst_U.harvest_str
-  let j_inst = Inst_J.harvest_str
+  let r_inst = Inst_R.str_table
+  let i_inst = Inst_I.str_table
+  let s_inst = Inst_S.str_table
+  let b_inst = Inst_B.str_table
+  let u_inst = Inst_U.str_table
+  let j_inst = Inst_J.str_table
 
   let regs = Hashtbl.create 63
   let () =
@@ -103,10 +103,10 @@ and parse_inst = parse
   | inst_r as id
     {
       let open Hashtbl in
-      let r   = find r_inst id    in
-      let rd  = parse_reg lexbuf  in
-      let rs1 = parse_reg lexbuf  in
-      let rs2 = parse_reg lexbuf  in
+      let r   = find r_inst id   in
+      let rd  = parse_reg lexbuf in
+      let rs1 = parse_reg lexbuf in
+      let rs2 = parse_reg lexbuf in
       R(r, rd, rs1, rs2)
     }
   | inst_s as id

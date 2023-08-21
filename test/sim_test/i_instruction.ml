@@ -123,5 +123,3 @@ let test_jalr () =
   Cpu.exec 0b000000000010_00001_000_00010_1100111l cpu memory;
   Alcotest.check Alcotest.int32 "JALR pc" 16l (Cpu.get_pc cpu);
   Alcotest.check Alcotest.int32 "JALR rd" 4l (Cpu.get_reg cpu 2)
-
-

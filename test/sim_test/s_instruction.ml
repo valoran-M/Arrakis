@@ -19,4 +19,3 @@ let test () =
   Cpu.set_reg cpu 1 0x2343_2303l;
   Cpu.exec 0b0000000_00001_00000_010_01111_0100011l cpu memory;
   Alcotest.check Alcotest.int32 "SW" 0x2343_2303l (Memory.get_int32 memory 15l)
-

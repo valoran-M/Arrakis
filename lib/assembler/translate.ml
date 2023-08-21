@@ -15,11 +15,9 @@ let rec get_label_address prog addr =
     Hashtbl.add label_address label addr;
     get_label_address l (addr + 0x4l)
 
-let imm_to_int32 (imm : imm) =
-  match imm with
+let imm_to_int32 = function
   | Imm imm     -> imm
   | Label label -> Hashtbl.find label_address label
-
 
 let rec write_in_memory prog mem addr =
   match prog with
@@ -44,4 +42,3 @@ let translate code =
   get_label_address prog Segment.text_begin;
   write_in_memory prog mem Segment.text_begin;
   mem
-

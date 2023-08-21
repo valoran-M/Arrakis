@@ -11,7 +11,7 @@ let () =
       SW,  (0b0100011l,  0x2l,   "sw" );
     ]
 
-let harvest_str =
+let str_table =
   let open Hashtbl in
   let s = create (length s_instructions) in
   iter (fun v (_,_,k) -> add s k v) s_instructions;

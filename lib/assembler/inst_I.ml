@@ -26,7 +26,7 @@ let () =
       EBREAK, (0b1110011l,  0x0l,   "ebreak" );
     ]
 
-let harvest_str =
+let str_table =
   let open Hashtbl in
   let i = create (length i_instructions) in
   iter (fun v (_,_,k) -> add i k v) i_instructions;

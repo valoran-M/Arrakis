@@ -9,7 +9,7 @@ let () =
       JAL,   (0b1101111l, "jal" );
     ]
 
-let harvest_str =
+let str_table =
   let open Hashtbl in
   let j = create (length j_instructions) in
   iter (fun v (_,k) -> add j k v) j_instructions;

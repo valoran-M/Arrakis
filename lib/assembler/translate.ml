@@ -36,7 +36,9 @@ let rec write_in_memory prog mem addr =
   | Seq (Instr (_, U (inst, rd, imm)), l) ->
     Inst_U.write_in_memory mem addr inst rd (imm_to_int32 imm);
     write_in_memory l mem (addr + 4l)
-  | Seq (Instr (_, J (_inst, _rd,  _imm)), _l) -> failwith "TODO"
+  | Seq (Instr (_, J (inst, rd,  imm)), l) ->
+    Inst_J.write_in_mem mem addr inst rd (imm_to_int32 imm);
+    write_in_memory l mem (addr + 4l)
   | Seq (Label _, l) -> write_in_memory l mem addr
 
 let translate code =
@@ -45,3 +47,4 @@ let translate code =
   get_label_address prog Segment.text_begin;
   write_in_memory prog mem Segment.text_begin;
   mem
+

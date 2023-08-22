@@ -1,19 +1,23 @@
+let usage_msg = "arrakis <file>"
+
+let input_file = ref ""
+let anon_fun filename = input_file := filename
+
+let speclist = []
+
+let read_whole_file filename =
+    (* open_in_bin works correctly on Unix and Windows *)
+    let ch = open_in_bin filename in
+    let s = really_input_string ch (in_channel_length ch) in
+    close_in ch;
+    s
+
 open Simulator
 
-let code = {|
-     addi x1, x0, 10 # add
-     beq  x0, x0, .A
-     addi x2, x0, 20
-.A:  addi x2, x0, 30
-|}
-
-let mem = Assembler.Translate.translate code
-
-let arch = Arch.init (Assembler.Segment.text_begin) mem
-
 let () =
-  Arch.exec_instruction arch;
-  Printf.printf "%d\n" (Int32.to_int (Cpu.get_reg arch.cpu 1));
-  Arch.exec_instruction arch;
-  Arch.exec_instruction arch;
-  Printf.printf "%d\n" (Int32.to_int (Cpu.get_reg arch.cpu 2))
+  Arg.parse speclist anon_fun usage_msg;
+  let channel = open_in !input_file in
+  let mem, _ = Assembler.Translate.translate (Lexing.from_channel channel) in
+  let arch = Arch.init (Assembler.Segment.text_begin) mem in
+  Shell.run arch
+

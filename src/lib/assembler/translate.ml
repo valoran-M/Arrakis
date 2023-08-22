@@ -11,7 +11,7 @@ let label_address = Hashtbl.create 16
 let rec get_label_address prog addr =
   match prog with
   | Nil -> ()
-  | Seq (Instr (_, _), l)               -> get_label_address l (addr + 0x4l)
+  | Seq (Instr (_, _), l) -> get_label_address l (addr + 0x4l)
   | Seq (Label label, l)  ->
     Hashtbl.add label_address label addr;
     get_label_address l (addr + 0x4l)
@@ -24,7 +24,7 @@ let imm_to_int32 line addr = function
 
 let rec write_in_memory prog mem addr =
   match prog with
-  | Nil -> ()
+  | Nil -> addr
   | Seq (Instr (_, R (inst, rd, rs1, rs2)), next) ->
     Inst_R.write_in_memory mem addr inst rd rs1 rs2;
     write_in_memory next mem (addr + 4l)
@@ -47,8 +47,8 @@ let rec write_in_memory prog mem addr =
 
 let translate code =
   let mem = Memory.make () in
-  let prog = prog 0 (Lexing.from_string code) in
+  let prog = prog 0 code in
   get_label_address prog Segment.text_begin;
-  write_in_memory prog mem Segment.text_begin;
-  mem
+  let addr = write_in_memory prog mem Segment.text_begin in
+  (mem, addr)
 

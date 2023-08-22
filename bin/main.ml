@@ -1,17 +1,19 @@
-let cpu = Simulator.Cpu.make 0l
-
-let memory = Simulator.Memory.make ()
-
-let code = {|
-  addi x1 x0 10 # add
-  addi x2 x0 20
+let code = {| 
+     addi x1 x0 10 # add
+     beq  x0 x0 .A
+     addi x2 x0 20
+.A:  addi x2 x0 30
 |}
 
-let code =
-  Assembler.Lexer.prog 0 (Lexing.from_string code)
+let mem = Assembler.Translate.translate code
 
-let () = match code with
-  | Seq (Instr (l1, I (ADDI, 1l, 0l, Imm 10l)),
-    Seq (Instr (l2, I (ADDI, 2l, 0l, Imm 20l)), Nil)) ->
-    Printf.printf "%d %d\n" l1 l2;
-  | _ -> assert false
+let arch = Simulator.Arch.init (Assembler.Segment.text_begin) mem
+
+  open Simulator
+
+let () =
+  Simulator.Arch.exec_instruction arch;
+  Printf.printf "%d\n" (Int32.to_int (Cpu.get_reg arch.cpu 1));
+  Simulator.Arch.exec_instruction arch;
+  Simulator.Arch.exec_instruction arch;
+  Printf.printf "%d\n" (Int32.to_int (Cpu.get_reg arch.cpu 2))

@@ -33,9 +33,9 @@
 let digit   = ['0'-'9']
 let integer = ('-')? digit+
 
-let alpha = ['a'-'z']
+let alpha = (['a'-'z'] | ['A'-'Z'])
 let ident = alpha (alpha | digit)*
-let label = '.' ident
+let label = '.'? (ident | '_')*
 
 let inst_b = "beq"  | "bne" | "blt" | "bge" | "bltu" | "bgeu"
 
@@ -60,7 +60,7 @@ rule prog i = parse
     { prog i lexbuf }
   | eof
     { Nil }
-  | label as lbl
+  | label as lbl ':'
     { Seq(Label lbl, prog i lexbuf) }
   | inst_b as id
     {

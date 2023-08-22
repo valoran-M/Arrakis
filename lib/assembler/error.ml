@@ -1,4 +1,4 @@
-type lexing_error = Register | Imm | Inst | Comma
+type lexing_error = Register | Imm | Inst
 
 exception Lexing_error of int * lexing_error * string
 

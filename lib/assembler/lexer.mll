@@ -67,9 +67,7 @@ rule prog l = parse
       let open Hashtbl in
       let r   = find b_inst id   in
       let rs1 = parse_reg l lexbuf in
-      parse_comma l lexbuf;
       let rs2 = parse_reg l lexbuf in
-      parse_comma l lexbuf;
       let imm = parse_imm l lexbuf in
       let instr = Instr(l, B(r, rs1, rs2, imm)) in
       Seq(instr, end_line l lexbuf)
@@ -79,9 +77,7 @@ rule prog l = parse
       let open Hashtbl in
       let r   = find i_inst id   in
       let rd  = parse_reg l lexbuf in
-      parse_comma l lexbuf;
       let rs1 = parse_reg l lexbuf in
-      parse_comma l lexbuf;
       let imm = parse_imm l lexbuf in
       let instr = Instr(l, I(r, rd, rs1, imm)) in
       Seq(instr, end_line l lexbuf)
@@ -91,7 +87,6 @@ rule prog l = parse
       let open Hashtbl in
       let r   = find j_inst id   in
       let rd  = parse_reg l lexbuf in
-      parse_comma l lexbuf;
       let imm = parse_imm l lexbuf in
       let instr = Instr(l, J(r, rd, imm)) in
       Seq(instr, end_line l lexbuf)
@@ -101,9 +96,7 @@ rule prog l = parse
       let open Hashtbl in
       let r   = find r_inst id   in
       let rd  = parse_reg l lexbuf in
-      parse_comma l lexbuf;
       let rs1 = parse_reg l lexbuf in
-      parse_comma l lexbuf;
       let rs2 = parse_reg l lexbuf in
       let instr = Instr(l, R(r, rd, rs1, rs2)) in
       Seq(instr, prog l lexbuf)
@@ -113,9 +106,7 @@ rule prog l = parse
       let open Hashtbl in
       let r   = find s_inst id   in
       let rs2 = parse_reg l lexbuf in
-      parse_comma l lexbuf;
       let rs1 = parse_reg l lexbuf in
-      parse_comma l lexbuf;
       let imm = parse_imm l lexbuf in
       let instr = Instr(l, S(r, rs2, rs1, imm)) in
       Seq(instr, end_line l lexbuf)
@@ -125,7 +116,6 @@ rule prog l = parse
       let open Hashtbl in
       let r   = find u_inst id   in
       let rd  = parse_reg l lexbuf in
-      parse_comma l lexbuf;
       let imm = parse_imm l lexbuf in
       let instr = Instr(l, U(r, rd, imm)) in
       Seq(instr, end_line l lexbuf)
@@ -134,7 +124,7 @@ rule prog l = parse
     { raise (Lexing_error (l, Inst, String.make 1 c)) }
 
 and parse_reg l = parse
-  | ' ' | '\t'
+  | ' ' | '\t' | ','
     { parse_reg l lexbuf }
   | ident as id
     {
@@ -144,16 +134,8 @@ and parse_reg l = parse
   | _ as c
     { raise (Lexing_error (l, Register, String.make 1 c)) }
 
-and parse_comma l = parse
-  | ','
-    { () }
-  | ' ' | '\t'
-    { parse_comma l lexbuf }
-  | _ as c
-   { raise (Lexing_error (l, Comma, String.make 1 c)) }
-
 and parse_imm l = parse
-  | ' ' | '\t'
+  | ' ' | '\t' | ','
     { parse_imm l lexbuf }
   | integer as i
     { Imm(Int32.of_string i) }

@@ -71,7 +71,7 @@ rule prog i = parse
       let rs2 = parse_reg lexbuf in
       let imm = parse_imm lexbuf in
       let instr = Instr(i, B(r, rs1, rs2, imm)) in
-      Seq(instr, prog i lexbuf)
+      Seq(instr, end_line i lexbuf)
     }
   | inst_i as id
     {
@@ -81,7 +81,7 @@ rule prog i = parse
       let rs1 = parse_reg lexbuf in
       let imm = parse_imm lexbuf in
       let instr = Instr(i, I(r, rd, rs1, imm)) in
-      Seq(instr, prog i lexbuf)
+      Seq(instr, end_line i lexbuf)
     }
   | inst_j as id
     {
@@ -90,7 +90,7 @@ rule prog i = parse
       let rd  = parse_reg lexbuf in
       let imm = parse_imm lexbuf in
       let instr = Instr(i, J(r, rd, imm)) in
-      Seq(instr, prog i lexbuf)
+      Seq(instr, end_line i lexbuf)
     }
   | inst_r as id
     {
@@ -110,7 +110,7 @@ rule prog i = parse
       let rs1 = parse_reg lexbuf in
       let imm = parse_imm lexbuf in
       let instr = Instr(i, S(r, rs2, rs1, imm)) in
-      Seq(instr, prog i lexbuf)
+      Seq(instr, end_line i lexbuf)
     }
   | inst_u as id
     {
@@ -119,7 +119,7 @@ rule prog i = parse
       let rd  = parse_reg lexbuf in
       let imm = parse_imm lexbuf in
       let instr = Instr(i, U(r, rd, imm)) in
-      Seq(instr, prog i lexbuf)
+      Seq(instr, end_line i lexbuf)
     }
   | _ as c
     { raise (Lexing_error (String.make 1 c)) }
@@ -144,3 +144,12 @@ and parse_imm = parse
     { Label(lbl) }
   | _ as c
     { raise (Lexing_error (String.make 1 c)) }
+
+and end_line i = parse
+  | ' ' | '\t' { end_line i lexbuf }
+  | '\n' { prog (i+1) lexbuf }
+  | '#'  {  comment i lexbuf }
+
+and comment i = parse
+  | '\n' { prog (i+1) lexbuf }
+  | _    { comment i lexbuf  }

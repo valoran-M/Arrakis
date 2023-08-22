@@ -11,7 +11,7 @@ let code =
   Assembler.Lexer.prog 0 (Lexing.from_string code)
 
 let () = match code with
-  | Seq (Instr (l1, I (ADDI, _, _, _)),
-    Seq (Instr (l2, I (ADDI, _, _, _)), Nil)) ->
+  | Seq (Instr (l1, I (ADDI, 1l, 0l, Imm 10l)),
+    Seq (Instr (l2, I (ADDI, 2l, 0l, Imm 20l)), Nil)) ->
     Printf.printf "%d %d\n" l1 l2;
   | _ -> assert false

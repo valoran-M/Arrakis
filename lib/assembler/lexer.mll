@@ -1,8 +1,7 @@
 {
+  open Error
   open Program
   open Lexing
-
-  exception Lexing_error of string
 
   let r_inst = Inst_R.str_table
   let i_inst = Inst_I.str_table
@@ -67,9 +66,9 @@ rule prog i = parse
     {
       let open Hashtbl in
       let r   = find b_inst id   in
-      let rs1 = parse_reg lexbuf in
-      let rs2 = parse_reg lexbuf in
-      let imm = parse_imm lexbuf in
+      let rs1 = parse_reg i lexbuf in
+      let rs2 = parse_reg i lexbuf in
+      let imm = parse_imm i lexbuf in
       let instr = Instr(i, B(r, rs1, rs2, imm)) in
       Seq(instr, end_line i lexbuf)
     }
@@ -77,9 +76,9 @@ rule prog i = parse
     {
       let open Hashtbl in
       let r   = find i_inst id   in
-      let rd  = parse_reg lexbuf in
-      let rs1 = parse_reg lexbuf in
-      let imm = parse_imm lexbuf in
+      let rd  = parse_reg i lexbuf in
+      let rs1 = parse_reg i lexbuf in
+      let imm = parse_imm i lexbuf in
       let instr = Instr(i, I(r, rd, rs1, imm)) in
       Seq(instr, end_line i lexbuf)
     }
@@ -87,8 +86,8 @@ rule prog i = parse
     {
       let open Hashtbl in
       let r   = find j_inst id   in
-      let rd  = parse_reg lexbuf in
-      let imm = parse_imm lexbuf in
+      let rd  = parse_reg i lexbuf in
+      let imm = parse_imm i lexbuf in
       let instr = Instr(i, J(r, rd, imm)) in
       Seq(instr, end_line i lexbuf)
     }
@@ -96,9 +95,9 @@ rule prog i = parse
     {
       let open Hashtbl in
       let r   = find r_inst id   in
-      let rd  = parse_reg lexbuf in
-      let rs1 = parse_reg lexbuf in
-      let rs2 = parse_reg lexbuf in
+      let rd  = parse_reg i lexbuf in
+      let rs1 = parse_reg i lexbuf in
+      let rs2 = parse_reg i lexbuf in
       let instr = Instr(i, R(r, rd, rs1, rs2)) in
       Seq(instr, prog i lexbuf)
     }
@@ -106,9 +105,9 @@ rule prog i = parse
     {
       let open Hashtbl in
       let r   = find s_inst id   in
-      let rs2 = parse_reg lexbuf in
-      let rs1 = parse_reg lexbuf in
-      let imm = parse_imm lexbuf in
+      let rs2 = parse_reg i lexbuf in
+      let rs1 = parse_reg i lexbuf in
+      let imm = parse_imm i lexbuf in
       let instr = Instr(i, S(r, rs2, rs1, imm)) in
       Seq(instr, end_line i lexbuf)
     }
@@ -116,34 +115,34 @@ rule prog i = parse
     {
       let open Hashtbl in
       let r   = find u_inst id   in
-      let rd  = parse_reg lexbuf in
-      let imm = parse_imm lexbuf in
+      let rd  = parse_reg i lexbuf in
+      let imm = parse_imm i lexbuf in
       let instr = Instr(i, U(r, rd, imm)) in
       Seq(instr, end_line i lexbuf)
     }
   | _ as c
-    { raise (Lexing_error (String.make 1 c)) }
+    { raise (Lexing_error (i, Inst, String.make 1 c)) }
 
-and parse_reg = parse
+and parse_reg l = parse
   | ' ' | '\t'
-    { parse_reg lexbuf }
+    { parse_reg l lexbuf }
   | ident as id
     {
       try Hashtbl.find regs id
-      with Not_found -> raise (Lexing_error id)
+      with Not_found -> raise (Lexing_error (l, Register, id))
     }
   | _ as c
-    { raise (Lexing_error (String.make 1 c)) }
+    { raise (Lexing_error (l, Register, String.make 1 c)) }
 
-and parse_imm = parse
+and parse_imm l = parse
   | ' ' | '\t'
-    { parse_imm lexbuf }
+    { parse_imm l lexbuf }
   | integer as i
     { Imm(Int32.of_string i) }
   | label as lbl
     { Label(lbl) }
   | _ as c
-    { raise (Lexing_error (String.make 1 c)) }
+    { raise (Lexing_error (l, Imm, String.make 1 c)) }
 
 and end_line i = parse
   | ' ' | '\t' { end_line i lexbuf }

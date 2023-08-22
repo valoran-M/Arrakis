@@ -9,8 +9,8 @@ Arrakis currently support the RV32IM instruction set.
 
 ## Ressources
 
-* The [riscv-card](https://github.com/jameslzhu/riscv-card) is a comprehensive
-  reference sheet for RISC-V
+* [Riscv-card](https://github.com/jameslzhu/riscv-card), a comprehensive
+  reference sheet for RISC-V.
 * [Venus](https://github.com/kvakil/venus), a RISC-V simulator written in
   Kotlin, which inspired Arrakis.
 * [CeCILL](http://www.cecill.info/index.en.html), Arrakis License.

@@ -1,6 +1,6 @@
 (lang dune 3.10)
 
-(name riscV_sim)
+(name arrakis)
 
 (generate_opam_files true)
 
@@ -11,13 +11,13 @@
 
 (maintainers "Maintainer Name")
 
-(license LICENSE)
+(license "CeCILL v2.1")
 
 (documentation https://url/to/documentation)
 
 (package
- (name riscV_sim)
- (synopsis "A short synopsis")
+ (name arrakis)
+ (synopsis "A RISC-V simulator")
  (description "A longer description")
  (depends ocaml dune)
  (tags

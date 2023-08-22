@@ -57,23 +57,12 @@ let inst_u = "lui" | "auipc"
 rule prog i = parse
   | '\n'
     { new_line lexbuf; prog (i+1) lexbuf }
+  | ' ' | '\t'
+    { prog i lexbuf }
   | eof
     { Nil }
-  | _
-    {
-      let l = parse_line i lexbuf in
-      Seq(l, prog i lexbuf)
-    }
-
-and parse_line i = parse
-  | ' ' | '\t'
-    { parse_line i lexbuf }
   | label as lbl
-    { Label lbl }
-  | _
-    { Instr(i, parse_inst lexbuf) }
-
-and parse_inst = parse
+    { Seq(Label lbl, prog i lexbuf) }
   | inst_b as id
     {
       let open Hashtbl in
@@ -81,7 +70,8 @@ and parse_inst = parse
       let rs1 = parse_reg lexbuf in
       let rs2 = parse_reg lexbuf in
       let imm = parse_imm lexbuf in
-      B(r, rs1, rs2, imm)
+      let instr = Instr(i, B(r, rs1, rs2, imm)) in
+      Seq(instr, prog i lexbuf)
     }
   | inst_i as id
     {
@@ -90,7 +80,8 @@ and parse_inst = parse
       let rd  = parse_reg lexbuf in
       let rs1 = parse_reg lexbuf in
       let imm = parse_imm lexbuf in
-      I(r, rd, rs1, imm)
+      let instr = Instr(i, I(r, rd, rs1, imm)) in
+      Seq(instr, prog i lexbuf)
     }
   | inst_j as id
     {
@@ -98,7 +89,8 @@ and parse_inst = parse
       let r   = find j_inst id   in
       let rd  = parse_reg lexbuf in
       let imm = parse_imm lexbuf in
-      J(r, rd, imm)
+      let instr = Instr(i, J(r, rd, imm)) in
+      Seq(instr, prog i lexbuf)
     }
   | inst_r as id
     {
@@ -107,7 +99,8 @@ and parse_inst = parse
       let rd  = parse_reg lexbuf in
       let rs1 = parse_reg lexbuf in
       let rs2 = parse_reg lexbuf in
-      R(r, rd, rs1, rs2)
+      let instr = Instr(i, R(r, rd, rs1, rs2)) in
+      Seq(instr, prog i lexbuf)
     }
   | inst_s as id
     {
@@ -116,7 +109,8 @@ and parse_inst = parse
       let rs2 = parse_reg lexbuf in
       let rs1 = parse_reg lexbuf in
       let imm = parse_imm lexbuf in
-      S(r, rs2, rs1, imm)
+      let instr = Instr(i, S(r, rs2, rs1, imm)) in
+      Seq(instr, prog i lexbuf)
     }
   | inst_u as id
     {
@@ -124,7 +118,8 @@ and parse_inst = parse
       let r   = find u_inst id   in
       let rd  = parse_reg lexbuf in
       let imm = parse_imm lexbuf in
-      U(r, rd, imm)
+      let instr = Instr(i, U(r, rd, imm)) in
+      Seq(instr, prog i lexbuf)
     }
   | _ as c
     { raise (Lexing_error (String.make 1 c)) }

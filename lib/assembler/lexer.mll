@@ -33,7 +33,7 @@
 let digit   = ['0'-'9']
 let integer = ('-')? digit+
 
-let alpha = (['a'-'z'] | ['A'-'Z'])
+let alpha = ['a'-'z' 'A'-'Z']
 let ident = alpha (alpha | digit)*
 let label = '.'? (ident | '_')*
 
@@ -53,75 +53,85 @@ let inst_s = "sb" | "sh" | "sw"
 
 let inst_u = "lui" | "auipc"
 
-rule prog i = parse
+rule prog l = parse
   | '\n'
-    { new_line lexbuf; prog (i+1) lexbuf }
+    { new_line lexbuf; prog (l+1) lexbuf }
   | ' ' | '\t'
-    { prog i lexbuf }
+    { prog l lexbuf }
   | eof
     { Nil }
   | label as lbl ':'
-    { Seq(Label lbl, prog i lexbuf) }
+    { Seq(Label lbl, prog l lexbuf) }
   | inst_b as id
     {
       let open Hashtbl in
       let r   = find b_inst id   in
-      let rs1 = parse_reg i lexbuf in
-      let rs2 = parse_reg i lexbuf in
-      let imm = parse_imm i lexbuf in
-      let instr = Instr(i, B(r, rs1, rs2, imm)) in
-      Seq(instr, end_line i lexbuf)
+      let rs1 = parse_reg l lexbuf in
+      parse_comma l lexbuf;
+      let rs2 = parse_reg l lexbuf in
+      parse_comma l lexbuf;
+      let imm = parse_imm l lexbuf in
+      let instr = Instr(l, B(r, rs1, rs2, imm)) in
+      Seq(instr, end_line l lexbuf)
     }
   | inst_i as id
     {
       let open Hashtbl in
       let r   = find i_inst id   in
-      let rd  = parse_reg i lexbuf in
-      let rs1 = parse_reg i lexbuf in
-      let imm = parse_imm i lexbuf in
-      let instr = Instr(i, I(r, rd, rs1, imm)) in
-      Seq(instr, end_line i lexbuf)
+      let rd  = parse_reg l lexbuf in
+      parse_comma l lexbuf;
+      let rs1 = parse_reg l lexbuf in
+      parse_comma l lexbuf;
+      let imm = parse_imm l lexbuf in
+      let instr = Instr(l, I(r, rd, rs1, imm)) in
+      Seq(instr, end_line l lexbuf)
     }
   | inst_j as id
     {
       let open Hashtbl in
       let r   = find j_inst id   in
-      let rd  = parse_reg i lexbuf in
-      let imm = parse_imm i lexbuf in
-      let instr = Instr(i, J(r, rd, imm)) in
-      Seq(instr, end_line i lexbuf)
+      let rd  = parse_reg l lexbuf in
+      parse_comma l lexbuf;
+      let imm = parse_imm l lexbuf in
+      let instr = Instr(l, J(r, rd, imm)) in
+      Seq(instr, end_line l lexbuf)
     }
   | inst_r as id
     {
       let open Hashtbl in
       let r   = find r_inst id   in
-      let rd  = parse_reg i lexbuf in
-      let rs1 = parse_reg i lexbuf in
-      let rs2 = parse_reg i lexbuf in
-      let instr = Instr(i, R(r, rd, rs1, rs2)) in
-      Seq(instr, prog i lexbuf)
+      let rd  = parse_reg l lexbuf in
+      parse_comma l lexbuf;
+      let rs1 = parse_reg l lexbuf in
+      parse_comma l lexbuf;
+      let rs2 = parse_reg l lexbuf in
+      let instr = Instr(l, R(r, rd, rs1, rs2)) in
+      Seq(instr, prog l lexbuf)
     }
   | inst_s as id
     {
       let open Hashtbl in
       let r   = find s_inst id   in
-      let rs2 = parse_reg i lexbuf in
-      let rs1 = parse_reg i lexbuf in
-      let imm = parse_imm i lexbuf in
-      let instr = Instr(i, S(r, rs2, rs1, imm)) in
-      Seq(instr, end_line i lexbuf)
+      let rs2 = parse_reg l lexbuf in
+      parse_comma l lexbuf;
+      let rs1 = parse_reg l lexbuf in
+      parse_comma l lexbuf;
+      let imm = parse_imm l lexbuf in
+      let instr = Instr(l, S(r, rs2, rs1, imm)) in
+      Seq(instr, end_line l lexbuf)
     }
   | inst_u as id
     {
       let open Hashtbl in
       let r   = find u_inst id   in
-      let rd  = parse_reg i lexbuf in
-      let imm = parse_imm i lexbuf in
-      let instr = Instr(i, U(r, rd, imm)) in
-      Seq(instr, end_line i lexbuf)
+      let rd  = parse_reg l lexbuf in
+      parse_comma l lexbuf;
+      let imm = parse_imm l lexbuf in
+      let instr = Instr(l, U(r, rd, imm)) in
+      Seq(instr, end_line l lexbuf)
     }
   | _ as c
-    { raise (Lexing_error (i, Inst, String.make 1 c)) }
+    { raise (Lexing_error (l, Inst, String.make 1 c)) }
 
 and parse_reg l = parse
   | ' ' | '\t'
@@ -134,6 +144,14 @@ and parse_reg l = parse
   | _ as c
     { raise (Lexing_error (l, Register, String.make 1 c)) }
 
+and parse_comma l = parse
+  | ','
+    { () }
+  | ' ' | '\t'
+    { parse_comma l lexbuf }
+  | _ as c
+   { raise (Lexing_error (l, Comma, String.make 1 c)) }
+
 and parse_imm l = parse
   | ' ' | '\t'
     { parse_imm l lexbuf }
@@ -144,11 +162,11 @@ and parse_imm l = parse
   | _ as c
     { raise (Lexing_error (l, Imm, String.make 1 c)) }
 
-and end_line i = parse
-  | ' ' | '\t' { end_line i lexbuf }
-  | '\n' { prog (i+1) lexbuf }
-  | '#'  {  comment i lexbuf }
+and end_line l = parse
+  | ' ' | '\t' { end_line l lexbuf }
+  | '\n' { prog (l+1) lexbuf }
+  | '#'  {  comment l lexbuf }
 
-and comment i = parse
-  | '\n' { prog (i+1) lexbuf }
-  | _    { comment i lexbuf  }
+and comment l = parse
+  | '\n' { prog (l+1) lexbuf }
+  | _    { comment l lexbuf  }

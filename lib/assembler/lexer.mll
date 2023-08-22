@@ -136,6 +136,8 @@ and parse_reg = parse
     { raise (Lexing_error (String.make 1 c)) }
 
 and parse_imm = parse
+  | ' ' | '\t'
+    { parse_imm lexbuf }
   | integer as i
     { Imm(Int32.of_string i) }
   | label as lbl

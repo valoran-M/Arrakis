@@ -2,7 +2,8 @@ let cpu = Simulator.Cpu.make 0l
 
 let memory = Simulator.Memory.make ()
 
-let code = {|addi x1 x0 10
+let code = {|
+  addi x1 x0 10
 |}
 
 let code =

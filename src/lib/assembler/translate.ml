@@ -24,7 +24,7 @@ let imm_to_int32 line addr = function
 
 let rec write_in_memory prog mem addr =
   match prog with
-  | Nil -> addr
+  | Nil -> Memory.set_int32 mem addr 0l; addr
   | Seq (Instr (_, R (inst, rd, rs1, rs2)), next) ->
     Inst_R.write_in_memory mem addr inst rd rs1 rs2;
     write_in_memory next mem (addr + 4l)

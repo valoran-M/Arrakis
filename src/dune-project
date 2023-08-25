@@ -19,7 +19,7 @@
  (name arrakis)
  (synopsis "A RISC-V simulator")
  (description "A longer description")
- (depends ocaml dune)
+ (depends ocaml dune alcotest)
  (tags
   (topics "to describe" your project)))
 

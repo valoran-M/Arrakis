@@ -5,17 +5,17 @@ let breakpoints = Hashtbl.create 16
 let rec run arch =
   match exec_instruction arch with
   | Continue addr -> if not (Hashtbl.mem breakpoints addr) then run arch
-  | Zero -> Printf.printf "Waring: not syscal end\n"
+  | Zero -> Printf.printf "Warning: not syscal end\n"
   | Sys_call -> failwith "TODO"
 
 let step arch =
   match exec_instruction arch with
   | Continue _ -> ()
-  | Zero -> Printf.printf "Waring: not syscal end\n"
+  | Zero -> Printf.printf "Warning: not syscal end\n"
   | Sys_call -> failwith "TODO"
 
 let set_breakpoint args label =
-  try 
+  try
     List.iter (fun arg ->
       let number = Hashtbl.length breakpoints in
       try
@@ -33,7 +33,7 @@ let set_breakpoint args label =
 
 let print_help () =
   print_string {|
-Commandes :
+Commands :
 
 (r)un -> run code
 
@@ -42,7 +42,9 @@ Commandes :
 (n)ext -> run to next breakpoint
 (sh)ow -> show args
 
-(e)xit
+(h)elp -> show this help
+
+(q)uit
 |}
 
 let parse_command arch command args label =
@@ -50,7 +52,7 @@ let parse_command arch command args label =
   | "run"         | "r" -> run  arch
   | "step"        | "s" -> step arch
   | "breakpoints" | "b" -> set_breakpoint args label
-  | "help" -> print_help ()
+  | "help"        | "h" -> print_help ()
   | _ -> Printf.printf "Undefined command: \"%s\".  Try \"help\".\n" command
 
 let rec shell arch label =
@@ -58,9 +60,8 @@ let rec shell arch label =
   let line = read_line () in
   let words = String.split_on_char ' ' line in
   match words with
-  | "exit" :: _ | "e" :: _ -> ()
+  | "quit" :: _ | "q" :: _ -> ()
   | command :: args ->
     parse_command arch command args label;
     shell arch label
   | _ -> shell arch label
-

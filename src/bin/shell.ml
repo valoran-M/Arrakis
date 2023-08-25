@@ -1,10 +1,35 @@
 open Simulator.Arch
 
+let breakpoints = Hashtbl.create 16
+
 let rec run arch =
   match exec_instruction arch with
-  | Continue -> run arch
+  | Continue addr -> if not (Hashtbl.mem breakpoints addr) then run arch
   | Zero -> Printf.printf "Waring: not syscal end\n"
   | Sys_call -> failwith "TODO"
+
+let step arch =
+  match exec_instruction arch with
+  | Continue _ -> ()
+  | Zero -> Printf.printf "Waring: not syscal end\n"
+  | Sys_call -> failwith "TODO"
+
+let set_breakpoint args label =
+  try 
+    List.iter (fun arg ->
+      let number = Hashtbl.length breakpoints in
+      try
+        let addr = Int32.of_string arg in
+        Hashtbl.add breakpoints addr number;
+        Printf.printf "Breakpoint %d at 0x%x\n" number (Int32.to_int addr)
+      with Failure _ ->
+      try
+        let addr = Hashtbl.find label arg in
+        Hashtbl.add breakpoints addr number;
+        Printf.printf "Breakpoint %d at 0x%x\n" number (Int32.to_int addr)
+      with Not_found -> Printf.printf "Function \"%s\" not defined.\n" arg
+    ) args
+  with _ -> ()
 
 let print_help () =
   print_string {|
@@ -20,18 +45,22 @@ Commandes :
 (e)xit
 |}
 
-let parse_command arch command _args =
+let parse_command arch command args label =
   match command with
-  | "run" | "r"  -> run arch
+  | "run"         | "r" -> run  arch
+  | "step"        | "s" -> step arch
+  | "breakpoints" | "b" -> set_breakpoint args label
   | "help" -> print_help ()
   | _ -> Printf.printf "Undefined command: \"%s\".  Try \"help\".\n" command
 
-let rec shell arch =
+let rec shell arch label =
   Printf.printf "> ";
   let line = read_line () in
   let words = String.split_on_char ' ' line in
   match words with
   | "exit" :: _ | "e" :: _ -> ()
-  | command :: args -> parse_command arch command args; shell arch
-  | _ -> shell arch
+  | command :: args ->
+    parse_command arch command args label;
+    shell arch label
+  | _ -> shell arch label
 

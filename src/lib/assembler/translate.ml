@@ -50,5 +50,5 @@ let translate code =
   let prog = prog 0 code in
   get_label_address prog Segment.text_begin;
   let addr = write_in_memory prog mem Segment.text_begin in
-  (mem, addr)
+  (mem, addr, label_address)
 

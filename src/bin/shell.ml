@@ -49,16 +49,20 @@ Commands :
 (p)rint      -> print args
 
 (h)elp -> show this help
-
 (q)uit
 |}
+
+exception Shell_exit
 
 let parse_command arch command args label =
   match command with
   | "run"         | "r" -> program_run := true; run  arch
+  | "breakpoint"  | "b" -> set_breakpoint args label
   | "step"        | "s" -> step arch
-  | "breakpoints" | "b" -> set_breakpoint args label
+  | "next"        | "n" -> Printf.printf "Unimplemented for now.\n"
+  | "print"       | "p" -> Printf.printf "Unimplemented for now.\n"
   | "help"        | "h" -> print_help ()
+  | "quit"        | "q" -> raise Shell_exit
   | _ -> Printf.printf "Undefined command: \"%s\".  Try \"help\".\n" command
 
 let rec shell arch label debug =
@@ -66,10 +70,10 @@ let rec shell arch label debug =
   Printf.printf "> ";
   let line = read_line () in
   let words = String.split_on_char ' ' line in
-  match words with
-  | "quit" :: _ | "q" :: _ -> ()
+  try match words with
   | command :: args ->
     parse_command arch command args label;
     shell arch label debug
   | _ -> shell arch label debug
+  with Shell_exit -> ()
 

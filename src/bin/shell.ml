@@ -9,7 +9,9 @@ let rec run arch =
   if not (Hashtbl.mem breakpoints addr) then
   match exec_instruction arch with
   | Continue _addr  -> run arch
-  | Zero            -> Printf.printf "Warning: not syscal end\n"
+  | Zero            ->
+    Printf.printf "Warning: not syscal end\n";
+    program_run := false
   | Sys_call        -> failwith "TODO"
 
 let step arch =
@@ -70,3 +72,4 @@ let rec shell arch label debug =
     parse_command arch command args label;
     shell arch label debug
   | _ -> shell arch label debug
+

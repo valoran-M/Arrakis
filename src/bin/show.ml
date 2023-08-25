@@ -61,4 +61,5 @@ let print_prog (arch : Arch.t) debug =
     Printf.printf "   0x%08x\t\t0x%08x\t\t%s\t\t%s\n" (Int32.to_int addr)
       (Int32.to_int code) (print_code arch code) orignal_code
   done
-  with Break -> ()
+  with _ -> ()
+

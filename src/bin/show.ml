@@ -50,7 +50,7 @@ let print_prog (arch : Arch.t) debug =
   let addr = pc in
   let code = Memory.get_int32 arch.memory  addr in
   try
-  print_string "   adresse\t\tMachine Code\t\tBasic Code\t\tOriginal Code\n";
+  print_string "   Adress\t\tMachine Code\t\tBasic Code\t\tOriginal Code\n";
   let _, orignal_code = Hashtbl.find debug pc in
   Printf.printf "-> 0x%08x\t\t0x%08x\t\t%s\t\t%s\n" (Int32.to_int addr)
     (Int32.to_int code) (print_code arch code) orignal_code;

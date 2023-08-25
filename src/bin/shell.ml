@@ -42,9 +42,9 @@ Commands :
 (r)un -> run code
 
 (b)reakpoint -> create breakpoint
-(s)tep -> In debug mode execute next instruction
-(n)ext -> run to next breakpoint
-(sh)ow -> show args
+(s)tep       -> In debug mode execute next instruction
+(n)ext       -> run to next breakpoint
+(p)rint      -> print args
 
 (h)elp -> show this help
 

@@ -8,4 +8,3 @@ let () =
   in
   let arch = Arch.init (Assembler.Segment.text_begin) mem in
   Shell.shell arch label debug
-

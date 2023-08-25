@@ -8,15 +8,15 @@ let rec run arch =
   let addr = Simulator.Cpu.get_pc arch.cpu in
   if not (Hashtbl.mem breakpoints addr) then
   match exec_instruction arch with
-  | Continue _addr ->  run arch
-  | Zero -> Printf.printf "Warning: not syscal end\n"
-  | Sys_call -> failwith "TODO"
+  | Continue _addr  -> run arch
+  | Zero            -> Printf.printf "Warning: not syscal end\n"
+  | Sys_call        -> failwith "TODO"
 
 let step arch =
   match exec_instruction arch with
-  | Continue _ -> ()
-  | Zero -> Printf.printf "Warning: not syscal end\n"
-  | Sys_call -> failwith "TODO"
+  | Continue _  -> ()
+  | Zero        -> Printf.printf "Warning: not syscal end\n"
+  | Sys_call    -> failwith "TODO"
 
 let set_breakpoint args label =
   try
@@ -70,4 +70,3 @@ let rec shell arch label debug =
     parse_command arch command args label;
     shell arch label debug
   | _ -> shell arch label debug
-

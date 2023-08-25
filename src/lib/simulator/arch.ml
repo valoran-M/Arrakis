@@ -9,3 +9,4 @@ let exec_instruction arch =
   if code = 0l
   then Zero
   else (Cpu.exec code arch.cpu arch.memory; Continue (Cpu.get_pc arch.cpu))
+

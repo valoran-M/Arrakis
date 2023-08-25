@@ -2,9 +2,13 @@ open Simulator.Arch
 
 let breakpoints = Hashtbl.create 16
 
+let program_run = ref false
+
 let rec run arch =
+  let addr = Simulator.Cpu.get_pc arch.cpu in
+  if not (Hashtbl.mem breakpoints addr) then
   match exec_instruction arch with
-  | Continue addr -> if not (Hashtbl.mem breakpoints addr) then run arch
+  | Continue _addr ->  run arch
   | Zero -> Printf.printf "Waring: not syscal end\n"
   | Sys_call -> failwith "TODO"
 
@@ -47,13 +51,14 @@ Commandes :
 
 let parse_command arch command args label =
   match command with
-  | "run"         | "r" -> run  arch
+  | "run"         | "r" -> program_run := true; run  arch
   | "step"        | "s" -> step arch
   | "breakpoints" | "b" -> set_breakpoint args label
   | "help" -> print_help ()
   | _ -> Printf.printf "Undefined command: \"%s\".  Try \"help\".\n" command
 
 let rec shell arch label =
+  if !program_run then Show.print_prog arch;
   Printf.printf "> ";
   let line = read_line () in
   let words = String.split_on_char ' ' line in

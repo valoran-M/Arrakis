@@ -8,12 +8,4 @@
       addi x2, x0, 20
       addi x2, x0, 20
       addi x2, x0, 20
-      addi x2, x0, 20
-      addi x2, x0, 20
-      addi x2, x0, 20
-      addi x2, x0, 20
-      addi x2, x0, 20
-      addi x2, x0, 20
-      addi x2, x0, 20
-      addi x2, x0, 20
 .A:   addi x2, x0, 30

@@ -59,8 +59,8 @@ let parse_command arch command args label =
   | "help"        | "h" -> print_help ()
   | _ -> Printf.printf "Undefined command: \"%s\".  Try \"help\".\n" command
 
-let rec shell arch label =
-  if !program_run then Show.print_prog arch;
+let rec shell arch label debug =
+  if !program_run then Show.print_prog arch debug;
   Printf.printf "> ";
   let line = read_line () in
   let words = String.split_on_char ' ' line in
@@ -68,5 +68,6 @@ let rec shell arch label =
   | "quit" :: _ | "q" :: _ -> ()
   | command :: args ->
     parse_command arch command args label;
-    shell arch label
-  | _ -> shell arch label
+    shell arch label debug
+  | _ -> shell arch label debug
+

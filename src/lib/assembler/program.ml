@@ -62,8 +62,8 @@ type instruction =
   | J of j_instruction * int32 * imm
 
 type program_line =
-          (* line nb *)
-  | Instr of int     * instruction
+          (* line nb, origian code *)
+  | Instr of int *    string * instruction
   | Label of string
 
 type program =

@@ -13,6 +13,7 @@ let debug = Hashtbl.create 1024
 let rec get_label_address prog addr =
   match prog with
   | Nil -> ()
+  | Seq (Instr (_, _, Pseudo _), _l) -> failwith "TODO"
   | Seq (Instr (_, _, _), l) -> get_label_address l (addr + 0x4l)
   | Seq (Label label, l)  ->
     Hashtbl.add label_address label addr;
@@ -51,6 +52,7 @@ let rec write_in_memory prog mem addr =
     Hashtbl.add debug addr (l, s);
     Inst_J.write_in_mem mem addr inst rd (imm_to_int32 l addr imm);
     write_in_memory next mem (addr + 4l)
+  | Seq (Instr (_l, _s, Pseudo _), _next) -> failwith "TODO\n"
   | Seq (Label _, l) -> write_in_memory l mem addr
 
 let translate code =

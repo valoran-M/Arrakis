@@ -17,7 +17,9 @@ let rec run arch =
 let step arch =
   match exec_instruction arch with
   | Continue _  -> ()
-  | Zero        -> Printf.printf "Warning: not syscal end\n"
+  | Zero        ->
+    Printf.printf "Warning: not syscal end\n";
+    program_run := false
   | Sys_call    -> failwith "TODO"
 
 let set_breakpoint args label =

@@ -10,11 +10,14 @@ let rec run arch =
   match exec_instruction arch with
   | Continue _addr  -> run arch
   | Zero            ->
-    Printf.printf "Warning: not syscal end\n";
+    print_endline "Warning: not syscal end";
     program_run := false
   | Sys_call        -> failwith "TODO"
 
 let step arch =
+  if not !program_run
+  then print_endline "The program is not being run."
+  else
   match exec_instruction arch with
   | Continue _  -> ()
   | Zero        ->

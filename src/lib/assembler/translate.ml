@@ -6,14 +6,41 @@ open Program
 let (+) = Int32.add
 let (-) = Int32.sub
 
+let (<=) x y = Int32.compare x y <=  0
+let (>=) x y = Int32.compare x y >=  0
+
 let label_address = Hashtbl.create 16
 
 let debug = Hashtbl.create 1024
 
+let pseuodo_length (pseudo : pseudo_instruction) =
+  match pseudo with
+  | NOP -> 0x4l
+  | LA (_, _) -> 0x8l
+  | J _ -> 0x4l
+  | JALI _ -> 0x4l
+  | JR _ -> 0x4l
+  | JALR _ -> 0x0l
+  | RET -> 0x8l
+  | CALL _ -> 0x8l
+  | TAIL _ -> 0x8l
+  | LGlob (_, _, _) -> 0x8l
+  | SGlob (_, _, _) -> 0x8l
+  | Two_Regs (_, _, _) -> 0x4l
+  | Regs_Offset (_, _, _) -> 0x4l
+  | LI (_, imm) ->
+    match imm with
+    | Label _ -> 0x8l
+    | Imm imm -> if -2048l <= imm && imm <= 2048l
+                 then 0x4l else 0x8l
+
+
+
 let rec get_label_address prog addr =
   match prog with
   | Nil -> ()
-  | Seq (Instr (_, _, Pseudo _), _l) -> failwith "TODO"
+  | Seq (Instr (_, _, Pseudo instruction), l) ->
+    get_label_address l (addr + (pseuodo_length instruction))
   | Seq (Instr (_, _, _), l) -> get_label_address l (addr + 0x4l)
   | Seq (Label label, l)  ->
     Hashtbl.add label_address label addr;

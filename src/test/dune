@@ -1,3 +1,0 @@
-(test
- (name riscV_sim)
- (libraries alcotest simulator_test assembler_test))

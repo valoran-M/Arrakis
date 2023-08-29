@@ -30,8 +30,8 @@ let pseuodo_length (pseudo : pseudo_instruction) =
   | RET       -> 0x8l
   | CALL _    -> 0x8l
   | TAIL _    -> 0x8l
-  | LGlob (_, _, _) -> 0x8l
-  | SGlob (_, _, _) -> 0x8l
+  | LGlob (_, _, _)       -> 0x8l
+  | SGlob (_, _, _, _)    -> 0x8l
   | Two_Regs (_, _, _)    -> 0x4l
   | Regs_Offset (_, _, _) -> 0x4l
   | LI (_, imm) ->
@@ -117,8 +117,16 @@ let translate_pseudo pseudo mem addr line string =
     Hashtbl.add debug (addr + 4l) (line, string);
     Inst_U.write_in_memory mem addr        AUIPC 6l    hi;
     Inst_I.write_in_memory mem (addr + 4l) JALR  0l 6l lo; 8l
-  | LGlob (_, _, _) -> failwith "TODO\n"
-  | SGlob (_, _, _) -> failwith "TODO\n"
+  | LGlob (rd, symbol, load) ->
+    let (hi, lo) = hi_lo symbol addr line in
+    Hashtbl.add debug (addr + 4l) (line, string);
+    Inst_U.write_in_memory mem addr        AUIPC rd    hi;
+    Inst_I.write_in_memory mem (addr + 4l) load  rd rd lo; 8l
+  | SGlob (rd, symbol, rt, store) ->
+    let (hi, lo) = hi_lo symbol addr line in
+    Hashtbl.add debug (addr + 4l) (line, string);
+    Inst_U.write_in_memory mem addr        AUIPC rt    hi;
+    Inst_I.write_in_memory mem (addr + 4l) store rd rt lo; 8l
   | Two_Regs (_, _, _) -> failwith "TODO\n"
   | Regs_Offset (_, _, _) -> failwith "TODO\n"
 

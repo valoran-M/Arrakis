@@ -107,13 +107,12 @@ let translate_pseudo pseudo mem addr line string =
   match pseudo with
   | NOP       -> Inst_I.write_in_memory mem addr ADDI 0l 0l 0l; 4l
   | LI (rd, imm) ->
-    (match imm with Imm _ -> assert false | _ ->
     let (hi, lo) = hi_lo imm addr line in
     if hi = 0l
     then (Inst_I.write_in_memory mem addr ADDI rd 0l lo; 4l)
     else (Hashtbl.add debug (addr + 4l) (line, string);
           Inst_U.write_in_memory mem addr        LUI  rd    hi;
-          Inst_I.write_in_memory mem (addr + 4l) ADDI rd rd lo; 8l))
+          Inst_I.write_in_memory mem (addr + 4l) ADDI rd rd lo; 8l)
   | LA (rd, symbol) ->
     let (hi, lo) = hi_lo symbol addr line in
     Hashtbl.add debug (addr + 4l) (line, string);

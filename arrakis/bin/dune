@@ -1,0 +1,4 @@
+(executable
+ (public_name arrakis)
+ (name main)
+ (libraries riscV_sim simulator assembler))

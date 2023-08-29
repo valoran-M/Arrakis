@@ -1,0 +1,5 @@
+(ocamllex lexer)
+
+(library
+ (libraries simulator)
+ (name assembler))

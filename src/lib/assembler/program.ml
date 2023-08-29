@@ -67,7 +67,7 @@ type pseudo_instruction =
   | LGlob of int32 * imm * i_instruction
   | SGlob of int32 * imm * int32 * i_instruction
   | Two_Regs    of two_reg    * int32 * int32
-  | Regs_Offset of reg_offset * int32 * int32
+  | Regs_Offset of reg_offset * int32 * imm
 
 (* ------------------------------ Program ----------------------------------- *)
 

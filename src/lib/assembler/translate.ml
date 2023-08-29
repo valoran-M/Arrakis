@@ -81,6 +81,27 @@ let translate (instruction : instruction) mem addr line =
     let imm = imm_to_int32 line addr imm in
     Inst_J.write_in_memory mem addr inst rd imm
 
+let translate_two_reg (pseudo : two_reg) rd rs mem addr =
+  (match pseudo with
+  | MV   -> Inst_I.write_in_memory mem addr ADDI  rd rs 0l
+  | NOT  -> Inst_I.write_in_memory mem addr XORI  rd rs (-1l)
+  | NEG  -> Inst_R.write_in_memory mem addr SUB   rd 0l rs
+  | SEQZ -> Inst_I.write_in_memory mem addr SLTIU rd rs 1l
+  | SNEZ -> Inst_R.write_in_memory mem addr SLTU  rd rs 0l
+  | SLTZ -> Inst_R.write_in_memory mem addr SLT   rd rs 0l
+  | SGTZ -> Inst_R.write_in_memory mem addr SLT   rd 0l rs);
+  4l
+
+let translate_reg_offset (pseudo : reg_offset) rs offset mem addr =
+  (match pseudo with
+  | BEQZ -> Inst_B.write_in_memory mem addr BEQ rs 0l offset
+  | BNEZ -> Inst_B.write_in_memory mem addr BNE rs 0l offset
+  | BLEZ -> Inst_B.write_in_memory mem addr BGE 0l rs offset
+  | BGEZ -> Inst_B.write_in_memory mem addr BGE rs 0l offset
+  | BLTZ -> Inst_B.write_in_memory mem addr BLT rs 0l offset
+  | BGTZ -> Inst_B.write_in_memory mem addr BLT 0l rs offset);
+  4l
+
 let translate_pseudo pseudo mem addr line string =
   Hashtbl.add debug addr (line, string);
   match pseudo with
@@ -127,8 +148,10 @@ let translate_pseudo pseudo mem addr line string =
     Hashtbl.add debug (addr + 4l) (line, string);
     Inst_U.write_in_memory mem addr        AUIPC rt    hi;
     Inst_I.write_in_memory mem (addr + 4l) store rd rt lo; 8l
-  | Two_Regs (_, _, _) -> failwith "TODO\n"
-  | Regs_Offset (_, _, _) -> failwith "TODO\n"
+  | Two_Regs (inst, rd, rs) -> translate_two_reg inst rd rs mem addr
+  | Regs_Offset (inst, rs, offset) ->
+    let imm = imm_to_int32 line addr offset in
+    translate_reg_offset inst rs imm mem addr
 
 let rec loop prog mem addr =
   match prog with

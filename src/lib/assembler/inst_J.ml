@@ -15,7 +15,7 @@ let str_table =
   iter (fun v (_,k) -> add j k v) j_instructions;
   j
 
-let write_in_mem mem addr instruction rd imm =
+let write_in_memory mem addr instruction rd imm =
   let (<<) = Int32.shift_left in
   let (||) = Int32.logor in
   let (opcode, _) = Hashtbl.find j_instructions instruction in

@@ -58,9 +58,9 @@ type pseudo_instruction =
   | LI    of int32 * imm
   | LA    of int32 * imm
   | J     of imm
-  | JALI  of imm
+  | JALP  of imm
   | JR    of int32
-  | JALR  of int32
+  | JALRP of int32
   | RET
   | CALL  of imm
   | TAIL  of imm
@@ -84,12 +84,12 @@ type instruction =
   | U of u_instruction * int32 * imm
                       (* rd      imm *)
   | J of j_instruction * int32 * imm
-  | Pseudo of pseudo_instruction
 
 type program_line =
           (* line nb, origian code *)
-  | Instr of int *    string * instruction
-  | Label of string
+  | Pseudo of int *    string * pseudo_instruction
+  | Instr  of int *    string * instruction
+  | Label  of string
 
 type program =
   | Seq   of program_line * program

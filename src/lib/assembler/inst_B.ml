@@ -20,7 +20,7 @@ let str_table =
   iter (fun v (_,_,k) -> add b k v) b_instructions;
   b
 
-let write_in_mem mem addr instruction rs1 rs2 imm =
+let write_in_memory mem addr instruction rs1 rs2 imm =
   let (<<) = Int32.shift_left in
   let (||) = Int32.logor in
   let (opcode, funct3, _) = Hashtbl.find b_instructions instruction in

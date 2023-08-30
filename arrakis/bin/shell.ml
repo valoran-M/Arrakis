@@ -71,7 +71,7 @@ let parse_command arch command args label =
   | _ -> Printf.printf "Undefined command: \"%s\".  Try \"help\".\n" command
 
 let rec shell arch label debug =
-  if !program_run then Show.print_prog arch debug;
+  if !program_run then Print.print_prog arch debug;
   Printf.printf "> ";
   let line = read_line () in
   let words = String.split_on_char ' ' line in

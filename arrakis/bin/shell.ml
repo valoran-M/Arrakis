@@ -59,25 +59,27 @@ Commands :
 
 exception Shell_exit
 
-let parse_command arch command args label =
+let parse_command arch command args label debug =
   match command with
-  | "run"         | "r" -> program_run := true; run  arch
+  | "run"         | "r" ->
+    program_run := true;
+    run  arch;
+    Print.print_prog arch debug
   | "breakpoint"  | "b" -> set_breakpoint args label
-  | "step"        | "s" -> step arch
+  | "step"        | "s" -> step arch; Print.print_prog arch debug
   | "next"        | "n" -> Printf.printf "Unimplemented for now.\n"
-  | "print"       | "p" -> Printf.printf "Unimplemented for now.\n"
+  | "print"       | "p" -> Print.decode_print arch args
   | "help"        | "h" -> print_help ()
   | "quit"        | "q" -> raise Shell_exit
   | _ -> Printf.printf "Undefined command: \"%s\".  Try \"help\".\n" command
 
 let rec shell arch label debug =
-  if !program_run then Print.print_prog arch debug;
   Printf.printf "> ";
   let line = read_line () in
   let words = String.split_on_char ' ' line in
   try match words with
   | command :: args ->
-    parse_command arch command args label;
+    parse_command arch command args label debug;
     shell arch label debug
   | _ -> shell arch label debug
   with Shell_exit -> ()

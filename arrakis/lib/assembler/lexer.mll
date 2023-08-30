@@ -152,6 +152,10 @@ rule prog l = parse
       let instr = Instr(l, code, U(r, rd, imm)) in
       Seq(instr, end_line l lexbuf)
     }
+  | "nop"
+    {
+      Seq(Pseudo(l,"nop", NOP), end_line l lexbuf)
+    }
   | _ as c
     { raise (Lexing_error (l, Inst, String.make 1 c)) }
 

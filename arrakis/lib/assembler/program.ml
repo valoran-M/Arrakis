@@ -2,7 +2,7 @@ type imm =
   | Label of string
   | Imm   of int32
 
-(* ---------------------------- All instructions ---------------------------- *)
+(* ---------------------------- Real instructions --------------------------- *)
 
 type r_instruction =
   (* RV32I *)
@@ -45,6 +45,8 @@ type u_instruction =
 type j_instruction =
   | JAL
 
+(* --------------------------- Pseudo instructions -------------------------- *)
+
 type two_reg =
   | MV   | NOT  | NEG
   | SEQZ | SNEZ | SLTZ | SGTZ
@@ -69,7 +71,7 @@ type pseudo_instruction =
   | Two_Regs    of two_reg    * int32 * int32
   | Regs_Offset of reg_offset * int32 * imm
 
-(* ------------------------------ Program ----------------------------------- *)
+(* ------------------------------- Program ---------------------------------- *)
 
 type instruction =
                       (* rd      rs1     rs2 *)
@@ -86,9 +88,9 @@ type instruction =
   | J of j_instruction * int32 * imm
 
 type program_line =
-          (* line nb, origian code *)
-  | Pseudo of int *    string * pseudo_instruction
-  | Instr  of int *    string * instruction
+              (* line nb, original code *)
+  | Pseudo of int *       string        * pseudo_instruction
+  | Instr  of int *       string        * instruction
   | Label  of string
 
 type program =

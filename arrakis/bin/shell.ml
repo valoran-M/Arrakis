@@ -21,7 +21,7 @@ let step arch =
   match exec_instruction arch with
   | Continue _  -> ()
   | Zero        ->
-    Printf.printf "Warning: not syscal end\n";
+    print_endline "Warning: not syscal end";
     program_run := false
   | Sys_call    -> failwith "TODO"
 

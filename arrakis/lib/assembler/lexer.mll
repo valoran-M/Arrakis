@@ -66,10 +66,12 @@ let inst_s = "sb" | "sh" | "sw"
 
 let inst_u = "lui" | "auipc"
 
+let space = ' ' | '\t'
+
 rule prog l = parse
   | '\n'
     { new_line lexbuf; prog (l+1) lexbuf }
-  | ' ' | '\t'
+  | space
     { prog l lexbuf }
   | eof
     { Nil }
@@ -154,7 +156,7 @@ rule prog l = parse
     { raise (Lexing_error (l, Inst, String.make 1 c)) }
 
 and parse_reg l = parse
-  | ' ' | '\t' | ','
+  | space | ','
     { parse_reg l lexbuf }
   | ident as id
     {
@@ -165,7 +167,7 @@ and parse_reg l = parse
     { raise (Lexing_error (l, Register, String.make 1 c)) }
 
 and parse_reg_memory l = parse
-  | ' ' | '\t' | ','
+  | space | ','
     { parse_reg l lexbuf }
   | '(' (ident as id) ')'
     {
@@ -177,7 +179,7 @@ and parse_reg_memory l = parse
 
 
 and parse_imm l = parse
-  | ' ' | '\t' | ','
+  | space | ','
     { parse_imm l lexbuf }
   | integer as i
     { Imm(Int32.of_string i), i }
@@ -187,9 +189,9 @@ and parse_imm l = parse
     { raise (Lexing_error (l, Imm, String.make 1 c)) }
 
 and end_line l = parse
-  | ' ' | '\t' { end_line l lexbuf }
-  | '\n' { prog (l+1) lexbuf }
-  | '#'  {  comment l lexbuf }
+  | space { end_line l lexbuf }
+  | '\n'  { prog (l+1) lexbuf }
+  | '#'   {  comment l lexbuf }
 
 and comment l = parse
   | '\n' { prog (l+1) lexbuf }

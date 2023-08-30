@@ -38,6 +38,7 @@ let oct_literal =
   '0' ['o' 'O'] ['0'-'7'] ['0'-'7' '_']*
 let bin_literal =
   '0' ['b' 'B'] ['0'-'1'] ['0'-'1' '_']*
+let space = [' ' '\t']*
 
 let int_literal =
   decimal_literal | hex_literal | oct_literal | bin_literal
@@ -66,7 +67,6 @@ let inst_s = "sb" | "sh" | "sw"
 
 let inst_u = "lui" | "auipc"
 
-let space = ' ' | '\t'
 
 rule prog l = parse
   | '\n'

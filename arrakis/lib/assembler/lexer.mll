@@ -28,6 +28,9 @@
       Hashtbl.add regs ("x" ^ (Int.to_string i)) (Int32.of_int i)
     done
 
+    let simm_to_imm simm =
+      try Imm (Int32.of_string simm)
+      with Failure -> Label (simm)
 }
 
 let decimal_literal =
@@ -40,8 +43,7 @@ let bin_literal =
   '0' ['b' 'B'] ['0'-'1'] ['0'-'1' '_']*
 let space = [' ' '\t']*
 
-let int_literal =
-  decimal_literal | hex_literal | oct_literal | bin_literal
+let int_literal = decimal_literal | hex_literal | oct_literal | bin_literal
 
 let integer = ('-')? int_literal+
 
@@ -67,6 +69,8 @@ let inst_s = "sb" | "sh" | "sw"
 
 let inst_u = "lui" | "auipc"
 
+let spacec = space ','? space
+let imm = integer | label
 
 rule prog l = parse
   | '\n'
@@ -77,125 +81,99 @@ rule prog l = parse
     { Nil }
   | label as lbl ':'
     { Seq(Label lbl, prog l lexbuf) }
-  | inst_b as id
+  | (inst_b as id) space (ident as s1) spacec (ident as s2) spacec (imm as simm)
     {
       let open Hashtbl in
       let r   = find b_inst id   in
-      let rs1, s1   = parse_reg l lexbuf in
-      let rs2, s2   = parse_reg l lexbuf in
-      let imm, simm = parse_imm l lexbuf in
-      let code  = id ^ " " ^ s1 ^ ", " ^ s2 ^ ", " ^ simm in
+      let rs1 = find regs s1     in
+      let rs2 = find regs s2     in
+      let imm = simm_to_imm simm in
+
+      let code  = id ^ " " ^ s1 ^ ", " ^ s2 ^ ", " ^ i in
       let instr = Instr(l, code, B(r, rs1, rs2, imm)) in
       Seq(instr, end_line l lexbuf)
     }
-  | inst_i as id
+  | (inst_i as id) space (ident as sd) spacec (ident as s1) spacec (imm as simm)
     {
       let open Hashtbl in
-      let r   = find i_inst id   in
-      let rd,  sd   = parse_reg l lexbuf in
-      let rs1, s1   = parse_reg l lexbuf in
-      let imm, simm = parse_imm l lexbuf in
+      let r   = find i_inst id    in
+      let rd  = find regs sd      in
+      let rs1 = find regs s1      in
+      let imm = simm_to_imm simm  in
+
       let code  = id ^ " " ^ sd ^ ", " ^ s1 ^ ", " ^ simm in
       let instr = Instr(l, code, I(r, rd, rs1, imm)) in
       Seq(instr, end_line l lexbuf)
     }
-  | inst_i_load as id
+  | (inst_i_load as id) space (ident as sd) spacec (imm as simm) spacec
+    '(' (ident as rs1) ')'
     {
       let open Hashtbl in
       let r   = find i_inst id   in
-      let rd,  sd   = parse_reg l lexbuf in
-      let imm, simm = parse_imm l lexbuf in
-      let rs1, s1   = parse_reg_memory l lexbuf in
+      let rd  = find regs sd     in
+      let imm = simm_to_imm simm in
+      let rs1 = find regs s1     in
+
       let code  = id ^ " " ^ sd ^ ", " ^ simm ^ "(" ^ s1 ^ ")" in
       let instr = Instr(l, code, I(r, rd, rs1, imm)) in
       Seq(instr, end_line l lexbuf)
     }
-  | inst_j as id
+  | (inst_j as id) space (ident as sd) spacec (imm as simm)
     {
       let open Hashtbl in
       let r   = find j_inst id   in
-      let rd,  sd   = parse_reg l lexbuf in
-      let imm, simm = parse_imm l lexbuf in
+      let rd  = find regs sd     in
+      let imm = simm_to_imm simm in
+
       let code  = id ^ " " ^ sd ^ ", " ^ simm in
       let instr = Instr(l, code, J(r, rd, imm)) in
       Seq(instr, end_line l lexbuf)
     }
-  | inst_r as id
+  | (inst_r as id) space (ident as sd) spacec (ident as s1) spacec (ident as s2)
     {
       let open Hashtbl in
-      let r   = find r_inst id   in
-      let rd,  sd = parse_reg l lexbuf in
-      let rs1, s1 = parse_reg l lexbuf in
-      let rs2, s2 = parse_reg l lexbuf in
+      let r   = find r_inst id in
+      let rd  = find regs sd   in
+      let rs1 = find regs s1   in
+      let rs2 = find regs s2   in
+
       let code  = id ^ " " ^ sd ^ ", " ^ s1 ^ ", " ^ s2 in
       let instr = Instr(l, code, R(r, rd, rs1, rs2)) in
       Seq(instr, prog l lexbuf)
     }
-  | inst_s as id
+  | (inst_s as id) space (ident as s2) spacec (imm as simm) spacec
+  '(' (ident as s1) ')'
     {
       let open Hashtbl in
       let r   = find s_inst id   in
-      let rs2, s2   = parse_reg l lexbuf in
-      let imm, simm = parse_imm l lexbuf in
-      let rs1, s1   = parse_reg_memory l lexbuf in
+      let rs2 = find regs s2     in
+      let imm = simm_to_imm simm in
+      let rs1 = find regs s1     in
       let code  = id ^ " " ^ s2 ^ ", " ^ simm ^ "(" ^ s1 ^ ")" in
       let instr = Instr(l, code, S(r, rs2, rs1, imm)) in
       Seq(instr, end_line l lexbuf)
     }
-  | inst_u as id
+  | (inst_u as id) space (ident as sd) spacec (imm as simm)
     {
       let open Hashtbl in
       let r   = find u_inst id   in
-      let rd,  sd   = parse_reg l lexbuf in
-      let imm, simm = parse_imm l lexbuf in
+      let rd  = find regs sd     in
+      let imm = simm_to_imm simm in
       let code  = id ^ " " ^ sd ^ ", " ^ simm in
       let instr = Instr(l, code, U(r, rd, imm)) in
       Seq(instr, end_line l lexbuf)
     }
   | "nop"
     {
-      Seq(Pseudo(l,"nop", NOP), end_line l lexbuf)
+      Seq(Pseudo(l, "nop", NOP), end_line l lexbuf)
     }
   | _ as c
     { raise (Lexing_error (l, Inst, String.make 1 c)) }
 
-and parse_reg l = parse
-  | space | ','
-    { parse_reg l lexbuf }
-  | ident as id
-    {
-      try Hashtbl.find regs id, id
-      with Not_found -> raise (Lexing_error (l, Register, id))
-    }
-  | _ as c
-    { raise (Lexing_error (l, Register, String.make 1 c)) }
-
-and parse_reg_memory l = parse
-  | space | ','
-    { parse_reg l lexbuf }
-  | '(' (ident as id) ')'
-    {
-      try Hashtbl.find regs id, id
-      with Not_found -> raise (Lexing_error (l, Register, id))
-    }
-  | _ as c
-    { raise (Lexing_error (l, Register, String.make 1 c)) }
-
-
-and parse_imm l = parse
-  | space | ','
-    { parse_imm l lexbuf }
-  | integer as i
-    { Imm(Int32.of_string i), i }
-  | label as lbl
-    { Label(lbl), lbl }
-  | _ as c
-    { raise (Lexing_error (l, Imm, String.make 1 c)) }
-
 and end_line l = parse
   | space { end_line l lexbuf }
   | '\n'  { prog (l+1) lexbuf }
-  | '#'   {  comment l lexbuf }
+  | '#'   { comment l lexbuf }
 
 and comment l = parse
   | '\n' { prog (l+1) lexbuf }

@@ -1,3 +1,9 @@
+let int32_to_int i =
+  match Int32.unsigned_to_int i with
+  | Some i -> i
+  | None -> failwith {|int32 cannot be converted to int,
+                       so it's time to move to a 64-bit machine" |}
+
 let sign_extended i size =
   Int32.shift_right
     (Int32.shift_left i (32 - size)) (32 - size)

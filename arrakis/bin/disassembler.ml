@@ -57,17 +57,27 @@ let print_code _arch code =
       (Hashtbl.find r_to_string (inst.funct3, inst.funct7))
       (reg_to_str inst.rd) (reg_to_str inst.rs1) (reg_to_str inst.rs2)
   (* I type *)
-  | 0b0010011l | 0b0000011l | 0b1100111l | 0b1110011l ->
+  | 0b0010011l | 0b1100111l | 0b1110011l ->
     let inst = Instructions.I_type.decode code in
     Printf.sprintf "%s %s, %s, %d"
       (Hashtbl.find i_to_string (opcode, inst.funct3))
-      (reg_to_str inst.rd) (reg_to_str inst.rs1) (Int32.to_int inst.imm)
+      (reg_to_str inst.rd) (reg_to_str inst.rs1)
+      (Int32.to_int (Simulator.Utils.sign_extended inst.imm 12))
+  | 0b0000011l ->
+    let inst = Instructions.I_type.decode code in
+    Printf.sprintf "%s %s, %d(%s)"
+      (Hashtbl.find i_to_string (opcode, inst.funct3))
+      (reg_to_str inst.rd)
+      (Int32.to_int (Simulator.Utils.sign_extended inst.imm 12))
+      (reg_to_str inst.rs1)
   (* S type *)
   | 0b0100011l ->
     let inst = Instructions.S_type.decode code in
     Printf.sprintf "%s %s, %d(%s)"
       (Hashtbl.find s_to_string inst.funct3)
-      (reg_to_str inst.rs2) (Int32.to_int inst.imm) (reg_to_str inst.rs1)
+      (reg_to_str inst.rs2) 
+      (Int32.to_int (Simulator.Utils.sign_extended inst.imm 12))
+      (reg_to_str inst.rs1)
   (* B type *)
   | 0b1100011l  ->
     let inst = Instructions.B_type.decode code in

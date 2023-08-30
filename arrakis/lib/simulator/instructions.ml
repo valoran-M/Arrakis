@@ -177,9 +177,9 @@ module S_type = struct
       funct3 = (code && func3_mask) >> 12;
       rs1 = (code && rs1_mask) >> 15;
       rs2 = (code && rs2_mask) >> 20;
-      imm = Int32.logor
+      imm = Utils.sign_extended (Int32.logor
               (Int32.shift_right_logical (Int32.logand code func7_mask) 20)
-              (Int32.shift_right_logical (Int32.logand code rd_mask) 7);
+              (Int32.shift_right_logical (Int32.logand code rd_mask) 7)) 12;
     }
 
   let execute instruction rs1 rs2 memory =

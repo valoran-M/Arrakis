@@ -18,8 +18,8 @@ let print_prog (arch : Arch.t) debug =
     then (print_endline "   End without syscall"; raise Break)
     else let _, orignal_code = Hashtbl.find debug addr in
          Printf.printf "%s 0x%08x\t\t0x%08x\t\t%-24s%s\n"
-          (if i = 0 then "->" else "  ") (Int32.to_int addr)
-          (Int32.to_int code) (print_code arch code) orignal_code
+          (if i = 0 then "->" else "  ") (Utils.int32_to_int addr)
+          (Utils.int32_to_int  code) (print_code arch code) orignal_code
   done
   with _ -> ()
 

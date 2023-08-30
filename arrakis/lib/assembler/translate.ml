@@ -168,7 +168,7 @@ let rec loop prog mem addr =
 let translate code =
   let mem = Memory.make () in
   let prog = prog 0 code in
-  get_label_address prog Segment.text_begin;
-  let addr = loop prog mem Segment.text_begin in
+  get_label_address prog Simulator.Segment.text_begin;
+  let addr = loop prog mem Simulator.Segment.text_begin in
   (mem, addr, label_address, debug)
 

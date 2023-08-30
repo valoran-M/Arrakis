@@ -1,5 +1,4 @@
 open Program
-open Simulator
 
 let s_instructions = Hashtbl.create 3
 
@@ -21,10 +20,10 @@ let str_table =
 let write_in_memory mem addr instruction rs2 rs1 imm =
   let (<<) = Int32.shift_left in
   let (||) = Int32.logor  in
-  let (&&) = Int32.logand in
   let (opcode, funct3, _) = Hashtbl.find s_instructions instruction in
-  let code = ((imm && 0b1111111_00000l) << 25) ||
-             (rs2 << 20) || (rs1 << 15) || (funct3 << 12) ||
-             ((imm && 0b11111l) << 7) || opcode in
-  Memory.set_int32 mem addr code
+  let imm11_5 = Utils.get_interval imm 11 5 in
+  let imm4_0  = Utils.get_interval imm  4 0 in
+  let code = (imm11_5 << 25) || (rs2 << 20)   || (rs1 << 15)
+          || (funct3 << 12)  || (imm4_0 << 7) || opcode in
+  Simulator.Memory.set_int32 mem addr code
 

@@ -32,13 +32,10 @@
 
 let decimal_literal =
   ['0'-'9'] ['0'-'9' '_']*
-
 let hex_literal =
   '0' ['x' 'X'] ['0'-'9' 'A'-'F' 'a'-'f']['0'-'9' 'A'-'F' 'a'-'f' '_']*
-
 let oct_literal =
   '0' ['o' 'O'] ['0'-'7'] ['0'-'7' '_']*
-
 let bin_literal =
   '0' ['b' 'B'] ['0'-'1'] ['0'-'1' '_']*
 
@@ -54,9 +51,10 @@ let label = '.'? (ident | '_')*
 
 let inst_b = "beq"  | "bne" | "blt" | "bge" | "bltu" | "bgeu"
 
-let inst_i = "addi" | "xori" | "ori" | "andi" | "slli" | "srli" | "sari"
-           | "slti" | "slti" | "lb"   | "lh"  | "lw"   | "lbu"  | "lhu"
-           | "jalr" | "ecal" | "ebreak"
+let inst_i = "addi" | "xori" | "ori"  | "andi" | "slli" | "srli"
+           | "sari" | "slti" | "slti" | "jalr" | "ecal" | "ebreak"
+
+let inst_i_load = "lb" | "lh"  | "lw" | "lbu"  | "lhu"
 
 let inst_j = "jal"
 
@@ -99,6 +97,17 @@ rule prog l = parse
       let instr = Instr(l, code, I(r, rd, rs1, imm)) in
       Seq(instr, end_line l lexbuf)
     }
+  | inst_i_load as id
+    {
+      let open Hashtbl in
+      let r   = find i_inst id   in
+      let rd,  sd   = parse_reg l lexbuf in
+      let imm, simm = parse_imm l lexbuf in
+      let rs1, s1   = parse_reg_memory l lexbuf in
+      let code  = id ^ " " ^ sd ^ ", " ^ simm ^ "(" ^ s1 ^ ")" in
+      let instr = Instr(l, code, I(r, rd, rs1, imm)) in
+      Seq(instr, end_line l lexbuf)
+    }
   | inst_j as id
     {
       let open Hashtbl in
@@ -125,8 +134,8 @@ rule prog l = parse
       let open Hashtbl in
       let r   = find s_inst id   in
       let rs2, s2   = parse_reg l lexbuf in
-      let rs1, s1   = parse_reg l lexbuf in
       let imm, simm = parse_imm l lexbuf in
+      let rs1, s1   = parse_reg_memory l lexbuf in
       let code  = id ^ " " ^ s2 ^ ", " ^ simm ^ "(" ^ s1 ^ ")" in
       let instr = Instr(l, code, S(r, rs2, rs1, imm)) in
       Seq(instr, end_line l lexbuf)
@@ -154,6 +163,18 @@ and parse_reg l = parse
     }
   | _ as c
     { raise (Lexing_error (l, Register, String.make 1 c)) }
+
+and parse_reg_memory l = parse
+  | ' ' | '\t' | ','
+    { parse_reg l lexbuf }
+  | '(' (ident as id) ')'
+    {
+      try Hashtbl.find regs id, id
+      with Not_found -> raise (Lexing_error (l, Register, id))
+    }
+  | _ as c
+    { raise (Lexing_error (l, Register, String.make 1 c)) }
+
 
 and parse_imm l = parse
   | ' ' | '\t' | ','

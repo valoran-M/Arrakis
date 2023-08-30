@@ -21,9 +21,15 @@ end = struct
     then regs.(x_reg - 1) <- value
 end
 
+(* Memory Segment *)
+
 type t = { mutable pc : int32; regs: Regs.t }
 
-let make addr_start : t = { pc = addr_start; regs = Regs.make () }
+let make addr_start : t =
+  let cpu = { pc = addr_start; regs = Regs.make () } in
+  Regs.set cpu.regs 2 Segment.stack_begin;
+  Regs.set cpu.regs 3 Segment.stack_begin;
+  cpu
 
 (* ------------------------- get and set registers -------------------------- *)
 

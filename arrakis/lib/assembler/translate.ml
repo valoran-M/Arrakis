@@ -1,6 +1,5 @@
 open Error
 open Simulator
-open Lexer
 open Program
 
 let (+) = Int32.add
@@ -19,7 +18,7 @@ let label_address = Hashtbl.create 16
 
 let debug = Hashtbl.create 1024
 
-let pseuodo_length (pseudo : pseudo_instruction) =
+let pseudo_length (pseudo : pseudo_instruction) =
   match pseudo with
   | NOP       -> 0x4l
   | LA (_, _) -> 0x8l
@@ -42,11 +41,11 @@ let pseuodo_length (pseudo : pseudo_instruction) =
 
 let rec get_label_address prog addr =
   match prog with
-  | Nil -> ()
-  | Seq (Pseudo (_, _, instruction), l) ->
-    get_label_address l (addr + (pseuodo_length instruction))
-  | Seq (Instr (_, _, _), l) -> get_label_address l (addr + 0x4l)
-  | Seq (Label label, l)  ->
+  | [] -> ()
+  | Pseudo (_, _, instruction) :: l ->
+    get_label_address l (addr + (pseudo_length instruction))
+  | Instr (_, _, _) :: l -> get_label_address l (addr + 0x4l)
+  | Label label :: l  ->
     Hashtbl.add label_address label addr;
     get_label_address l (addr + 0x4l)
 
@@ -154,20 +153,20 @@ let translate_pseudo pseudo mem addr line string =
 
 let rec loop prog mem addr =
   match prog with
-  | Nil -> Memory.set_int32 mem addr 0l; addr
-  | Seq (Pseudo (l, s, inst), next) ->
+  | [] -> Memory.set_int32 mem addr 0l; addr
+  | Pseudo (l, s, inst) :: next ->
     Hashtbl.add debug addr (l, s);
     let length = translate_pseudo inst mem addr l s in
     loop next mem (addr + length)
-  | Seq (Instr (l, s, inst), next) ->
+  | Instr (l, s, inst) :: next ->
     Hashtbl.add debug addr (l, s);
     translate inst mem addr l;
     loop next mem (addr + 4l)
-  | Seq (Label _, l) -> loop l mem addr
+  | Label _ ::  l -> loop l mem addr
 
 let translate code =
   let mem = Memory.make () in
-  let prog = prog 0 code in
+  let prog = Parser.program Lexer.token code in
   get_label_address prog Simulator.Segment.text_begin;
   let addr = loop prog mem Simulator.Segment.text_begin in
   (mem, addr, label_address, debug)

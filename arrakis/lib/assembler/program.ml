@@ -93,6 +93,4 @@ type program_line =
   | Instr  of int *       string        * instruction
   | Label  of string
 
-type program =
-  | Seq   of program_line * program
-  | Nil
+type program = program_line list

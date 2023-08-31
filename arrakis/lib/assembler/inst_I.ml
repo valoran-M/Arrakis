@@ -1,3 +1,4 @@
+open Error
 open Simulator
 open Program
 
@@ -32,11 +33,16 @@ let str_table =
   iter (fun v (_,_,k) -> add i k v) i_instructions;
   i
 
-let write_in_memory mem addr instruction rd rs1 imm =
-  let (<<) = Int32.shift_left in
-  let (||) = Int32.logor in
-  let (opcode, funct3, _) = Hashtbl.find i_instructions instruction in
-  let code = (imm << 20) || (rs1 << 15) || (funct3 << 12) ||
-             (rd << 7) || opcode in
-  Memory.set_int32 mem addr code
+
+let write_in_memory mem addr instruction rd rs1 imm line =
+  let (<) x y = Int32.compare x y <  0 in
+  if imm < -2048l || 2027l < imm
+  then raise (Assembler_error (line, Interval_imm (imm, -2048l, 2027l)))
+  else
+    (let (<<) = Int32.shift_left in
+    let (||) = Int32.logor in
+    let (opcode, funct3, _) = Hashtbl.find i_instructions instruction in
+    let code = (imm << 20) || (rs1 << 15) || (funct3 << 12) ||
+               (rd << 7) || opcode in
+    Memory.set_int32 mem addr code)
 

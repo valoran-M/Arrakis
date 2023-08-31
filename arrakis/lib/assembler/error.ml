@@ -2,6 +2,8 @@ type lexing_error = Register | Imm | Inst
 
 exception Lexing_error of int * lexing_error * string
 
-type translate_error = Label_not_exists of string
+type assembler_error =
+  | Label_not_exists of string
+  | Interval_imm of int32 * int32 * int32
 
-exception Translate_error of int * translate_error
+exception Assembler_error of int * assembler_error

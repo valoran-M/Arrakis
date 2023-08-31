@@ -35,8 +35,8 @@ instruction:
 | inst=INST_I rd=REG COMMA? rs1=REG COMMA? simm=imm
   { let inst, line, id = inst in
     let (rd,   rds) = rd in
-    let (rs1,  s1) = rs1 in
-    let (simm, s) = simm in
+    let (rs1,  s1 ) = rs1 in
+    let (simm, s  ) = simm in
     (I(inst,rd,rs1,simm), line, id ^ " " ^ rds ^ ", " ^ s1 ^ ", " ^ s) }
 | inst=INST_S rs2=REG COMMA? simm=imm LPAR rs1=REG RPAR
   { let inst, line, id = inst in

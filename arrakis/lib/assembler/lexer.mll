@@ -2,6 +2,8 @@
   open Error
   open Parser
 
+  let line = ref 0
+
   let r_inst = Inst_R.str_table
   let i_inst = Inst_I.str_table
   let s_inst = Inst_S.str_table
@@ -67,40 +69,29 @@ let inst_u = "lui" | "auipc"
 let imm = integer | label
 
 rule token = parse
-  | '\n'
-    { END_LINE }
-  | ','
-    { COMMA }
-  | ':'
-    { COLON }
-  | '#'
-    { comment lexbuf }
-  | space
-    { token lexbuf }
-  | eof
-    { EOF }
-  | integer as i
-    { INT(Int32.of_string i) }
-  | inst_b as id
-    { INST_B (Hashtbl.find b_inst id) }
-  | inst_i as id
-    { INST_I (Hashtbl.find i_inst id) }
-  | inst_j as id
-    { INST_J (Hashtbl.find j_inst id) }
-  | inst_r as id
-    { INST_R (Hashtbl.find r_inst id) }
-  | inst_s as id
-    { INST_S (Hashtbl.find s_inst id) }
-  | inst_u as id
-    { INST_U (Hashtbl.find u_inst id) }
+  | '\n'{ incr line; END_LINE }
+  | ',' { COMMA }
+  | ':' { COLON }
+  | '#' { comment lexbuf }
+  | '(' { LPAR }
+  | ')' { RPAR }
+  | space { token lexbuf }
+  | eof   { EOF }
+  | integer as i { INT(Int32.of_string i, i) }
+  | inst_b as id { INST_B (Hashtbl.find b_inst id, !line, id) }
+  | inst_i as id { INST_I (Hashtbl.find i_inst id, !line, id) }
+  | inst_j as id { INST_J (Hashtbl.find j_inst id, !line, id) }
+  | inst_r as id { INST_R (Hashtbl.find r_inst id, !line, id) }
+  | inst_s as id { INST_S (Hashtbl.find s_inst id, !line, id) }
+  | inst_u as id { INST_U (Hashtbl.find u_inst id, !line, id) }
   | label as id
     {
-      try REG(Hashtbl.find regs id)
+      try REG(Hashtbl.find regs id, id)
       with Not_found -> IDENT (id)
     }
   | _ as c
     { raise (Lexing_error (0, Inst, String.make 1 c)) }
 
 and comment = parse
-| '\n' { END_LINE }
+| '\n' { incr line; END_LINE }
 | _    { comment lexbuf }

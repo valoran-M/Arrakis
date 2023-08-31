@@ -47,6 +47,6 @@ program_line:
 ;
 
 program:
-| program_line*
+| program_line* EOF
   { $1 }
 ;

@@ -79,11 +79,6 @@ rule token = parse
     { token lexbuf }
   | eof
     { EOF }
-  | label as id
-    {
-      try REG(Hashtbl.find regs id)
-      with Not_found -> IDENT (id)
-    }
   | integer as i
     { INT(Int32.of_string i) }
   | inst_b as id
@@ -98,6 +93,11 @@ rule token = parse
     { INST_S (Hashtbl.find s_inst id) }
   | inst_u as id
     { INST_U (Hashtbl.find u_inst id) }
+  | label as id
+    {
+      try REG(Hashtbl.find regs id)
+      with Not_found -> IDENT (id)
+    }
   | _ as c
     { raise (Lexing_error (0, Inst, String.make 1 c)) }
 

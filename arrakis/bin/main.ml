@@ -12,8 +12,5 @@ let () =
   in
   let arch = Arch.init (Simulator.Segment.text_begin) mem in
   if !unix_socket
-  then (
-    let server = Server.start_server !unix_file in
-    Server.loop server;
-    Server.close_server server
-  ) else Shell.shell arch label debug
+  then Server.start_server !unix_file
+  else Shell.shell arch label debug

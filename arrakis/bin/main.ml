@@ -16,18 +16,18 @@ let () =
     in
     let arch = Arch.init (Simulator.Segment.text_begin) mem in
     if unix_socket
-    then Server.start_server unix_file
+    then Server.start_server unix_file arch label debug
     else Shell.shell arch label debug
   with
   | Lexing_error (ln, s) ->
-      eprintf "%sLexical error on line %d: %s\n" c_red ln s;
+      eprintf "%sLexical error on line %s%d%s: %s\n" fg_red fg_yellow ln fg_red s;
       exit 1
   | Assembler.Parser.Error  ->
-      eprintf "%sSyntax error!\n" c_red;
+      eprintf "%sSyntax error!\n" fg_red;
       exit 2
   | Assembler_error (ln, Unknown_Label ul) ->
-      eprintf "%sUnknown label on line %d: %s" c_red ln ul;
+      eprintf "%sUnknown label on line %s%d%s: %s" fg_red fg_yellow ln fg_red ul;
       exit 3
   | Assembler_error (ln, Interval_imm _) ->
-      eprintf "%sError on line %d" c_red ln;
+      eprintf "%sError on line %s%d" fg_red fg_yellow ln;
       exit 4

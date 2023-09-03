@@ -1,8 +1,8 @@
 let int32_to_int i =
   match Int32.unsigned_to_int i with
   | Some i -> i
-  | None -> failwith {|int32 cannot be converted to int,
-                       so it's time to move to a 64-bit machine" |}
+  | None -> failwith {|int32 cannot be converted to int.
+                       Time to move to a 64-bit machine!" |}
 
 let sign_extended i size =
   Int32.shift_right

@@ -1,12 +1,12 @@
 type t =
-  | Invalid_opcode of int32
-  | Invalid_R of int * int
-  | Invalid_I of int * int32 * int32
+  | Invalid_opcode  of int32
+  | Invalid_R       of int * int
+  | Invalid_I       of int * int32 * int32
   | Invalid_I_arith of int * int32
-  | Invalid_I_load of int
-  | Invalid_S of int
-  | Invalid_B of int
-  | Invalid_U of int32
+  | Invalid_I_load  of int
+  | Invalid_S       of int
+  | Invalid_B       of int
+  | Invalid_U       of int32
 
 exception Simulator_error of t
 

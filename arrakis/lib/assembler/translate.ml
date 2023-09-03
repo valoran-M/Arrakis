@@ -12,7 +12,7 @@ let (>>) = Int32.shift_right_logical
 let (<=) x y = Int32.compare x y <=  0
 let (>=) x y = Int32.compare x y >=  0
 
-(* ----------------------------- get addresse  -----------------------------  *)
+(* ----------------------------- Get address  ------------------------------  *)
 
 let label_address = Hashtbl.create 16
 
@@ -49,13 +49,13 @@ let rec get_label_address prog addr =
     Hashtbl.add label_address label addr;
     get_label_address l (addr + 0x4l)
 
-(* ------------------------------- translate -------------------------------  *)
+(* ----------------------------- Translation -------------------------------  *)
 
 let imm_to_int32 line addr = function
   | Imm imm     -> imm
   | Label label ->
     try Hashtbl.find label_address label - addr with
-    | Not_found -> raise (Assembler_error (line, Label_not_exists label))
+    | Not_found -> raise (Assembler_error (line, Unknown_Label label))
 
 let hi_lo imm addr line =
   let imm = imm_to_int32 line addr imm in

@@ -74,11 +74,11 @@ rule token = parse
   | '\n'{ incr line; END_LINE }
   | ',' { COMMA }
   | ':' { COLON }
-  | '#' { comment lexbuf }
   | '(' { LPAR }
   | ')' { RPAR }
-  | space { token lexbuf }
   | eof   { EOF }
+  | space { token lexbuf }
+  | '#' { comment lexbuf }
   | integer as i { INT(Int32.of_string i, i) }
   | inst_b as id { INST_B (Hashtbl.find b_inst id, !line, id) }
   | inst_i as id { INST_I (Hashtbl.find i_inst id, !line, id) }
@@ -92,7 +92,7 @@ rule token = parse
       with Not_found -> IDENT (id)
     }
   | _ as c
-    { raise (Lexing_error (0, Inst, String.make 1 c)) }
+    { raise (Lexing_error (!line, String.make 1 c)) }
 
 and comment = parse
 | '\n' { incr line; END_LINE }

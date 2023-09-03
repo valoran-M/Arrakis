@@ -31,7 +31,7 @@ let make addr_start : t =
   Regs.set cpu.regs 3 Segment.static_being;
   cpu
 
-(* ------------------------- get and set registers -------------------------- *)
+(* -------------------------- get and set registers ------------------------- *)
 
 let get_pc  cpu     = cpu.pc
 let set_pc  cpu pc  = cpu.pc <- pc
@@ -41,7 +41,7 @@ let add_pc  cpu imm = cpu.pc <- Int32.add cpu.pc imm
 let get_reg cpu reg       = Regs.get cpu.regs reg
 let set_reg cpu reg value = Regs.set cpu.regs reg value
 
-(* -------------------------  execute instruction  -------------------------- *)
+(* --------------------------  execute instruction  ------------------------- *)
 
 let opcode_mask = 0b1111111l
 
@@ -49,7 +49,7 @@ let exec (instruction : Int32.t) cpu memory =
   let open Instructions in
   let opcode = Int32.logand opcode_mask instruction in
   match opcode with
-(* R type *)
+  (* R type *)
   | 0b0110011l ->
     let decode = R_type.decode instruction in
     let rs1 = Regs.get cpu.regs decode.rs1 in
@@ -57,7 +57,7 @@ let exec (instruction : Int32.t) cpu memory =
     let return = R_type.execute decode rs1 rs2 in
     Regs.set cpu.regs decode.rd return;
     next_pc cpu
-(* I type *)
+  (* I type *)
   | 0b0010011l ->
     let decode = I_type.decode instruction in
     let rs1 = Regs.get cpu.regs decode.rs1 in
@@ -79,21 +79,21 @@ let exec (instruction : Int32.t) cpu memory =
         set_pc cpu (Int32.add rs1 decode.imm)
      | _ -> Error.i_invalid decode.funct3 opcode decode.imm)
   | 0b1110011l -> Printf.printf "opcode I"
-(* S type *)
+  (* S type *)
   | 0b0100011l ->
     let decode = S_type.decode instruction in
     let rs1 = Regs.get cpu.regs decode.rs1 in
     let rs2 = Regs.get cpu.regs decode.rs2 in
     S_type.execute decode rs1 rs2 memory;
     next_pc cpu
-(* B type *)
+  (* B type *)
   | 0b1100011l ->
     let decode = B_type.decode instruction in
     let rs1 = Regs.get cpu.regs decode.rs1 in
     let rs2 = Regs.get cpu.regs decode.rs2 in
     let imm = B_type.execute decode rs1 rs2 in
     add_pc cpu imm
-(* U type *)
+  (* U type *)
   | 0b0110111l ->
     let decode = U_type.decode instruction in
     set_reg cpu decode.rd decode.imm_shift;
@@ -102,7 +102,7 @@ let exec (instruction : Int32.t) cpu memory =
     let decode = U_type.decode instruction in
     set_reg cpu decode.rd (Int32.add (get_pc cpu) decode.imm_shift);
     next_pc cpu
-(* J Type *)
+  (* J Type *)
   | 0b1101111l ->                                    (* JAL *)
     let decode = J_type.decode instruction in
     set_reg cpu decode.rd (Int32.add (get_pc cpu) 4l);

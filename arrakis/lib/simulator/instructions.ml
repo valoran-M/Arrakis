@@ -22,7 +22,7 @@ let imm20_mask  = Int32.of_int 0b11111111111111111111000000000000
 
 (* ----------------------------- Int 32 operator ---------------------------- *)
 
-(* arithmetic base *)
+(* Basic arithmetic *)
 let (-)   = Int32.sub
 let (+)   = Int32.add
 let (^)   = Int32.logxor
@@ -34,7 +34,7 @@ let (/.)  = Int32.unsigned_div
 let (%)   = Int32.rem
 let (%.)  = Int32.unsigned_rem
 
-(* mul *)
+(* Multiplication *)
 
 let high x = Int64.to_int32 (Int64.shift_right_logical x 32)
 

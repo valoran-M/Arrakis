@@ -33,7 +33,6 @@ let str_table =
   iter (fun v (_,_,k) -> add i k v) i_instructions;
   i
 
-
 let write_in_memory mem addr instruction rd rs1 imm line =
   let (<) x y = Int32.compare x y <  0 in
   if imm < -2048l || 2027l < imm

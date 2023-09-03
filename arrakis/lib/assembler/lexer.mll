@@ -30,6 +30,7 @@
     done
 }
 
+(* Numbers ------------------------------------------------------------------ *)
 let decimal_literal =
   ['0'-'9'] ['0'-'9' '_']*
 let hex_literal =
@@ -38,16 +39,19 @@ let oct_literal =
   '0' ['o' 'O'] ['0'-'7'] ['0'-'7' '_']*
 let bin_literal =
   '0' ['b' 'B'] ['0'-'1'] ['0'-'1' '_']*
-let space = [' ' '\t']*
 
 let int_literal = decimal_literal | hex_literal | oct_literal | bin_literal
-
 let integer = ('-')? int_literal+
 
+(* Alphanumerics ------------------------------------------------------------ *)
+
+let space = [' ' '\t']*
 let digit = ['0'-'9']*
 let alpha = ['a'-'z' 'A'-'Z']
 let ident = alpha (alpha | digit)*
 let label = '.'? (ident | '_')*
+
+(* Instructions ------------------------------------------------------------- *)
 
 let inst_b = "beq"  | "bne" | "blt" | "bge" | "bltu" | "bgeu"
 
@@ -65,8 +69,6 @@ let inst_r = "add"  | "sub"  | "xor"  | "or"  | "and"  | "sll"    | "srl"
 let inst_s = "sb" | "sh" | "sw"
 
 let inst_u = "lui" | "auipc"
-
-let imm = integer | label
 
 rule token = parse
   | '\n'{ incr line; END_LINE }

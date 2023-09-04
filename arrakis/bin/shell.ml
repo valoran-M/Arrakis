@@ -43,7 +43,7 @@ let set_breakpoint args label =
   with _ -> ()
 
 let print_help () =
-  print_string {|
+  Printf.printf {|
 Commands :
 
 (r)un -> run code
@@ -55,7 +55,7 @@ Commands :
 
 (h)elp -> show this help
 (q)uit
-|}
+%!|}
 
 exception Shell_exit
 

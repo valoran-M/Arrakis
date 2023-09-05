@@ -16,7 +16,8 @@ let (>=) x y = Int32.compare x y >=  0
 
 let label_address = Hashtbl.create 16
 
-let debug = Hashtbl.create 1024
+let addr_debug = Hashtbl.create 1024
+let line_debug = Hashtbl.create 1024
 
 let pseudo_length (pseudo : pseudo_instruction) =
   match pseudo with
@@ -102,19 +103,19 @@ let translate_reg_offset (pseudo : reg_offset) rs offset mem addr =
   4l
 
 let translate_pseudo pseudo mem addr line string =
-  Hashtbl.add debug addr (line, string);
+  Hashtbl.add addr_debug addr (line, string);
   match pseudo with
   | NOP       -> Inst_I.write_in_memory mem addr ADDI 0l 0l 0l line; 4l
   | LI (rd, imm) ->
     let (hi, lo) = hi_lo imm addr line in
     if hi = 0l
     then (Inst_I.write_in_memory mem addr ADDI rd 0l lo line; 4l)
-    else (Hashtbl.add debug (addr + 4l) (line, string);
+    else (Hashtbl.add addr_debug (addr + 4l) (line, string);
           Inst_U.write_in_memory mem addr        LUI  rd    hi;
           Inst_I.write_in_memory mem (addr + 4l) ADDI rd rd lo line; 8l)
   | LA (rd, symbol) ->
     let (hi, lo) = hi_lo symbol addr line in
-    Hashtbl.add debug (addr + 4l) (line, string);
+    Hashtbl.add addr_debug (addr + 4l) (line, string);
     Inst_U.write_in_memory mem addr        AUIPC rd    hi;
     Inst_I.write_in_memory mem (addr + 4l) ADDI  rd rd lo line; 8l
   | J offset  ->
@@ -128,22 +129,22 @@ let translate_pseudo pseudo mem addr line string =
   | RET       -> Inst_I.write_in_memory mem addr JALR 0l 1l 0l line; 4l
   | CALL offset ->
     let (hi, lo) = hi_lo offset addr line in
-    Hashtbl.add debug (addr + 4l) (line, string);
+    Hashtbl.add addr_debug (addr + 4l) (line, string);
     Inst_U.write_in_memory mem addr        AUIPC 1l    hi;
     Inst_I.write_in_memory mem (addr + 4l) JALR  1l 1l lo line; 8l
   | TAIL offset ->
     let (hi, lo) = hi_lo offset addr line in
-    Hashtbl.add debug (addr + 4l) (line, string);
+    Hashtbl.add addr_debug (addr + 4l) (line, string);
     Inst_U.write_in_memory mem addr        AUIPC 6l    hi;
     Inst_I.write_in_memory mem (addr + 4l) JALR  0l 6l lo line; 8l
   | LGlob (rd, symbol, load) ->
     let (hi, lo) = hi_lo symbol addr line in
-    Hashtbl.add debug (addr + 4l) (line, string);
+    Hashtbl.add addr_debug (addr + 4l) (line, string);
     Inst_U.write_in_memory mem addr        AUIPC rd    hi;
     Inst_I.write_in_memory mem (addr + 4l) load  rd rd lo line; 8l
   | SGlob (rd, symbol, rt, store) ->
     let (hi, lo) = hi_lo symbol addr line in
-    Hashtbl.add debug (addr + 4l) (line, string);
+    Hashtbl.add addr_debug (addr + 4l) (line, string);
     Inst_U.write_in_memory mem addr        AUIPC rt    hi;
     Inst_I.write_in_memory mem (addr + 4l) store rd rt lo line; 8l
   | Two_Regs (inst, rd, rs) -> translate_two_reg inst rd rs mem addr line
@@ -155,11 +156,13 @@ let rec loop prog mem addr =
   match prog with
   | [] -> Memory.set_int32 mem addr 0l; addr
   | Pseudo (l, s, inst) :: next ->
-    Hashtbl.add debug addr (l, s);
+    Hashtbl.add line_debug l addr;
+    Hashtbl.add addr_debug addr (l, s);
     let length = translate_pseudo inst mem addr l s in
     loop next mem (addr + length)
   | Instr (l, s, inst) :: next ->
-    Hashtbl.add debug addr (l, s);
+    Hashtbl.add line_debug l addr;
+    Hashtbl.add addr_debug addr (l, s);
     translate inst mem addr l;
     loop next mem (addr + 4l)
   | Label _ ::  l -> loop l mem addr
@@ -169,5 +172,5 @@ let translate code =
   let prog = Parser.program Lexer.token code in
   get_label_address prog Simulator.Segment.text_begin;
   let addr = loop prog mem Simulator.Segment.text_begin in
-  (mem, addr, label_address, debug)
+  (mem, addr, label_address, addr_debug, line_debug)
 

@@ -13,13 +13,13 @@ let () =
   );
   try
     let channel = open_in input_file in
-    let mem, _, label, debug =
+    let mem, _, label, addr_debug, line_debug =
       Assembler.Translate.translate (Lexing.from_channel channel)
     in
     let arch = Arch.init (Simulator.Segment.text_begin) mem in
     if unix_socket
-    then Server.start_server unix_file arch label debug
-    else Shell.shell arch label debug
+    then Server.start_server unix_file arch label addr_debug line_debug
+    else Shell.shell arch label addr_debug line_debug
   with
   | Lexing_error (ln, s) ->
       eprintf "@{<fg_red>Lexical error on line %d: %s@}@." ln s;

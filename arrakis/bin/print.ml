@@ -6,12 +6,12 @@ exception Break
 let ( + ) = Int32.add
 let ( * ) = Int32.mul
 
-(* -------------------------------- Progamme -------------------------------- *)
+(* Progamme ----------------------------------------------------------------  *)
 
 let print_prog (arch : Arch.t) debug =
   let pc = Cpu.get_pc arch.cpu in
   try
-  print_string "   Adress\t\tMachine Code\t\tBasic Code\t\tOriginal Code\n%!";
+  Printf.printf "   Adress\t\tMachine Code\t\tBasic Code\t\tOriginal Code\n%!";
   for i=0 to code_print do
     let addr = (pc + Int32.of_int i * 0x4l) in
     let code = Memory.get_int32 arch.memory  addr in
@@ -25,7 +25,7 @@ let print_prog (arch : Arch.t) debug =
   done
   with _ -> ()
 
-(* --------------------------------- Memory --------------------------------- *)
+(* Memory ------------------------------------------------------------------- *)
 
 let start_default = Segment.static_being
 let size_default  = 0x10
@@ -58,7 +58,7 @@ let decode_memory_arguments (arch: Arch.t) args =
     print_memory arch (Int32.of_string start) (int_of_string size)
   | _ -> ()
 
-(* ---------------------------------- Regs ---------------------------------- *)
+(* Regs --------------------------------------------------------------------- *)
 
 let regs = [|
   "    zero"; " ra (x1)"; " sp (x2)"; " gp (x3)";
@@ -92,7 +92,7 @@ let decode_regs_arguments (arch: Arch.t) args =
   | _ -> print_list_regs arch args
 
 
-(* --------------------------------- Decode --------------------------------- *)
+(* Decode ------------------------------------------------------------------- *)
 
 let print_memory_help () =
   print_string {|

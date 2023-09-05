@@ -2,7 +2,7 @@ type imm =
   | Label of string
   | Imm   of int32
 
-(* ---------------------------- Real instructions --------------------------- *)
+(* Real instructions -------------------------------------------------------- *)
 
 type r_instruction =
   (* RV32I *)
@@ -45,7 +45,7 @@ type u_instruction =
 type j_instruction =
   | JAL
 
-(* --------------------------- Pseudo instructions -------------------------- *)
+(* Pseudo instructions ------------------------------------------------------ *)
 
 type two_reg =
   | MV   | NOT  | NEG
@@ -71,7 +71,7 @@ type pseudo_instruction =
   | Two_Regs    of two_reg    * int32 * int32
   | Regs_Offset of reg_offset * int32 * imm
 
-(* ------------------------------- Program ---------------------------------- *)
+(* Program ------------------------------------------------------------------ *)
 
 type instruction =
                       (* rd      rs1     rs2 *)

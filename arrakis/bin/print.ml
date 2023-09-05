@@ -6,7 +6,7 @@ exception Break
 let ( + ) = Int32.add
 let ( * ) = Int32.mul
 
-(* Progamme ----------------------------------------------------------------  *)
+(* Progam ------------------------------------------------------------------  *)
 
 let print_prog (arch : Arch.t) debug =
   let pc = Cpu.get_pc arch.cpu in

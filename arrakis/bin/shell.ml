@@ -25,7 +25,7 @@ let step chanel arch =
     program_run := false
   | Sys_call    -> failwith "TODO"
 
-(* breakpoints -------------------------------------------------------------- *)
+(* Breakpoints -------------------------------------------------------------- *)
 
 let help_breakpoint chanel =
   Printf.fprintf chanel {|
@@ -73,7 +73,7 @@ let set_breakpoint chanel args label line_debug =
   | "remove" :: _args -> failwith "TODO"
   | _ -> help_breakpoint chanel
 
-(* shell -------------------------------------------------------------------- *)
+(* Shell -------------------------------------------------------------------- *)
 
 let print_help chanel =
   Printf.fprintf chanel {|

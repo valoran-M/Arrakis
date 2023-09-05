@@ -5,7 +5,7 @@ exception Invalide_instruction
 let ( + ) = Int32.add
 let ( * ) = Int32.mul
 
-(* ------------------------------ Instructions ------------------------------ *)
+(* Instructions ------------------------------------------------------------- *)
 
 let reg_to_str reg = "x" ^ (Int.to_string reg)
 
@@ -75,7 +75,7 @@ let print_code _arch code =
     let inst = Instructions.S_type.decode code in
     Printf.sprintf "%s %s, %d(%s)"
       (Hashtbl.find s_to_string inst.funct3)
-      (reg_to_str inst.rs2) 
+      (reg_to_str inst.rs2)
       (Int32.to_int (Simulator.Utils.sign_extended inst.imm 12))
       (reg_to_str inst.rs1)
   (* B type *)

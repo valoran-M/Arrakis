@@ -23,6 +23,5 @@ let () =
 
 let unix_socket = !unix_socket
 let unix_file   = !unix_file
-
-let input_file = !input_file
-let no_color   = !no_color
+let input_file  = !input_file
+let no_color    = !no_color

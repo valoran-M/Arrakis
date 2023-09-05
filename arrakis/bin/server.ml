@@ -3,19 +3,19 @@ open Unix
 let max_read = 1024
 let buffer = Bytes.create 1024
 
-let rec loop arch label debug in_channel _out_channel =
+let rec loop arch label debug in_channel out_channel =
   match In_channel.input_line in_channel with
   | Some s ->
     (try
       let input = String.trim s in
       (match String.split_on_char ' ' input with
       | command :: args ->
-          Shell.parse_command arch command args label debug;
+          Shell.parse_command out_channel arch command args label debug;
       | [] -> ());
-      loop arch label debug in_channel _out_channel
+      loop arch label debug in_channel out_channel
     with Shell.Shell_exit -> ())
   | None -> 
-    loop arch label debug in_channel _out_channel
+    loop arch label debug in_channel out_channel
 
 let rec accept_non_intr s =
   try accept ~cloexec:true s

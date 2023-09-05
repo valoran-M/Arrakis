@@ -1,6 +1,6 @@
 # Arrakis
 
-<img src="./imgs/logo.png" alt="logo" style="text-align: center" width="100"/>
+<img src="./imgs/logo.png" alt="logo" style="text-align: center" width="200"/>
 
 [Arrakis](https://en.wikipedia.org/wiki/Arrakis) is a RISC-V simulator written
 in OCaml.

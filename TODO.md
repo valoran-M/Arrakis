@@ -2,15 +2,10 @@
 
 ## Simulateur
 
-- [x] CPU
-- [x] Mémoire
-- [x] Instruction
-- [x] Code machine
+- [ ] Test extension M
 
 ## Assembleur
 
-- [ ] Faire un assembleur string vers Code machine
+- [ ] Parser pseudo instruction
+- [ ] Meilleures erreurs
 
-## Communication
-
-- [ ] Trouver un bon moyen de communication

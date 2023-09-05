@@ -2,7 +2,9 @@ open Options
 open Simulator
 open Format
 open Assembler.Error
-open Color
+
+let () =
+  Color.setup ()
 
 let () =
   if input_file = "" then (
@@ -20,14 +22,14 @@ let () =
     else Shell.shell arch label debug
   with
   | Lexing_error (ln, s) ->
-      eprintf "%sLexical error on line %s%d%s: %s\n" fg_red fg_yellow ln fg_red s;
+      eprintf "@{<fg_red>Lexical error on line %d: %s@}@." ln s;
       exit 1
   | Assembler.Parser.Error  ->
-      eprintf "%sSyntax error!\n" fg_red;
+      eprintf "@{<fg_red>Syntax error!@}@.";
       exit 2
   | Assembler_error (ln, Unknown_Label ul) ->
-      eprintf "%sUnknown label on line %s%d%s: %s" fg_red fg_yellow ln fg_red ul;
+      eprintf "@{<fg_red>Unknown label on line %d: %s@}@." ln ul;
       exit 3
   | Assembler_error (ln, Interval_imm _) ->
-      eprintf "%sError on line %s%d" fg_red fg_yellow ln;
+      eprintf "@{<fg_red>Error on line %d@}@." ln;
       exit 4

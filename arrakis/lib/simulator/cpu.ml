@@ -31,7 +31,7 @@ let make addr_start : t =
   Regs.set cpu.regs 3 Segment.static_being;
   cpu
 
-(* -------------------------- get and set registers ------------------------- *)
+(* Get and set registers ---------------------------------------------------- *)
 
 let get_pc  cpu     = cpu.pc
 let set_pc  cpu pc  = cpu.pc <- pc
@@ -41,7 +41,7 @@ let add_pc  cpu imm = cpu.pc <- Int32.add cpu.pc imm
 let get_reg cpu reg       = Regs.get cpu.regs reg
 let set_reg cpu reg value = Regs.set cpu.regs reg value
 
-(* --------------------------  execute instruction  ------------------------- *)
+(* Execute instruction  ----------------------------------------------------- *)
 
 let opcode_mask = 0b1111111l
 

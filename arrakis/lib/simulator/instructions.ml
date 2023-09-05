@@ -1,4 +1,4 @@
-(* -------------------------- Instructions format --------------------------- *)
+(* Instructions format ------------------------------------------------------ *)
 
 (* Instruction format :
    31          25 24      20 19      15 14  12 11         7 6            0
@@ -20,7 +20,7 @@ let func7_mask  = Int32.of_int 0b11111110000000000000000000000000
 let imm12_mask  = Int32.of_int 0b11111111111100000000000000000000
 let imm20_mask  = Int32.of_int 0b11111111111111111111000000000000
 
-(* ----------------------------- Int 32 operator ---------------------------- *)
+(* Int 32 operator ---------------------------------------------------------- *)
 
 (* Basic arithmetic *)
 let (-)   = Int32.sub
@@ -60,7 +60,7 @@ let mulhsu x y =
   let y = u32_to_i64 y in
   high (mul x y)
 
-(* logical base *)
+(* Logical base *)
 
 let (<<)  x y = Int32.shift_left x (Int32.to_int y)
 let (>>)  x y = Int32.shift_right x (Int32.to_int y)
@@ -79,7 +79,7 @@ let (>)   x y = Int32.compare          x y >  0
 let (>=.) x y = Int32.unsigned_compare x y >= 0
 let (>=)  x y = Int32.compare          x y >= 0
 
-(* ----------------------------- R Instructions ----------------------------- *)
+(* R Instructions ----------------------------------------------------------- *)
 
 module R_type = struct
   type t = { funct7 : int; funct3: int; rs1: int; rs2: int; rd: int; }
@@ -122,7 +122,7 @@ module R_type = struct
       Error.r_invalid instruction.funct3 instruction.funct7
 end
 
-(* ----------------------------- I Instructions ----------------------------- *)
+(* I Instructions ----------------------------------------------------------- *)
 
 module I_type = struct
   type t = { funct3: int; rs1: int; imm: int32; rd: int }
@@ -165,7 +165,7 @@ module I_type = struct
     | _ -> Error.i_invalid_load instruction.funct3
 end
 
-(* ----------------------------- S Instructions ----------------------------- *)
+(* S Instructions ----------------------------------------------------------- *)
 
 module S_type = struct
   type t = { funct3: int; rs1: int; rs2: int; imm: int32; }
@@ -191,7 +191,7 @@ module S_type = struct
       | _ -> Error.s_invalid instruction.funct3
 end
 
-(* ----------------------------- B Instructions ----------------------------- *)
+(* B Instructions ----------------------------------------------------------- *)
 
 module B_type = struct
   type t = { funct3: int; rs1: int; rs2: int; imm: int32; }
@@ -228,7 +228,7 @@ module B_type = struct
     | _ -> Error.b_invalid instruction.funct3
 end
 
-(* ----------------------------- U Instructions ----------------------------- *)
+(* U Instructions ----------------------------------------------------------- *)
 
 module U_type = struct
   type t = { rd: int; imm_shift : int32; }
@@ -243,7 +243,7 @@ module U_type = struct
 
 end
 
-(* ----------------------------- J Instructions ----------------------------- *)
+(* J Instructions ----------------------------------------------------------- *)
 
 module J_type = struct
   type t = { rd: int; imm : int32; }

@@ -4,7 +4,9 @@ open Format
 open Assembler.Error
 
 let () =
-  Color.setup ()
+  if Options.no_color
+  then ()
+  else Color.setup ()
 
 let () =
   if input_file = "" then (

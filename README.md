@@ -1,9 +1,9 @@
 <div align="center">
+<h1>
+    Arrakis
     <br>
     <img src="./imgs/logo.png" width="200" />
     </br>
-<h1>
-    Arrakis
 </h1>
 </div>
 

@@ -32,7 +32,6 @@ let help_breakpoint chanel =
 Breakpoint help :
 
 (b)reakpoint (l)ine l1 [l2 ...] -> Set breakpoints on line l1 ...
-
 (b)reakpoint (a)ddr a1 [a2 ...] -> Set breakpoints on addresses a1 ...
 %!|}
 
@@ -69,8 +68,8 @@ let addr_breakpoint chanel args label =
 
 let set_breakpoint chanel args label line_debug =
   match args with
-  | "line" :: args -> line_breakpoint chanel args line_debug
-  | "addr" :: args -> addr_breakpoint chanel args label
+  | "line" :: args | "l" :: args -> line_breakpoint chanel args line_debug
+  | "addr" :: args | "a" :: args -> addr_breakpoint chanel args label
   | "remove" :: _args -> failwith "TODO"
   | _ -> help_breakpoint chanel
 

@@ -64,7 +64,6 @@ let parse_command arch command args label debug =
   | "run"         | "r" ->
     program_run := true;
     run  arch;
-    Print.print_prog arch debug
   | "breakpoint"  | "b" -> set_breakpoint args label
   | "step"        | "s" -> step arch; Print.print_prog arch debug
   | "next"        | "n" -> Printf.printf "Unimplemented for now.\n"

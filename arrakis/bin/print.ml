@@ -8,11 +8,11 @@ let ( * ) = Int32.mul
 
 (* Progam ------------------------------------------------------------------  *)
 
-let print_prog (arch : Arch.t) debug =
+let print_prog (arch : Arch.t) code_print debug =
   let pc = Cpu.get_pc arch.cpu in
   try
   Printf.printf "   Adress\t\tMachine Code\t\tBasic Code\t\tOriginal Code\n%!";
-  for i=0 to code_print do
+  for i=0 to code_print-1 do
     let addr = (pc + Int32.of_int i * 0x4l) in
     let code = Memory.get_int32 arch.memory  addr in
 
@@ -109,11 +109,17 @@ let print_memory_help () =
 
   * (p)rint (r)egs <r1> ...
 
-    Print regs list, if the list is empty, desplays all registers
+      Print regs list, if the list is empty, desplays all registers
+
+  * (p)rint (c)ode offset
+
+      Print code, from pc value to offet
 |}
 
-let decode_print arch args =
+let decode_print arch args addr_debug =
   match args with
   | "m" :: l | "memory" :: l -> decode_memory_arguments arch l
   | "r" :: l | "regs"   :: l -> decode_regs_arguments   arch l
+  | ["c"; o] | ["code"; o]   ->
+    (try print_prog arch (int_of_string o) addr_debug with _ -> ())
   | _ -> print_memory_help ()

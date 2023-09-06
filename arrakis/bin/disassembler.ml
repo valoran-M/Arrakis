@@ -42,11 +42,6 @@ let () =
       Hashtbl.add j_to_string opcode str)
     Assembler.Inst_J.j_instructions
 
-
-
-
-let code_print = 8
-
 let print_code _arch code =
   let opcode = Int32.logand 0b1111111l code in
   match opcode with

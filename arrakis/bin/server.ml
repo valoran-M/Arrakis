@@ -10,7 +10,8 @@ let rec loop arch label addr_debug line_debug in_channel out_channel =
       let input = String.trim s in
       (match String.split_on_char ' ' input with
       | command :: args ->
-          Shell.parse_command out_channel arch command args label line_debug;
+          Shell.parse_command out_channel arch command args label
+            addr_debug line_debug;
       | [] -> ());
       loop arch label addr_debug line_debug in_channel out_channel
     with Shell.Shell_exit -> ())

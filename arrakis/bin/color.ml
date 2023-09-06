@@ -1,6 +1,6 @@
 open Format
 
-let tag_table = Hashtbl.create 100
+let tag_table = Hashtbl.create 18
 
 (* Foreground Color --------------------------------------------------------- *)
 

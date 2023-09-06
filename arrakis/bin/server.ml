@@ -15,7 +15,7 @@ let rec loop arch label addr_debug line_debug in_channel out_channel =
       | [] -> ());
       loop arch label addr_debug line_debug in_channel out_channel
     with Shell.Shell_exit -> ())
-  | None -> 
+  | None ->
     loop arch label addr_debug line_debug in_channel out_channel
 
 let rec accept_non_intr s =
@@ -30,7 +30,7 @@ let start_server file arch label addr_debug line_debug =
   listen sock 5;
   let (s, _caller) = accept_non_intr sock in
   let inchan = in_channel_of_descr s in
-  let outchan = out_channel_of_descr s in
+  let outchan = Format.formatter_of_out_channel (out_channel_of_descr s) in
   loop arch label addr_debug line_debug inchan outchan;
   close sock;
   unlink file

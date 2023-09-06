@@ -11,7 +11,7 @@ let ( * ) = Int32.mul
 let print_prog (arch : Arch.t) code_print debug =
   let pc = Cpu.get_pc arch.cpu in
   try
-  Printf.printf "   Adress\t\tMachine Code\t\tBasic Code\t\tOriginal Code\n%!";
+  Format.printf "   Adress\t\tMachine Code\t\tBasic Code\t\tOriginal Code\n%!";
   for i=0 to code_print-1 do
     let addr = (pc + Int32.of_int i * 0x4l) in
     let code = Memory.get_int32 arch.memory  addr in
@@ -19,7 +19,7 @@ let print_prog (arch : Arch.t) code_print debug =
     if code = 0l
     then (print_endline "   End without syscall"; raise Break)
     else let _, orignal_code = Hashtbl.find debug addr in
-         Printf.printf "%s 0x%08x\t\t0x%08x\t\t%-24s%s\n%!"
+         Format.printf "%s 0x%08x\t\t0x%08x\t\t%-24s%s\n%!"
           (if i = 0 then "->" else "  ") (Utils.int32_to_int addr)
           (Utils.int32_to_int  code) (print_code arch code) orignal_code
   done
@@ -34,11 +34,11 @@ let line_size   = 0x4
 let line_size32 = 0x4l
 
 let print_line (arch: Arch.t) line_address =
-  Printf.printf "0x%08x" (Utils.int32_to_int line_address);
+  Format.printf "0x%08x" (Utils.int32_to_int line_address);
   for i = line_size - 1 downto 0 do
     let addr = line_address + (Int32.of_int i) in
     let value = Memory.get_byte arch.memory addr in
-    Printf.printf "  %02x" (Int32.to_int value)
+    Format.printf "  %02x" (Int32.to_int value)
   done;
   print_newline ()
 
@@ -73,7 +73,7 @@ let regs = [|
 
 let print_all_regs (arch: Arch.t) =
   for i = 0 to 31 do
-    Printf.printf "  %s -> %08x\n" regs.(i)
+    Format.printf "  %s -> %08x\n" regs.(i)
       (Int32.to_int (Cpu.get_reg arch.cpu i))
   done
 
@@ -81,9 +81,9 @@ let print_list_regs (arch: Arch.t) =
   List.iter (fun reg ->
     try
       let i = int_of_string reg in
-      Printf.printf "  %s -> %08x\n" regs.(i)
+      Format.printf "  %s -> %08x\n" regs.(i)
         (Int32.to_int (Cpu.get_reg arch.cpu i))
-    with _ -> Printf.printf "Error: \"%s\" isn't a register\n" reg
+    with _ -> Format.printf "@{<fg_red>Error@}: \"%s\" isn't a register\n" reg
   )
 
 let decode_regs_arguments (arch: Arch.t) args =

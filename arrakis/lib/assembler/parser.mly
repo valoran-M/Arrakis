@@ -7,6 +7,7 @@
 %token LPAR RPAR
 %token <Program.r_instruction * int * string> INST_R
 %token <Program.i_instruction * int * string> INST_I
+%token <Program.i_instruction * int * string> INST_I_LOAD
 %token <Program.s_instruction * int * string> INST_S
 %token <Program.b_instruction * int * string> INST_B
 %token <Program.u_instruction * int * string> INST_U
@@ -34,13 +35,13 @@ instruction:
     let rs2, s2  = rs2        in
     (R(inst, rd, rs1, rs2), line, id ^ " " ^ rds ^ ", " ^ s1 ^ ", " ^ s2) }
 
-(* I Immediate *)
-| inst=INST_I rd=REG COMMA? simm=imm COMMA? LPAR rs1=REG RPAR
+(* I Load *)
+| inst=INST_I_LOAD rd=REG COMMA? simm=imm COMMA? LPAR rs1=REG RPAR
   { let inst, line, id = inst in
     let rd,   rds = rd        in
     let rs1,  s1  = rs1       in
     let simm, s   = simm      in
-    (I(inst,rd,rs1,simm), line, id ^ " " ^ rds ^ ", " ^ s1 ^ ", " ^ s) }
+    (I(inst,rd,rs1,simm), line, id ^ " " ^ rds ^ ", " ^ s ^ "(" ^ s1 ^ ")") }
 
 (* I *)
 | inst=INST_I rd=REG COMMA? rs1=REG COMMA? simm=imm

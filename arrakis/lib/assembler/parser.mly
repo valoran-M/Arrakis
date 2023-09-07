@@ -8,6 +8,7 @@
 %token <Program.r_instruction * int * string> INST_R
 %token <Program.i_instruction * int * string> INST_I
 %token <Program.i_instruction * int * string> INST_I_LOAD
+%token <Program.i_instruction * int * string> INST_SYST
 %token <Program.s_instruction * int * string> INST_S
 %token <Program.b_instruction * int * string> INST_B
 %token <Program.u_instruction * int * string> INST_U
@@ -42,6 +43,12 @@ instruction:
     let rs1,  s1  = rs1       in
     let simm, s   = simm      in
     (I(inst,rd,rs1,simm), line, id ^ " " ^ rds ^ ", " ^ s ^ "(" ^ s1 ^ ")") }
+
+| inst=INST_SYST
+  { let inst, line, id = inst in
+    match inst with
+    | ECALL -> (I(inst,0l,0l,Imm 0x0l), line, id)
+    | _ -> assert false }
 
 (* I *)
 | inst=INST_I rd=REG COMMA? rs1=REG COMMA? simm=imm

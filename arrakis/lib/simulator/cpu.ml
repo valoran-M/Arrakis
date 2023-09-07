@@ -83,7 +83,7 @@ let exec (instruction : Int32.t) cpu memory =
   | 0b1110011l ->
     let decode = I_type.decode instruction in
     if Int32.equal decode.imm 0x0l
-    then raise Syscall
+    then (next_pc cpu; raise Syscall)
     else Error.i_invalid decode.funct3 opcode decode.imm
   (* S type *)
   | 0b0100011l ->

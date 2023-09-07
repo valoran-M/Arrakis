@@ -40,7 +40,9 @@ let label = '.'? (ident | '_')*
 let inst_b = "beq"  | "bne" | "blt" | "bge" | "bltu" | "bgeu"
 
 let inst_i = "addi" | "xori" | "ori"  | "andi" | "slli" | "srli"
-           | "sari" | "slti" | "slti" | "jalr" | "ecal" | "ebreak"
+           | "sari" | "slti" | "slti" | "jalr"
+
+let inst_syst = "ecall"
 
 let inst_i_load = "lb" | "lh"  | "lw" | "lbu"  | "lhu"
 
@@ -71,6 +73,7 @@ rule token = parse
   | inst_s as id { INST_S (Hashtbl.find s_inst id, !line, id) }
   | inst_u as id { INST_U (Hashtbl.find u_inst id, !line, id) }
   | inst_i_load as id { INST_I_LOAD (Hashtbl.find i_inst id, !line, id) }
+  | inst_syst   as id { INST_SYST (Hashtbl.find i_inst id, !line, id) }
   | label as id
     {
       try REG(Hashtbl.find regs id, id)

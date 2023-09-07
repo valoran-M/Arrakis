@@ -12,7 +12,10 @@ let rec run channel arch =
   | Zero            ->
     Format.fprintf channel "@{<fg_yellow>Warning:@} not syscal end@.";
     program_run := false
-  | Sys_call        -> failwith "TODO"
+  | Sys_call        ->
+    match Syscall.syscall channel arch with
+    | Syscall.Continue -> run channel arch
+    | Syscall.Exit _   -> failwith "TODO"
 
 let step channel arch =
   if not !program_run

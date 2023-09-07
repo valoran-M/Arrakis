@@ -1,14 +1,16 @@
 # TODO
 
-## Simulateur
+## Simulator
 
-- [ ] Test extension M
+* Better test for RV32M Multiply extension
+* Add RV32F Floating Point extension
 
-## Assembleur
+## Assembler
 
-- [ ] Parser pseudo instruction
-- [ ] Better errors
+* Parse pseudo instructions
+* Better errors. 'Did you mean...'
 
 ## Divers
 
-- [ ] Sys Calls
+* Sys Calls
+

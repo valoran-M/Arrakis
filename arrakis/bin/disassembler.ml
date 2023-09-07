@@ -45,13 +45,13 @@ let () =
 let print_code _arch code =
   let opcode = Int32.logand 0b1111111l code in
   match opcode with
-  (* R type *)
+  (* R *)
   | 0b0110011l ->
     let inst = Instructions.R_type.decode code in
     Format.sprintf "%s %s, %s, %s"
       (Hashtbl.find r_to_string (inst.funct3, inst.funct7))
       (reg_to_str inst.rd) (reg_to_str inst.rs1) (reg_to_str inst.rs2)
-  (* I type *)
+  (* I *)
   | 0b0010011l | 0b1100111l | 0b1110011l ->
     let inst = Instructions.I_type.decode code in
     Format.sprintf "%s %s, %s, %d"
@@ -65,7 +65,7 @@ let print_code _arch code =
       (reg_to_str inst.rd)
       (Int32.to_int (Simulator.Utils.sign_extended inst.imm 12))
       (reg_to_str inst.rs1)
-  (* S type *)
+  (* S *)
   | 0b0100011l ->
     let inst = Instructions.S_type.decode code in
     Format.sprintf "%s %s, %d(%s)"
@@ -73,18 +73,18 @@ let print_code _arch code =
       (reg_to_str inst.rs2)
       (Int32.to_int (Simulator.Utils.sign_extended inst.imm 12))
       (reg_to_str inst.rs1)
-  (* B type *)
+  (* B *)
   | 0b1100011l  ->
     let inst = Instructions.B_type.decode code in
     Format.sprintf "%s %s, %s, 0x%x"
       (Hashtbl.find b_to_string inst.funct3)
       (reg_to_str inst.rs1) (reg_to_str inst.rs2) (Int32.to_int inst.imm)
-  (* U type *)
+  (* U *)
   | 0b0110111l | 0b0010111l  ->
     let inst = Instructions.U_type.decode code in
     Format.sprintf "%s %d" (Hashtbl.find u_to_string opcode)
       (Int32.to_int inst.imm_shift)
-  (* J type *)
+  (* J *)
   | 0b1101111l   ->
     let inst = Instructions.J_type.decode code in
     Format.sprintf " %s%d" (Hashtbl.find j_to_string opcode)

@@ -27,27 +27,6 @@ let step channel arch =
 
 (* Breakpoints -------------------------------------------------------------- *)
 
-let help_breakpoint channel =
-  Format.fprintf channel {|
-  @{<fg_green> Breakpoint help:@}
-
-  @{<fg_green>*@} (b)reakpoint (l)ine <l_1> ... <l_n>
-
-    Set breakpoints on specified lines.
-
-  @{<fg_green>*@} (b)reakpoint (a)ddr <b_1> ... <b_n>
-
-    Set breakpoints on specified addresses.
-
-  @{<fg_green>*@} (b)reakpoint (r)emove <b_1> ... <b_n>
-
-    Remove specified breakpoints.
-
-  @{<fg_green>*@} (b)reakpoint (p)rint
-
-    Print all breakpoints.
-@.|}
-
 let line_breakpoint channel line_debug arg =
   match int_of_string_opt arg with
   | None      -> Format.fprintf channel "@{<fg_red>Error:@} \"%s\" is not a number" arg
@@ -105,40 +84,9 @@ let set_breakpoint channel args label line_debug =
     Hashtbl.iter (fun addr number ->
       Format.fprintf channel "%3d -> 0x%08x@."
         number (Simulator.Utils.int32_to_int addr)) breakpoints
-  | _ -> help_breakpoint channel
+  | _ -> Help.help_breakpoint channel
 
 (* Shell -------------------------------------------------------------------- *)
-
-let print_help channel =
-  Format.fprintf channel {|
-  @{<fg_green>General help:@}
-
-  @{<fg_green>*@} (r)un
-
-    Run code.
-
- @{<fg_green>*@} (b)reakpoint
-
-    Create breakpoint
-
- @{<fg_green>*@} (s)tep
-
-    In debug mode: execute next instruction.
-
- @{<fg_green>*@} (n)ext
-
-    Run to next breakpoint.
-
- @{<fg_green>*@} (p)rint
-
-    Print informations about CPU.
-
- @{<fg_green>*@} (h)elp
-
-    Show this help.
-
- @{<fg_green>*@} (q)uit
-@.|}
 
 exception Shell_exit
 
@@ -151,7 +99,7 @@ let parse_command channel arch command args label addr_debug line_debug =
   | "step"        | "s" -> step channel arch
   | "next"        | "n" -> Format.fprintf channel "@{<fg_yellow>Unimplemented for now.@}@."
   | "print"       | "p" -> Print.decode_print channel arch args addr_debug
-  | "help"        | "h" -> print_help channel
+  | "help"        | "h" -> Help.print_help channel
   | "quit"        | "q" -> raise Shell_exit
   | _ ->
       Format.fprintf channel "@{<fg_red>Error:@} Undefined command: \

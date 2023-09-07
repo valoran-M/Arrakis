@@ -97,35 +97,10 @@ let decode_regs_arguments channel (arch: Arch.t) args =
 
 (* Decode ------------------------------------------------------------------- *)
 
-let print_memory_help channel =
-  Format.fprintf channel {|
-  @{<fg_green>Print help:@}
-
-  @{<fg_green>*@} (p)rint (m)emory <start> <nb>
-
-      Print memory segment.
-      Starts at address <start> and displays <nb> 32 bits.
-
-      default args:
-        <start> : start data segement
-        <nb>    : 0x10
-
-  @{<fg_green>*@} (p)rint (r)egs <r_1> ... <r_n>
-
-      Print specified registers.
-      If the list is empty, display all of them.
-
-      Accepted register may be x0...x31 or zero, ra, ...
-
-  @{<fg_green>*@} (p)rint (c)ode offset
-
-      Print code from pc value to offset.
-@.|}
-
 let decode_print channel arch args addr_debug =
   match args with
   | "m" :: l | "memory" :: l -> decode_memory_arguments channel arch l
   | "r" :: l | "regs"   :: l -> decode_regs_arguments   channel arch l
   | ["c"; o] | ["code"; o]   ->
     (try print_prog channel arch (int_of_string o) addr_debug with _ -> ())
-  | _ -> print_memory_help channel
+  | _ -> Help.print_memory_help channel

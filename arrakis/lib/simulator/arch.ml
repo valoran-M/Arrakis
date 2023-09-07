@@ -8,5 +8,8 @@ let exec_instruction arch =
   let code = Memory.get_int32 arch.memory (Cpu.get_pc arch.cpu) in
   if code = 0l
   then Zero
-  else (Cpu.exec code arch.cpu arch.memory; Continue (Cpu.get_pc arch.cpu))
+  else (
+    try Cpu.exec code arch.cpu arch.memory; Continue (Cpu.get_pc arch.cpu)
+    with Cpu.Syscall -> Sys_call
+  )
 

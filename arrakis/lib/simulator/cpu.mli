@@ -19,6 +19,8 @@ val get_reg : t -> int -> int32
 val set_reg : t -> int -> int32 -> unit
   (** [set_reg cpu i val] set [val] in x[i] register *)
 
+exception Syscall
+
 val exec : int32 -> t -> Memory.t -> unit
 (** [exec code cpu memory] execute [code] with [cpu] and
     [memory] *)

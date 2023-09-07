@@ -43,6 +43,8 @@ let set_reg cpu reg value = Regs.set cpu.regs reg value
 
 (* Execute instruction  ----------------------------------------------------- *)
 
+exception Syscall
+
 let opcode_mask = 0b1111111l
 
 let exec (instruction : Int32.t) cpu memory =
@@ -78,7 +80,11 @@ let exec (instruction : Int32.t) cpu memory =
         set_reg cpu decode.rd (Int32.add (get_pc cpu) 4l);
         set_pc cpu (Int32.add rs1 decode.imm)
      | _ -> Error.i_invalid decode.funct3 opcode decode.imm)
-  | 0b1110011l -> Printf.printf "opcode I"
+  | 0b1110011l ->
+    let decode = I_type.decode instruction in
+    if Int32.equal decode.imm 0x0l
+    then raise Syscall
+    else Error.i_invalid decode.funct3 opcode decode.imm
   (* S type *)
   | 0b0100011l ->
     let decode = S_type.decode instruction in

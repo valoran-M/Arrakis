@@ -18,7 +18,8 @@ in OCaml.
 ## Development
 
 The `main` branch is currently developped using OCaml 5.0 and Dune 3.10.
-For Contributions, please take a look at [CONTRIBUTING.md](./CONTRIBUTING.md)
+
+For Contributions, please take a look at [`CONTRIBUTING.md`](./CONTRIBUTING.md)
 
 ## Resources
 * [Riscv-card](https://github.com/jameslzhu/riscv-card), a comprehensive

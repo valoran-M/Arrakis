@@ -3,8 +3,8 @@
 Arrakis is open to contributors.
 
 If you wish to contribute, please keep in mind that Arrakis is distributed under
-the CeCILL 2.1 license, and that any code submitted will be redistributed under
-this license.
+the [`CeCILL 2.1 license`](./LICENSE), and that any code submitted will be
+redistributed under this license.
 
 You must own full right to any code submitted.
 

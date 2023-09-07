@@ -60,9 +60,9 @@ rule token = parse
   | ':' { COLON }
   | '(' { LPAR }
   | ')' { RPAR }
+  | '#' { comment lexbuf }
   | eof   { EOF }
   | space { token lexbuf }
-  | '#' { comment lexbuf }
   | integer as i { INT(Int32.of_string i, i) }
   | inst_b as id { INST_B (Hashtbl.find b_inst id, !line, id) }
   | inst_i as id { INST_I (Hashtbl.find i_inst id, !line, id) }

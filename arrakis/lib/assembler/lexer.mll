@@ -14,6 +14,7 @@
 }
 
 (* Numbers ------------------------------------------------------------------ *)
+
 let decimal_literal =
   ['0'-'9'] ['0'-'9' '_']*
 let hex_literal =
@@ -65,6 +66,7 @@ rule token = parse
   | integer as i { INT(Int32.of_string i, i) }
   | inst_b as id { INST_B (Hashtbl.find b_inst id, !line, id) }
   | inst_i as id { INST_I (Hashtbl.find i_inst id, !line, id) }
+  | inst_i_load as id { INST_I (Hashtbl.find i_inst id, !line, id) }
   | inst_j as id { INST_J (Hashtbl.find j_inst id, !line, id) }
   | inst_r as id { INST_R (Hashtbl.find r_inst id, !line, id) }
   | inst_s as id { INST_S (Hashtbl.find s_inst id, !line, id) }

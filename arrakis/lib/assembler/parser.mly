@@ -26,35 +26,54 @@ imm:
 ;
 
 instruction:
+(* R *)
 | inst=INST_R rd=REG COMMA? rs1=REG COMMA? rs2=REG
   { let inst, line, id = inst in
     let rd,  rds = rd         in
     let rs1, s1  = rs1        in
     let rs2, s2  = rs2        in
     (R(inst, rd, rs1, rs2), line, id ^ " " ^ rds ^ ", " ^ s1 ^ ", " ^ s2) }
+
+(* I Immediate *)
+| inst=INST_I rd=REG COMMA? simm=imm COMMA? LPAR rs1=REG RPAR
+  { let inst, line, id = inst in
+    let rd,   rds = rd        in
+    let rs1,  s1  = rs1       in
+    let simm, s   = simm      in
+    (I(inst,rd,rs1,simm), line, id ^ " " ^ rds ^ ", " ^ s1 ^ ", " ^ s) }
+
+(* I *)
 | inst=INST_I rd=REG COMMA? rs1=REG COMMA? simm=imm
   { let inst, line, id = inst in
     let rd,   rds = rd        in
     let rs1,  s1  = rs1       in
     let simm, s   = simm      in
     (I(inst,rd,rs1,simm), line, id ^ " " ^ rds ^ ", " ^ s1 ^ ", " ^ s) }
+
+(* S *)
 | inst=INST_S rs2=REG COMMA? simm=imm LPAR rs1=REG RPAR
   { let inst, line, id = inst in
     let rs2, s2   = rs2       in
     let rs1, s1   = rs1       in
     let imm, simm = simm      in
     (S(inst, rs2, rs1, imm), line, id ^ " " ^ s2 ^ ", " ^ simm ^ "(" ^ s1 ^ ")") }
+
+(* B *)
 | inst=INST_B rs1=REG COMMA? rs2=REG COMMA? simm=imm
   { let inst, line, id = inst in
     let rs1, s1    = rs1      in
     let rs2, s2    = rs2      in
     let imm, simm  = simm     in
     (B(inst, rs1, rs2, imm), line, id ^ " " ^ s1 ^ ", " ^ s2 ^ ", " ^ simm) }
+
+(* U *)
 | inst=INST_U rd=REG COMMA? simm=imm
   { let inst, line, id = inst in
     let rd,  rds   = rd       in
     let imm, simm  = simm     in
     (U(inst, rd, imm), line, id ^ " " ^ rds ^ ", " ^ simm) }
+
+(* J *)
 | inst=INST_J rd=REG COMMA? simm=imm
   { let inst, line, id = inst in
     let rd,  rds  = rd        in

@@ -93,8 +93,8 @@ let decode_regs_arguments (arch: Arch.t) args =
 
 (* Decode ------------------------------------------------------------------- *)
 
-let print_memory_help () =
-  Format.printf {|
+let print_memory_help channel =
+  Format.fprintf channel {|
   @{<fg_green>Print help:@}
 
   @{<fg_green>*@} (p)rint (m)emory <start> <nb>
@@ -118,10 +118,10 @@ let print_memory_help () =
       Print code from pc value to offset.
 @.|}
 
-let decode_print arch args addr_debug =
+let decode_print channel arch args addr_debug =
   match args with
   | "m" :: l | "memory" :: l -> decode_memory_arguments arch l
   | "r" :: l | "regs"   :: l -> decode_regs_arguments   arch l
   | ["c"; o] | ["code"; o]   ->
     (try print_prog arch (int_of_string o) addr_debug with _ -> ())
-  | _ -> print_memory_help ()
+  | _ -> print_memory_help channel

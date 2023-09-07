@@ -7,7 +7,7 @@
 ## Assembleur
 
 - [ ] Parser pseudo instruction
-- [ ] Meilleures erreurs
+- [ ] Better errors
 
 ## Divers
 

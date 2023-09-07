@@ -60,14 +60,14 @@ let () =
 
 let open_tag = function
   | Format.String_tag s   -> (
-        try  let ostr, _ = Hashtbl.find tag_table s in ostr
+        try let ostr, _ = Hashtbl.find tag_table s in ostr
         with Not_found -> ""
       )
   | _ -> ""
 
 let close_tag = function
   | Format.String_tag s   -> (
-        try  let _, otag = Hashtbl.find tag_table s in otag
+        try let _, otag = Hashtbl.find tag_table s in otag
         with Not_found -> ""
       )
   | _ -> ""

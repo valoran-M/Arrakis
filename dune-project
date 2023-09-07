@@ -6,16 +6,15 @@
 (generate_opam_files true)
 
 (source
- (github username/reponame))
+ (gitlab valoranM/arrakis))
 
-(authors "Author Name")
+(authors "Valeran Maytié" "Gurvan Debaussart")
 
-(maintainers "Maintainer Name")
+(maintainers "valeran.maytie@universite-paris-saclay.fr" "gurvan@debauss.art")
 
 (license "CeCILL v2.1")
 
 (documentation https://url/to/documentation)
-
 
 (package
  (name arrakis)

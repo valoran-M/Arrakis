@@ -10,18 +10,18 @@ let rec run chanel arch =
   match exec_instruction arch with
   | Continue _addr  -> run chanel arch
   | Zero            ->
-    Format.fprintf chanel "Warning: not syscal end\n%!";
+    Format.fprintf chanel "@{<fg_yellow>Warning:@} not syscal end@.";
     program_run := false
   | Sys_call        -> failwith "TODO"
 
 let step chanel arch =
   if not !program_run
-  then Format.fprintf chanel "The program is not being run.\n%!"
+  then Format.fprintf chanel "The program is not being run.@."
   else
   match exec_instruction arch with
   | Continue _  -> ()
   | Zero        ->
-    Format.fprintf chanel "Warning: not syscal end\n%!";
+    Format.fprintf chanel "@{<fg_yellow>Warning:@} not syscal end@.";
     program_run := false
   | Sys_call    -> failwith "TODO"
 
@@ -39,32 +39,32 @@ Breakpoint help :
 
 let line_breakpoint chanel line_debug arg =
   match int_of_string_opt arg with
-  | None      -> Format.fprintf chanel "Error : \"%s\" is not a number" arg
+  | None      -> Format.fprintf chanel "@{fg_red>Error:@} \"%s\" is not a number" arg
   | Some line ->
     try
       let number = Hashtbl.length breakpoints in
       let addr   = Hashtbl.find line_debug line in
       Hashtbl.add breakpoints addr number;
-      Format.fprintf chanel "Breakpoint %d at 0x%x\n%!" number
+      Format.fprintf chanel "Breakpoint %d at 0x%x@." number
         (Int32.to_int addr)
     with Not_found ->
-      Format.fprintf chanel "Error : %d line does not exist\n%!" line
+      Format.fprintf chanel "@{<fg_red>Error:@} %d line does not exist@." line
 
 let addr_breakpoint chanel label arg =
   let number = Hashtbl.length breakpoints in
   match Int32.of_string_opt arg with
   | Some addr ->
     Hashtbl.add breakpoints addr number;
-    Format.fprintf chanel "Breakpoint %d at 0x%x\n%!" number
+    Format.fprintf chanel "Breakpoint %d at 0x%x@." number
       (Int32.to_int addr)
   | None ->
     try
       let addr = Hashtbl.find label arg in
       Hashtbl.add breakpoints addr number;
-      Format.fprintf chanel "Breakpoint %d at 0x%x\n%!" number
+      Format.fprintf chanel "Breakpoint %d at 0x%x@." number
         (Int32.to_int addr)
     with Not_found ->
-      Format.fprintf chanel "Function \"%s\" not defined.\n%!" arg
+      Format.fprintf chanel "@{<fg_red>Error:@} Function \"%s\" not defined.@." arg
 
 exception End_loop
 
@@ -74,12 +74,12 @@ let remove_breakpoint chanel arg =
     Hashtbl.iter (fun addr line ->
       if line = breakpoint then (
         Hashtbl.remove breakpoints addr;
-        Format.fprintf chanel "Breakpoint %d was removed\n%!" breakpoint;
+        Format.fprintf chanel "Breakpoint %d was removed@." breakpoint;
         raise End_loop
     )) breakpoints
   with
     | End_loop -> ()
-    | _ -> Format.fprintf chanel "Error : breakpoint \"%s\" does not exist" arg
+    | _ -> Format.fprintf chanel "@{<fg_red>Error:@} breakpoint \"%s\" does not exist" arg
 
 let set_breakpoint chanel args label line_debug =
   match args with
@@ -92,7 +92,7 @@ let set_breakpoint chanel args label line_debug =
   | "p"     :: _
   | "print" :: _ ->
     Hashtbl.iter (fun addr number ->
-      Format.fprintf chanel "%3d -> 0x%08x\n%!"
+      Format.fprintf chanel "%3d -> 0x%08x@."
         number (Simulator.Utils.int32_to_int addr)) breakpoints
   | _ -> help_breakpoint chanel
 
@@ -111,7 +111,7 @@ Commands :
 
 (h)elp -> show this help
 (q)uit
-%!|}
+@.|}
 
 exception Shell_exit
 
@@ -122,15 +122,15 @@ let parse_command chanel arch command args label addr_debug line_debug =
     run chanel arch;
   | "breakpoint"  | "b" -> set_breakpoint chanel args label line_debug
   | "step"        | "s" -> step chanel arch
-  | "next"        | "n" -> Format.fprintf chanel "Unimplemented for now.\n"
+  | "next"        | "n" -> Format.fprintf chanel "@{<fg_yellow>Unimplemented for now.@}@."
   | "print"       | "p" -> Print.decode_print arch args addr_debug
   | "help"        | "h" -> print_help chanel
   | "quit"        | "q" -> raise Shell_exit
   | _ ->
-    Format.fprintf chanel "Undefined command: \"%s\".  Try \"help\".\n%!"command
+      Format.fprintf chanel "@{<fg_red>Error:@} Undefined command: \"%s\". Try \"help\".@."command
 
 let rec shell arch label addr_debug line_debug =
-  Format.printf "> ";
+  Format.printf "> %!";
   if !program_run then Print.print_prog arch 8 addr_debug;
   let line = read_line () in
   let words = String.split_on_char ' ' line in

@@ -34,7 +34,7 @@ let () =
     (* Tag        Open *)
     "bg_black",   40;
     "bg_red",     41;
-    "bg_green",   43;
+    "bg_green",   42;
     "bg_yellow",  43;
     "bg_blue",    44;
     "bg_purple",  45;

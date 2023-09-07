@@ -80,41 +80,43 @@ let print_all_regs (arch: Arch.t) =
 let print_list_regs (arch: Arch.t) =
   List.iter (fun reg ->
     try
-      let i = int_of_string reg in
-      Format.printf "  %s -> %08x\n" regs.(i)
-        (Int32.to_int (Cpu.get_reg arch.cpu i))
+      let i = Int32.to_int (Assembler.Regs.of_string reg) in
+      Format.printf "  %s -> %08x\n" regs.(i) (Int32.to_int (Cpu.get_reg arch.cpu i))
     with _ -> Format.printf "@{<fg_red>Error@}: \"%s\" isn't a register@." reg
   )
 
 let decode_regs_arguments (arch: Arch.t) args =
   match args with
   | [] -> print_all_regs arch
-  | _ -> print_list_regs arch args
+  | _  -> print_list_regs arch args
 
 
 (* Decode ------------------------------------------------------------------- *)
 
 let print_memory_help () =
-  print_string {|
-  Print command :
+  Format.printf {|
+  @{<fg_green>Print help:@}
 
-  * (p)rint (m)emory <start> <nb>
+  @{<fg_green>*@} (p)rint (m)emory <start> <nb>
 
-      Print memory segement, it starts at address <start>
-      and displays <nb> 32 bits
+      Print memory segment.
+      Starts at address <start> and displays <nb> 32 bits.
 
-      default:
+      default args:
         <start> : start data segement
         <nb>    : 0x10
 
-  * (p)rint (r)egs <r1> ...
+  @{<fg_green>*@} (p)rint (r)egs <r_1> ... <r_n>
 
-      Print regs list, if the list is empty, desplays all registers
+      Print specified registers.
+      If the list is empty, display all of them.
 
-  * (p)rint (c)ode offset
+      Accepted register may be x0...x31 or zero, ra, ...
 
-      Print code, from pc value to offet
-|}
+  @{<fg_green>*@} (p)rint (c)ode offset
+
+      Print code from pc value to offset.
+@.|}
 
 let decode_print arch args addr_debug =
   match args with

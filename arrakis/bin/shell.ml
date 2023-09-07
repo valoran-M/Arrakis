@@ -29,17 +29,28 @@ let step chanel arch =
 
 let help_breakpoint chanel =
   Format.fprintf chanel {|
-Breakpoint help :
+  @{<fg_green> Breakpoint help:@}
 
-(b)reakpoint (l)ine   l1 [l2 ...] -> Set breakpoints on line l1 ...
-(b)reakpoint (a)ddr   a1 [a2 ...] -> Set breakpoints on addresses a1 ...
-(b)reakpoint (r)emove b1 [b2 ...] -> Remove breakpoints b1 ...
-(b)reakpoint (p)rint              -> Print all breakpoints
-%!|}
+  @{<fg_green>*@} (b)reakpoint (l)ine <l_1> ... <l_n>
+
+    Set breakpoints on specified lines.
+
+  @{<fg_green>*@} (b)reakpoint (a)ddr <b_1> ... <b_n>
+
+    Set breakpoints on specified addresses.
+
+  @{<fg_green>*@} (b)reakpoint (r)emove <b_1> ... <b_n>
+
+    Remove specified breakpoints.
+
+  @{<fg_green>*@} (b)reakpoint (p)rint
+
+    Print all breakpoints.
+@.|}
 
 let line_breakpoint chanel line_debug arg =
   match int_of_string_opt arg with
-  | None      -> Format.fprintf chanel "@{fg_red>Error:@} \"%s\" is not a number" arg
+  | None      -> Format.fprintf chanel "@{<fg_red>Error:@} \"%s\" is not a number" arg
   | Some line ->
     try
       let number = Hashtbl.length breakpoints in
@@ -83,14 +94,14 @@ let remove_breakpoint chanel arg =
 
 let set_breakpoint chanel args label line_debug =
   match args with
-  | "line" :: args
-  | "l"    :: args -> List.iter (line_breakpoint chanel line_debug) args
-  | "addr" :: args
-  | "a"    :: args -> List.iter (addr_breakpoint chanel label) args
+  | "line"   :: args
+  | "l"      :: args -> List.iter (line_breakpoint chanel line_debug) args
+  | "addr"   :: args
+  | "a"      :: args -> List.iter (addr_breakpoint chanel label) args
   | "remove" :: args
   | "r"      :: args -> List.iter (remove_breakpoint chanel) args
-  | "p"     :: _
-  | "print" :: _ ->
+  | "p"      :: _
+  | "print"  :: _    ->
     Hashtbl.iter (fun addr number ->
       Format.fprintf chanel "%3d -> 0x%08x@."
         number (Simulator.Utils.int32_to_int addr)) breakpoints
@@ -100,17 +111,33 @@ let set_breakpoint chanel args label line_debug =
 
 let print_help chanel =
   Format.fprintf chanel {|
-Commands :
+  @{<fg_green>General help:@}
 
-(r)un -> run code
+  @{<fg_green>*@} (r)un
 
-(b)reakpoint -> create breakpoint
-(s)tep       -> In debug mode execute next instruction
-(n)ext       -> run to next breakpoint
-(p)rint      -> print args
+    Run code.
 
-(h)elp -> show this help
-(q)uit
+ @{<fg_green>*@} (b)reakpoint
+
+    Create breakpoint
+
+ @{<fg_green>*@} (s)tep
+
+    In debug mode: execute next instruction.
+
+ @{<fg_green>*@} (n)ext
+
+    Run to next breakpoint.
+
+ @{<fg_green>*@} (p)rint
+
+    Print informations about CPU.
+
+ @{<fg_green>*@} (h)elp
+
+    Show this help.
+
+ @{<fg_green>*@} (q)uit
 @.|}
 
 exception Shell_exit
@@ -127,7 +154,8 @@ let parse_command chanel arch command args label addr_debug line_debug =
   | "help"        | "h" -> print_help chanel
   | "quit"        | "q" -> raise Shell_exit
   | _ ->
-      Format.fprintf chanel "@{<fg_red>Error:@} Undefined command: \"%s\". Try \"help\".@."command
+      Format.fprintf chanel "@{<fg_red>Error:@} Undefined command: \
+        @{<fg_yellow>\"%s\"@}. Try @{<fg_green>\"help\"@}.@."command
 
 let rec shell arch label addr_debug line_debug =
   Format.printf "> %!";

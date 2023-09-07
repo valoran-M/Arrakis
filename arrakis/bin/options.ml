@@ -12,7 +12,7 @@ let no_color   = ref false
 
 let spec = [
   ("-U",         Arg.Set unix_socket,       "Use unix socket");
-  ("--no-color", Arg.Set no_color,          "Don't use color in error output");
+  ("--no-color", Arg.Set no_color,          "Don't use color in output");
   ("-f",         Arg.Set_string unix_file , "Unix socket's file");
 ]
 

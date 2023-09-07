@@ -26,7 +26,11 @@ let step channel arch =
   | Zero        ->
     Format.fprintf channel "@{<fg_yellow>Warning:@} not syscal end@.";
     program_run := false
-  | Sys_call    -> failwith "TODO"
+  | Sys_call    ->
+    match Syscall.syscall channel arch with
+    | Syscall.Continue -> ()
+    | Syscall.Exit _   -> failwith "TODO"
+
 
 (* Breakpoints -------------------------------------------------------------- *)
 

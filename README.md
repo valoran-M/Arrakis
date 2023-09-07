@@ -25,7 +25,9 @@ Arrakis is open to contributors.
 
 If you wish to contribute, please keep in mind that Arrakis is distributed under
 the CeCILL 2.1 license, and that any code submitted will be redistributed under
-this license. You must own full right to any code submitted.
+this license.
+
+You must own full right to any code submitted.
 
 Submitted code must also respect the following coding style:
 * Wrap line at 80 characters

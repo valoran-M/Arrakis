@@ -155,7 +155,8 @@ module I_type = struct
     | _ -> Error.i_invalid_arith instruction.funct3 instruction.imm
 
   let execute_load instruction rs1 memory =
-    let addr = rs1 + instruction.imm in
+    let imm = Utils.sign_extended instruction.imm 12 in
+    let addr = rs1 + imm in
     match instruction.funct3 with
     | 0x0 -> Utils.sign_extended (Memory.get_byte memory addr) 8   (* LB  *)
     | 0x1 -> Utils.sign_extended (Memory.get_int16 memory addr) 16 (* LH  *)

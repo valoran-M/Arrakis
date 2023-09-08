@@ -10,7 +10,7 @@
 
 (authors "Valeran Maytié" "Gurvan Debaussart")
 
-(maintainers "valeran.maytie@universite-paris-saclay.fr" "gurvan@debauss.art")
+(maintainers "mvalo@proton.me" "gurvan@debauss.art")
 
 (license "CeCILL v2.1")
 

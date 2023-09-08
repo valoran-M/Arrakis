@@ -1,4 +1,4 @@
-let print_help channel =
+let general channel =
   Format.fprintf channel {|
   @{<fg_green>General help:@}
 
@@ -29,7 +29,7 @@ let print_help channel =
  @{<fg_green>*@} (q)uit
 @.|}
 
-let help_breakpoint channel =
+let breakpoint channel =
   Format.fprintf channel {|
   @{<fg_green> Breakpoint help:@}
 
@@ -50,7 +50,7 @@ let help_breakpoint channel =
     Print all breakpoints.
 @.|}
 
-let print_memory_help channel =
+let print channel =
   Format.fprintf channel {|
   @{<fg_green>Print help:@}
 

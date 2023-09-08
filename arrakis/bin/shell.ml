@@ -103,7 +103,7 @@ let set_breakpoint channel args label line_debug =
     Hashtbl.iter (fun addr number ->
       Format.fprintf channel "%3d -> 0x%08x@."
         number (Simulator.Utils.int32_to_int addr)) breakpoints
-  | _ -> Help.help_breakpoint channel
+  | _ -> Help.breakpoint channel
 
 (* Shell -------------------------------------------------------------------- *)
 
@@ -118,7 +118,7 @@ let parse_command channel arch command args label addr_debug line_debug =
   | "step"        | "s" -> step channel arch
   | "next"        | "n" -> run  channel arch
   | "print"       | "p" -> Print.decode_print channel arch args addr_debug
-  | "help"        | "h" -> Help.print_help channel
+  | "help"        | "h" -> Help.general channel
   | "quit"        | "q" -> raise Shell_exit
   | _ ->
       Format.fprintf channel "@{<fg_red>Error:@} Undefined command: \

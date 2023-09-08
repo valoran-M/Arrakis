@@ -2,9 +2,7 @@
 opam-version: "2.0"
 synopsis: "A RISC-V simulator"
 description: "A longer description"
-maintainer: [
-  "valeran.maytie@universite-paris-saclay.fr" "gurvan@debauss.art"
-]
+maintainer: ["mvalo@proton.me" "gurvan@debauss.art"]
 authors: ["Valeran Maytié" "Gurvan Debaussart"]
 license: "CeCILL v2.1"
 tags: ["topics" "to describe" "your" "project"]

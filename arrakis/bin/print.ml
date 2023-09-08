@@ -103,4 +103,4 @@ let decode_print channel arch args addr_debug =
   | "r" :: l | "regs"   :: l -> decode_regs_arguments   channel arch l
   | ["c"; o] | ["code"; o]   ->
     (try print_prog channel arch (int_of_string o) addr_debug with _ -> ())
-  | _ -> Help.print_memory_help channel
+  | _ -> Help.print channel

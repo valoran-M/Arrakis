@@ -24,7 +24,7 @@ let () =
       LHU,    (0b0000011l,  0x5l,   "lhu"    );
       JALR,   (0b1100111l,  0x0l,   "jalr"   );
       ECALL,  (0b1110011l,  0x0l,   "ecall"  );
-      EBREAK, (0b1110011l,  0x0l,   "ebreak" );
+      (* EBREAK, (0b1110011l,  0x0l,   "ebreak" ); *)
     ]
 
 let str_table =

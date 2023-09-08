@@ -15,10 +15,15 @@ let () =
   );
   try
     let channel = open_in input_file in
-    let mem, _, label, addr_debug, line_debug =
+    let mem, _, label, global_label, addr_debug, line_debug =
       Assembler.Translate.translate (Lexing.from_channel channel)
     in
-    let arch = Arch.init (Simulator.Segment.text_begin) mem in
+    let pc = 
+      if   Hashtbl.mem global_label "main"
+      then Hashtbl.find global_label "main"
+      else Simulator.Segment.text_begin
+    in
+    let arch = Arch.init pc mem in
     if unix_socket
     then Server.start_server unix_file arch label addr_debug line_debug
     else Shell.shell arch label addr_debug line_debug

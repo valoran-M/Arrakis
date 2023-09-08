@@ -17,6 +17,8 @@
 %token <Int32.t * string> REG
 %token <string> IDENT
 
+%token GLOBL
+
 %start program
 %type <Program.program> program
 
@@ -93,10 +95,11 @@ program_line:
 | inst=instruction END_LINE*
   { let i, line, string = inst in
     Instr(line , string, i) }
-| i=IDENT COLON { Label(i) }
+| GLOBL COLON? i=IDENT  END_LINE* { GLabel i }
+| i=IDENT COLON END_LINE*         { Label i  }
 ;
 
 program:
-| program_line* EOF
-  { $1 }
+| END_LINE* program_line* EOF
+  { $2 }
 ;

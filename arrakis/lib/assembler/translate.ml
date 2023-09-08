@@ -14,6 +14,8 @@ let (>=) x y = Int32.compare x y >=  0
 
 (* Get address  ------------------------------------------------------------  *)
 
+let global_label = Hashtbl.create 16
+
 let label_address = Hashtbl.create 16
 
 let addr_debug = Hashtbl.create 1024
@@ -46,9 +48,10 @@ let rec get_label_address prog addr =
   | Pseudo (_, _, instruction) :: l ->
     get_label_address l (addr + (pseudo_length instruction))
   | Instr (_, _, _) :: l -> get_label_address l (addr + 0x4l)
-  | Label label :: l  ->
+  | GLabel _ :: l -> get_label_address l addr
+  | Label label  :: l ->
     Hashtbl.add label_address label addr;
-    get_label_address l (addr + 0x4l)
+    get_label_address l addr
 
 (* Translation -------------------------------------------------------------  *)
 
@@ -165,12 +168,17 @@ let rec loop prog mem addr =
     Hashtbl.add addr_debug addr (l, s);
     translate inst mem addr l;
     loop next mem (addr + 4l)
-  | Label _ ::  l -> loop l mem addr
+  | Label _  ::  l -> loop l mem addr
+  | GLabel label :: l ->
+    try 
+      Hashtbl.add global_label label (Hashtbl.find label_address label);
+      loop l mem addr
+    with Not_found -> failwith "TODO global address"
 
 let translate code =
   let mem = Memory.make () in
   let prog = Parser.program Lexer.token code in
   get_label_address prog Simulator.Segment.text_begin;
   let addr = loop prog mem Simulator.Segment.text_begin in
-  (mem, addr, label_address, addr_debug, line_debug)
+  (mem, addr, label_address, global_label, addr_debug, line_debug)
 

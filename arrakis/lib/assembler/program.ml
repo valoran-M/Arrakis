@@ -91,6 +91,7 @@ type program_line =
               (* line nb, original code *)
   | Pseudo of int *       string        * pseudo_instruction
   | Instr  of int *       string        * instruction
+  | GLabel of string
   | Label  of string
 
 type program = program_line list

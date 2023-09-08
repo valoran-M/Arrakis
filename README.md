@@ -12,8 +12,22 @@ in OCaml.
 
 ## Features
 
-* Fully supported RV32IM instruction set.
+* Fully supported RV32IM instruction set, with most pseudo instructions.
+* System calls
 * A debugging system using breakpoints.
+
+## Installation
+
+Since Arrakis is written in OCaml, it can be installed using
+[opam](https://opam.ocaml.org/), OCaml Package Manager.
+
+Simply run:
+
+`$ opam install arrakis`
+
+## Documentation
+
+Documentation about Arrakis usage is ~~available here~~ on it's way.
 
 ## Development
 
@@ -22,6 +36,7 @@ The `main` branch is currently developped using OCaml 5.0 and Dune 3.10.
 For Contributions, please take a look at [`CONTRIBUTING.md`](./CONTRIBUTING.md)
 
 ## Resources
+
 * [Riscv-card](https://github.com/jameslzhu/riscv-card), a comprehensive
   reference sheet for RISC-V.
 * [Venus](https://github.com/kvakil/venus), a RISC-V simulator written in

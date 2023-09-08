@@ -7,38 +7,44 @@ let program_end = ref false
 
 let rec run channel arch =
   if !program_end then
-    Format.fprintf channel "@{<fg_red>Error:@} The programme is finished@."
+    Format.fprintf channel "@{<fg_red>Error:@} Program is finished@."
   else (
     let addr = Simulator.Cpu.get_pc arch.cpu in
     if not (Hashtbl.mem breakpoints addr) then
       match exec_instruction arch with
       | Continue _addr  -> run channel arch
       | Zero            ->
-        Format.fprintf channel "@{<fg_yellow>Warning:@} not syscal end@.";
+        Format.fprintf channel
+          "@{<fg_yellow>Warning:@} Syscall is not finished.@.";
         program_end := true;
         program_run := false
       | Sys_call        ->
         match Syscall.syscall channel arch with
         | Syscall.Continue -> run channel arch
         | Syscall.Exit code ->
-            Format.fprintf channel "Exit with error code '%d'" code;
+            Format.fprintf channel
+              "Exiting with code @{<fg_yellow>'%d'@}@." code;
             program_run := false;
             program_end := true)
 
 let step channel arch =
   if not !program_run && !program_end
-  then Format.fprintf channel "The program is not being run.@."
+  then
+    (* TODO: Clarify what this message mean. *)
+    Format.fprintf channel "The program is not being run.@."
   else
     match exec_instruction arch with
     | Continue _  -> ()
     | Zero        ->
-      Format.fprintf channel "@{<fg_yellow>Warning:@} not syscal end@.";
+      Format.fprintf channel
+        "@{<fg_yellow>Warning:@} Syscall is not finished.@.";
       program_run := false
     | Sys_call    ->
       match Syscall.syscall channel arch with
       | Syscall.Continue  -> ()
       | Syscall.Exit code ->
-        Format.fprintf channel "Exit with error code '%d'" code;
+        Format.fprintf channel
+          "Exiting code @{<fg_yellow>'%d'@}@." code;
             program_run := false;
             program_end := true
 

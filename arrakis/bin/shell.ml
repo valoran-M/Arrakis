@@ -3,40 +3,51 @@ open Simulator.Arch
 let breakpoints = Hashtbl.create 16
 
 let program_run = ref false
+let program_end = ref false
 
 let rec run channel arch =
-  let addr = Simulator.Cpu.get_pc arch.cpu in
-  if not (Hashtbl.mem breakpoints addr) then
-  match exec_instruction arch with
-  | Continue _addr  -> run channel arch
-  | Zero            ->
-    Format.fprintf channel "@{<fg_yellow>Warning:@} not syscal end@.";
-    program_run := false
-  | Sys_call        ->
-    match Syscall.syscall channel arch with
-    | Syscall.Continue -> run channel arch
-    | Syscall.Exit _   -> failwith "TODO"
+  if !program_end then
+    Format.fprintf channel "@{<fg_red>Error:@} The programme is finished@."
+  else (
+    let addr = Simulator.Cpu.get_pc arch.cpu in
+    if not (Hashtbl.mem breakpoints addr) then
+      match exec_instruction arch with
+      | Continue _addr  -> run channel arch
+      | Zero            ->
+        Format.fprintf channel "@{<fg_yellow>Warning:@} not syscal end@.";
+        program_end := true;
+        program_run := false
+      | Sys_call        ->
+        match Syscall.syscall channel arch with
+        | Syscall.Continue -> run channel arch
+        | Syscall.Exit code ->
+            Format.fprintf channel "Exit with error code '%d'" code;
+            program_run := false;
+            program_end := true)
 
 let step channel arch =
-  if not !program_run
+  if not !program_run && !program_end
   then Format.fprintf channel "The program is not being run.@."
   else
-  match exec_instruction arch with
-  | Continue _  -> ()
-  | Zero        ->
-    Format.fprintf channel "@{<fg_yellow>Warning:@} not syscal end@.";
-    program_run := false
-  | Sys_call    ->
-    match Syscall.syscall channel arch with
-    | Syscall.Continue -> ()
-    | Syscall.Exit _   -> failwith "TODO"
-
+    match exec_instruction arch with
+    | Continue _  -> ()
+    | Zero        ->
+      Format.fprintf channel "@{<fg_yellow>Warning:@} not syscal end@.";
+      program_run := false
+    | Sys_call    ->
+      match Syscall.syscall channel arch with
+      | Syscall.Continue  -> ()
+      | Syscall.Exit code ->
+        Format.fprintf channel "Exit with error code '%d'" code;
+            program_run := false;
+            program_end := true
 
 (* Breakpoints -------------------------------------------------------------- *)
 
 let line_breakpoint channel line_debug arg =
   match int_of_string_opt arg with
-  | None      -> Format.fprintf channel "@{<fg_red>Error:@} \"%s\" is not a number" arg
+  | None      -> Format.fprintf channel
+                          "@{<fg_red>Error:@} \"%s\" is not a number" arg
   | Some line ->
     try
       let number = Hashtbl.length breakpoints in
@@ -61,7 +72,8 @@ let addr_breakpoint channel label arg =
       Format.fprintf channel "Breakpoint %d at 0x%x@." number
         (Int32.to_int addr)
     with Not_found ->
-      Format.fprintf channel "@{<fg_red>Error:@} Function \"%s\" not defined.@." arg
+      Format.fprintf channel
+        "@{<fg_red>Error:@} Function \"%s\" not defined.@." arg
 
 exception End_loop
 
@@ -76,7 +88,8 @@ let remove_breakpoint channel arg =
     )) breakpoints
   with
     | End_loop -> ()
-    | _ -> Format.fprintf channel "@{<fg_red>Error:@} breakpoint \"%s\" does not exist" arg
+    | _ -> Format.fprintf channel
+              "@{<fg_red>Error:@} breakpoint \"%s\" does not exist" arg
 
 let set_breakpoint channel args label line_debug =
   match args with
@@ -86,8 +99,7 @@ let set_breakpoint channel args label line_debug =
   | "a"      :: args -> List.iter (addr_breakpoint channel label) args
   | "remove" :: args
   | "r"      :: args -> List.iter (remove_breakpoint channel) args
-  | "p"      :: _
-  | "print"  :: _    ->
+  | "p"      :: _ | "print"  :: _    ->
     Hashtbl.iter (fun addr number ->
       Format.fprintf channel "%3d -> 0x%08x@."
         number (Simulator.Utils.int32_to_int addr)) breakpoints
@@ -104,7 +116,7 @@ let parse_command channel arch command args label addr_debug line_debug =
     run channel arch;
   | "breakpoint"  | "b" -> set_breakpoint channel args label line_debug
   | "step"        | "s" -> step channel arch
-  | "next"        | "n" -> Format.fprintf channel "@{<fg_yellow>Unimplemented for now.@}@."
+  | "next"        | "n" -> run  channel arch
   | "print"       | "p" -> Print.decode_print channel arch args addr_debug
   | "help"        | "h" -> Help.print_help channel
   | "quit"        | "q" -> raise Shell_exit
@@ -113,14 +125,15 @@ let parse_command channel arch command args label addr_debug line_debug =
         @{<fg_yellow>\"%s\"@}. Try @{<fg_green>\"help\"@}.@."command
 
 let rec shell arch label addr_debug line_debug =
-  if !program_run then 
+  if !program_run && not !program_end then
     Print.print_prog (Format.formatter_of_out_channel stdout) arch 8 addr_debug;
   Format.printf "> %!";
   let line = read_line () in
   let words = String.split_on_char ' ' line in
   try match words with
   | command :: args ->
-    parse_command Format.std_formatter arch command args label addr_debug line_debug;
+    parse_command Format.std_formatter arch
+        command args label addr_debug line_debug;
     shell arch label addr_debug line_debug
   | _ -> shell arch label addr_debug line_debug
   with Shell_exit -> ()

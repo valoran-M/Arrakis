@@ -29,7 +29,7 @@ let syscall channel (arch : Arch.t) =
   match reg with
   | 1l  -> print_int       channel arch
   | 4l  -> print_string    channel arch
-  | 9l  -> sbrk                 arch
+  | 9l  -> sbrk                    arch
   | 10l -> exit            ()
   | 11l -> print_character channel arch
   | 17l -> exit2                   arch

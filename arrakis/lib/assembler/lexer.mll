@@ -11,6 +11,11 @@
   let b_inst = Inst_B.str_table
   let u_inst = Inst_U.str_table
   let j_inst = Inst_J.str_table
+
+
+  let tr_inst = Inst_Pseudo.two_regs_str
+  let ro_inst = Inst_Pseudo.regs_offset_str
+
 }
 
 (* Numbers ------------------------------------------------------------------ *)
@@ -56,6 +61,11 @@ let inst_s = "sb" | "sh" | "sw"
 
 let inst_u = "lui" | "auipc"
 
+(* Pseudo instructions ------------------------------------------------------ *)
+
+let inst_two_regs = "mv" | "not" | "neg" | "seqz" | "snez" | "sltz" | "sgtz"
+let reg_offset = "beqz" | "bnez" | "blez" | "bgez" | "bltz" | "bgtz"
+
 rule token = parse
   | '\n'{ incr line; END_LINE }
   | ',' { COMMA }
@@ -67,18 +77,32 @@ rule token = parse
   | space { token lexbuf }
   | ".globl" { GLOBL }
   | integer as i { INT(Int32.of_string i, i) }
-  | inst_b as id { INST_B (Hashtbl.find b_inst id, !line, id) }
-  | inst_i as id { INST_I (Hashtbl.find i_inst id, !line, id) }
-  | inst_j as id { INST_J (Hashtbl.find j_inst id, !line, id) }
-  | inst_r as id { INST_R (Hashtbl.find r_inst id, !line, id) }
-  | inst_s as id { INST_S (Hashtbl.find s_inst id, !line, id) }
-  | inst_u as id { INST_U (Hashtbl.find u_inst id, !line, id) }
-  | inst_i_load as id { INST_I_LOAD (Hashtbl.find i_inst id, !line, id) }
-  | inst_syst   as id { INST_SYST (Hashtbl.find i_inst id, !line, id) }
-  | label as id
+  | inst_b as inst { INST_B (!line, inst, Hashtbl.find b_inst inst) }
+  | inst_i as inst { INST_I (!line, inst, Hashtbl.find i_inst inst) }
+  | inst_j as inst { INST_J (!line, inst, Hashtbl.find j_inst inst) }
+  | inst_r as inst { INST_R (!line, inst, Hashtbl.find r_inst inst) }
+  | inst_s as inst { INST_S (!line, inst, Hashtbl.find s_inst inst) }
+  | inst_u as inst { INST_U (!line, inst, Hashtbl.find u_inst inst) }
+  | inst_i_load as inst { INST_I_LOAD (!line, inst, Hashtbl.find i_inst inst) }
+  | inst_syst   as inst { INST_SYST (!line, inst, Hashtbl.find i_inst inst) }
+  (* Pseudo instructions *)
+  | inst_two_regs as inst { TWO_REGS (!line, inst, Hashtbl.find tr_inst inst) }
+  | reg_offset  as inst { REGS_OFFSET (!line, inst, Hashtbl.find ro_inst inst) }
+  | "nop"  { NOP   (!line) }
+  | "li"   { LI    (!line) }
+  | "la"   { LA    (!line) }
+  | "j"    { J     (!line) }
+  | "jal"  { JALP  (!line) }
+  | "jr"   { JR    (!line) }
+  | "jalr" { JALRP (!line) }
+  | "ret"  { RET   (!line) }
+  | "call" { CALL  (!line) }
+  | "tail" { TAIL  (!line) }
+  (* --- *)
+  | label as lbl
     {
-      try REG(Hashtbl.find regs id, id)
-      with Not_found -> IDENT (id)
+      try  REG (Hashtbl.find regs lbl, lbl)
+      with Not_found -> IDENT (lbl)
     }
   | _ as c
     { raise (Lexing_error (!line, String.make 1 c)) }

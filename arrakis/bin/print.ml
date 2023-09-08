@@ -41,7 +41,7 @@ let print_line channel (arch: Arch.t) line_address =
     let value = Memory.get_byte arch.memory addr in
     Format.fprintf channel "  %02x" (Int32.to_int value)
   done;
-  Format.fprintf channel "\n"
+  Format.fprintf channel "@."
 
 let print_memory channel (arch: Arch.t) start size =
   Format.fprintf channel " Address    +3  +2  +1  +0\n";

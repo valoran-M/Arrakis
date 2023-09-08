@@ -62,7 +62,7 @@ type pseudo_instruction =
   | J     of imm
   | JALP  of imm
   | JR    of int32
-  | JALRP of int32
+  | JALRP  of int32
   | RET
   | CALL  of imm
   | TAIL  of imm

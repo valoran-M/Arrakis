@@ -8,6 +8,15 @@
 ## Shell
 
 * A `clear` command would be nice to have.
+* If no argument is given to print code, print everything.
+* Printing breakpoints when printing code could be helpful.
+* Print code could have a negative and a positive offset and print from
+  one to another to show what code was executed.
+* breakpoint line may be hard to know. Printing line number could help.
+* Using up arrow to get last command
+* print memory sp should be a thing
+* Some error crash the shell (Failures, Usage of of_string for example)
+  but they probably should be printing simple error.
 
 ## Assembler
 

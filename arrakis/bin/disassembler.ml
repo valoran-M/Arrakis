@@ -1,6 +1,6 @@
 open Simulator
 
-exception Invalide_instruction
+exception Invalid_instruction
 
 let ( + ) = Int32.add
 let ( * ) = Int32.mul
@@ -89,5 +89,5 @@ let print_code _arch code =
     let inst = Instructions.J_type.decode code in
     Format.sprintf " %s%d" (Hashtbl.find j_to_string opcode)
         (Int32.to_int inst.imm)
-  | _ -> raise Invalide_instruction
+  | _ -> raise Invalid_instruction
 

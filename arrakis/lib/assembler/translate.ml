@@ -170,7 +170,7 @@ let rec loop prog mem addr =
     loop next mem (addr + 4l)
   | Label _  ::  l -> loop l mem addr
   | GLabel label :: l ->
-    try 
+    try
       Hashtbl.add global_label label (Hashtbl.find label_address label);
       loop l mem addr
     with Not_found -> failwith "TODO global address"

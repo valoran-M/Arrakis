@@ -27,7 +27,16 @@ let print_int channel (arch : Arch.t) =
   Format.fprintf channel "%d@." (Int32.to_int (Cpu.get_reg arch.cpu 11));
   Continue
 
-let print_string _channel _arch = failwith "TODO: print_string"
+let print_string channel (arch : Arch.t) =
+  let adr = ref (Cpu.get_reg arch.cpu 11)          in
+  let c   = ref (Memory.get_byte arch.memory !adr) in
+  while (!c != 0l) do
+    Format.fprintf channel "%c" (Char.chr (Int32.to_int !c));
+    adr := Int32.add !adr 1l;
+    c := Memory.get_byte arch.memory !adr
+  done;
+  Format.fprintf channel "@.";
+  Continue
 
 let print_character channel (arch : Arch.t) =
   let reg = Cpu.get_reg arch.cpu 11 in

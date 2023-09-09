@@ -132,7 +132,8 @@ let parse_command channel arch command args label addr_debug line_debug =
 
 let rec shell arch label addr_debug line_debug =
   if !program_run && not !program_end then
-    Print.print_prog (Format.formatter_of_out_channel stdout) arch 8 addr_debug;
+    Print.print_code_part
+    (Format.formatter_of_out_channel stdout) arch 8 addr_debug;
   Format.printf "> %!";
   let line = read_line () in
   let words = String.split_on_char ' ' line in

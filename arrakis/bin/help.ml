@@ -59,8 +59,13 @@ let print channel =
       Print memory segment.
       Starts at address <start> and displays <nb> 32 bits.
 
+
+      <start> can either be an adress or a register.
+      If it's a register, the actual start value will be the value stored inside
+      the register.
+
       default args:
-        <start> : start data segement
+        <start> : Starting data segement
         <nb>    : 0x10
 
   @{<fg_green>*@} (p)rint (r)egs <r_1> ... <r_n>
@@ -70,8 +75,10 @@ let print channel =
 
       Accepted register may be x0...x31 or zero, ra, ...
 
-  @{<fg_green>*@} (p)rint (c)ode offset
+  @{<fg_green>*@} (p)rint (c)ode <offset>
 
-      Print code from pc value to offset.
+      Print code from pc to pc+offset.
+      If no offset is specified, print code from pc to the end.
+
 @.|}
 

@@ -5,22 +5,22 @@ let breakpoints = Hashtbl.create 16
 let program_run = ref false
 let program_end = ref false
 
-let rec run channel arch =
+let rec run first channel arch =
   if !program_end then
     Format.fprintf channel "@{<fg_red>Error:@} Program is finished@."
   else (
     let addr = Simulator.Cpu.get_pc arch.cpu in
-    if not (Hashtbl.mem breakpoints addr) then
+    if first || not (Hashtbl.mem breakpoints addr) then
       match exec_instruction arch with
-      | Continue _addr  -> run channel arch
-      | Zero            ->
+      | Continue _ -> run false channel arch
+      | Zero       ->
         Format.fprintf channel
           "@{<fg_yellow>Warning:@} Syscall is not finished.@.";
         program_end := true;
         program_run := false
       | Sys_call        ->
         match Syscall.syscall channel arch with
-        | Syscall.Continue -> run channel arch
+        | Syscall.Continue  -> run false channel arch
         | Syscall.Exit code ->
             Format.fprintf channel
               "Exiting with code @{<fg_yellow>'%d'@}@." code;
@@ -119,10 +119,10 @@ let parse_command channel arch command args label addr_debug line_debug =
   match command with
   | "run"         | "r" ->
     program_run := true;
-    run channel arch;
+    run false channel arch;
   | "breakpoint"  | "b" -> set_breakpoint channel args label line_debug
   | "step"        | "s" -> step channel arch
-  | "next"        | "n" -> run  channel arch
+  | "next"        | "n" -> run true channel arch
   | "print"       | "p" -> Print.decode_print channel arch args addr_debug breakpoints
   | "help"        | "h" -> Help.general channel
   | "quit"        | "q" -> raise Shell_exit

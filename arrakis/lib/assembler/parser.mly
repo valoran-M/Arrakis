@@ -45,8 +45,7 @@ pseudo_instruction:
     let str = "li " ^ rds ^ ", " ^ simm in
     (line, str, LI(rd, imm)) }
 | line=LA rd=REG COMMA? imm=imm
-  { (* TODO: CHECK *)
-    let imm, simm = imm in
+  { let imm, simm = imm in
     let rd, rds   = rd  in
     let str = "li " ^ rds ^ ", " ^ simm in
     (line, str, LA(rd, imm)) }

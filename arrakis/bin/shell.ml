@@ -123,7 +123,7 @@ let parse_command channel arch command args label addr_debug line_debug =
   | "breakpoint"  | "b" -> set_breakpoint channel args label line_debug
   | "step"        | "s" -> step channel arch
   | "next"        | "n" -> run  channel arch
-  | "print"       | "p" -> Print.decode_print channel arch args addr_debug
+  | "print"       | "p" -> Print.decode_print channel arch args addr_debug breakpoints
   | "help"        | "h" -> Help.general channel
   | "quit"        | "q" -> raise Shell_exit
   | _ ->
@@ -133,7 +133,7 @@ let parse_command channel arch command args label addr_debug line_debug =
 let rec shell arch label addr_debug line_debug =
   if !program_run && not !program_end then
     Print.print_code_part
-    (Format.formatter_of_out_channel stdout) arch 8 addr_debug;
+    (Format.formatter_of_out_channel stdout) arch addr_debug breakpoints 8 0;
   Format.printf "> %!";
   let line = read_line () in
   let words = String.split_on_char ' ' line in

@@ -8,10 +8,7 @@
 ## Shell
 
 * A `clear` command would be nice to have.
-* Printing breakpoints when printing code could be helpful.
-* Print code could have a negative and a positive offset and print from
-  one to another to show what code was executed.
-* breakpoint line may be hard to know. Printing line number could help.
+* Breakpoint line may be hard to know. Printing line number could help.
 * Using up arrow to get last command
 
 ## Assembler

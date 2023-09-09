@@ -1,5 +1,6 @@
 open Simulator
 open Disassembler
+open Format
 
 exception Break
 
@@ -9,49 +10,71 @@ let ( * ) = Int32.mul
 
 (* Progam ------------------------------------------------------------------  *)
 
-let print_code_part channel (arch : Arch.t) code_print debug =
+let print_addr channel arch debug breakpoints addr pc code =
+    let breakpoint_str  =
+      try  sprintf "%d " (Hashtbl.find breakpoints addr)
+      with Not_found -> "  "
+    in
+    let addr_pc         = if addr = pc then "->" else "  "  in
+    let addr_str        = Utils.int32_to_int addr           in
+    let machinec_str    = Utils.int32_to_int code           in
+    let basicc_str      = (print_code arch code)            in
+    let _, orignal_code = Hashtbl.find debug addr           in
+
+    fprintf channel "%s%s 0x%08x\t\t0x%08x\t\t%-24s%s@."
+      breakpoint_str
+      addr_pc
+      addr_str
+      machinec_str
+      basicc_str
+      orignal_code
+
+let print_code_part channel (arch : Arch.t) debug breakpoints offset noffset =
   let pc = Cpu.get_pc arch.cpu in
   try
-  Format.fprintf channel
-      "   Adress\t\tMachine Code\t\tBasic Code\t\tOriginal Code@.";
-  for i=0 to code_print-1 do
-    let addr = (pc + Int32.of_int i * 0x4l) in
-    let code = Memory.get_int32 arch.memory  addr in
+    fprintf channel
+        "     Adress\t\tMachine Code\t\tBasic Code\t\tOriginal Code@.";
+    for i=noffset to offset-1 do
+      let addr = (pc + Int32.of_int i * 0x4l) in
+      if addr >= 0l then (
+        let code = Memory.get_int32 arch.memory  addr in
 
-    if code = 0l
-    then (Format.fprintf channel "   End without syscall@."; raise Break)
-    else let _, orignal_code = Hashtbl.find debug addr in
-         Format.fprintf channel "%s 0x%08x\t\t0x%08x\t\t%-24s%s@."
-          (if i = 0 then "->" else "  ") (Utils.int32_to_int addr)
-          (Utils.int32_to_int  code) (print_code arch code) orignal_code
-  done
+        if code = 0l
+        then (fprintf channel "     End without syscall@."; raise Break)
+        else print_addr channel arch debug breakpoints addr pc code
+        )
+    done
   with _ -> ()
 
-let print_code_full channel (arch : Arch.t) debug =
+let print_code_full channel (arch : Arch.t) debug breakpoints =
   let pc = Cpu.get_pc arch.cpu in
-  let addr = ref pc in
+  let addr = ref 0l in
   let code = ref (Memory.get_int32 arch.memory !addr) in
   try
-  Format.fprintf channel
-      "   Adress\t\tMachine Code\t\tBasic Code\t\tOriginal Code@.";
-  while !code != 0l do
-
-    let _, orignal_code = Hashtbl.find debug !addr in
-    Format.fprintf channel "%s 0x%08x\t\t0x%08x\t\t%-24s%s@."
-      (if !addr = pc then "->" else "  ") (Utils.int32_to_int !addr)
-      (Utils.int32_to_int !code) (print_code arch !code) orignal_code;
-    addr := !addr + 0x4l;
-    code := Memory.get_int32 arch.memory !addr
-  done;
-  Format.fprintf channel "   End without syscall@."
+    fprintf channel
+     "     Adress\t\tMachine Code\t\tBasic Code\t\tOriginal Code@.";
+    while !code != 0l do
+      print_addr channel arch debug breakpoints !addr pc !code;
+      addr := !addr + 0x4l;
+      code := Memory.get_int32 arch.memory !addr
+    done;
+    fprintf channel "     End without syscall@."
   with _ -> ()
 
-let decode_code_args channel (arch : Arch.t) args debug =
+let decode_code_args channel (arch : Arch.t) args debug breakpoints =
   match args with
-  | o :: _ ->
-    (try print_code_part channel arch (int_of_string o) debug with _ -> ())
-  | _ -> print_code_full channel arch debug
-
+  | offset :: [] -> (
+    try
+      let offset  = int_of_string   offset  in
+      print_code_part channel arch debug breakpoints offset 0
+    with _ -> printf "@{<fg_red>Error:@} Incorrect argument to print code. @.")
+  | offset :: noffset :: _ -> (
+    try
+      let offset  = int_of_string offset  in
+      let noffset = int_of_string noffset in
+      print_code_part channel arch debug breakpoints offset noffset
+    with _ -> printf "@{<fg_red>Error:@} Incorrect argument to print code. @.")
+  | _ -> print_code_full channel arch debug breakpoints
 
 (* Memory ------------------------------------------------------------------- *)
 
@@ -69,16 +92,16 @@ let i32_or_reg_of_str reg (arch : Arch.t) =
   with _ -> Int32.of_string reg
 
 let print_line channel (arch: Arch.t) line_address =
-  Format.fprintf channel "0x%08x" (Utils.int32_to_int line_address);
+  fprintf channel "0x%08x" (Utils.int32_to_int line_address);
   for i = line_size - 1 downto 0 do
     let addr = line_address + (Int32.of_int i) in
     let value = Memory.get_byte arch.memory addr in
-    Format.fprintf channel "  %02x" (Int32.to_int value)
+    fprintf channel "  %02x" (Int32.to_int value)
   done;
-  Format.fprintf channel "@."
+  fprintf channel "@."
 
 let print_memory channel (arch: Arch.t) start size =
-  Format.fprintf channel " Address    +3  +2  +1  +0\n";
+  fprintf channel " Address    +3  +2  +1  +0\n";
   let line_address = ref (Int32.logand start (Int32.lognot line_size32)) in
   for _ = 1 to size do
     print_line channel arch !line_address;
@@ -93,7 +116,7 @@ let decode_memory_args channel (arch: Arch.t) args =
       let start = i32_or_reg_of_str start arch in
       print_memory channel arch start size_default
     with _ ->
-        Format.printf
+        printf
         "@{<fg_red>Error:@} Incorrect argument to print memory. @.")
   | [start; size] -> (
       try
@@ -101,7 +124,7 @@ let decode_memory_args channel (arch: Arch.t) args =
         let size = int_of_string size            in
         print_memory channel arch start size
       with _ ->
-        Format.printf
+        printf
         "@{<fg_red>Error:@} Incorrect argument to print memory. @.")
   | _ -> ()
 
@@ -120,7 +143,7 @@ let regs = [|
 
 let print_all_regs channel (arch: Arch.t) =
   for i = 0 to 31 do
-    Format.fprintf channel "  %s -> 0x%08x\n" regs.(i)
+    fprintf channel "  %s -> 0x%08x\n" regs.(i)
       (Simulator.Utils.int32_to_int (Cpu.get_reg arch.cpu i))
   done
 
@@ -131,11 +154,11 @@ let print_list_regs channel (arch: Arch.t) =
         try Int32.to_int (Assembler.Regs.of_string reg)
         with _ -> int_of_string reg
       in
-      Format.fprintf channel
+      fprintf channel
         "  %s -> 0x%08x\n" regs.(i)
         (Simulator.Utils.int32_to_int (Cpu.get_reg arch.cpu i))
     with _ ->
-      Format.fprintf channel "@{<fg_red>Error@}: \"%s\" isn't a register@." reg
+      fprintf channel "@{<fg_red>Error@}: \"%s\" isn't a register@." reg
   )
 
 let decode_regs_args channel (arch: Arch.t) args =
@@ -145,9 +168,9 @@ let decode_regs_args channel (arch: Arch.t) args =
 
 (* Decode ------------------------------------------------------------------- *)
 
-let decode_print channel arch args addr_debug =
+let decode_print channel arch args addr_debug breakpoints =
   match args with
   | "m" :: l | "memory" :: l -> decode_memory_args channel arch l
   | "r" :: l | "regs"   :: l -> decode_regs_args   channel arch l
-  | "c" :: l | "code"   :: l -> decode_code_args   channel arch l addr_debug
+  | "c" :: l | "code"   :: l -> decode_code_args   channel arch l addr_debug breakpoints
   | _ -> Help.print channel

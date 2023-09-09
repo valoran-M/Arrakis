@@ -75,10 +75,11 @@ let print channel =
 
       Accepted register may be x0...x31 or zero, ra, ...
 
-  @{<fg_green>*@} (p)rint (c)ode <offset>
+  @{<fg_green>*@} (p)rint (c)ode <offset> <noffset>
 
-      Print code from pc to pc+offset.
-      If no offset is specified, print code from pc to the end.
+      If no offset is specified, print code from start to finish.
+      If offset is specified, print code from pc to pc+offset.
+      If noffset is also specified, print code from pc-noffset to pc+offset.
 
 @.|}
 

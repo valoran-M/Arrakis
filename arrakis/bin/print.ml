@@ -120,7 +120,7 @@ let regs = [|
 
 let print_all_regs channel (arch: Arch.t) =
   for i = 0 to 31 do
-    Format.fprintf channel "  %s -> %08x\n" regs.(i)
+    Format.fprintf channel "  %s -> 0x%08x\n" regs.(i)
       (Simulator.Utils.int32_to_int (Cpu.get_reg arch.cpu i))
   done
 
@@ -132,7 +132,7 @@ let print_list_regs channel (arch: Arch.t) =
         with _ -> int_of_string reg
       in
       Format.fprintf channel
-        "  %s -> %08x\n" regs.(i)
+        "  %s -> 0x%08x\n" regs.(i)
         (Simulator.Utils.int32_to_int (Cpu.get_reg arch.cpu i))
     with _ ->
       Format.fprintf channel "@{<fg_red>Error@}: \"%s\" isn't a register@." reg

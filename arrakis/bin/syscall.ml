@@ -77,6 +77,11 @@ let geteuid (arch : Arch.t) =
   Cpu.set_reg arch.cpu 11 (Int32.of_int euid);
   Continue
 
+let time (arch : Arch.t) =
+  let t = Unix.time () in
+  Cpu.set_reg arch.cpu 11 (Int32.of_float t);
+  Continue
+
 (* --- *)
 
 (* Source: https://github.com/ThaumicMekanism/venus/wiki/Environmental-Calls *)

@@ -6,3 +6,5 @@ val input_file : string
 
 val no_color   : bool
 val allow_root : bool
+
+val env        : string

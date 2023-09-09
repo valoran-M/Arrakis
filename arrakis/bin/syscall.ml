@@ -4,7 +4,7 @@ type syscall_ret = Exit of int | Continue
 
 let invalid_sysc channel reg =
   Format.fprintf channel
-    "@{<fg_red>Error:@} @{<fg_yellow>'%d'@} Invalid syscall."
+    "@{<fg_red>Error:@} @{<fg_yellow>'%d'@} Invalid syscall.@."
     (Int32.to_int reg);
   Continue
 
@@ -116,4 +116,8 @@ let unix_syscall channel (arch : Arch.t) =
   | 214l -> failwith "todo: brk"
   | _    -> invalid_sysc channel reg
 
-let syscall = venus_syscall
+let syscall =
+  match Options.env with
+  | "unix"  -> unix_syscall
+  | "venus" -> venus_syscall
+  | _       -> failwith "Invalid environment."

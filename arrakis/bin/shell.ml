@@ -44,7 +44,7 @@ let step channel arch =
       | Syscall.Continue  -> ()
       | Syscall.Exit code ->
         Format.fprintf channel
-          "Exiting code @{<fg_yellow>'%d'@}@." code;
+          "Exiting with code @{<fg_yellow>'%d'@}@." code;
             program_run := false;
             program_end := true
 

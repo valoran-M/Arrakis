@@ -117,9 +117,7 @@ module R_type = struct
     | 0x5, 0x01 -> rs1 /. rs2                   (* DIVU   *)
     | 0x6, 0x01 -> rs1 % rs2                    (* REM    *)
     | 0x7, 0x01 -> rs1 %. rs2                   (* REMU   *)
-    | _, _ ->
-      Printf.eprintf "%d %d" instruction.funct3 instruction.funct7;
-      Error.r_invalid instruction.funct3 instruction.funct7
+    | _, _ -> Error.r_invalid instruction.funct3 instruction.funct7
 end
 
 (* I Instructions ----------------------------------------------------------- *)
@@ -204,8 +202,8 @@ module B_type = struct
     (* Imm's bits *)
     let imm12   = (imm_7 && 0b1000000l) << 6l in
     let imm10_5 = (imm_7 && 0b0111111l) << 5l in
-    let imm11   = (imm_5 && 0b00001l) << 11l in
-    let imm4_1  = imm_5 && 0b11110l in
+    let imm11   = (imm_5 && 0b00001l) << 11l  in
+    let imm4_1  = imm_5 && 0b11110l           in
     let imm = Utils.sign_extended (imm12 || imm11 || imm10_5 || imm4_1) 13 in
 
     let (>>) = Int.shift_right_logical in
@@ -235,7 +233,7 @@ module U_type = struct
   type t = { rd: int; imm_shift : int32; }
 
   let decode code =
-    let (>>) = Int.shift_right_logical in
+    let (>>) = Int.shift_right_logical   in
     let (&&) x y = Int32.to_int (x && y) in
     {
       rd = (code && rd_mask) >> 7;
@@ -254,16 +252,9 @@ module J_type = struct
     let imm_31_20 = (code && (func7_mask || rs2_mask)) >> 20l in
     (* Imm's bits *)
     let imm19_12 = code && 0b11111111000000000000l in
-    let imm11 = (imm_31_20 && 0b1l) << 11l in
-    let imm10_1 = (imm_31_20 && 0b11111111110l) in
-    let imm20 = (imm_31_20 && 0b100000000000l) in
-    Printf.printf "%d %d %d %d %d\n"
-        (Int32.to_int imm20)
-        (Int32.to_int imm19_12)
-        (Int32.to_int imm11)
-        (Int32.to_int imm10_1)
-        (Int32.to_int (imm20 || imm19_12 || imm11 || imm10_1))
-    ;
+    let imm11 = (imm_31_20 && 0b1l) << 11l         in
+    let imm10_1 = (imm_31_20 && 0b11111111110l)    in
+    let imm20 = (imm_31_20 && 0b100000000000l)     in
     let imm = Utils.sign_extended (imm20 || imm19_12 || imm11 || imm10_1) 21 in
 
     let (>>) = Int.shift_right_logical in

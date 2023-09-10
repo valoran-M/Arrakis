@@ -28,7 +28,7 @@ let () =
   try
   let channel = open_in input_file in
   let lb = Lexing.from_channel channel in
-    let mem, _, label, global_label, addr_debug, line_debug =
+    let mem, label, global_label, addr_debug, line_debug =
       Assembler.Translate.translate lb
     in
     let pc =

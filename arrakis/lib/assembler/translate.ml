@@ -177,33 +177,54 @@ let translate_pseudo pseudo mem addr line string =
     let imm = imm_to_int32 line addr offset in
     translate_reg_offset inst rs imm mem addr
 
-let rec loop prog mem addr =
+let loop_prog mem addr prog =
   match prog with
-  | [] -> Memory.set_int32 mem addr 0l; addr
-  | Prog_Pseudo (l, s, inst) :: next ->
+  | Prog_Pseudo (l, s, inst) ->
     Hashtbl.add line_debug l addr;
     Hashtbl.add addr_debug addr (l, s);
     let length = translate_pseudo inst mem addr l s in
-    loop next mem (addr + length)
-  | Prog_Instr (l, s, inst) :: next ->
+    addr + length
+  | Prog_Instr (l, s, inst) ->
     Hashtbl.add line_debug l addr;
     Hashtbl.add addr_debug addr (l, s);
     translate inst mem addr l;
-    loop next mem (addr + 4l)
-  | Prog_Label _  ::  l -> loop l mem addr
-  | Prog_GLabel label :: l ->
+    addr + 4l
+  | Prog_Label _  -> addr
+  | Prog_GLabel label ->
     try
-      Hashtbl.add global_label label (Hashtbl.find label_address label);
-      loop l mem addr
+      Hashtbl.add global_label label (Hashtbl.find label_address label); addr
+    with Not_found -> failwith "TODO global address"
+
+let loop_memory mem addr (prog : memory_line) =
+  match prog with
+  | Mem_Value v     -> Memory.set_int32 mem addr v; addr + 4l
+  | Mem_Bytes lb    ->
+    List.fold_left (fun addr v ->
+      Memory.set_byte mem addr (Utils.char_to_int32 v); addr + 1l)
+      addr lb
+  | Mem_Asciiz s    ->
+    String.fold_left (fun addr v ->
+      Memory.set_byte mem addr (Utils.char_to_int32 v); addr + 1l)
+      addr s
+  | Mem_Word words  ->
+    List.fold_left (fun addr v ->
+      Memory.set_int32 mem addr v; addr + 1l)
+      addr words
+  | Mem_Label _      -> addr
+  | Mem_GLabel label ->
+    try
+      Hashtbl.add global_label label (Hashtbl.find label_address label); addr
     with Not_found -> failwith "TODO global address"
 
 let translate code =
+    let open Simulator.Segment in
   try
     let mem = Memory.make () in
     let prog = Parser.program Lexer.token code in
     get_label_address prog;
-    let addr = loop prog.program mem Simulator.Segment.text_begin in
-    (mem, addr, label_address, global_label, addr_debug, line_debug)
+    ignore (List.fold_left (loop_memory mem) static_being prog.memory);
+    ignore (List.fold_left (loop_prog mem)   text_begin   prog.program);
+    (mem, label_address, global_label, addr_debug, line_debug)
   with Parser.Error ->
     let pe = Parsing_error (Lexing.lexeme code) in
     raise (Assembler_error (!Lexer.line, pe))

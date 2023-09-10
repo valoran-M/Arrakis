@@ -2,8 +2,9 @@ open Error
 open Simulator
 open Program
 
-let (+) = Int32.add
-let (-) = Int32.sub
+let ( * ) = Int32.mul
+let ( + ) = Int32.add
+let ( - ) = Int32.sub
 
 let (&)  = Int32.logand
 let (<<) = Int32.shift_left
@@ -42,16 +43,37 @@ let pseudo_length (pseudo : pseudo_instruction) =
     | Imm imm -> if -2048l <= imm && imm <= 2048l
                  then 0x4l else 0x8l
 
-let rec get_label_address prog addr =
+let rec get_label_address_program prog addr =
   match prog with
   | [] -> ()
   | Prog_Pseudo (_, _, instruction) :: l ->
-    get_label_address l (addr + (pseudo_length instruction))
-  | Prog_Instr (_, _, _) :: l -> get_label_address l (addr + 0x4l)
-  | Prog_GLabel _ :: l -> get_label_address l addr
+    get_label_address_program l (addr + (pseudo_length instruction))
+  | Prog_Instr (_, _, _) :: l -> get_label_address_program l (addr + 0x4l)
+  | Prog_GLabel _ :: l -> get_label_address_program l addr
   | Prog_Label label  :: l ->
     Hashtbl.add label_address label addr;
-    get_label_address l addr
+    get_label_address_program l addr
+
+let rec get_label_address_memory (memory : memory_line list) addr =
+  match memory with
+  | [] -> ()
+  | Mem_Value _     :: l -> get_label_address_memory l (addr + 0x4l)
+  | Mem_Bytes bs    :: l -> 
+    get_label_address_memory l (addr + Int32.of_int (List.length bs))
+  | Mem_Asciiz s    :: l ->
+    get_label_address_memory l (addr + Int32.of_int (String.length s))
+  | Mem_Word lw     :: l ->
+    let offset = 0x4l * Int32.of_int (List.length lw) in
+    get_label_address_memory l (addr + offset)
+  | Mem_GLabel _    :: l -> get_label_address_memory l addr
+  | Mem_Label label :: l ->
+    Hashtbl.add label_address label addr;
+    get_label_address_memory l addr
+
+let get_label_address (prog : program) =
+  let open Simulator.Segment in
+  get_label_address_memory  prog.memory  static_being;
+  get_label_address_program prog.program text_begin
 
 (* Translation -------------------------------------------------------------  *)
 
@@ -179,8 +201,8 @@ let translate code =
   try
     let mem = Memory.make () in
     let prog = Parser.program Lexer.token code in
-    get_label_address prog Simulator.Segment.text_begin;
-    let addr = loop prog mem Simulator.Segment.text_begin in
+    get_label_address prog;
+    let addr = loop prog.program mem Simulator.Segment.text_begin in
     (mem, addr, label_address, global_label, addr_debug, line_debug)
   with Parser.Error ->
     let pe = Parsing_error (Lexing.lexeme code) in

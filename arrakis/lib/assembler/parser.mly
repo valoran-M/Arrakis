@@ -182,5 +182,5 @@ program_line:
 
 program:
 | END_LINE* program_line* EOF
-  { $2 }
+    { { memory = []; program = $2 } }
 ;

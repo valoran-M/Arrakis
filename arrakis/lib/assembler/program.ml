@@ -98,13 +98,16 @@ type program_line =
 
 type memory_line =
   | Mem_Value  of int32
-  | Mem_Bytes  of Bytes.t
+  | Mem_Bytes  of Bytes.t list
   | Mem_Asciiz of string
   | Mem_Word   of Int32.t list
   | Mem_GLabel of string
   | Mem_Label  of string
 
-
 (* Program ------------------------------------------------------------------ *)
 
-type program = program_line list
+type program =
+  {
+    memory  : memory_line list;
+    program : program_line list; 
+  }

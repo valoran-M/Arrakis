@@ -40,7 +40,9 @@ pseudo_instruction:
   { let imm, simm = imm in
     let rd, rds   = rd  in
     let str = "li " ^ rds ^ ", " ^ simm in
-    (line, str, LI(rd, imm)) }
+    match imm with
+    | Label s -> (line, str, LA(rd, imm))
+    | Imm imm -> (line, str, LI(rd, imm)) }
 | line=LA rd=REG COMMA? imm=imm
   { let imm, simm = imm in
     let rd, rds   = rd  in

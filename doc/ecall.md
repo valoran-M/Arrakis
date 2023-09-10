@@ -25,21 +25,21 @@ found [here](https://jborza.com/post/2021-05-11-riscv-linux-syscalls/).
 
 | ID    | Name                    |
 |-------|-------------------------|
-| 17    | [getcwd](###getcwd)     |
-| 34    | [mkdirat](###mkdirat)   |
-| 35    | [unlinkat](###unlinkat) |
-| 37    | [link](###link)         |
-| 49    | [chdir](###chdir)       |
-| 56    | [open](###open)         |
-| 57    | [close](###close)       |
-| 63    | [read](###read)         |
-| 64    | [write](###write)       |
-| 93    | [exit](###exit)         |
-| 129   | [kill](###kill)         |
-| 174   | [getuid](###getuid)     |
-| 175   | [geteuid](###geteuid)   |
-| 221   | [execve](###execve)     |
-| 214   | [brk](###brk)           |
+| 17    | [getcwd](#getcwd)     |
+| 34    | [mkdirat](#mkdirat)   |
+| 35    | [unlinkat](#unlinkat) |
+| 37    | [link](#link)         |
+| 49    | [chdir](#chdir)       |
+| 56    | [open](#open)         |
+| 57    | [close](#close)       |
+| 63    | [read](#read)         |
+| 64    | [write](#write)       |
+| 93    | [exit](#exit)         |
+| 129   | [kill](#kill)         |
+| 174   | [getuid](#getuid)     |
+| 175   | [geteuid](#geteuid)   |
+| 221   | [execve](#execve)     |
+| 214   | [brk](#brk)           |
 
 ### getcwd
 

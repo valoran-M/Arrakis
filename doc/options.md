@@ -9,7 +9,7 @@
 | f            |             | Specify a Unix socket file                      |
 |              | allow-root  | Allow usage of arrakis in root mode             |
 |              | no-color    | Remove usage of color in output                 |
-| e            |             | Set environment for ecalls. <venus | unix>      |
+| e            |             | Set environment for ecalls. Either venus or unix|
 
 ## Some additionnal information
 

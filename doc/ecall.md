@@ -1,14 +1,5 @@
 # Environmental Calls
 
-## Using ecall
-
-Environmental calls are made with the `ecall` instruction.
-To use a specific `ecall`, load it's id into `a0` and parameters in `a1` to
-`a7`.
-
-When "pointed out" is used in the documentation, it means that the register
-should contain a pointer to the memory.
-
 ## Venus
 
 Arrakis can fully emulate Venus environment calls.
@@ -22,7 +13,7 @@ below.
 
 Interesting ressources about system calls in Linux/RISC-V:
 * [How to use linux system calls in RISC-V](https://github.com/scotws/RISC-V-tests/blob/master/docs/riscv_linux_system_calls.md)
-* [Complete list of system calls ID]((https://jborza.com/post/2021-05-11-riscv-linux-syscalls/)]
+* [Complete list of system calls ID](https://jborza.com/post/2021-05-11-riscv-linux-syscalls/)
 
 | ID    | Name      |
 |-------|-----------|

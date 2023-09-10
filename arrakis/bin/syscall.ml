@@ -34,7 +34,7 @@ let get_str_pointed_by (arch : Arch.t) adr =
   done;
   !res
 
-(* Implementation of various SysCalls --------------------------------------- *)
+(* Implementation of Venus ecall -------------------------------------------- *)
 
 let print_int channel (arch : Arch.t) =
   Format.fprintf channel "%d@." (Int32.to_int (Cpu.get_reg arch.cpu 11));
@@ -56,11 +56,14 @@ let print_character channel (arch : Arch.t) =
 
 let exit0 () = Exit 0
 
+
+let sbrk _arch = failwith "TODO: sbrk"
+
+(* Implementation of Linux ecall -------------------------------------------- *)
+
 let exit (arch : Arch.t) =
   let status = Cpu.get_reg arch.cpu 11 in
   Exit (Int32.to_int status)
-
-let sbrk _arch = failwith "TODO: sbrk"
 
 let kill (arch : Arch.t) =
   let pid = Cpu.get_reg arch.cpu 11 in

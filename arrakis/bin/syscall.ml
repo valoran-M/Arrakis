@@ -56,26 +56,41 @@ let print_character channel (arch : Arch.t) =
 
 let exit0 () = Exit 0
 
-
 let sbrk _arch = failwith "TODO: sbrk"
-
-(* Implementation of Linux ecall -------------------------------------------- *)
 
 let exit (arch : Arch.t) =
   let status = Cpu.get_reg arch.cpu 11 in
   Exit (Int32.to_int status)
 
+(* Source: https://github.com/ThaumicMekanism/venus/wiki/Environmental-Calls *)
+let venus_syscall channel (arch : Arch.t) =
+  let reg = Cpu.get_reg arch.cpu 10 in
+  match reg with
+  | 1l  -> print_int       channel arch
+  | 4l  -> print_string    channel arch
+  | 9l  -> sbrk                    arch
+  | 10l -> exit0           ()
+  | 11l -> print_character channel arch
+  | 17l -> exit            arch
+  | _   -> invalid_sysc    channel reg
+
+(* Implementation of Linux ecall -------------------------------------------- *)
+
+let exit (arch : Arch.t) =
+  let status = Cpu.get_reg arch.cpu 10 in
+  Exit (Int32.to_int status)
+
 let kill (arch : Arch.t) =
-  let pid = Cpu.get_reg arch.cpu 11 in
-  let signal = Cpu.get_reg arch.cpu 12 in
+  let pid = Cpu.get_reg arch.cpu 10    in
+  let signal = Cpu.get_reg arch.cpu 11 in
   Unix.kill (Int32.to_int pid) (Int32.to_int signal);
   Continue
 
 let openat (arch : Arch.t) =
-  let _dfd   = Cpu.get_reg arch.cpu 11     in
-  let _adr   = Cpu.get_reg arch.cpu 12     in
-  let _flags = Cpu.get_reg arch.cpu 13     in
-  let _mode  = Cpu.get_reg arch.cpu 14     in
+  let _dfd   = Cpu.get_reg arch.cpu 10     in
+  let _adr   = Cpu.get_reg arch.cpu 11     in
+  let _flags = Cpu.get_reg arch.cpu 12     in
+  let _mode  = Cpu.get_reg arch.cpu 13     in
 
   let _path  = get_str_pointed_by arch _adr in
 
@@ -90,36 +105,25 @@ let read (_arch : Arch.t) =
 let write (_arch : Arch.t) =
   failwith "todo : write"
 
+let sbrk (_arch : Arch.t) =
+  failwith "TODO: sbrk"
+
 let getuid (arch : Arch.t) =
   let uid = Unix.getuid () in
-  Cpu.set_reg arch.cpu 11 (Int32.of_int uid);
+  Cpu.set_reg arch.cpu 10 (Int32.of_int uid);
   Continue
 
 let geteuid (arch : Arch.t) =
   let euid = Unix.geteuid () in
-  Cpu.set_reg arch.cpu 11 (Int32.of_int euid);
+  Cpu.set_reg arch.cpu 10 (Int32.of_int euid);
   Continue
 
 let execve (_arch : Arch.t) =
   failwith "todo: execve"
 
-(* --- *)
-
-(* Source: https://github.com/ThaumicMekanism/venus/wiki/Environmental-Calls *)
-let venus_syscall channel (arch : Arch.t) =
-  let reg = Cpu.get_reg arch.cpu 10 in
-  match reg with
-  | 1l  -> print_int       channel arch
-  | 4l  -> print_string    channel arch
-  | 9l  -> sbrk                    arch
-  | 10l -> exit0           ()
-  | 11l -> print_character channel arch
-  | 17l -> exit            arch
-  | _   -> invalid_sysc    channel reg
-
 (* Source: https://jborza.com/post/2021-05-11-riscv-linux-syscalls/ *)
 let unix_syscall channel (arch : Arch.t) =
-  let reg = Cpu.get_reg arch.cpu 10 in
+  let reg = Cpu.get_reg arch.cpu 17 in
   match reg with
   | 17l  -> failwith "todo: getcwd"
   | 34l  -> failwith "todo: mkdirat"
@@ -137,6 +141,8 @@ let unix_syscall channel (arch : Arch.t) =
   | 221l -> execve    arch
   | 214l -> sbrk      arch
   | _    -> invalid_sysc channel reg
+
+(* -------------------------------------------------------------------------- *)
 
 let syscall =
   match Options.env with

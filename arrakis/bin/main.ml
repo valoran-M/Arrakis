@@ -26,14 +26,14 @@ let () =
   );
 
   try
-    let channel = open_in input_file in
+  let channel = open_in input_file in
+  let lb = Lexing.from_channel channel in
     let mem, _, label, global_label, addr_debug, line_debug =
-      Assembler.Translate.translate (Lexing.from_channel channel)
+      Assembler.Translate.translate lb
     in
     let pc =
-      if   Hashtbl.mem global_label "main"
-      then Hashtbl.find global_label "main"
-      else Simulator.Segment.text_begin
+      try Hashtbl.find global_label "main"
+      with Not_found -> Simulator.Segment.text_begin
     in
     let arch = Arch.init pc mem in
     if unix_socket
@@ -41,13 +41,16 @@ let () =
     else Shell.shell arch label addr_debug line_debug
   with
   | Lexing_error (ln, s) ->
-      eprintf "@{<fg_red>Lexical error on line @{<fg_yellow>%d@}: %s@}@." ln s;
+      eprintf
+        "@{<fg_red>Lexical error on line @{<fg_yellow>%d@}: '%s'@}@." ln s;
       exit 3
-  | Assembler.Parser.Error  ->
-      eprintf "@{<fg_red>Syntax error!@}@.";
+  | Assembler_error(ln, Parsing_error(s)) ->
+      eprintf
+        "@{<fg_red>Syntax error on line @{<fg_yellow>%d@}: '%s'@}@." ln s;
       exit 4
   | Assembler_error (ln, Unknown_Label ul) ->
-      eprintf "@{<fg_red>Unknown label on line @{<fg_yellow>%d@}: %s@}@." ln ul;
+      eprintf
+        "@{<fg_red>Unknown label on line @{<fg_yellow>%d@}: '%s'@}@." ln ul;
       exit 5
   | Assembler_error (ln, Interval_imm _) ->
       eprintf "@{<fg_red>Error on line @{<fg_yellow>%d@}@}@." ln;

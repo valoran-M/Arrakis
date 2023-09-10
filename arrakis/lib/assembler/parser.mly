@@ -18,9 +18,6 @@
 %token <string> IDENT
 /* Pseudo instructions */
 %token <int> NOP LI LA J JALP JR JALRP RET CALL TAIL
-/* TODO
-%token <int> LGlob SGlob
-*/
 %token <int * string * Program.reg_offset> REGS_OFFSET
 %token <int * string * Program.two_reg> TWO_REGS
 
@@ -92,14 +89,14 @@ pseudo_instruction:
     let rd,   rds = rd        in
     let simm, s   = simm      in
     let str = id ^ " " ^ rds ^ ", " ^ s in
-    (line, str, LGlob(rd,simm,inst))}
+    (line, str, LGlob(rd,simm,inst)) }
 | inst=INST_S rd=REG COMMA? simm=imm COMMA? rt=REG
   { let line, id, inst = inst in
     let rd,   rds = rd        in
     let simm, s   = simm      in
     let rt,   rts = rt        in
     let str = id ^ " " ^ rds ^ ", " ^ s ^ ", " ^ rts in
-    (line, str, SGlob(rd,simm,rt,inst))}
+    (line, str, SGlob(rd,simm,rt,inst)) }
 
 instruction:
 (* R *)
@@ -109,7 +106,7 @@ instruction:
     let rs1, s1  = rs1        in
     let rs2, s2  = rs2        in
     let str = id ^ " " ^ rds ^ ", " ^ s1 ^ ", " ^ s2 in
-    (line, str, R(inst, rd, rs1, rs2))}
+    (line, str, R(inst, rd, rs1, rs2)) }
 
 (* I Load *)
 | inst=INST_I_LOAD rd=REG COMMA? simm=imm COMMA? LPAR rs1=REG RPAR
@@ -118,7 +115,7 @@ instruction:
     let rs1,  s1  = rs1       in
     let simm, s   = simm      in
     let str = id ^ " " ^ rds ^ ", " ^ s ^ "(" ^ s1 ^ ")" in
-    (line, str, I(inst,rd,rs1,simm))}
+    (line, str, I(inst,rd,rs1,simm)) }
 
 | inst=INST_SYST
   { let line, str, inst = inst in

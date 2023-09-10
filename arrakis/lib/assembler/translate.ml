@@ -176,9 +176,13 @@ let rec loop prog mem addr =
     with Not_found -> failwith "TODO global address"
 
 let translate code =
-  let mem = Memory.make () in
-  let prog = Parser.program Lexer.token code in
-  get_label_address prog Simulator.Segment.text_begin;
-  let addr = loop prog mem Simulator.Segment.text_begin in
-  (mem, addr, label_address, global_label, addr_debug, line_debug)
+  try
+    let mem = Memory.make () in
+    let prog = Parser.program Lexer.token code in
+    get_label_address prog Simulator.Segment.text_begin;
+    let addr = loop prog mem Simulator.Segment.text_begin in
+    (mem, addr, label_address, global_label, addr_debug, line_debug)
+  with Parser.Error ->
+    let pe = Parsing_error (Lexing.lexeme code) in
+    raise (Assembler_error (!Lexer.line, pe))
 

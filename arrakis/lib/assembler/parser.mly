@@ -87,6 +87,19 @@ pseudo_instruction:
     let imm, simm = imm       in
     let str = id ^ " " ^ s ^ ", " ^ simm in
     (line, str, Regs_Offset(inst, rs, imm)) }
+| inst=INST_I_LOAD rd=REG COMMA? simm=imm
+  { let line, id, inst = inst in
+    let rd,   rds = rd        in
+    let simm, s   = simm      in
+    let str = id ^ " " ^ rds ^ ", " ^ s in
+    (line, str, LGlob(rd,simm,inst))}
+| inst=INST_S rd=REG COMMA? simm=imm COMMA? rt=REG
+  { let line, id, inst = inst in
+    let rd,   rds = rd        in
+    let simm, s   = simm      in
+    let rt,   rts = rt        in
+    let str = id ^ " " ^ rds ^ ", " ^ s ^ ", " ^ rts in
+    (line, str, SGlob(rd,simm,rt,inst))}
 
 instruction:
 (* R *)

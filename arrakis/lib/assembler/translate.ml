@@ -149,7 +149,7 @@ let translate_pseudo pseudo mem addr line string =
     let (hi, lo) = hi_lo symbol addr line in
     Hashtbl.add addr_debug (addr + 4l) (line, string);
     Inst_U.write_in_memory mem addr        AUIPC rt    hi;
-    Inst_I.write_in_memory mem (addr + 4l) store rd rt lo line; 8l
+    Inst_S.write_in_memory mem (addr + 4l) store rd rt lo; 8l
   | Two_Regs (inst, rd, rs) -> translate_two_reg inst rd rs mem addr line
   | Regs_Offset (inst, rs, offset) ->
     let imm = imm_to_int32 line addr offset in

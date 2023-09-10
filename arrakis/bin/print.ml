@@ -172,5 +172,6 @@ let decode_print channel arch args addr_debug breakpoints =
   match args with
   | "m" :: l | "memory" :: l -> decode_memory_args channel arch l
   | "r" :: l | "regs"   :: l -> decode_regs_args   channel arch l
-  | "c" :: l | "code"   :: l -> decode_code_args   channel arch l addr_debug breakpoints
+  | "c" :: l | "code"   :: l ->
+      decode_code_args   channel arch l addr_debug breakpoints
   | _ -> Help.print channel

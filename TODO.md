@@ -2,8 +2,7 @@
 
 ## Simulator
 
-* Better test for RV32M Multiply extension
-* Add RV32F Floating Point extension
+* Better testing for RV32M Multiply extension
 
 ## Shell
 

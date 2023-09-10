@@ -37,12 +37,12 @@ pseudo_instruction:
 | line=NOP
   { (line, "nop", NOP) }
 | line=LI rd=REG COMMA? imm=imm
-  { let imm, simm = imm in
+  { let (imm: imm), simm = imm in
     let rd, rds   = rd  in
     let str = "li " ^ rds ^ ", " ^ simm in
     match imm with
-    | Label s -> (line, str, LA(rd, imm))
-    | Imm imm -> (line, str, LI(rd, imm)) }
+    | Label _ -> (line, str, LA(rd, imm))
+    | Imm   _ -> (line, str, LI(rd, imm)) }
 | line=LA rd=REG COMMA? imm=imm
   { let imm, simm = imm in
     let rd, rds   = rd  in

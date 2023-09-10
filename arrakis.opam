@@ -7,7 +7,7 @@ authors: ["Valeran Maytié" "Gurvan Debaussart"]
 license: "CeCILL v2.1"
 tags: ["topics" "to describe" "your" "project"]
 homepage: "https://gitlab.com/valoranM/arrakis"
-doc: "https://url/to/documentation"
+doc: "https://gitlab.com/valoranM/arrakis/-/blob/main/doc/main.md"
 bug-reports: "https://gitlab.com/valoranM/arrakis/-/issues"
 depends: [
   "ocaml"

@@ -8,14 +8,14 @@
 </div>
 
 [Arrakis](https://en.wikipedia.org/wiki/Arrakis) is a RISC-V simulator written
-in OCaml.
+in OCaml, primarly designed for education.
 
 ## Features
 
 * Fully supported RV32IM instruction set, with most pseudo instructions.
 * Different type of environmental calls: Either [Venus environmental calls
   emulation](https://github.com/kvakil/venus/wiki/Environmental-Calls) or
-  partial UNIX environmental calls.
+  partial UNIX syscalls.
 * A debugging system using breakpoints.
 
 ## Installation

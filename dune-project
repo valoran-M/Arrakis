@@ -14,7 +14,7 @@
 
 (license "CeCILL v2.1")
 
-(documentation https://url/to/documentation)
+(documentation https://gitlab.com/valoranM/arrakis/-/blob/main/doc/main.md)
 
 (package
  (name arrakis)
@@ -23,5 +23,3 @@
  (depends ocaml dune alcotest)
  (tags
   (topics "to describe" your project)))
-
-; See the complete stanza docs at https://dune.readthedocs.io/en/stable/dune-files.html#dune-project

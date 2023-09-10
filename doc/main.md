@@ -1,6 +1,4 @@
-# Arrakis documentation
-
-## Table of content
+# Documentation Table of Contents
 
 1. Writing RISC-V
     1. [Instructions](./instr.md)

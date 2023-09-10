@@ -1,7 +1,5 @@
 # Options
 
-## Option table
-
 | Short Option | Long Option | Description                                     |
 |--------------|-------------|-------------------------------------------------|
 | h            | help        | Display the list of options, then exit          |

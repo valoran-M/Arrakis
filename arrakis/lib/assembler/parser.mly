@@ -172,12 +172,12 @@ instruction:
 program_line:
 | inst=instruction END_LINE*
   { let line, str, inst = inst in
-    Instr(line , str, inst) }
+    Prog_Instr(line , str, inst) }
 | inst=pseudo_instruction END_LINE*
   { let line, str, inst = inst in
-    Pseudo(line, str, inst) }
-| GLOBL COLON? i=IDENT  END_LINE* { GLabel i }
-| i=IDENT COLON END_LINE*         { Label i  }
+    Prog_Pseudo(line, str, inst) }
+| GLOBL COLON? i=IDENT  END_LINE* { Prog_GLabel i }
+| i=IDENT COLON END_LINE*         { Prog_Label i  }
 ;
 
 program:

@@ -45,11 +45,11 @@ let pseudo_length (pseudo : pseudo_instruction) =
 let rec get_label_address prog addr =
   match prog with
   | [] -> ()
-  | Pseudo (_, _, instruction) :: l ->
+  | Prog_Pseudo (_, _, instruction) :: l ->
     get_label_address l (addr + (pseudo_length instruction))
-  | Instr (_, _, _) :: l -> get_label_address l (addr + 0x4l)
-  | GLabel _ :: l -> get_label_address l addr
-  | Label label  :: l ->
+  | Prog_Instr (_, _, _) :: l -> get_label_address l (addr + 0x4l)
+  | Prog_GLabel _ :: l -> get_label_address l addr
+  | Prog_Label label  :: l ->
     Hashtbl.add label_address label addr;
     get_label_address l addr
 
@@ -158,18 +158,18 @@ let translate_pseudo pseudo mem addr line string =
 let rec loop prog mem addr =
   match prog with
   | [] -> Memory.set_int32 mem addr 0l; addr
-  | Pseudo (l, s, inst) :: next ->
+  | Prog_Pseudo (l, s, inst) :: next ->
     Hashtbl.add line_debug l addr;
     Hashtbl.add addr_debug addr (l, s);
     let length = translate_pseudo inst mem addr l s in
     loop next mem (addr + length)
-  | Instr (l, s, inst) :: next ->
+  | Prog_Instr (l, s, inst) :: next ->
     Hashtbl.add line_debug l addr;
     Hashtbl.add addr_debug addr (l, s);
     translate inst mem addr l;
     loop next mem (addr + 4l)
-  | Label _  ::  l -> loop l mem addr
-  | GLabel label :: l ->
+  | Prog_Label _  ::  l -> loop l mem addr
+  | Prog_GLabel label :: l ->
     try
       Hashtbl.add global_label label (Hashtbl.find label_address label);
       loop l mem addr

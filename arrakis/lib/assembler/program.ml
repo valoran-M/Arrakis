@@ -71,7 +71,7 @@ type pseudo_instruction =
   | Two_Regs    of two_reg    * int32 * int32
   | Regs_Offset of reg_offset * int32 * imm
 
-(* Program ------------------------------------------------------------------ *)
+(* Code --------------------------------------------------------------------- *)
 
 type instruction =
                       (* rd      rs1     rs2 *)
@@ -89,9 +89,22 @@ type instruction =
 
 type program_line =
               (* line nb, original code *)
-  | Pseudo of int *       string        * pseudo_instruction
-  | Instr  of int *       string        * instruction
-  | GLabel of string
-  | Label  of string
+  | Prog_Pseudo of int *       string        * pseudo_instruction
+  | Prog_Instr  of int *       string        * instruction
+  | Prog_GLabel of string
+  | Prog_Label  of string
+
+(* Memory ------------------------------------------------------------------- *)
+
+type memory_line =
+  | Mem_Value  of int32
+  | Mem_Bytes  of Bytes.t
+  | Mem_Asciiz of string
+  | Mem_Word   of Int32.t list
+  | Mem_GLabel of string
+  | Mem_Label  of string
+
+
+(* Program ------------------------------------------------------------------ *)
 
 type program = program_line list

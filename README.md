@@ -13,7 +13,9 @@ in OCaml.
 ## Features
 
 * Fully supported RV32IM instruction set, with most pseudo instructions.
-* System calls
+* Different type of environmental calls: Either [Venus environmental calls
+  emulation](https://github.com/kvakil/venus/wiki/Environmental-Calls) or
+  partial UNIX environmental calls.
 * A debugging system using breakpoints.
 
 ## Installation
@@ -27,7 +29,7 @@ Simply run:
 
 ## Documentation
 
-Documentation about Arrakis usage is ~~available here~~ on it's way.
+Documentation about Arrakis usage is available [here](./doc/main.md).
 
 ## Development
 

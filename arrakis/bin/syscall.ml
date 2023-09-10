@@ -114,9 +114,9 @@ let unix_syscall channel (arch : Arch.t) =
   let reg = Cpu.get_reg arch.cpu 10 in
   match reg with
   | 17l  -> failwith "todo: getcwd"
-  | 37l  -> failwith "todo: link"
   | 34l  -> failwith "todo: mkdirat"
   | 35l  -> failwith "todo: unlinkat"
+  | 37l  -> failwith "todo: link"
   | 49l  -> failwith "todo: chdir"
   | 56l  -> open_file arch
   | 57l  -> close     arch

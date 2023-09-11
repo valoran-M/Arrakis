@@ -35,7 +35,7 @@ Format :
 | add   | rd = rs1 + rs2         |                      |
 | sub   | rd = rs1 - rs2         |                      |
 | xor   | rd = rs1 ^ rs2         |                      |
-| or    | rd = rs1 | rs2         |                      |
+| or    | rd = rs1 \| rs2        |                      |
 | and   | rd = rs1 & rs2         |                      |
 | sll   | rd = rs1 << rs2        | shift left  logical  |
 | srl   | rd = rs1 >> rs2        | shift right logical  |

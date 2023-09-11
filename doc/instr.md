@@ -58,3 +58,38 @@ Format :
 | rem   | rd = rs1 % rs2         | |
 | remu  | rd = rs1 %u rs2        | |
 
+## I type
+
+Warning :
+
+    The coding of instructions implies that the immediate is coded on 12 bits,
+    there are pseudo instructions to avoid certain errors.
+
+### Normal
+
+Format :
+```as
+    inst rd, rs1, imm
+```
+
+| Inst  | Description            | note                 |
+|-------|------------------------|----------------------|
+| add   | rd = rs1 + imm         |                      |
+| sub   | rd = rs1 - imm         |                      |
+| xor   | rd = rs1 ^ imm         |                      |
+| or    | rd = rs1 \| imm        |                      |
+| and   | rd = rs1 & imm         |                      |
+| sll   | rd = rs1 << imm[0:4]   | shift left  logical  |
+| srl   | rd = rs1 >> imm[0:4]   | shift right logical  |
+| sra   | rd = rs1 \>\>a imm[0:4]| shift right arith    |
+| slt   | rd = (rs1 \< imm)?1:0  | signed   comparaison |
+| sltu  | rd = (rs1 \<u imm)?1:0 | unsigned comparaison |
+
+### Load
+
+### Other
+
+
+
+
+

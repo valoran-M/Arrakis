@@ -15,7 +15,7 @@ p2 : second parameter
 
 Risc-V is composed of 6 instructions types :
 
-* [R type](r-type)
+* R type
 * I type
 * S type
 * B type

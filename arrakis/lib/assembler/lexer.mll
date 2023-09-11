@@ -45,7 +45,7 @@ let label = '.'? (ident | '_')*
 let inst_b = "beq"  | "bne" | "blt" | "bge" | "bltu" | "bgeu"
 
 let inst_i = "addi" | "xori" | "ori"  | "andi" | "slli" | "srli"
-           | "sari" | "slti" | "slti" | "jalr"
+           | "sari" | "slti" | "jalr"
 
 let inst_syst = "ecall"
 

@@ -1,17 +1,17 @@
 # Registers
 
 Registers are storage area inside the CPU.
-In RV32IM (The specification of RISC-V implemented in Arrakis), each register
+In RV32 (The specification of RISC-V implemented in Arrakis), each register
 can store 32bit of information.
 
 Some registers can be used freely for calculation, while other have special
 defined semantics.
 
-A register can either be used with it's name or by using 'x[RegisterNumber]'.
+A register can either be used with it's name or by using `x[RegisterNumber]`.
 
 | Register number | Name    | Description                           |
 |:---------------:|:-------:|:-------------------------------------:|
-| 0               | zero    | Hard-Wired zero. Value can't be set   |
+| 0               | zero    | Hard-Wired zero (Value can't be set)  |
 | 1               | ra      | Return adress                         |
 | 2               | sp      | Stack pointer                         |
 | 3               | gp      | Global pointer                        |

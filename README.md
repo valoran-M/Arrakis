@@ -13,7 +13,7 @@ in OCaml, primarly designed for education.
 ## Features
 
 * Fully supported RV32IM instruction set, with most pseudo instructions.
-* Different type of environmental calls: Either [Venus environmental calls
+* Different type of environmental calls: either [Venus environmental calls
   emulation](https://github.com/kvakil/venus/wiki/Environmental-Calls) or
   partial UNIX syscalls.
 * A debugging system using breakpoints.
@@ -29,7 +29,7 @@ Simply run:
 
 ## Documentation
 
-Documentation about Arrakis usage is available [here](./doc/main.md).
+Documentation about Arrakis usage is available [here](./doc/README.md).
 
 ## Development
 

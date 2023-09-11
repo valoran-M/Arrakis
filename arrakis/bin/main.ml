@@ -40,7 +40,7 @@ let () =
     then Server.start_server unix_file arch label addr_debug line_debug
     else Shell.shell arch label addr_debug line_debug
   with
-  | Lexing_error (ln, s) ->
+  | Assembler_error (ln, Lexing_error s) ->
       eprintf
         "@{<fg_red>Lexical error on line @{<fg_yellow>%d@}: '%s'@}@." ln s;
       exit 3

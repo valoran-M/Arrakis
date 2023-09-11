@@ -16,6 +16,11 @@
   let tr_inst = Inst_Pseudo.two_regs_str
   let ro_inst = Inst_Pseudo.regs_offset_str
 
+  let string_buffer = Buffer.create 256
+  let reset_stored_string () = Buffer.reset string_buffer
+  let get_stored_string () = Buffer.contents string_buffer
+  let store_string_char c = Buffer.add_char string_buffer c
+  
 }
 
 (* Numbers ------------------------------------------------------------------ *)
@@ -73,6 +78,13 @@ rule token = parse
   | '(' { LPAR }
   | ')' { RPAR }
   | '#' { comment lexbuf }
+  | '\"'
+      { 
+        string lexbuf;
+        let s  = get_stored_string () in
+        reset_stored_string ();
+        STRING s
+      }
   | eof   { EOF }
   | space { token lexbuf }
   | ".globl" { GLOBL  }
@@ -110,8 +122,18 @@ rule token = parse
       with Not_found -> IDENT (lbl)
     }
   | _ as c
-    { raise (Lexing_error (!line, String.make 1 c)) }
+    { raise (Assembler_error (!line, Lexing_error (String.make 1 c))) }
 
 and comment = parse
-| '\n' { incr line; END_LINE }
-| _    { comment lexbuf }
+  | '\n' { incr line; END_LINE }
+  | _    { comment lexbuf }
+
+and string = parse 
+  | '\\' (['\\' '\'' '\"'] as c ) { store_string_char c; string lexbuf }
+  | "\\n"  { store_string_char '\n'; string lexbuf }
+  | "\\t"  { store_string_char '\t'; string lexbuf }
+  | "\\r"  { store_string_char '\r'; string lexbuf }
+  | '\"'   { }
+  | "\n"   { Error.raise_unclosed (!line) }
+  | eof    { Error.raise_unclosed (!line) }
+  | _ as c { store_string_char c; string lexbuf}

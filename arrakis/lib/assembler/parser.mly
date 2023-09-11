@@ -60,7 +60,7 @@ pseudo_instruction:
 | line=LA rd=REG COMMA? imm=imm
   { let imm, simm = imm in
     let rd, rds   = rd  in
-    let str = "li " ^ rds ^ ", " ^ simm in
+    let str = "la " ^ rds ^ ", " ^ simm in
     (line, str, LA(rd, imm)) }
 | line=J offset=imm
   { let imm, simm = offset in
@@ -184,10 +184,10 @@ instruction:
 ;
 
 program_line:
-| inst=instruction END_LINE+
+| inst=instruction END_LINE*
   { let line, str, inst = inst in
     Prog_Instr(line , str, inst) }
-| inst=pseudo_instruction END_LINE+
+| inst=pseudo_instruction END_LINE*
   { let line, str, inst = inst in
     Prog_Pseudo(line, str, inst) }
 | GLOBL COLON? i=IDENT  END_LINE+ { Prog_GLabel i }
@@ -206,6 +206,8 @@ program:
 | END_LINE* DATA COLON? END_LINE* data_line*
             TEXT COLON? END_LINE* program_line* EOF
     { { memory = $5; program = $9 } }
-| END_LINE* program_line* EOF
-    { { memory = []; program = $2 } }
+| END_LINE* TEXT COLON? END_LINE* program_line*
+            DATA COLON? END_LINE* data_line* EOF
+    { { memory = $9; program = $5 } }
+| END_LINE* program_line* EOF { { memory = []; program = $2 } }
 ;

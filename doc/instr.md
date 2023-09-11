@@ -13,12 +13,12 @@ p2 : second parameter
 
 RISC-V is composed of 6 instructions types:
 
-* [R type](#R-type)
-* [I type](#I-type)
-* [S type](#S-type)
-* [B type](#B-type)
-* [U type](#U-type)
-* [J type](#J-type)
+* [R type](#r-type)
+* [I type](#i-type)
+* [S type](#s-type)
+* [B type](#b-type)
+* [U type](#u-type)
+* [J type](#j-type)
 
 Warning:
 

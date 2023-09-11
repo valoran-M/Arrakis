@@ -63,7 +63,7 @@ Format :
 Warning :
 
     The coding of instructions implies that the immediate is coded on 12 bits,
-    there are pseudo instructions to avoid certain errors.
+    there are pseudo instructions to avoid some mistake.
 
 ### Normal
 
@@ -104,7 +104,6 @@ Format :
 
 ### Other
 
-
-
-
+Finally, there is the `ecall` instruction, which is used to make
+[system calls](./ecall.md)
 

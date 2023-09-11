@@ -94,16 +94,16 @@ let openat (arch : Arch.t) =
 
   let _path  = get_str_pointed_by arch _adr in
 
-  failwith "todo: open"
+  failwith "TODO: open"
 
 let close (_arch : Arch.t) =
-  failwith "todo: close"
+  failwith "TODO: close"
 
 let read (_arch : Arch.t) =
-  failwith "todo : read"
+  failwith "TODO : read"
 
 let write (_arch : Arch.t) =
-  failwith "todo : write"
+  failwith "TODO : write"
 
 let sbrk (_arch : Arch.t) =
   failwith "TODO: sbrk"
@@ -119,17 +119,17 @@ let geteuid (arch : Arch.t) =
   Continue
 
 let execve (_arch : Arch.t) =
-  failwith "todo: execve"
+  failwith "TODO: execve"
 
 (* Source: https://jborza.com/post/2021-05-11-riscv-linux-syscalls/ *)
 let unix_syscall channel (arch : Arch.t) =
   let reg = Cpu.get_reg arch.cpu 17 in
   match reg with
-  | 17l  -> failwith "todo: getcwd"
-  | 34l  -> failwith "todo: mkdirat"
-  | 35l  -> failwith "todo: unlinkat"
-  | 37l  -> failwith "todo: link"
-  | 49l  -> failwith "todo: chdir"
+  | 17l  -> failwith "TODO: getcwd"
+  | 34l  -> failwith "TODO: mkdirat"
+  | 35l  -> failwith "TODO: unlinkat"
+  | 37l  -> failwith "TODO: link"
+  | 49l  -> failwith "TODO: chdir"
   | 56l  -> openat    arch
   | 57l  -> close     arch
   | 63l  -> read      arch

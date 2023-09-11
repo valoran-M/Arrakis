@@ -11,7 +11,7 @@
 
 ## Some additionnal information
 
-* Why isn't running Arrakis in root allowed by default?
+* Why isn't running Arrakis as root allowed by default?
 
   In short: Safety reason.
   Arrakis provide full access to [`ecall`](./ecall.md).

@@ -1,9 +1,7 @@
 # Instructions
 
-
-Most instructions are three-address codded
-
-This means we have 3 parameters :
+Most instructions are three-address codded, which mean they take three
+parameters:
 
 ```
     inst d, p1, p2
@@ -13,83 +11,81 @@ p1 : first parameter
 p2 : second parameter
 ```
 
-Risc-V is composed of 6 instructions types :
+RISC-V is composed of 6 instructions types:
 
-* R type
-* I type
-* S type
-* B type
-* U type
-* J type
+* [R type](#R type)
+* [I type](#I type)
+* [S type](#S type)
+* [B type](#B type)
+* [U type](#U type)
+* [J type](#J type)
 
-
-Warning :
+Warning:
 
     The coding of I, S, B instructions implies that the immediate is coded on 12 bits,
     there are pseudo instructions to avoid some mistake.
 
 ## R type
 
-Format :
+Format:
 ```as
     inst rd, rs1, rs2
 ```
 
 ### RV32I
 
-| Inst  | Description            | note                 |
+| Inst  | Description            | Note                 |
 |-------|------------------------|----------------------|
 | add   | rd = rs1 + rs2         |                      |
 | sub   | rd = rs1 - rs2         |                      |
 | xor   | rd = rs1 ^ rs2         |                      |
 | or    | rd = rs1 \| rs2        |                      |
 | and   | rd = rs1 & rs2         |                      |
-| sll   | rd = rs1 << rs2        | shift left  logical  |
-| srl   | rd = rs1 >> rs2        | shift right logical  |
-| sra   | rd = rs1 \>\>a rs2     | shift right arith    |
-| slt   | rd = (rs1 \< rs2)?1:0  | signed   comparaison |
-| sltu  | rd = (rs1 \<u rs2)?1:0 | unsigned comparaison |
+| sll   | rd = rs1 << rs2        | Shift left  logical  |
+| srl   | rd = rs1 >> rs2        | Shift right logical  |
+| sra   | rd = rs1 \>\>a rs2     | Shift right arith    |
+| slt   | rd = (rs1 \< rs2)?1:0  | Signed   comparaison |
+| sltu  | rd = (rs1 \<u rs2)?1:0 | Unsigned comparaison |
 
-### RV32M Multiply Extension
+### RV32M (Multiply Extension)
 
-
-| Inst  | Description            | note                 |
+| Inst  | Description            | Note                 |
 |-------|------------------------|----------------------|
 | mul   | rd = (rs1 * rs2)[31:0] |                      |
 | mulh  | rd = (rs1 * rs2)[62:32]|                      |
 | mulhsu| rd = (rs1 * rs2)[62:32]|                      |
 | mulu  | rd = (rs1 * rs2)[62:32]|                      |
 | div   | rd = rs1 / rs2         |                      |
-| divu  | rd = rs1 /u rs2        | |
-| rem   | rd = rs1 % rs2         | |
-| remu  | rd = rs1 %u rs2        | |
+| divu  | rd = rs1 /u rs2        |                      |
+| rem   | rd = rs1 % rs2         |                      |
+| remu  | rd = rs1 %u rs2        |                      |
 
 ## I type
 
-Warning :
+Warning:
 
     The coding of instructions implies that the immediate is coded on 12 bits,
     there are pseudo instructions to avoid some mistake.
 
 ### Normal
 
-Format :
+Format:
 ```as
     inst rd, rs1, imm
 ```
 
-| Inst  | Description            | note                 |
+| Inst  | Description            | Note                 |
 |-------|------------------------|----------------------|
 | add   | rd = rs1 + imm         |                      |
 | sub   | rd = rs1 - imm         |                      |
 | xor   | rd = rs1 ^ imm         |                      |
 | or    | rd = rs1 \| imm        |                      |
 | and   | rd = rs1 & imm         |                      |
-| sll   | rd = rs1 << imm[0:4]   | shift left  logical  |
-| srl   | rd = rs1 >> imm[0:4]   | shift right logical  |
-| sra   | rd = rs1 \>\>a imm[0:4]| shift right arith    |
-| slt   | rd = (rs1 \< imm)?1:0  | signed   comparaison |
-| sltu  | rd = (rs1 \<u imm)?1:0 | unsigned comparaison |
+| sll   | rd = rs1 << imm[0:4]   | Shift left  logical  |
+| srl   | rd = rs1 >> imm[0:4]   | Shift right logical  |
+| sra   | rd = rs1 \>\>a imm[0:4]| Shift right arith    |
+| slt   | rd = (rs1 \< imm)?1:0  | Signed   comparaison |
+| sltu  | rd = (rs1 \<u imm)?1:0 | Unsigned comparaison |
 |-------|------------------------|----------------------|
 | jalr  | rd = PC+4; PC+=rs1+imm | Jump And Link        |
 
@@ -100,29 +96,47 @@ Format :
     inst rd, imm(rs1)
 ```
 
-| Inst  | Description            | note                 |
+| Inst  | Description            | Note                 |
 |-------|------------------------|----------------------|
-| lb    | rd = M\[rs1+imm\][0:7] | load byte            |
-| lh    | rd = M\[rs1+imm\][0:15]| load half            |
-| lw    | rd = M\[rs1+imm\][0:31]| load word            |
-| lbu   | rd = M\[rs1+imm\][0:7] | load byte unsigned   |
-| lhu   | rd = M\[rs1+imm\][0:15]| load half unsigned   |
+| lb    | rd = M\[rs1+imm\][0:7] | Load byte            |
+| lh    | rd = M\[rs1+imm\][0:15]| Load half            |
+| lw    | rd = M\[rs1+imm\][0:31]| Load word            |
+| lbu   | rd = M\[rs1+imm\][0:7] | Load byte unsigned   |
+| lhu   | rd = M\[rs1+imm\][0:15]| Load half unsigned   |
 
 ### Other
 
-Finally, there is the `ecall` instruction, which is used to make
-[system calls](./ecall.md)
+The last I type instruction is `ecall`, which is used to make
+[environmental calls](./ecall.md).
 
 ## S type
 
-Format :
+Format:
 ```as
     inst rs2, imm(rs1)
 ```
 
-| Inst  | Description            | note                 |
+| Inst  | Description            | Note                 |
 |-------|------------------------|----------------------|
-| sb    | M\[rs1+imm\]=rs2[0:7]  | store byte           |
-| sh    | M\[rs1+imm\]=rs2[0:15] | store half           |
-| sw    | M\[rs1+imm\]=rs2[0:31] | store word           |
+| sb    | M\[rs1+imm\]=rs2[0:7]  | Store byte           |
+| sh    | M\[rs1+imm\]=rs2[0:15] | Store half           |
+| sw    | M\[rs1+imm\]=rs2[0:31] | Store word           |
+
+## B type
+
+Format:
+```as
+    inst rs2, rs1, imm
+```
+
+| Inst  | Description              | Note                 |
+|-------|--------------------------|----------------------|
+| beq   | if(rs1 == rs2) PC += imm |                      |
+| bne   | if(rs1 != rs2) PC += imm |                      |
+| blt   | if(rs1 <  rs2) PC += imm |                      |
+| bge   | if(rs1 >= rs2) PC += imm |                      |
+| bltu  | if(rs1 <  rs2) PC += imm |                      |
+| bgeu  | if(rs1 >= rs2) PC += imm |                      |
+
+## U type
 

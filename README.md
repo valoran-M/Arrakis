@@ -35,11 +35,11 @@ Documentation about Arrakis usage is available [here](./doc/main.md).
 
 The `main` branch is currently developped using OCaml 5.0 and Dune 3.10.
 
-For Contributions, please take a look at [`CONTRIBUTING.md`](./CONTRIBUTING.md)
+For contributions, please take a look at [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
 ## Resources
 
-* [Riscv-card](https://github.com/jameslzhu/riscv-card), a comprehensive
+* [riscv-card](https://github.com/jameslzhu/riscv-card), a comprehensive
   reference sheet for RISC-V.
 * [Venus](https://github.com/kvakil/venus), a RISC-V simulator written in
   Kotlin, which inspired Arrakis.

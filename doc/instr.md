@@ -2,7 +2,7 @@
 
 Risc-V is composed of 6 instructions types
 
-La plupart des instructions sont des instructions three-address codded
+Most instructions are three-address codded
 
 This means we have 3 parameters :
 

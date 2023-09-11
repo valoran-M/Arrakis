@@ -30,15 +30,15 @@ Format :
 ```
 
 
-| Inst  | Description |
-|-------|-------------|
-| add   | rd = rs1 + rs2         |
-| sub   | rd = rs1 - rs2         |
-| xor   | rd = rs1 ^ rs2         |
-| or    | rd = rs1 | rs2         |
-| and   | rd = rs1 & rs2         |
-| sll   | rd = rs1 << rs2        |
-| srl   | rd = rs1 >> rs2        |
-| sra   | rd = rs1 \>\>a rs2     |
-| slt   | rd = (rs1 \< rs2)?1:0  |
-| sltu  | rd = (rs1 \<u rs2)?1:0 |
+| Inst  | Description            | note                 |
+|-------|------------------------|----------------------|
+| add   | rd = rs1 + rs2         |                      |
+| sub   | rd = rs1 - rs2         |                      |
+| xor   | rd = rs1 ^ rs2         |                      |
+| or    | rd = rs1 | rs2         |                      |
+| and   | rd = rs1 & rs2         |                      |
+| sll   | rd = rs1 << rs2        | shift left  logical  |
+| srl   | rd = rs1 >> rs2        | shift right logical  |
+| sra   | rd = rs1 \>\>a rs2     | shift right arith    |
+| slt   | rd = (rs1 \< rs2)?1:0  | signed   comparaison |
+| sltu  | rd = (rs1 \<u rs2)?1:0 | unsigned comparaison |

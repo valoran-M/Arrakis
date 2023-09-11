@@ -22,7 +22,13 @@
 
 ## Diverse
 
-* Documentation
 * dune-project
 * Would be fun to have a small gif in README displaying the use of breakpoints
   and printing stuff.
+
+## Documentation
+
+* Add a documentation about registers
+* instr.md: Explain what an immediate is before any warning.
+* instr.md: The warning is currently redundant and all of them should be merged.
+* shell.md: Explain usage of breakpoints

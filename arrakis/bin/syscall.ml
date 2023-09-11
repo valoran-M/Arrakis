@@ -4,10 +4,10 @@ type syscall_ret = Exit of int | Continue
 
 (* Helper functions --------------------------------------------------------- *)
 
-let invalid_sysc channel reg =
+let invalid_sysc channel id =
   Format.fprintf channel
     "@{<fg_red>Error:@} @{<fg_yellow>'%d'@} Invalid syscall.@."
-    (Int32.to_int reg);
+    (Int32.to_int id);
   Continue
 
 let opened_fd = Hashtbl.create 3

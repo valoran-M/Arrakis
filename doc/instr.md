@@ -29,6 +29,7 @@ Format :
     inst rd, rs1, rs2
 ```
 
+### RV32I
 
 | Inst  | Description            | note                 |
 |-------|------------------------|----------------------|
@@ -42,3 +43,18 @@ Format :
 | sra   | rd = rs1 \>\>a rs2     | shift right arith    |
 | slt   | rd = (rs1 \< rs2)?1:0  | signed   comparaison |
 | sltu  | rd = (rs1 \<u rs2)?1:0 | unsigned comparaison |
+
+### RV32M Multiply Extension
+
+
+| Inst  | Description            | note                 |
+|-------|------------------------|----------------------|
+| mul   | rd = (rs1 * rs2)[31:0] |                      |
+| mulh  | rd = (rs1 * rs2)[62:32]|                      |
+| mulhsu| rd = (rs1 * rs2)[62:32]|                      |
+| mulu  | rd = (rs1 * rs2)[62:32]|                      |
+| div   | rd = rs1 / rs2         |                      |
+| divu  | rd = rs1 /u rs2        | |
+| rem   | rd = rs1 % rs2         | |
+| remu  | rd = rs1 %u rs2        | |
+

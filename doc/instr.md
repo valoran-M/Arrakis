@@ -22,6 +22,12 @@ Risc-V is composed of 6 instructions types :
 * U type
 * J type
 
+
+Warning :
+
+    The coding of I, S, B instructions implies that the immediate is coded on 12 bits,
+    there are pseudo instructions to avoid some mistake.
+
 ## R type
 
 Format :
@@ -106,4 +112,17 @@ Format :
 
 Finally, there is the `ecall` instruction, which is used to make
 [system calls](./ecall.md)
+
+## S type
+
+Format :
+```as
+    inst rs2, imm(rs1)
+```
+
+| Inst  | Description            | note                 |
+|-------|------------------------|----------------------|
+| sb    | M\[rs1+imm\]=rs2[0:7]  | store byte           |
+| sh    | M\[rs1+imm\]=rs2[0:15] | store half           |
+| sw    | M\[rs1+imm\]=rs2[0:31] | store word           |
 

@@ -87,8 +87,20 @@ Format :
 |-------|------------------------|----------------------|
 | jalr  | rd = PC+4; PC+=rs1+imm | Jump And Link        |
 
-
 ### Load
+
+Format :
+```as
+    inst rd, imm(rs1)
+```
+
+| Inst  | Description            | note                 |
+|-------|------------------------|----------------------|
+| lb    | rd = M\[rs1+imm\][0:7] | load byte            |
+| lh    | rd = M\[rs1+imm\][0:15]| load half            |
+| lw    | rd = M\[rs1+imm\][0:31]| load word            |
+| lbu   | rd = M\[rs1+imm\][0:7] | load byte unsigned   |
+| lhu   | rd = M\[rs1+imm\][0:15]| load half unsigned   |
 
 ### Other
 

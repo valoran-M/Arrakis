@@ -84,6 +84,9 @@ Format :
 | sra   | rd = rs1 \>\>a imm[0:4]| shift right arith    |
 | slt   | rd = (rs1 \< imm)?1:0  | signed   comparaison |
 | sltu  | rd = (rs1 \<u imm)?1:0 | unsigned comparaison |
+|-------|------------------------|----------------------|
+| jalr  | rd = PC+4; PC+=rs1+imm | Jump And Link        |
+
 
 ### Load
 

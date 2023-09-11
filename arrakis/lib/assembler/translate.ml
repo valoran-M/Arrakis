@@ -208,7 +208,7 @@ let loop_memory mem addr (prog : memory_line) =
       addr s
   | Mem_Word words  ->
     List.fold_left (fun addr v ->
-      Memory.set_int32 mem addr v; addr + 1l)
+      Memory.set_int32 mem addr v; addr + 4l)
       addr words
   | Mem_Label _      -> addr
   | Mem_GLabel label ->

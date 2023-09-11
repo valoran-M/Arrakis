@@ -75,7 +75,12 @@ rule token = parse
   | '#' { comment lexbuf }
   | eof   { EOF }
   | space { token lexbuf }
-  | ".globl" { GLOBL }
+  | ".globl" { GLOBL  }
+  | ".data"  { DATA   }
+  | ".text"  { TEXT   }
+  | ".byte"  { BYTES  }
+  | ".word"  { WORD   }
+  | ".asciiz"{ ASCIIZ }
   | integer as i { INT(Int32.of_string i, i) }
   | inst_b as inst { INST_B (!line, inst, Hashtbl.find b_inst inst) }
   | inst_i as inst { INST_I (!line, inst, Hashtbl.find i_inst inst) }

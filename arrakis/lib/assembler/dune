@@ -1,6 +1,6 @@
 (menhir
-  (modules parser)
-)
+ (flags -v)
+ (modules parser))
 
 (ocamllex lexer)
 

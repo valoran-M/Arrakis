@@ -1,5 +1,12 @@
 %{
   open Program
+
+  let int_list_to_char_list =
+    List.map (fun (i, s) ->
+      try Char.chr (Simulator.Utils.int32_to_int i)
+      with Invalid_argument _ ->
+        raise (Error.Assembler_error
+        (0, (Error.Parsing_error (s ^ " is not int [0,255]")))))
 %}
 
 %token COMMA COLON
@@ -21,6 +28,13 @@
 %token <int * string * Program.reg_offset> REGS_OFFSET
 %token <int * string * Program.two_reg> TWO_REGS
 
+%token <string> STRING
+
+%token DATA
+%token TEXT
+%token BYTES
+%token ASCIIZ
+%token WORD
 %token GLOBL
 
 %start program
@@ -170,17 +184,28 @@ instruction:
 ;
 
 program_line:
-| inst=instruction END_LINE*
+| inst=instruction END_LINE+
   { let line, str, inst = inst in
     Prog_Instr(line , str, inst) }
-| inst=pseudo_instruction END_LINE*
+| inst=pseudo_instruction END_LINE+
   { let line, str, inst = inst in
     Prog_Pseudo(line, str, inst) }
-| GLOBL COLON? i=IDENT  END_LINE* { Prog_GLabel i }
+| GLOBL COLON? i=IDENT  END_LINE+ { Prog_GLabel i }
 | i=IDENT COLON END_LINE*         { Prog_Label i  }
 ;
 
+data_line:
+| i=INT                   END_LINE* { let i, _ = i in Mem_Value i }
+| BYTES   COLON? INT*     END_LINE+ { Mem_Bytes (int_list_to_char_list $3)  }
+| ASCIIZ  COLON? s=STRING END_LINE+ { Mem_Asciiz s  }
+| WORD    COLON? INT*     END_LINE+ { Mem_Word (List.map fst $3) }
+| GLOBL   COLON? i=IDENT  END_LINE+ { Mem_GLabel i  }
+| i=IDENT COLON           END_LINE* { Mem_Label  i  }
+
 program:
+| END_LINE* DATA COLON? END_LINE* data_line*
+            TEXT COLON? END_LINE* program_line* EOF
+    { { memory = $5; program = $9 } }
 | END_LINE* program_line* EOF
     { { memory = []; program = $2 } }
 ;

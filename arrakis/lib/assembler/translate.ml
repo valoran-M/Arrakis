@@ -92,7 +92,7 @@ let symbol_to_int32 line = function
 
 let hi_lo imm addr line =
   let imm = imm_to_int32 line addr imm in
-  ((imm + 0x800l) >> 12, (imm) & 0b111111111111l)
+  ((imm + 0x800l) >> 12, imm & 0b111111111111l)
 
 let translate (instruction : instruction) mem addr line =
   match instruction with
@@ -147,9 +147,6 @@ let translate_pseudo pseudo mem addr line string =
           Inst_I.write_in_memory mem (addr + 4l) ADDI rd rd lo line; 8l)
   | LA (rd, symbol) ->
     let (hi, lo) = hi_lo symbol addr line in
-    Printf.printf "%x %d %d\n"
-      (Int32.to_int (symbol_to_int32 line symbol)) (Int32.to_int hi)
-      (Int32.to_int lo);
     Hashtbl.add addr_debug (addr + 4l) (line, string);
     Inst_U.write_in_memory mem addr        AUIPC rd    hi;
     Inst_I.write_in_memory mem (addr + 4l) ADDI  rd rd lo line; 8l

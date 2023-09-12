@@ -150,13 +150,18 @@ let print_all_regs channel (arch: Arch.t) =
 let print_list_regs channel (arch: Arch.t) =
   List.iter (fun reg ->
     try
-      let i =
-        try Int32.to_int (Assembler.Regs.of_string reg)
-        with _ -> int_of_string reg
-      in
-      fprintf channel
-        "  %s -> 0x%08x\n" regs.(i)
-        (Simulator.Utils.int32_to_int (Cpu.get_reg arch.cpu i))
+      if reg = "pc" then
+        fprintf channel
+          "  pc -> 0x%08x\n"
+          (Simulator.Utils.int32_to_int (Cpu.get_pc arch.cpu))
+      else
+        let i =
+          try Int32.to_int (Assembler.Regs.of_string reg)
+          with _ -> int_of_string reg
+        in
+        fprintf channel
+          "  %s -> 0x%08x\n" regs.(i)
+          (Simulator.Utils.int32_to_int (Cpu.get_reg arch.cpu i))
     with _ ->
       fprintf channel "@{<fg_red>Error@}: \"%s\" isn't a register@." reg
   )

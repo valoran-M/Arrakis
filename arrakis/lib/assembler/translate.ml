@@ -30,7 +30,7 @@ let pseudo_length (pseudo : pseudo_instruction) =
   | JALP _    -> 0x4l
   | JR _      -> 0x4l
   | JALRP _   -> 0x0l
-  | RET       -> 0x8l
+  | RET       -> 0x4l
   | CALL _    -> 0x8l
   | TAIL _    -> 0x8l
   | LGlob (_, _, _)       -> 0x8l

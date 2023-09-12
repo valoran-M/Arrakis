@@ -74,11 +74,12 @@ let exec (instruction : Int32.t) cpu memory =
     next_pc cpu
   | 0b1100111l ->
     let decode = I_type.decode instruction in
+    let imm    = Utils.sign_extended decode.imm 12 in
     let rs1 = Regs.get cpu.regs decode.rs1 in
     (match decode.funct3 with
      | 0x0 ->                                       (* JALR *)
         set_reg cpu decode.rd (Int32.add (get_pc cpu) 4l);
-        set_pc cpu (Int32.add rs1 decode.imm)
+        set_pc cpu (Int32.add rs1 imm)
      | _ -> Error.i_invalid decode.funct3 opcode decode.imm)
   | 0b1110011l ->
     let decode = I_type.decode instruction in

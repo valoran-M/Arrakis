@@ -33,3 +33,8 @@
   la a1, exclamation  #
   li a2, 2            #
   ecall
+
+  li a7, 93
+  li a0, 0
+  ecall
+

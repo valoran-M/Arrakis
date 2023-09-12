@@ -3,6 +3,7 @@ type t
 val make : unit -> t
   (** Creates a memory area of size 2**32 *)
 
+val direct_access : t -> Bytes.t
 
 val get_byte : t -> int32 -> int32
   (** [get_byte memory addr] Get Byte in [memory]

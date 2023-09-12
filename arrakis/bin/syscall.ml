@@ -15,13 +15,20 @@ let opened_fd = Hashtbl.create 3
 let () =
   List.iter (fun (k, v) -> Hashtbl.add opened_fd k v)
   [
-    0,    Unix.stdin;
-    1,    Unix.stdout;
-    2,    Unix.stderr;
+    0l,    Unix.stdin;
+    1l,    Unix.stdout;
+    2l,    Unix.stderr;
   ]
 
+let lfd = ref 3l
+
 let close_fd fd =
-  if fd > 2 then Hashtbl.remove opened_fd fd
+  if fd > 2l then Hashtbl.remove opened_fd fd
+
+let open_fd fd =
+  lfd := Int32.add !lfd 1l;
+  Hashtbl.add opened_fd !lfd fd;
+  !lfd
 
 let get_str_pointed_by (arch : Arch.t) adr =
   let res = ref "" in
@@ -86,24 +93,72 @@ let kill (arch : Arch.t) =
   Unix.kill (Int32.to_int pid) (Int32.to_int signal);
   Continue
 
+(* TODO : Move somewhere else *)
+let open_flag_list_from_int i =
+  let open Unix in
+  let (&) = Int32.logor in
+  let fl =
+    [
+      00000000l, O_RDONLY;
+      00000001l, O_WRONLY;
+      00000002l, O_RDWR;
+      00004000l, O_NONBLOCK;
+      00002000l, O_APPEND;
+      00000100l, O_CREAT;
+      00001000l, O_TRUNC;
+      00000200l, O_EXCL;
+      00000400l, O_NOCTTY;
+      00010000l, O_DSYNC;
+      04000000l, O_SYNC;
+      02000000l, O_CLOEXEC;
+    ]
+  in
+  let contained = List.filter
+    (fun (x,_) -> (i&x) > 0l) fl
+  in
+  List.map (fun (_, y) -> y) contained
+
 let openat (arch : Arch.t) =
-  let _dfd   = Cpu.get_reg arch.cpu 10     in
-  let _adr   = Cpu.get_reg arch.cpu 11     in
-  let _flags = Cpu.get_reg arch.cpu 12     in
-  let _mode  = Cpu.get_reg arch.cpu 13     in
+  let _dfd  = Cpu.get_reg arch.cpu 10     in (* TODO: USE *)
+  let adr   = Cpu.get_reg arch.cpu 11 in
+  let flags = Cpu.get_reg arch.cpu 12 in
+  let mode  = Cpu.get_reg arch.cpu 13 in
 
-  let _path  = get_str_pointed_by arch _adr in
+  let path  = get_str_pointed_by arch adr   in
+  let flags = open_flag_list_from_int flags in
 
-  failwith "TODO: open"
+  let fd = open_fd (Unix.openfile path flags (Int32.to_int mode)) in
 
-let close (_arch : Arch.t) =
-  failwith "TODO: close"
+  Cpu.set_reg arch.cpu 10 fd;
+  Continue
 
-let read (_arch : Arch.t) =
-  failwith "TODO : read"
+let close (arch : Arch.t) =
+  let fd = Cpu.get_reg arch.cpu 10 in
+  close_fd fd;
+  Continue
 
-let write (_arch : Arch.t) =
-  failwith "TODO : write"
+let read (arch : Arch.t) =
+  let fd    = Cpu.get_reg arch.cpu 10 in
+  let buf   = Cpu.get_reg arch.cpu 11 in
+  let count = Cpu.get_reg arch.cpu 12 in
+
+  let fd  = Hashtbl.find opened_fd fd in
+  let mem = Memory.direct_access arch.memory in
+  let res = Unix.read fd mem (Int32.to_int buf) (Int32.to_int count) in
+  Cpu.set_reg arch.cpu 10 (Int32.of_int res);
+  Continue
+
+let write (arch : Arch.t) =
+  let fd    = Cpu.get_reg arch.cpu 10 in
+  let buf   = Cpu.get_reg arch.cpu 11 in
+  let count = Cpu.get_reg arch.cpu 12 in
+
+  let fd  = Hashtbl.find opened_fd fd in
+  let mem = Memory.direct_access arch.memory in
+  let res = Unix.write fd mem (Int32.to_int buf) (Int32.to_int count) in
+
+  Cpu.set_reg arch.cpu 10 (Int32.of_int res);
+  Continue
 
 let sbrk (_arch : Arch.t) =
   failwith "TODO: sbrk"

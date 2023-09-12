@@ -7,6 +7,8 @@ type t = Bytes.t
 
 let make () = Bytes.create size
 
+let direct_access x = x
+
 let get_byte memory addr =
   Int32.of_int (Bytes.get_uint8 memory (Utils.int32_to_int addr))
 let set_byte memory addr value =

@@ -4,7 +4,9 @@
 
 .text
 
+.globl main
 
+main:
   addi sp, sp, -15 # We are going to store the name of the user in the stack
 
   li a7, 63       # Load the read syscall ID (63)

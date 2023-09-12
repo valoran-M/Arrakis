@@ -152,7 +152,6 @@ let translate_pseudo pseudo mem addr line string =
     Inst_I.write_in_memory mem (addr + 4l) ADDI  rd rd lo line; 8l
   | J offset  ->
     let imm = imm_to_int32 line addr offset in
-    Printf.printf "%d\n" (Int32.to_int imm);
     Inst_J.write_in_memory mem addr JAL 0l imm; 4l
   | JALP offset ->
     let imm = imm_to_int32 line addr offset in

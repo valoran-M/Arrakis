@@ -35,4 +35,6 @@ let get_str memory adr =
   Bytes.to_string (Bytes.sub memory adr endadr)
 
 let set_str memory adr value size  =
+  let size = min (String.length value) size in
   Bytes.blit_string value 0 memory (Utils.int32_to_int adr) size
+

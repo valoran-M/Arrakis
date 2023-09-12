@@ -12,7 +12,6 @@
   let u_inst = Inst_U.str_table
   let j_inst = Inst_J.str_table
 
-
   let tr_inst = Inst_Pseudo.two_regs_str
   let ro_inst = Inst_Pseudo.regs_offset_str
 
@@ -137,3 +136,4 @@ and string = parse
   | "\n"   { Error.raise_unclosed (!line) }
   | eof    { Error.raise_unclosed (!line) }
   | _ as c { store_string_char c; string lexbuf}
+

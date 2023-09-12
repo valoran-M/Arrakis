@@ -175,12 +175,16 @@ let geteuid (arch : Arch.t) =
   Continue
 
 let getcwd (arch : Arch.t) =
-  let buf   = Cpu.get_reg arch.cpu 10 in
-  let size  = Cpu.get_reg arch.cpu 11 in
+  let buf  = Cpu.get_reg arch.cpu 10 in
+  let size = Cpu.get_reg arch.cpu 11 in
+  let str  = Unix.getcwd ()          in
 
-  let str = Unix.getcwd () in
-
-  Memory.set_str arch.memory buf str (Int32.to_int size);
+  (
+    try Memory.set_str arch.memory buf str (Int32.to_int size)
+    with _ ->
+      Format.eprintf "@{<fg_yellow>Warning:@}Syscall getcwd failed@.";
+      Cpu.set_reg arch.cpu 10 0l
+  );
   Continue
 
 (* Source: https://jborza.com/post/2021-05-11-riscv-linux-syscalls/ *)

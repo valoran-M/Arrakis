@@ -34,8 +34,9 @@ let str_table =
   i
 
 let write_in_memory mem addr instruction rd rs1 imm line =
+  let (&)     = Int32.logand in
   let (<) x y = Int32.compare x y <  0 in
-  if imm < -2048l || 2027l < imm
+  if 4096l < (imm & 0b11111111111l)
   then raise (Assembler_error (line, Interval_imm (imm, -2048l, 2027l)))
   else (
     let (<<) = Int32.shift_left in

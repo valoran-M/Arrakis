@@ -27,10 +27,10 @@ let get_str_pointed_by (arch : Arch.t) adr =
   let res = ref "" in
   let adr = ref adr in
   let c   = ref (Memory.get_byte arch.memory !adr) in
-  while (!c != 0l) do
+  while (!c <> 0l) do
     res := Format.sprintf "%s%c" !res (Char.chr (Int32.to_int !c));
     adr := Int32.add !adr 1l;
-    c := Memory.get_byte arch.memory !adr
+    c := Memory.get_byte arch.memory !adr;
   done;
   !res
 

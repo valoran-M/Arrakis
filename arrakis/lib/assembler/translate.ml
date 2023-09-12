@@ -83,8 +83,15 @@ let imm_to_int32 line addr = function
     try Hashtbl.find label_address label - addr with
     | Not_found -> raise (Assembler_error (line, Unknown_Label label))
 
-let hi_lo imm addr line =
-  let imm = imm_to_int32 line addr imm in
+let symbol_to_int32 line = function
+  | Imm imm     -> imm
+  | Label label ->
+    try Hashtbl.find label_address label with
+    | Not_found -> raise (Assembler_error (line, Unknown_Label label))
+
+
+let hi_lo imm line =
+  let imm = symbol_to_int32 line imm in
   (imm >> 12, imm &  0b111111111111l)
 
 let translate (instruction : instruction) mem addr line =
@@ -132,14 +139,14 @@ let translate_pseudo pseudo mem addr line string =
   match pseudo with
   | NOP       -> Inst_I.write_in_memory mem addr ADDI 0l 0l 0l line; 4l
   | LI (rd, imm) ->
-    let (hi, lo) = hi_lo imm addr line in
+    let (hi, lo) = hi_lo imm line in
     if hi = 0l
     then (Inst_I.write_in_memory mem addr ADDI rd 0l lo line; 4l)
     else (Hashtbl.add addr_debug (addr + 4l) (line, string);
           Inst_U.write_in_memory mem addr        LUI  rd    hi;
           Inst_I.write_in_memory mem (addr + 4l) ADDI rd rd lo line; 8l)
   | LA (rd, symbol) ->
-    let (hi, lo) = hi_lo symbol addr line in
+    let (hi, lo) = hi_lo symbol line in
     Hashtbl.add addr_debug (addr + 4l) (line, string);
     Inst_U.write_in_memory mem addr        AUIPC rd    hi;
     Inst_I.write_in_memory mem (addr + 4l) ADDI  rd rd lo line; 8l
@@ -153,22 +160,22 @@ let translate_pseudo pseudo mem addr line string =
   | JALRP rs  -> Inst_I.write_in_memory mem addr JALR 1l rs 0l line; 4l
   | RET       -> Inst_I.write_in_memory mem addr JALR 0l 1l 0l line; 4l
   | CALL offset ->
-    let (hi, lo) = hi_lo offset addr line in
+    let (hi, lo) = hi_lo offset line in
     Hashtbl.add addr_debug (addr + 4l) (line, string);
     Inst_U.write_in_memory mem addr        AUIPC 1l    hi;
     Inst_I.write_in_memory mem (addr + 4l) JALR  1l 1l lo line; 8l
   | TAIL offset ->
-    let (hi, lo) = hi_lo offset addr line in
+    let (hi, lo) = hi_lo offset line in
     Hashtbl.add addr_debug (addr + 4l) (line, string);
     Inst_U.write_in_memory mem addr        AUIPC 6l    hi;
     Inst_I.write_in_memory mem (addr + 4l) JALR  0l 6l lo line; 8l
   | LGlob (rd, symbol, load) ->
-    let (hi, lo) = hi_lo symbol addr line in
+    let (hi, lo) = hi_lo symbol line in
     Hashtbl.add addr_debug (addr + 4l) (line, string);
     Inst_U.write_in_memory mem addr        AUIPC rd    hi;
     Inst_I.write_in_memory mem (addr + 4l) load  rd rd lo line; 8l
   | SGlob (rd, symbol, rt, store) ->
-    let (hi, lo) = hi_lo symbol addr line in
+    let (hi, lo) = hi_lo symbol line in
     Hashtbl.add addr_debug (addr + 4l) (line, string);
     Inst_U.write_in_memory mem addr        AUIPC rt    hi;
     Inst_S.write_in_memory mem (addr + 4l) store rd rt lo; 8l

@@ -82,8 +82,9 @@ let print_code _arch code =
   (* U *)
   | 0b0110111l | 0b0010111l  ->
     let inst = Instructions.U_type.decode code in
-    Format.sprintf "%s %d" (Hashtbl.find u_to_string opcode)
-      (Int32.to_int inst.imm_shift)
+    Format.sprintf "%s %s, %d" (Hashtbl.find u_to_string opcode)
+      (reg_to_str inst.rd) (Int32.to_int (Int32.shift_right_logical
+        inst.imm_shift 12))
   (* J *)
   | 0b1101111l   ->
     let inst = Instructions.J_type.decode code in

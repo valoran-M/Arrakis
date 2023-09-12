@@ -8,6 +8,7 @@
 |              | allow-root  | Allow usage of arrakis in root mode             |
 |              | no-color    | Remove usage of color in output                 |
 | e            |             | Set environment for ecalls. Either venus or unix|
+| ns           |             | Run the program given as argument then exit     |
 
 ## Some additionnal information
 

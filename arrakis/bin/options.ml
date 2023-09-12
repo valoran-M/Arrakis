@@ -12,7 +12,7 @@ let no_color   = ref false
 let allow_root = ref false
 let no_shell   = ref false
 
-let env = ref "venus"
+let env = ref "unix"
 
 let spec = [
   ("-U",            Arg.Set unix_socket,       "Use unix socket");

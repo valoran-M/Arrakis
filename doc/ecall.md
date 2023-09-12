@@ -1,10 +1,11 @@
 # Environmental Calls
 
-## Venus
+Environmental calls are made with the `ecall` instruction.
+As their name suggest, the actual semantics of the instruction depends on the
+environment.
 
-Arrakis can fully emulate Venus environment calls.
-The documentation for those ecall can be found on
-[Venus's Wiki](https://github.com/kvakil/venus/wiki/Environmental-Calls)
+Arrakis currently implement two kind of environment: [UNIX](#unix) and
+[Venus](#venus).
 
 ## UNIX
 
@@ -35,3 +36,18 @@ Interesting ressources about system calls in Linux/RISC-V:
 | 175   | geteuid   |
 | 221   | execve    |
 | 214   | brk       |
+
+### Examples
+
+* [Hello, World!](../examples/helloworld.s)
+    Write a simple 'Hello, World!' to stdout, and then exit.
+
+* [Hello, [name]](../examples/helloname.s)
+    Read a name from stdin, write 'Hello, [name]!' in stdout, and then exit with
+    a proper syscall.
+
+## Venus
+
+The documentation for Venus ecall can be found on
+[Venus's Wiki](https://github.com/kvakil/venus/wiki/Environmental-Calls)
+

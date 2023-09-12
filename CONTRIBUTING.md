@@ -11,6 +11,9 @@ You must own full right to any code submitted.
 Submitted code must also respect the following coding style:
 * Wrap line at 80 characters
 * Use snake_case
+* Use space instead of tabulation
+* Remove any trailing whitespace
 
 Some stuff that are currently planned can be looked at in
 [`TODO.md`](./TODO.md).
+

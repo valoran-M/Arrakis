@@ -6,10 +6,13 @@ Arrakis can fully emulate Venus environment calls.
 The documentation for those ecall can be found on
 [Venus's Wiki](https://github.com/kvakil/venus/wiki/Environmental-Calls)
 
-## Linux
+## UNIX
 
 Arrakis currently support only a small fraction of UNIX system calls, listed
 below.
+
+UNIX environment calls are made by loading the ID of the call in the `a7`
+registers, and parameters in `a0` to `a6`.
 
 Interesting ressources about system calls in Linux/RISC-V:
 * [How to use linux system calls in RISC-V](https://github.com/scotws/RISC-V-tests/blob/master/docs/riscv_linux_system_calls.md)

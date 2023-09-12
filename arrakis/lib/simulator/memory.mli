@@ -30,3 +30,11 @@ val get_int32 : t -> int32 -> int32
 val set_int32 : t -> int32 -> int32 -> unit
   (** [set_int32 memory addr value] Set [value] (4 Byte size)
       in [memory] at the addresse [addr] *)
+
+
+val get_str : t -> int32 -> string
+  (** [get_str memory addr] *)
+
+val set_str : t -> int32 -> string -> int -> unit
+  (** [set_str memory addr value] *)
+

@@ -3,7 +3,7 @@
   open Parser
   open Regs
 
-  let line = ref 0
+  let line = ref 1
 
   let r_inst = Inst_R.str_table
   let i_inst = Inst_I.str_table
@@ -20,7 +20,7 @@
   let reset_stored_string () = Buffer.reset string_buffer
   let get_stored_string () = Buffer.contents string_buffer
   let store_string_char c = Buffer.add_char string_buffer c
-  
+
 }
 
 (* Numbers ------------------------------------------------------------------ *)
@@ -79,7 +79,7 @@ rule token = parse
   | ')' { RPAR }
   | '#' { comment lexbuf }
   | '\"'
-      { 
+      {
         string lexbuf;
         let s  = get_stored_string () in
         reset_stored_string ();
@@ -128,7 +128,7 @@ and comment = parse
   | '\n' { incr line; END_LINE }
   | _    { comment lexbuf }
 
-and string = parse 
+and string = parse
   | '\\' (['\\' '\'' '\"'] as c ) { store_string_char c; string lexbuf }
   | "\\n"  { store_string_char '\n'; string lexbuf }
   | "\\t"  { store_string_char '\t'; string lexbuf }

@@ -10,6 +10,7 @@ let unix_file   = ref "./socket"
 
 let no_color   = ref false
 let allow_root = ref false
+let no_shell   = ref false
 
 let env = ref "venus"
 
@@ -19,6 +20,7 @@ let spec = [
   ("-e",            Arg.Set_string env, "Set env for ecalls. <venus | unix>");
   ("--no-color",    Arg.Set no_color,          "Don't use color in output");
   ("--allow-root",  Arg.Set allow_root,        "Allow usage in root mode.");
+  ("-ns",           Arg.Set no_shell,          "Run the program and exit.");
 ]
 
 let alspec = Arg.align spec
@@ -33,5 +35,6 @@ let unix_file   = !unix_file
 
 let no_color    = !no_color
 let allow_root  = !allow_root
+let no_shell    = !no_shell
 
 let env = !env

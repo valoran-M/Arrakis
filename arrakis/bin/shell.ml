@@ -15,7 +15,7 @@ let rec run first channel arch =
       | Continue _ -> run false channel arch
       | Zero       ->
         Format.fprintf channel
-          "@{<fg_yellow>Warning:@} Syscall is not finished.@.";
+          "@{<fg_yellow>Warning:@} Exiting without an exit syscall.@.";
         program_end := true;
         program_run := false
       | Sys_call        ->
@@ -37,7 +37,7 @@ let step channel arch =
     | Continue _  -> ()
     | Zero        ->
       Format.fprintf channel
-        "@{<fg_yellow>Warning:@} Syscall is not finished.@.";
+        "@{<fg_yellow>Warning:@} Exiting without an exit syscall.@.";
       program_run := false
     | Sys_call    ->
       match Syscall.syscall channel arch with

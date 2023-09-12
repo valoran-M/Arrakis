@@ -138,5 +138,17 @@ Format:
 | bltu  | if(rs1 <  rs2) PC += imm |                      |
 | bgeu  | if(rs1 >= rs2) PC += imm |                      |
 
-## U type
+## U/J type
+
+Format:
+```as
+    inst rd, imm
+```
+
+| Inst | Description     | Type |
+|------|-----------------|:----:|
+| jal  | rd=PC+4; PC+imm | J    |
+||||
+| lui  | rd=imm<<12      | U    |
+| auipc| PC+(imm<<12)    | U    |
 

@@ -48,3 +48,30 @@ li rd, imm ->
         lui rd, (imm[31:12] >> 12)
         addi rd, x0, imm[11:0]
 ```
+
+## Branch
+
+| Instruction      | Base Instructions  | Description |
+|------------------|--------------------|-------------|
+| beqz rs, offset  | beq rs, x0, offset | if == zero  |
+| bnez rs, offset  | bne rs, x0, offset | if != zero  |
+| blez rs, offset  | bge x0, rs, offset | if <= zero  |
+| bgez rs, offset  | bge rs, x0, offset | if >= zero  |
+| bltz rs, offset  | blt rs, x0, offset | if <  zero  |
+| bgtz rs, offset  | blt x0, rs, offset | if >  zero  |
+
+
+## Jump
+
+| Instruction      | Base Instructions        | Description                 |
+|------------------|--------------------------|-----------------------------|
+| j offset         | jal x0, offset           | Jump                        |
+| jal offset       | jal x1, offet            | Jump and link               |
+| jr rs            | jalr x0, rs, 0           | Jump register               |
+| jalr rs          | jalr x1, rs, 0           | Jump and link register      |
+| ret              | jalr x0, x1, 0           | Return from subroutine      |
+| call offset      | auipc x1, offset[31:12]  | Call far-away subroutine    |
+|                  | jalr x1, x1, offet[11:0] |                             |
+| tail offset      | auipc x6, offset[31:12]  | Tail call far-away          |
+|                  | jalr x0, x6, offset[11:0]|                             |
+

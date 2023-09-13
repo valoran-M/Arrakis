@@ -187,15 +187,28 @@ let getcwd (arch : Arch.t) =
   );
   Continue
 
+let chdir (arch : Arch.t) =
+  let path = Cpu.get_reg arch.cpu 10      in
+  let path = get_str_pointed_by arch path in
+
+  Unix.chdir path;
+  Continue
+
+let mkdirat (arch : Arch.t) =
+  let pathname = Cpu.get_reg arch.cpu 10 in
+  let mode = Cpu.get_reg arch.cpu 11 in
+
+  let pathname = get_str_pointed_by arch pathname in
+  Unix.mkdir pathname (Int32.to_int mode);
+  Continue
+
 (* Source: https://jborza.com/post/2021-05-11-riscv-linux-syscalls/ *)
 let unix_syscall channel (arch : Arch.t) =
   let reg = Cpu.get_reg arch.cpu 17 in
   match reg with
   | 17l  -> getcwd    arch
-  | 34l  -> failwith "TODO: mkdirat"
-  | 35l  -> failwith "TODO: unlinkat"
-  | 37l  -> failwith "TODO: link"
-  | 49l  -> failwith "TODO: chdir"
+  | 34l  -> mkdirat   arch
+  | 49l  -> chdir     arch
   | 56l  -> openat    arch
   | 57l  -> close     arch
   | 63l  -> read      arch

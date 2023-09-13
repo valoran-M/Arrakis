@@ -23,8 +23,6 @@ Interesting ressources about system calls in Linux/RISC-V:
 |-------|-----------|
 | 17    | getcwd    |
 | 34    | mkdirat   |
-| 35    | unlinkat  |
-| 37    | link      |
 | 49    | chdir     |
 | 56    | openat    |
 | 57    | close     |

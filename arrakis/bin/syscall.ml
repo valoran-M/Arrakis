@@ -182,7 +182,7 @@ let getcwd (arch : Arch.t) =
   (
     try Memory.set_str arch.memory buf str (Int32.to_int size)
     with _ ->
-      Format.eprintf "@{<fg_yellow>Warning:@}Syscall getcwd failed@.";
+      Format.eprintf "@{<fg_blue>Info:@} Syscall getcwd failed@.";
       Cpu.set_reg arch.cpu 10 0l
   );
   Continue
@@ -191,7 +191,12 @@ let chdir (arch : Arch.t) =
   let path = Cpu.get_reg arch.cpu 10      in
   let path = get_str_pointed_by arch path in
 
-  Unix.chdir path;
+  (
+    try Unix.chdir path;
+    with _ ->
+      Format.eprintf "@{<fg_blue>Info:@} Syscall chdir failed@.";
+      Cpu.set_reg arch.cpu 10 (Int32.of_int (-1));
+  );
   Continue
 
 let mkdirat (arch : Arch.t) =

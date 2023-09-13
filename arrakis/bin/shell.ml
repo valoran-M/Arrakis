@@ -7,7 +7,7 @@ let program_end = ref false
 
 let rec run first channel arch =
   if !program_end then
-    Format.fprintf channel "@{<fg_red>Error:@} Program is finished@."
+    Format.fprintf channel "\n@{<fg_red>Error:@} Program is finished@."
   else (
     let addr = Simulator.Cpu.get_pc arch.cpu in
     if first || not (Hashtbl.mem breakpoints addr) then
@@ -15,7 +15,7 @@ let rec run first channel arch =
       | Continue _ -> run false channel arch
       | Zero       ->
         Format.fprintf channel
-          "@{<fg_yellow>Warning:@} Exiting without an exit syscall.@.";
+          "\n@{<fg_yellow>Warning:@} Exiting without an exit syscall.@.";
         program_end := true;
         program_run := false
       | Sys_call        ->
@@ -23,7 +23,7 @@ let rec run first channel arch =
         | Syscall.Continue  -> run false channel arch
         | Syscall.Exit code ->
             Format.fprintf channel
-              "Exiting with code @{<fg_yellow>'%d'@}@." code;
+              "\nExiting with code @{<fg_yellow>'%d'@}@." code;
             program_run := false;
             program_end := true)
 
@@ -37,14 +37,14 @@ let step channel arch =
     | Continue _  -> ()
     | Zero        ->
       Format.fprintf channel
-        "@{<fg_yellow>Warning:@} Exiting without an exit syscall.@.";
+        "\n@{<fg_yellow>Warning:@} Exiting without an exit syscall.@.";
       program_run := false
     | Sys_call    ->
       match Syscall.syscall channel arch with
       | Syscall.Continue  -> ()
       | Syscall.Exit code ->
         Format.fprintf channel
-          "Exiting with code @{<fg_yellow>'%d'@}@." code;
+          "\nExiting with code @{<fg_yellow>'%d'@}@." code;
             program_run := false;
             program_end := true
 

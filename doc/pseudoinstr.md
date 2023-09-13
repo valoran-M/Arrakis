@@ -42,7 +42,7 @@ Compilation :
 ```
 li rd, imm ->
 
-    if imm < 4096 then
+    if imm[31:12] = 0 then
         addi rd, x0, imm
     else
         lui rd, (imm[31:12] >> 12)

@@ -98,6 +98,7 @@ type program_line =
 
 type memory_line =
   | Mem_Value  of int32
+  | Mem_Zero   of int32
   | Mem_Bytes  of char list
   | Mem_Asciiz of string
   | Mem_Word   of Int32.t list

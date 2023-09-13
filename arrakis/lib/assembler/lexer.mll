@@ -88,6 +88,7 @@ rule token = parse
   | space { token lexbuf }
   | ".globl" { GLOBL  }
   | ".data"  { DATA   }
+  | ".zero"  { ZERO   }
   | ".text"  { TEXT   }
   | ".byte"  { BYTES  }
   | ".word"  { WORD   }

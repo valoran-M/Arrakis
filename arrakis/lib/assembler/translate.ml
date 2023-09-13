@@ -65,6 +65,7 @@ let rec get_label_address_memory (memory : memory_line list) addr =
   | Mem_Word lw     :: l ->
     let offset = 0x4l * Int32.of_int (List.length lw) in
     get_label_address_memory l (addr + offset)
+  | Mem_Zero nz     :: l -> get_label_address_memory l (addr + 4l * nz);
   | Mem_GLabel _    :: l -> get_label_address_memory l addr
   | Mem_Label label :: l ->
     Hashtbl.add label_address label addr;
@@ -218,6 +219,9 @@ let loop_memory mem addr (prog : memory_line) =
     List.fold_left (fun addr v ->
       Memory.set_int32 mem addr v; addr + 4l)
       addr words
+  | Mem_Zero nz      ->
+    Memory.set_32b_zero mem addr nz;
+    addr + 4l * nz
   | Mem_Label _      -> addr
   | Mem_GLabel label ->
     try

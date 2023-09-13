@@ -73,8 +73,6 @@ let print channel =
       Print specified registers.
       If the list is empty, display all of them.
 
-      Accepted register may be x0...x31 or zero, ra, ...
-
   @{<fg_green>*@} (p)rint (c)ode <offset> <noffset>
 
       If no offset is specified, print code from start to finish.

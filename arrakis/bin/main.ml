@@ -58,5 +58,6 @@ let () =
         "@{<fg_red>Unknown label on line @{<fg_yellow>%d@}: '%s'@}@." ln ul;
       exit 5
   | Assembler_error (ln, Interval_imm _) ->
+      (* TODO: Better error here. *)
       eprintf "@{<fg_red>Error on line @{<fg_yellow>%d@}@}@." ln;
       exit 6

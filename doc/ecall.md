@@ -40,11 +40,11 @@ Interesting ressources about system calls in Linux/RISC-V:
 ### Examples
 
 * [Hello, World!](../examples/helloworld.s)
-    Write a simple 'Hello, World!' to stdout, and then exit.
+ Write a simple 'Hello, World!' to stdout, and then exit.
 
 * [Hello, [name]](../examples/helloname.s)
-    Read a name from stdin, write 'Hello, [name]!' in stdout, and then exit with
-    a proper syscall.
+ Read a name from stdin, write 'Hello, [name]!' in stdout, and then exit with
+ a proper syscall.
 
 ## Venus
 

@@ -146,9 +146,10 @@ let read (arch : Arch.t) =
 
   let fd  = Hashtbl.find opened_fd fd in
   let mem = Memory.direct_access arch.memory in
-  let res = Unix.read fd mem (Int32.to_int buf) (Int32.to_int count) in
+  let res = Unix.read fd mem (Int32.to_int buf) (Int32.to_int count - 1) in
+  Memory.set_byte arch.memory (Int32.add (Int32.of_int res) buf) 0l;
 
-  Cpu.set_reg arch.cpu 10 (Int32.of_int res);
+  Cpu.set_reg arch.cpu 10 (Int32.of_int (res + 1));
   Continue
 
 let write (arch : Arch.t) =

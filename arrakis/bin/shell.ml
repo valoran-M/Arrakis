@@ -45,8 +45,8 @@ let step channel arch =
       | Syscall.Exit code ->
         Format.fprintf channel
           "\nExiting with code @{<fg_yellow>'%d'@}@." code;
-            program_run := false;
-            program_end := true
+        program_run := false;
+        program_end := true
 
 (* Breakpoints -------------------------------------------------------------- *)
 
@@ -94,8 +94,9 @@ let remove_breakpoint channel arg =
     )) breakpoints
   with
     | End_loop -> ()
-    | _ -> Format.fprintf channel
-              "@{<fg_red>Error:@} breakpoint \"%s\" does not exist" arg
+    | _        ->
+      Format.fprintf channel
+        "@{<fg_red>Error:@} breakpoint \"%s\" does not exist@." arg
 
 let set_breakpoint channel args label line_debug =
   match args with
@@ -105,9 +106,10 @@ let set_breakpoint channel args label line_debug =
   | "a"      :: args -> List.iter (addr_breakpoint channel label) args
   | "remove" :: args
   | "r"      :: args -> List.iter (remove_breakpoint channel) args
-  | "p"      :: _ | "print"  :: _    ->
-    Hashtbl.iter (fun addr number ->
-      Format.fprintf channel "%3d -> 0x%08x@."
+  | "print"  :: _
+  | "p"      :: _    ->
+      Hashtbl.iter (fun addr number ->
+        Format.fprintf channel "%3d -> 0x%08x@."
         number (Simulator.Utils.int32_to_int addr)) breakpoints
   | _ -> Help.breakpoint channel
 
@@ -118,8 +120,8 @@ exception Shell_exit
 let parse_command channel arch command args label addr_debug line_debug =
   match command with
   | "run"         | "r" ->
-    program_run := true;
-    run false channel arch;
+      program_run := true;
+      run false channel arch;
   | "breakpoint"  | "b" -> set_breakpoint channel args label line_debug
   | "step"        | "s" -> step channel arch
   | "next"        | "n" -> run true channel arch

@@ -59,7 +59,9 @@ let print_character channel (arch : Arch.t) =
     let chr = Char.chr (Int32.to_int reg) in
     Format.fprintf channel "%c@." chr;
     Continue
-  with _ -> failwith "Too big" (* TODO: Better error here. *)
+  with _ ->
+    Format.fprintf channel "@{<fg_red>Error:@} Couldn't print character.";
+    Continue
 
 let exit0 () = Exit 0
 

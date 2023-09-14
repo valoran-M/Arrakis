@@ -1,5 +1,6 @@
 type assembler_error =
   | Unknown_Label  of string
+                   (* val     min     max     *)
   | Interval_imm   of int32 * int32 * int32
   | Parsing_error  of string
   | Lexing_error   of string

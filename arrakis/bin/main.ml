@@ -57,7 +57,8 @@ let () =
       eprintf
         "@{<fg_red>Unknown label on line @{<fg_yellow>%d@}: '%s'@}@." ln ul;
       exit 5
-  | Assembler_error (ln, Interval_imm _) ->
-      (* TODO: Better error here. *)
-      eprintf "@{<fg_red>Error on line @{<fg_yellow>%d@}@}@." ln;
+  | Assembler_error (ln, Interval_imm (v, min, max)) ->
+      eprintf "@{<fg_red>Error on line @{<fg_yellow>%d@}: Imm out of bound.
+      Found %s but expected a value between %s and %s@}@." ln
+      (Int32.to_string v) (Int32.to_string min) (Int32.to_string max);
       exit 6

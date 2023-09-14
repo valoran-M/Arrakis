@@ -6,6 +6,7 @@
   line_size: .word 256
   line:      .zero 256
 
+  plus: .asciiz "plus\n"
 
 # /!\ Norms for this assembly code
 #
@@ -54,7 +55,43 @@ pop_stack:
       li a0, 0
       ret
 
+# Operator #####################################################################
+
+exec_add:
+      # push ra
+      sw ra, 0(sp)
+      addi sp, sp, -4
+
+      li a7, 64
+      li a0, 1
+      la a1, plus
+      li a2, 6
+      ecall
+
+      # pop ra
+      lw ra, 4(sp)
+      addi sp, sp, 4
+      ret
+
 # input ########################################################################
+
+# Skip empty character
+# a0 : string address
+#
+# return:
+# a0 : new string pointer
+skip_space:
+  .while_skip_space:
+      lb t0, 0(a0)
+      xori t1, t0, 9    # 0 if t1 = '\t'
+      beqz t1, .lazy_or
+      xori t0, t0, 32   # 0 if t1 = ' '
+      bnez t0, .end_skip_space
+    .lazy_or:
+      addi a0, a0, 1
+      j .while_skip_space
+  .end_skip_space:
+      ret
 
 # Read line and store then to line address (.data)
 #
@@ -68,13 +105,34 @@ get_line:
       ecall
       ret
 
-read_line:
+exec_op:
       # push ra
       sw ra, 0(sp)
       addi sp, sp, -4
+      la s2, line
 
+    .while_exec:
+      mv a0, s2
+      call skip_space
+      lb t1, 0(s2)
+
+      beqz t1, .zero_exec
+
+      xori t0, t1, 43     # if t1 = '+'
+      beqz t0, .add_op
+      j .continue_exec
+
+    .add_op:
+      call exec_add
+
+    .continue_exec:
+      addi s2, s2, 1
+      j .while_exec
+    .zero_exec:
       call get_line
-
+      la s2, line
+      j .while_exec
+    .end:
       # pop ra
       lw ra, 4(sp)
       addi sp, sp, 4
@@ -86,8 +144,8 @@ read_line:
 main:
       call init_stack
 
-      call read_line
-  
+      call exec_op
+
       # exit
       li a7, 93
       li a0, 0

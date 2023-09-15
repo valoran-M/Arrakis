@@ -58,9 +58,9 @@ let rec get_label_address_memory (memory : memory_line list) addr =
   match memory with
   | [] -> ()
   | Mem_Value _     :: l -> get_label_address_memory l (addr + 0x4l)
-  | Mem_Bytes bs    :: l -> 
+  | Mem_Bytes bs    :: l ->
     get_label_address_memory l (addr + Int32.of_int (List.length bs))
-  | Mem_Asciiz s    :: l ->
+  | Mem_Asciz s    :: l ->
     get_label_address_memory l (addr + Int32.of_int (String.length s) + 1l)
   | Mem_Word lw     :: l ->
     let offset = 0x4l * Int32.of_int (List.length lw) in
@@ -210,7 +210,7 @@ let loop_memory mem addr (prog : memory_line) =
     List.fold_left (fun addr v ->
       Memory.set_byte mem addr (Utils.char_to_int32 v); addr + 1l)
       addr lb
-  | Mem_Asciiz s    ->
+  | Mem_Asciz s    ->
     let addr = String.fold_left (fun addr v ->
       Memory.set_byte mem addr (Utils.char_to_int32 v); addr + 1l)
       addr s in

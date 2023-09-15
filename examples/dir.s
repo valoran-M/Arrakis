@@ -1,5 +1,5 @@
 .data
-  path:        .asciiz "/home/azee"
+  path:        .asciz "/home/azee"
 
 .text
 

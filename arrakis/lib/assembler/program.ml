@@ -100,7 +100,7 @@ type memory_line =
   | Mem_Value  of int32
   | Mem_Zero   of int32
   | Mem_Bytes  of char list
-  | Mem_Asciiz of string
+  | Mem_Asciz  of string
   | Mem_Word   of Int32.t list
   | Mem_GLabel of string
   | Mem_Label  of string
@@ -110,5 +110,5 @@ type memory_line =
 type program =
   {
     memory  : memory_line list;
-    program : program_line list; 
+    program : program_line list;
   }

@@ -1,6 +1,6 @@
 .data
-  hello:       .asciiz "Hello, "
-  exclamation: .asciiz "!\n"
+  hello:       .asciz "Hello, "
+  exclamation: .asciz "!\n"
   maxname:     15
 
 .text

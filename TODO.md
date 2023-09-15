@@ -22,8 +22,6 @@
   For example, ``bgt rs`` would give out:
   ``Syntax Error on line .... bgt instruction usage: bgt rs, rt, offset.``
 
-* add character immediate
-
 ## Diverse
 
 * dune-project

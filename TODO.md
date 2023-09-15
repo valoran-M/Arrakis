@@ -10,6 +10,7 @@
 ## Syscall
 
 * sbrk syscall
+* Directory management syscall (opendir, ...)
 
 ## Assembler
 

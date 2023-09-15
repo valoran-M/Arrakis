@@ -198,7 +198,7 @@ program_line:
 data_line:
 | i=INT                   END_LINE* { Mem_Value (fst i) }
 | BYTES   COLON? INT*     END_LINE+ { Mem_Bytes (int_list_to_char_list $3)  }
-| ASCIZ  COLON? s=STRING END_LINE+ { Mem_Asciiz s  }
+| ASCIZ   COLON? s=STRING END_LINE+ { Mem_Asciz s  }
 | WORD    COLON? INT*     END_LINE+ { Mem_Word (List.map fst $3) }
 | ZERO    COLON? i=INT    END_LINE+ { Mem_Zero (fst i)    }
 | GLOBL   COLON? i=IDENT  END_LINE+ { Mem_GLabel i  }

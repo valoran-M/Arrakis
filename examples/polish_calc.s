@@ -7,9 +7,7 @@
   line:      .zero 256
 
   print:     .zero 5
-             .asciiz "\n"
-
-  plus: .asciiz "plus\n"
+             .asciz "\n"
 
 # /!\ Norms for this assembly code
 #
@@ -171,9 +169,9 @@ exec_mult:
 skip_space:
   .while_skip_space:
       lb t0, 0(a0)
-      xori t1, t0, 9    # 0 if t1 = '\t'
+      xori t1, t0, '\t'    # 0 if t1 = '\t'
       beqz t1, .lazy_or
-      xori t0, t0, 32   # 0 if t1 = ' '
+      xori t0, t0, ' '   # 0 if t1 = ' '
       bnez t0, .end_skip_space
     .lazy_or:
       addi a0, a0, 1
@@ -237,19 +235,19 @@ exec_op:
       call is_digit
       bgez a0, .digit_op
 
-      xori t0, t1, 43     # if t1 = '+'
+      xori t0, t1, '+'      # if t1 = '+'
       beqz t0, .add_op
 
-      xori t0, t1, 45     # if t1 = '-'
+      xori t0, t1, '-'      # if t1 = '-'
       beqz t0, .sub_op
 
-      xori t0, t1, 42     # if t1 = '*'
+      xori t0, t1, '*'      # if t1 = '*'
       beqz t0, .mul_op
 
-      xori t0, t1, 113    # if t1 = 'q'
+      xori t0, t1, 'q'      # if t1 = 'q'
       beqz t0, .end
 
-      xori t0, t1, 112    # if t1 = 'q'
+      xori t0, t1, 'p'      # if t1 = 'q'
       beqz t0, .print_op
 
       j .continue_exec

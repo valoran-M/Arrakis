@@ -84,6 +84,12 @@ rule token = parse
         reset_stored_string ();
         STRING s
       }
+  | "'\n'" { incr line; INT(Int32.of_int (Char.code '\n'), "\\n")}
+  | "'\\" (['\\' '\'' '\"'] as c) "'" { INT(Int32.of_int (Char.code c), "'" ^ String.make 1 c ^ "'") }
+  | "'\\n'" { INT(Int32.of_int (Char.code '\n'), "\\n") }
+  | "'\\t'" { INT(Int32.of_int (Char.code '\t'), "\\t") }
+  | "'\\r'" { INT(Int32.of_int (Char.code '\r'), "\\r") }
+  | "'" (_ as c) "'"  { INT(Int32.of_int (Char.code c), "'" ^ String.make 1 c ^ "'") }
   | eof   { EOF }
   | space { token lexbuf }
   | ".globl" { GLOBL  }

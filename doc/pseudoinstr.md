@@ -1,7 +1,7 @@
 # Pseudo-Instructions
 
-Pseudo instructions are not real instruction on Risc-V architecture. They are
-compiled to a set of Risc-V instruction.
+Pseudo instructions are not real instruction on RISC-V architecture.
+They are compiled to a set of RISC-V instruction.
 
 They are very useful tu simplify assembly code.
 
@@ -10,14 +10,14 @@ They are very useful tu simplify assembly code.
 They are used to load all address or to store (s) and load (l) value in
 all memory
 
-| Instructions              | Base Instructions                    |
-|---------------------------|--------------------------------------|
-| la rd, symbol             | auipc rd, symbol[31:12]              |
-|                           | addi rd, rd, symbol[11:0]            |
-| l{b\|h\|w\|d} rd, symbol  | auipc rd, symbol[31:12]              |
-|                           | l{b\|h\|w\|d} rd, symbol\[11:0\] \(rd\) |
-| s{b\|h\|w\|d} rd, symbol  | auipc rd, symbol[31:12]              |
-|                           | s{b\|h\|w\|d} rd, symbol\[11:0\] \(rd\) |
+| Instructions              | Base Instructions                                |
+|---------------------------|--------------------------------------------------|
+| la rd, symbol             | auipc rd, symbol[31:12]                          |
+|                           | addi rd, rd, symbol[11:0]                        |
+| l{b\|h\|w\|d} rd, symbol  | auipc rd, symbol[31:12]                          |
+|                           | l{b\|h\|w\|d} rd, symbol\[11:0\] \(rd\)          |
+| s{b\|h\|w\|d} rd, symbol  | auipc rd, symbol[31:12]                          |
+|                           | s{b\|h\|w\|d} rd, symbol\[11:0\] \(rd\)          |
 
 ## Arithmetic
 
@@ -33,9 +33,9 @@ all memory
 | sgtz rd, rs   | slt rd, x0, rs    |
 
 
-Li instruction :
+li instruction :
 
-    It used to load every 32 bites immediate in a register
+    Used to load every 32 bites immediate in a register.
 
 Compilation :
 
@@ -59,7 +59,6 @@ li rd, imm ->
 | bgez rs, offset  | bge rs, x0, offset | if >= zero  |
 | bltz rs, offset  | blt rs, x0, offset | if <  zero  |
 | bgtz rs, offset  | blt x0, rs, offset | if >  zero  |
-
 
 ## Jump
 

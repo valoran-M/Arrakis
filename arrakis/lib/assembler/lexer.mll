@@ -79,7 +79,7 @@ rule token = parse
   | '#' { comment lexbuf }
   | '\"'
       {
-        string lexbuf;
+        str lexbuf;
         let s  = get_stored_string () in
         reset_stored_string ();
         STRING s
@@ -92,14 +92,16 @@ rule token = parse
   | "'" (_ as c) "'"  { INT(Int32.of_int (Char.code c), "'" ^ String.make 1 c ^ "'") }
   | eof   { EOF }
   | space { token lexbuf }
-  | ".globl" { GLOBL  }
-  | ".data"  { DATA   }
-  | ".zero"  { ZERO   }
-  | ".text"  { TEXT   }
-  | ".byte"  { BYTES  }
-  | ".word"  { WORD   }
-  | ".asciz" { ASCIZ }
   | integer as i { INT(Int32.of_string i, i) }
+  (* Assembler directives *)
+  | ".globl" | ".global" { GLOBL  }
+  | ".data"              { DATA   }
+  | ".zero"              { ZERO   }
+  | ".text"              { TEXT   }
+  | ".byte"              { BYTES  }
+  | ".word"              { WORD   }
+  | ".asciz"             { ASCIZ }
+  (* Instructions *)
   | inst_b as inst { INST_B (!line, inst, Hashtbl.find b_inst inst) }
   | inst_i as inst { INST_I (!line, inst, Hashtbl.find i_inst inst) }
   | inst_j as inst { INST_J (!line, inst, Hashtbl.find j_inst inst) }
@@ -134,13 +136,13 @@ and comment = parse
   | '\n' { incr line; END_LINE }
   | _    { comment lexbuf }
 
-and string = parse
-  | '\\' (['\\' '\'' '\"'] as c ) { store_string_char c; string lexbuf }
-  | "\\n"  { store_string_char '\n'; string lexbuf }
-  | "\\t"  { store_string_char '\t'; string lexbuf }
-  | "\\r"  { store_string_char '\r'; string lexbuf }
+and str = parse
+  | '\\' (['\\' '\'' '\"'] as c ) { store_string_char c; str lexbuf }
+  | "\\n"  { store_string_char '\n'; str lexbuf }
+  | "\\t"  { store_string_char '\t'; str lexbuf }
+  | "\\r"  { store_string_char '\r'; str lexbuf }
   | '\"'   { }
   | "\n"   { Error.raise_unclosed (!line) }
   | eof    { Error.raise_unclosed (!line) }
-  | _ as c { store_string_char c; string lexbuf}
+  | _ as c { store_string_char c; str lexbuf}
 

@@ -23,15 +23,16 @@ let rec run first channel arch =
         | Syscall.Continue  -> run false channel arch
         | Syscall.Exit code ->
             Format.fprintf channel
-              "\nExiting with code @{<fg_yellow>'%d'@}@." code;
+              "\n@{<fg_blue>Info:@} Exiting with code @{<fg_yellow>'%d'@}@."
+              code;
             program_run := false;
             program_end := true)
 
 let step channel arch =
   if not !program_run && !program_end
   then
-    (* TODO: Clarify what this message mean. *)
-    Format.fprintf channel "The program is not being run.@."
+    Format.fprintf channel
+    "\n@{<fg_red>Error:@} Program has exited, can't do another step.@."
   else
     match exec_instruction arch with
     | Continue _  -> ()
@@ -44,7 +45,8 @@ let step channel arch =
       | Syscall.Continue  -> ()
       | Syscall.Exit code ->
         Format.fprintf channel
-          "\nExiting with code @{<fg_yellow>'%d'@}@." code;
+          "\n@{<fg_blue>Info:@} Exiting with code @{<fg_yellow>'%d'@}@."
+          code;
         program_run := false;
         program_end := true
 
@@ -53,10 +55,10 @@ let step channel arch =
 let line_breakpoint channel line_debug arg =
   match int_of_string_opt arg with
   | None      -> Format.fprintf channel
-                          "@{<fg_red>Error:@} \"%s\" is not a number" arg
+                  "@{<fg_red>Error:@} \"%s\" is not a number" arg
   | Some line ->
     try
-      let number = Hashtbl.length breakpoints in
+      let number = Hashtbl.length breakpoints   in
       let addr   = Hashtbl.find line_debug line in
       Hashtbl.add breakpoints addr number;
       Format.fprintf channel "Breakpoint %d at 0x%x@." number
@@ -129,8 +131,9 @@ let parse_command channel arch command args label addr_debug line_debug =
   | "help"        | "h" -> Help.general channel
   | "quit"        | "q" -> raise Shell_exit
   | _ ->
-      Format.fprintf channel "@{<fg_red>Error:@} Undefined command: \
-        @{<fg_yellow>\"%s\"@}. Try @{<fg_green>\"help\"@}.@."command
+      Format.fprintf channel
+      "@{<fg_red>Error:@} Undefined command: @{<fg_yellow>\"%s\"@}. \
+      Try @{<fg_green>\"help\"@}.@." command
 
 let rec shell arch label addr_debug line_debug =
   if !program_run && not !program_end then

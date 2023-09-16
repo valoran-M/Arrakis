@@ -62,3 +62,6 @@ let () =
       Found %s but expected a value between %s and %s@}@." ln
       (Int32.to_string v) (Int32.to_string min) (Int32.to_string max);
       exit 6
+  | Failure s ->
+      eprintf "@{<fg_red>Failure: @} %s@." s;
+      exit 6

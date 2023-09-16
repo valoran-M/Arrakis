@@ -13,9 +13,10 @@ in OCaml, primarly designed for education.
 ## Features
 
 * Fully supported RV32IM instruction set, with most pseudo instructions.
-* Different type of environmental calls: either [Venus environmental calls
-  emulation](https://github.com/kvakil/venus/wiki/Environmental-Calls) or
-  partial UNIX syscalls.
+* Different type of environmental calls: either UNIX syscalls (default) or
+[Venus environmental calls emulation](https://github.com/kvakil/venus/wiki/Environmental-Calls).
+* Partial GNU `as` [assembler
+  directives](./doc/directives.md).
 * A debugging system using breakpoints.
 
 ## Installation

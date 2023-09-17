@@ -12,11 +12,11 @@ in OCaml, primarly designed for education.
 
 ## Features
 
-* Fully supported RV32IM instruction set, with [most pseudo instructions](./doc/pseudoinstr.md).
-* Different type of environmental calls: either [UNIX syscalls](./doc/ecall.md#unix)
+* Fully supported RV32IM instruction set, with [most pseudo instructions](https://gitlab.com/valoranM/arrakis/-/wikis/risc_v/pseudo%20instructions).
+* Different type of environmental calls: either [UNIX syscalls](https://gitlab.com/valoranM/arrakis/-/wikis/risc_v/environment)
   (default) or
   [Venus environmental calls emulation](https://github.com/kvakil/venus/wiki/Environmental-Calls).
-* Partial GNU `as` [assembler directives](./doc/directives.md).
+* Partial GNU `as` [assembler directives](https://gitlab.com/valoranM/arrakis/-/wikis/risc_v/directives).
 * A debugging system using breakpoints.
 * Complete [documentation](https://gitlab.com/valoranM/arrakis/-/wikis/home),
   covering not only Arrakis usage but also serve as a general guide on how to

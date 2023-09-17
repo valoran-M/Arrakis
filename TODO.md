@@ -31,5 +31,4 @@
 
 ## Documentation
 
-
-
+* error documentation

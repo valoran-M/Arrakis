@@ -231,7 +231,7 @@ let loop_memory mem addr (prog : memory_line) =
 let translate code =
     let open Simulator.Segment in
   try
-    let mem = Memory.make () in
+    let mem  = Memory.make () in
     let prog = Parser.program Lexer.token code in
     get_label_address prog;
     ignore (List.fold_left (loop_memory mem) static_being prog.memory);

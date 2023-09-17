@@ -11,32 +11,8 @@ let syscall =
   | "venus" -> Syscall.Scvenus.syscall
   | _       -> failwith "Invalid environment."
 
-let rec run first channel arch =
-  if !program_end then
-    Format.fprintf channel
-    "\n@{<fg_red>Error:@} Program has exited, can't run further.@."
-  else (
-    let addr = Simulator.Cpu.get_pc arch.cpu in
-    if first || not (Hashtbl.mem breakpoints addr) then
-      match exec_instruction arch with
-      | Continue _ -> run false channel arch
-      | Zero       ->
-        Format.fprintf channel
-          "\n@{<fg_yellow>Warning:@} Exiting without an exit syscall.@.";
-        program_end := true;
-        program_run := false
-      | Sys_call        ->
-        match syscall channel arch with
-        | Continue  -> run false channel arch
-        | Exit code ->
-            Format.fprintf channel
-              "\n@{<fg_blue>Info:@} Exiting with code @{<fg_yellow>'%d'@}@."
-              code;
-            program_run := false;
-            program_end := true)
-
 let step channel arch =
-  if not !program_run && !program_end
+  if !program_end
   then
     Format.fprintf channel
     "\n@{<fg_red>Error:@} Program has exited, can't run further.@."
@@ -46,7 +22,7 @@ let step channel arch =
     | Zero        ->
       Format.fprintf channel
         "\n@{<fg_yellow>Warning:@} Exiting without an exit syscall.@.";
-      program_run := false
+      program_end := true
     | Sys_call    ->
       match syscall channel arch with
       | Continue  -> ()
@@ -54,15 +30,23 @@ let step channel arch =
         Format.fprintf channel
           "\n@{<fg_blue>Info:@} Exiting with code @{<fg_yellow>'%d'@}@."
           code;
-        program_run := false;
         program_end := true
+
+let rec run first channel arch =
+  if !program_end then () else
+  let addr = Simulator.Cpu.get_pc arch.cpu in
+  if first || not (Hashtbl.mem breakpoints addr) || !program_run then
+    (
+      step channel arch;
+      if not !program_end then run false channel arch
+    )
 
 (* Breakpoints -------------------------------------------------------------- *)
 
 let line_breakpoint channel line_debug arg =
   match int_of_string_opt arg with
   | None      -> Format.fprintf channel
-                  "@{<fg_red>Error:@} \"%s\" is not a number" arg
+                  "@{<fg_red>Error:@} \"%s\" is not a number@." arg
   | Some line ->
     try
       let number = Hashtbl.length breakpoints   in
@@ -71,7 +55,8 @@ let line_breakpoint channel line_debug arg =
       Format.fprintf channel "Breakpoint %d at 0x%x@." number
         (Int32.to_int addr)
     with Not_found ->
-      Format.fprintf channel "@{<fg_red>Error:@} %d line does not exist@." line
+      Format.fprintf channel
+        "@{<fg_red>Error:@} Line %d does not contain code@." line
 
 let addr_breakpoint channel label arg =
   let number = Hashtbl.length breakpoints in
@@ -105,16 +90,22 @@ let remove_breakpoint channel arg =
     | End_loop -> ()
     | _        ->
       Format.fprintf channel
-        "@{<fg_red>Error:@} breakpoint \"%s\" does not exist@." arg
+        "@{<fg_red>Error:@} Breakpoint \"%s\" does not exist@." arg
+
+let iter channel f l =
+  if List.length l == 0 then
+      Format.fprintf channel
+        "@{<fg_red>Error:@} Command require at least one argument.@."
+  else List.iter f l
 
 let set_breakpoint channel args label line_debug =
   match args with
   | "line"   :: args
-  | "l"      :: args -> List.iter (line_breakpoint channel line_debug) args
+  | "l"      :: args -> iter channel (line_breakpoint channel line_debug) args
   | "addr"   :: args
-  | "a"      :: args -> List.iter (addr_breakpoint channel label) args
+  | "a"      :: args -> iter channel (addr_breakpoint channel label) args
   | "remove" :: args
-  | "r"      :: args -> List.iter (remove_breakpoint channel) args
+  | "r"      :: args -> iter channel (remove_breakpoint channel) args
   | "print"  :: _
   | "p"      :: _    ->
       Hashtbl.iter (fun addr number ->

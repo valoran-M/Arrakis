@@ -23,12 +23,12 @@ A register can either be used with it's name or by using `x[RegisterNumber]`.
 | 9               | s1      | Temporary register 2                  |
 | 10              | a0      | Function arg 0 / Return value 0       |
 | 11              | a1      | Function arg 1 / Return value 1       |
-| 12              | a2      | Function arg 2 / Return value 2       |
-| 13              | a3      | Function arg 3 / Return value 3       |
-| 14              | a4      | Function arg 4 / Return value 4       |
-| 15              | a5      | Function arg 5 / Return value 5       |
-| 16              | a6      | Function arg 6 / Return value 6       |
-| 17              | a7      | Function arg 7 / Return value 7       |
+| 12              | a2      | Function arg 2                        |
+| 13              | a3      | Function arg 3                        |
+| 14              | a4      | Function arg 4                        |
+| 15              | a5      | Function arg 5                        |
+| 16              | a6      | Function arg 6                        |
+| 17              | a7      | Function arg 7                        |
 | 18              | s2      | Saved register 2                      |
 | 19              | s3      | Saved register 3                      |
 | 20              | s4      | Saved register 4                      |

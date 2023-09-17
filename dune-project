@@ -14,7 +14,7 @@
 
 (license "CeCILL v2.1")
 
-(documentation https://gitlab.com/valoranM/arrakis/-/blob/main/doc/main.md)
+(documentation https://gitlab.com/valoranM/arrakis/-/wikis/)
 
 (package
  (name arrakis)

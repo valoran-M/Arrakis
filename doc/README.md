@@ -10,3 +10,5 @@
     1. [Options](./options.md)
     2. [Errors](./errors.md)
     3. [Shell](./shell.md)
+3. After Arrakis
+    1. [Compiling assembly files](./compiling.md)

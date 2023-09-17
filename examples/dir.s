@@ -1,11 +1,11 @@
 .data
-  path:        .asciz "/home/azee"
+  path:        .asciz "/home/"
 
 .text
 
-.globl main
+.globl _start
 
-main:
+_start:
 
   li a7, 49    # Load the chdir syscall ID
   la a0, path  # Specify path to change dir to

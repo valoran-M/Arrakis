@@ -290,8 +290,8 @@ exec_op:
 
 # Main #########################################################################
 
-.globl main
-main:
+.globl _start
+_start:
       call init_stack
 
       call exec_op

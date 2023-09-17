@@ -10,7 +10,6 @@
 ## Syscall
 
 * sbrk syscall
-* Directory management syscall (opendir, ...)
 
 ## Assembler
 
@@ -28,3 +27,4 @@
 * dune-project
 * Would be fun to have a small gif in README displaying the use of breakpoints
   and printing stuff.
+

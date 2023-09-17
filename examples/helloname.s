@@ -5,9 +5,9 @@
 
 .text
 
-.globl main
+.globl _start
 
-main:
+_start:
 
   lb t0, maxname
 

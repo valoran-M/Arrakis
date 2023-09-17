@@ -18,6 +18,8 @@ in OCaml, primarly designed for education.
 * Partial GNU `as` [assembler
   directives](./doc/directives.md).
 * A debugging system using breakpoints.
+* Complete [documentation](./doc/README.md), covering not only Arrakis usage but
+  also a general guide on how to write RISC-V assembly code.
 
 ## Installation
 

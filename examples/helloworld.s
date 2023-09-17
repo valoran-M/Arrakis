@@ -3,9 +3,9 @@
 
 .text
 
-.globl main
+.globl _start
 
-main:
+_start:
   li a7, 64     # Load the write syscall ID (64)
   li a0, 1      # Write into stdout (File descriptor 1)
   la a1, hello  #

@@ -52,8 +52,9 @@ let line_breakpoint channel line_debug arg =
       let number = Hashtbl.length breakpoints   in
       let addr   = Hashtbl.find line_debug line in
       Hashtbl.add breakpoints addr number;
-      Format.fprintf channel "Breakpoint %d at 0x%x@." number
-        (Int32.to_int addr)
+      Format.fprintf channel
+        "{<fg_blue>Info:@} Created breakpoint %d at 0x%x@."
+        number (Int32.to_int addr)
     with Not_found ->
       Format.fprintf channel
         "@{<fg_red>Error:@} Line %d does not contain code@." line
@@ -63,14 +64,16 @@ let addr_breakpoint channel label arg =
   match Int32.of_string_opt arg with
   | Some addr ->
     Hashtbl.add breakpoints addr number;
-    Format.fprintf channel "Breakpoint %d at 0x%x@." number
-      (Int32.to_int addr)
+    Format.fprintf channel
+      "{<fg_blue>Info:@} Created breakpoint %d at 0x%x@."
+      number (Int32.to_int addr)
   | None ->
     try
       let addr = Hashtbl.find label arg in
       Hashtbl.add breakpoints addr number;
-      Format.fprintf channel "Breakpoint %d at 0x%x@." number
-        (Int32.to_int addr)
+      Format.fprintf channel
+        "{<fg_blue>Info:@} Created breakpoint %d at 0x%x@."
+        number (Int32.to_int addr)
     with Not_found ->
       Format.fprintf channel
         "@{<fg_red>Error:@} Function \"%s\" not defined.@." arg
@@ -83,7 +86,8 @@ let remove_breakpoint channel arg =
     Hashtbl.iter (fun addr line ->
       if line = breakpoint then (
         Hashtbl.remove breakpoints addr;
-        Format.fprintf channel "Breakpoint %d was removed@." breakpoint;
+        Format.fprintf channel
+          "@{<fg_blue>Info:@}Breakpoint %d was removed@." breakpoint;
         raise End_loop
     )) breakpoints
   with

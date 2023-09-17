@@ -37,6 +37,7 @@ let pseudo_length (pseudo : pseudo_instruction) =
   | SGlob (_, _, _, _)    -> 0x8l
   | Two_Regs (_, _, _)    -> 0x4l
   | Regs_Offset (_, _, _) -> 0x4l
+  | Regs_Regs_Offset (_, _, _, _) -> 0x4l
   | LI (_, imm) ->
     match imm with
     | Label _ -> assert false
@@ -135,6 +136,14 @@ let translate_reg_offset (pseudo : reg_offset) rs offset mem addr =
   | BGTZ -> Inst_B.write_in_memory mem addr BLT 0l rs offset);
   4l
 
+let translate_reg_reg_offset (pseudo : reg_reg_offset) rs rt offset mem addr =
+  (match pseudo with 
+  | BGT  -> Inst_B.write_in_memory mem addr BLT  rt rs offset
+  | BLE  -> Inst_B.write_in_memory mem addr BGE  rt rs offset
+  | BGTU -> Inst_B.write_in_memory mem addr BLTU rt rs offset
+  | BLEU -> Inst_B.write_in_memory mem addr BGEU rt rs offset);
+  4l
+
 let translate_pseudo pseudo mem addr line string =
   Hashtbl.add addr_debug addr (line, string);
   match pseudo with
@@ -184,6 +193,9 @@ let translate_pseudo pseudo mem addr line string =
   | Regs_Offset (inst, rs, offset) ->
     let imm = imm_to_int32 line addr offset in
     translate_reg_offset inst rs imm mem addr
+  | Regs_Regs_Offset (inst, rs, rt, offset) ->
+    let imm = imm_to_int32 line addr offset in
+    translate_reg_reg_offset inst rs rt imm mem addr
 
 let loop_prog mem addr prog =
   match prog with

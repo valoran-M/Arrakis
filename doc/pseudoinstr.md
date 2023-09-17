@@ -51,6 +51,8 @@ li rd, imm ->
 
 ## Branch
 
+### Zero
+
 | Instruction      | Base Instructions  | Description |
 |------------------|--------------------|-------------|
 | beqz rs, offset  | beq rs, x0, offset | if == zero  |
@@ -59,6 +61,15 @@ li rd, imm ->
 | bgez rs, offset  | bge rs, x0, offset | if >= zero  |
 | bltz rs, offset  | blt rs, x0, offset | if <  zero  |
 | bgtz rs, offset  | blt x0, rs, offset | if >  zero  |
+
+### Two Regs
+
+| Instruction          | Base Instructions    | Description     |
+|----------------------|----------------------|-----------------|
+| bgt  rs, rt, offset  | blt  rt, rs, offset  | if >            |
+| ble  rs, rt, offset  | bge  rt, rs, offset  | if <=           |
+| bgtu rs, rt, offset  | bltu rt, rs, offset  | if > , unsigned |
+| bleu rs, rt, offset  | bgeu rt, rs, offset  | if <=, unsigned |
 
 ## Jump
 

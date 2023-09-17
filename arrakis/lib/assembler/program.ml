@@ -55,6 +55,10 @@ type reg_offset =
   | BEQZ | BNEZ | BLEZ
   | BGEZ | BLTZ | BGTZ
 
+type reg_reg_offset =
+  | BGT  | BLE
+  | BGTU | BLEU
+
 type pseudo_instruction =
   | NOP
   | LI    of int32 * imm
@@ -70,6 +74,7 @@ type pseudo_instruction =
   | SGlob of int32 * imm * int32 * s_instruction
   | Two_Regs    of two_reg    * int32 * int32
   | Regs_Offset of reg_offset * int32 * imm
+  | Regs_Regs_Offset of reg_reg_offset * int32 * int32 * imm
 
 (* Code --------------------------------------------------------------------- *)
 

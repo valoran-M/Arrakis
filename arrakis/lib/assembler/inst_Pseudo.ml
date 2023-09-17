@@ -29,3 +29,14 @@ let () =
       BGTZ, "bgtz";
     ]
 
+let regs_regs_offset_str = Hashtbl.create 4
+
+let () =
+  List.iter (fun (v, k) -> Hashtbl.add regs_regs_offset_str k v)
+    [
+      BGT,  "bgt";
+      BLE,  "ble";
+      BGTU, "bgtu";
+      BLEU, "bleu";
+    ]
+

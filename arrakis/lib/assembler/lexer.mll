@@ -12,8 +12,9 @@
   let u_inst = Inst_U.str_table
   let j_inst = Inst_J.str_table
 
-  let tr_inst = Inst_Pseudo.two_regs_str
-  let ro_inst = Inst_Pseudo.regs_offset_str
+  let tr_inst  = Inst_Pseudo.two_regs_str
+  let ro_inst  = Inst_Pseudo.regs_offset_str
+  let rro_inst = Inst_Pseudo.regs_regs_offset_str
 
   let string_buffer = Buffer.create 256
   let reset_stored_string () = Buffer.reset string_buffer
@@ -69,6 +70,7 @@ let inst_u = "lui" | "auipc"
 
 let inst_two_regs = "mv" | "not" | "neg" | "seqz" | "snez" | "sltz" | "sgtz"
 let reg_offset = "beqz" | "bnez" | "blez" | "bgez" | "bltz" | "bgtz"
+let reg_reg_offset = "bgt" | "ble" | "bgtu" | "bleu"
 
 rule token = parse
   | '\n'{ incr line; END_LINE }
@@ -111,8 +113,9 @@ rule token = parse
   | inst_i_load as inst { INST_I_LOAD (!line, inst, Hashtbl.find i_inst inst) }
   | inst_syst   as inst { INST_SYST (!line, inst, Hashtbl.find i_inst inst) }
   (* Pseudo instructions *)
-  | inst_two_regs as inst { TWO_REGS (!line, inst, Hashtbl.find tr_inst inst) }
-  | reg_offset  as inst { REGS_OFFSET (!line, inst, Hashtbl.find ro_inst inst) }
+  | inst_two_regs  as inst { TWO_REGS (!line, inst, Hashtbl.find tr_inst inst) }
+  | reg_offset     as inst { REGS_OFFSET (!line, inst, Hashtbl.find ro_inst inst) }
+  | reg_reg_offset as inst { REGS_REGS_OFFSET (!line, inst, Hashtbl.find rro_inst inst) }
   | "nop"  { NOP   (!line) }
   | "li"   { LI    (!line) }
   | "la"   { LA    (!line) }

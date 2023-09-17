@@ -1,6 +1,6 @@
 .data
 
-  hello:  .asciiz "Hello World!\n"
+  hello:  .asciz "Hello World!\n"
 
 .text
 

@@ -25,8 +25,9 @@
 %token <string> IDENT
 /* Pseudo instructions */
 %token <int> NOP LI LA J JALP JR JALRP RET CALL TAIL
-%token <int * string * Program.reg_offset> REGS_OFFSET
-%token <int * string * Program.two_reg> TWO_REGS
+%token <int * string * Program.reg_offset>      REGS_OFFSET
+%token <int * string * Program.reg_reg_offset>  REGS_REGS_OFFSET
+%token <int * string * Program.two_reg>         TWO_REGS
 
 %token <string> STRING
 
@@ -101,6 +102,13 @@ pseudo_instruction:
     let imm, simm = imm       in
     let str = id ^ " " ^ s ^ ", " ^ simm in
     (line, str, Regs_Offset(inst, rs, imm)) }
+| inst=REGS_REGS_OFFSET rs=REG COMMA? rt=REG COMMA? imm=imm
+  { let line, id, inst = inst in
+    let rs, s     = rs        in
+    let rt, t     = rt        in
+    let imm, simm = imm       in
+    let str = id ^ " " ^ s ^ ", " ^ t ^ ", " ^ simm in
+    (line, str, Regs_Regs_Offset(inst, rs, rt, imm)) }
 | inst=INST_I_LOAD rd=REG COMMA? simm=imm
   { let line, id, inst = inst in
     let rd,   rds = rd        in

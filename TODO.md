@@ -6,6 +6,7 @@
 * `reset` command.
 * Breakpoint line may be hard to know. Printing line number could help.
 * Using up arrow to get last command
+* run function and step function are very similar, should be merged in a way
 
 ## Syscall
 
@@ -27,4 +28,8 @@
 * dune-project
 * Would be fun to have a small gif in README displaying the use of breakpoints
   and printing stuff.
+
+## Documentation
+
+
 

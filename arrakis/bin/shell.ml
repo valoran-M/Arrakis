@@ -5,9 +5,16 @@ let breakpoints = Hashtbl.create 16
 let program_run = ref false
 let program_end = ref false
 
+let syscall =
+  match Options.env with
+  | "unix"  -> Syscall.Scunix.syscall
+  | "venus" -> Syscall.Scvenus.syscall
+  | _       -> failwith "Invalid environment."
+
 let rec run first channel arch =
   if !program_end then
-    Format.fprintf channel "\n@{<fg_red>Error:@} Program is finished@."
+    Format.fprintf channel
+    "\n@{<fg_red>Error:@} Program has exited, can't run further.@."
   else (
     let addr = Simulator.Cpu.get_pc arch.cpu in
     if first || not (Hashtbl.mem breakpoints addr) then
@@ -19,9 +26,9 @@ let rec run first channel arch =
         program_end := true;
         program_run := false
       | Sys_call        ->
-        match Syscall.syscall channel arch with
-        | Syscall.Continue  -> run false channel arch
-        | Syscall.Exit code ->
+        match syscall channel arch with
+        | Continue  -> run false channel arch
+        | Exit code ->
             Format.fprintf channel
               "\n@{<fg_blue>Info:@} Exiting with code @{<fg_yellow>'%d'@}@."
               code;
@@ -32,7 +39,7 @@ let step channel arch =
   if not !program_run && !program_end
   then
     Format.fprintf channel
-    "\n@{<fg_red>Error:@} Program has exited, can't do another step.@."
+    "\n@{<fg_red>Error:@} Program has exited, can't run further.@."
   else
     match exec_instruction arch with
     | Continue _  -> ()
@@ -41,9 +48,9 @@ let step channel arch =
         "\n@{<fg_yellow>Warning:@} Exiting without an exit syscall.@.";
       program_run := false
     | Sys_call    ->
-      match Syscall.syscall channel arch with
-      | Syscall.Continue  -> ()
-      | Syscall.Exit code ->
+      match syscall channel arch with
+      | Continue  -> ()
+      | Exit code ->
         Format.fprintf channel
           "\n@{<fg_blue>Info:@} Exiting with code @{<fg_yellow>'%d'@}@."
           code;

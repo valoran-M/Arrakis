@@ -5,6 +5,8 @@ Arrakis is open to contributors.
 One simple way to contribute is to simply [open an
 issue](https://gitlab.com/valoranM/arrakis/-/issues).
 
+Stuff that are currently planned can be looked at in [`TODO.md`](./TODO.md).
+
 If you wish to contribute code, please keep in mind that Arrakis is distributed
 under the [`CeCILL 2.1 license`](./LICENSE), and that any code submitted will be
 redistributed under this same license.
@@ -17,7 +19,3 @@ Submitted code must also respect the following coding style:
 * Use snake_case
 * Use space instead of tabulation
 * Remove any trailing whitespace
-
-Some stuff that are currently planned can be looked at in
-[`TODO.md`](./TODO.md).
-

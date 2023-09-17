@@ -41,7 +41,7 @@ let () =
       Assembler.Translate.translate lb
     in
     let pc =
-      try Hashtbl.find global_label "main"
+      try Hashtbl.find global_label "_start"
       with Not_found -> Simulator.Segment.text_begin
     in
     let arch = Arch.init pc mem in

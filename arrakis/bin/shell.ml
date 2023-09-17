@@ -1,4 +1,4 @@
-open Simulator.Arch
+open Simulator.Execute
 
 let breakpoints = Hashtbl.create 16
 
@@ -27,7 +27,7 @@ let step channel arch syscall =
           code;
         program_end := true
 
-let rec run first channel arch syscall =
+let rec run first channel (arch : Simulator.Arch.t) syscall =
   if !program_end then () else
   let addr = Simulator.Cpu.get_pc arch.cpu in
   if first || not (Hashtbl.mem breakpoints addr) || !program_run then

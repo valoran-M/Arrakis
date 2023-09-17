@@ -8,7 +8,9 @@ along with pseudo instruction and several environmental calls."""
 maintainer: ["mvalo@proton.me" "gurvan@debauss.art"]
 authors: ["Valeran Maytié" "Gurvan Debaussart"]
 license: "CeCILL v2.1"
-tags: ["RISC-V" "simulator" "emulation" "RV32IM"]
+tags: [
+  "RISC-V" "simulator" "emulation" "RV32IM" "education" "debugger" "debug"
+]
 homepage: "https://gitlab.com/valoranM/arrakis"
 doc: "https://gitlab.com/valoranM/arrakis/-/wikis/"
 bug-reports: "https://gitlab.com/valoranM/arrakis/-/issues"

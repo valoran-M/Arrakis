@@ -1,8 +1,9 @@
+open Error
+
 let int32_to_int i =
   match Int32.unsigned_to_int i with
   | Some i -> i
-  | None -> failwith {|int32 cannot be converted to int.
-                       Time to move to a 64-bit machine!" |}
+  | None   -> raise (Simulator_error Conversion_Failure)
 
 let sign_extended i size =
   Int32.shift_right

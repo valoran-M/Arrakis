@@ -24,11 +24,6 @@
 
 ## Diverse
 
-* Replace every `failwith` with a propre exception that should be catched.
 * dune-project
 * Would be fun to have a small gif in README displaying the use of breakpoints
   and printing stuff.
-
-## Documentation
-
-* error documentation

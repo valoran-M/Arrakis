@@ -1,18 +1,12 @@
 open Simulator.Arch
 
-
 let breakpoints = Hashtbl.create 16
 
 let program_run = ref false
 let program_end = ref false
 
-let syscall =
-  match Options.env with
-  | "unix"  -> Syscall.Scunix.syscall
-  | "venus" -> Syscall.Scvenus.syscall
-  | _       -> failwith "Invalid environment."
-
-let step channel arch =
+let step channel arch syscall =
+  let open Syscall.Types in
   if !program_end
   then
     Format.fprintf channel
@@ -33,13 +27,13 @@ let step channel arch =
           code;
         program_end := true
 
-let rec run first channel arch =
+let rec run first channel arch syscall =
   if !program_end then () else
   let addr = Simulator.Cpu.get_pc arch.cpu in
   if first || not (Hashtbl.mem breakpoints addr) || !program_run then
     (
-      step channel arch;
-      if not !program_end then run false channel arch
+      step channel arch syscall;
+      if not !program_end then run false channel arch syscall
     )
 
 (* Breakpoints -------------------------------------------------------------- *)
@@ -122,14 +116,14 @@ let set_breakpoint channel args label line_debug =
 
 exception Shell_exit
 
-let parse_command channel arch command args label addr_debug line_debug =
+let parse_command channel arch command args label addr_debug line_debug syscall =
   match command with
   | "run"         | "r" ->
       program_run := true;
-      run false channel arch;
+      run false channel arch syscall;
   | "breakpoint"  | "b" -> set_breakpoint channel args label line_debug
-  | "step"        | "s" -> step channel arch
-  | "next"        | "n" -> run true channel arch
+  | "step"        | "s" -> step channel arch syscall
+  | "next"        | "n" -> run true channel arch syscall
   | "print"       | "p" -> Print.decode_print channel arch args addr_debug breakpoints
   | "help"        | "h" -> Help.general channel
   | "quit"        | "q" -> raise Shell_exit
@@ -138,7 +132,7 @@ let parse_command channel arch command args label addr_debug line_debug =
       "@{<fg_red>Error:@} Undefined command: @{<fg_yellow>\"%s\"@}. \
       Try @{<fg_green>\"help\"@}.@." command
 
-let rec shell arch label addr_debug line_debug =
+let rec shell arch label addr_debug line_debug syscall =
   if !program_run && not !program_end then
     Print.print_code_part
     (Format.formatter_of_out_channel stdout) arch addr_debug breakpoints 8 0;
@@ -148,8 +142,8 @@ let rec shell arch label addr_debug line_debug =
   try match words with
   | command :: args ->
     parse_command Format.std_formatter arch
-        command args label addr_debug line_debug;
-    shell arch label addr_debug line_debug
-  | _ -> shell arch label addr_debug line_debug
+        command args label addr_debug line_debug syscall;
+    shell arch label addr_debug line_debug syscall
+  | _ -> shell arch label addr_debug line_debug syscall
   with Shell_exit -> ()
 

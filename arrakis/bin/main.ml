@@ -2,6 +2,9 @@ open Options
 open Simulator
 open Format
 open Assembler.Error
+open Simulator.Error
+
+exception Invalid_env of string
 
 let () =
   if Options.no_color
@@ -26,6 +29,12 @@ let () =
   );
 
   try
+  let syscall =
+    match Options.env with
+    | "unix"  -> Syscall.Scunix.syscall
+    | "venus" -> Syscall.Scvenus.syscall
+    | s       -> raise (Invalid_env s)
+  in
   let channel = open_in input_file in
   let lb = Lexing.from_channel channel in
     let mem, label, global_label, addr_debug, line_debug =
@@ -37,21 +46,21 @@ let () =
     in
     let arch = Arch.init pc mem in
     if unix_socket
-    then Server.start_server unix_file arch label addr_debug line_debug
+    then Server.start_server unix_file arch label addr_debug line_debug syscall
     else if no_shell then (
       let channel = Format.std_formatter in
       Shell.program_run := true;
-      Shell.run false channel arch
+      Shell.run false channel arch syscall
     )
-    else Shell.shell arch label addr_debug line_debug
+    else Shell.shell arch label addr_debug line_debug syscall
   with
   | Assembler_error (ln, Lexing_error s) ->
       eprintf
-        "@{<fg_red>Lexical error on line @{<fg_yellow>%d@}: '%s'@}@." ln s;
+        "@{<fg_red>Error:@}Lexical error on line @{<fg_yellow>%d@}: '%s'@." ln s;
       exit 3
   | Assembler_error(ln, Parsing_error(s)) ->
       eprintf
-        "@{<fg_red>Syntax error on line @{<fg_yellow>%d@}: '%s'@}@." ln s;
+        "@{<fg_red>Error:@} Syntax error on line @{<fg_yellow>%d@}: '%s'@." ln s;
       exit 4
   | Assembler_error (ln, Unknown_Label ul) ->
       eprintf
@@ -65,3 +74,11 @@ let () =
   | Failure s ->
       eprintf "@{<fg_red>Failure: @} %s@." s;
       exit 6
+  | Invalid_env s ->
+      eprintf "@{<fg_red>Error:@} Invalid environment '%s'@." s;
+      exit 7
+  | Simulator_error Conversion_Failure ->
+      eprintf "@{<fg_red>Error:@} Couldn't convert an int32 to an int. Time to \
+      move to a 64 bit machine!";
+      exit 8
+

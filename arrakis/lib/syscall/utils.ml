@@ -1,6 +1,5 @@
 open Simulator
-
-type syscall_ret = Exit of int | Continue
+open Types
 
 (* Helper functions --------------------------------------------------------- *)
 

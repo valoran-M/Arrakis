@@ -1,3 +1,4 @@
+open Types
 open Utils
 open Simulator
 

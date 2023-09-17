@@ -19,7 +19,9 @@
 (package
  (name arrakis)
  (synopsis "A RISC-V simulator")
- (description "A longer description")
+ (description "A RISC-V simulator  with an integrated debugger.
+Support full RV32IM instruction set,
+along with pseudo instruction and several environmental calls.")
  (depends ocaml dune alcotest)
  (tags
-  (topics "to describe" your project)))
+  ("RISC-V" "simulator" "emulation" "RV32IM")))

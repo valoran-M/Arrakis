@@ -1,5 +1,6 @@
 open Simulator.Arch
 
+
 let breakpoints = Hashtbl.create 16
 
 let program_run = ref false
@@ -28,7 +29,7 @@ let step channel arch =
       | Continue  -> ()
       | Exit code ->
         Format.fprintf channel
-          "\n@{<fg_blue>Info:@} Exiting with code @{<fg_yellow>'%d'@}@."
+          "\n@{<fg_blue>Info:@} Exiting with code @{<fg_yellow>'%d'@}.@."
           code;
         program_end := true
 
@@ -46,7 +47,7 @@ let rec run first channel arch =
 let line_breakpoint channel line_debug arg =
   match int_of_string_opt arg with
   | None      -> Format.fprintf channel
-                  "@{<fg_red>Error:@} \"%s\" is not a number@." arg
+                  "@{<fg_red>Error:@} \"%s\" is not a number.@." arg
   | Some line ->
     try
       let number = Hashtbl.length breakpoints   in
@@ -57,7 +58,7 @@ let line_breakpoint channel line_debug arg =
         number (Int32.to_int addr)
     with Not_found ->
       Format.fprintf channel
-        "@{<fg_red>Error:@} Line %d does not contain code@." line
+        "@{<fg_red>Error:@} Line %d does not contain code.@." line
 
 let addr_breakpoint channel label arg =
   let number = Hashtbl.length breakpoints in
@@ -65,14 +66,14 @@ let addr_breakpoint channel label arg =
   | Some addr ->
     Hashtbl.add breakpoints addr number;
     Format.fprintf channel
-      "{<fg_blue>Info:@} Created breakpoint %d at 0x%x@."
+      "{<fg_blue>Info:@} Created breakpoint %d at 0x%x.@."
       number (Int32.to_int addr)
   | None ->
     try
       let addr = Hashtbl.find label arg in
       Hashtbl.add breakpoints addr number;
       Format.fprintf channel
-        "{<fg_blue>Info:@} Created breakpoint %d at 0x%x@."
+        "{<fg_blue>Info:@} Created breakpoint %d at 0x%x.@."
         number (Int32.to_int addr)
     with Not_found ->
       Format.fprintf channel
@@ -87,14 +88,14 @@ let remove_breakpoint channel arg =
       if line = breakpoint then (
         Hashtbl.remove breakpoints addr;
         Format.fprintf channel
-          "@{<fg_blue>Info:@}Breakpoint %d was removed@." breakpoint;
+          "@{<fg_blue>Info:@}Breakpoint %d was removed.@." breakpoint;
         raise End_loop
     )) breakpoints
   with
     | End_loop -> ()
     | _        ->
       Format.fprintf channel
-        "@{<fg_red>Error:@} Breakpoint \"%s\" does not exist@." arg
+        "@{<fg_red>Error:@} Breakpoint \"%s\" does not exist.@." arg
 
 let iter channel f l =
   if List.length l == 0 then

@@ -6,7 +6,7 @@
 * `reset` command.
 * Breakpoint line may be hard to know. Printing line number could help.
 * Using up arrow to get last command
-* run function and step function are very similar, should be merged in a way
+* Using side arrow to modify current command
 
 ## Syscall
 

@@ -24,4 +24,4 @@ Support full RV32IM instruction set,
 along with pseudo instruction and several environmental calls.")
  (depends ocaml dune alcotest)
  (tags
-  ("RISC-V" "simulator" "emulation" "RV32IM")))
+  ("RISC-V" "simulator" "emulation" "RV32IM" "education" "debugger" "debug")))

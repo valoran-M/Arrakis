@@ -18,7 +18,7 @@ in OCaml, primarly designed for education.
   [Venus environmental calls emulation](https://github.com/kvakil/venus/wiki/Environmental-Calls).
 * Partial GNU `as` [assembler directives](https://gitlab.com/valoranM/arrakis/-/wikis/risc_v/directives).
 * A debugging system using breakpoints.
-* Complete [documentation](https://gitlab.com/valoranM/arrakis/-/wikis/home),
+* Complete [documentation](https://gitlab.com/valoranM/arrakis/-/wikis),
   covering not only Arrakis usage but also serve as a general guide on how to
   write RISC-V assembly code.
 
@@ -33,7 +33,8 @@ Simply run:
 
 ## Documentation
 
-Documentation about Arrakis usage is available [here](./doc/README.md).
+Documentation about Arrakis usage is available
+[here](https://gitlab.com/ValoranM/arrakis/-/wikis)
 
 ## Development
 

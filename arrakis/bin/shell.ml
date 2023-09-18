@@ -5,36 +5,46 @@ let breakpoints = Hashtbl.create 16
 let program_run = ref false
 let program_end = ref false
 
-let step channel arch syscall =
+let step channel arch history syscall =
   let open Syscall.Types in
   if !program_end
-  then
+  then (
     Format.fprintf channel
-    "\n@{<fg_red>Error:@} Program has exited, can't run further.@."
-  else
-    match exec_instruction arch with
-    | Continue _  -> ()
+        "\n@{<fg_red>Error:@} Program has exited, can't run further.@.";
+    history
+  ) else
+    match exec_instruction arch history with
+    | Continue (_, history)  -> history
     | Zero        ->
       Format.fprintf channel
         "\n@{<fg_yellow>Warning:@} Exiting without an exit syscall.@.";
-      program_end := true
-    | Sys_call    ->
+      program_end := true; history
+    | Sys_call history  ->
       match syscall channel arch with
-      | Continue  -> ()
+      | Continue  -> history
       | Exit code ->
         Format.fprintf channel
           "\n@{<fg_blue>Info:@} Exiting with code @{<fg_yellow>'%d'@}.@."
           code;
-        program_end := true
+        program_end := true;
+        history
 
-let rec run first channel (arch : Simulator.Arch.t) syscall =
-  if !program_end then () else
+let rec run first channel (arch : Simulator.Arch.t) history syscall =
+  if !program_end then history else
   let addr = Simulator.Cpu.get_pc arch.cpu in
-  if first || not (Hashtbl.mem breakpoints addr) || !program_run then
-    (
-      step channel arch syscall;
-      if not !program_end then run false channel arch syscall
-    )
+  if first || not (Hashtbl.mem breakpoints addr) then (
+      Printf.printf "OK\n%!";
+      let history = step channel arch history syscall in
+      if !program_end
+      then history
+      else run false channel arch history syscall
+  ) else history
+
+let prev channel arch history =
+  try Simulator.History.step_back arch history
+  with Simulator.History.History_Empty ->
+    Format.fprintf channel
+  "\n@{<fg_red>Error:@} History is empty.@."; history
 
 (* Breakpoints -------------------------------------------------------------- *)
 
@@ -48,7 +58,7 @@ let line_breakpoint channel line_debug arg =
       let addr   = Hashtbl.find line_debug line in
       Hashtbl.add breakpoints addr number;
       Format.fprintf channel
-        "{<fg_blue>Info:@} Created breakpoint %d at 0x%x@."
+        "@{<fg_blue>Info:@} Created breakpoint %d at 0x%x@."
         number (Int32.to_int addr)
     with Not_found ->
       Format.fprintf channel
@@ -60,14 +70,14 @@ let addr_breakpoint channel label arg =
   | Some addr ->
     Hashtbl.add breakpoints addr number;
     Format.fprintf channel
-      "{<fg_blue>Info:@} Created breakpoint %d at 0x%x.@."
+      "@{<fg_blue>Info:@} Created breakpoint %d at 0x%x.@."
       number (Int32.to_int addr)
   | None ->
     try
       let addr = Hashtbl.find label arg in
       Hashtbl.add breakpoints addr number;
       Format.fprintf channel
-        "{<fg_blue>Info:@} Created breakpoint %d at 0x%x.@."
+        "@{<fg_blue>Info:@} Created breakpoint %d at 0x%x.@."
         number (Int32.to_int addr)
     with Not_found ->
       Format.fprintf channel
@@ -116,23 +126,26 @@ let set_breakpoint channel args label line_debug =
 
 exception Shell_exit
 
-let parse_command channel arch command args label addr_debug line_debug syscall =
+let parse_command channel arch history command args
+                  label addr_debug line_debug syscall =
   match command with
   | "run"         | "r" ->
       program_run := true;
-      run false channel arch syscall;
-  | "breakpoint"  | "b" -> set_breakpoint channel args label line_debug
-  | "step"        | "s" -> step channel arch syscall
-  | "next"        | "n" -> run true channel arch syscall
-  | "print"       | "p" -> Print.decode_print channel arch args addr_debug breakpoints
-  | "help"        | "h" -> Help.general channel
+      run false channel arch history syscall;
+  | "breakpoint"  | "b" -> set_breakpoint channel args label line_debug; history
+  | "step"        | "s" -> step channel arch history syscall
+  | "next"        | "n" -> run true channel arch history syscall
+  | "help"        | "h" -> Help.general channel; history
   | "quit"        | "q" -> raise Shell_exit
+  | "prev"        | "pr"-> prev channel arch history
+  | "print"       | "p" ->
+    Print.decode_print channel arch args addr_debug breakpoints; history
   | _ ->
       Format.fprintf channel
       "@{<fg_red>Error:@} Undefined command: @{<fg_yellow>\"%s\"@}. \
-      Try @{<fg_green>\"help\"@}.@." command
+      Try @{<fg_green>\"help\"@}.@." command; history
 
-let rec shell arch label addr_debug line_debug syscall =
+let rec shell arch history label addr_debug line_debug syscall =
   if !program_run && not !program_end then
     Print.print_code_part
     (Format.formatter_of_out_channel stdout) arch addr_debug breakpoints 8 0;
@@ -141,9 +154,9 @@ let rec shell arch label addr_debug line_debug syscall =
   let words = String.split_on_char ' ' line in
   try match words with
   | command :: args ->
-    parse_command Format.std_formatter arch
-        command args label addr_debug line_debug syscall;
-    shell arch label addr_debug line_debug syscall
-  | _ -> shell arch label addr_debug line_debug syscall
+    let history = parse_command Format.std_formatter arch history
+        command args label addr_debug line_debug syscall in
+    shell arch history label addr_debug line_debug syscall
+  | _ -> shell arch history label addr_debug line_debug syscall
   with Shell_exit -> ()
 

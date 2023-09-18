@@ -8,6 +8,7 @@ type change =
   | Change_Memory_16 of int32 * int32 (* addresse, value *)
   | Change_Memory_32 of int32 * int32 (* addresse, value *)
   | Change_Register  of int   * int32 (* register, value *)
+  | Change_Nothing
 
 type sim_change = { last_pc : int32; change : change }
 
@@ -26,10 +27,10 @@ let recover_change (change : sim_change) (arch : Arch.t) =
   | Change_Memory_16 (addr, value) -> set_int16 arch.memory addr value
   | Change_Memory_32 (addr, value) -> set_int32 arch.memory addr value
   | Change_Register  (reg,  value) -> set_reg   arch.cpu    reg  value
-
+  | Change_Nothing                 -> ()
 
 let step_back arch (history : t) =
   match history with
-  | [] -> raise History_Empty
+  | []                -> raise History_Empty
   | change :: history -> recover_change change arch; history
 

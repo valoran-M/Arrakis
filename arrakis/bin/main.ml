@@ -40,19 +40,21 @@ let () =
     let mem, label, global_label, addr_debug, line_debug =
       Assembler.Translate.translate lb
     in
+    let history = History.create_history () in
     let pc =
       try Hashtbl.find global_label "_start"
       with Not_found -> Simulator.Segment.text_begin
     in
     let arch = Arch.init pc mem in
     if unix_socket
-    then Server.start_server unix_file arch label addr_debug line_debug syscall
+    then Server.start_server unix_file arch history label
+                             addr_debug line_debug syscall
     else if no_shell then (
       let channel = Format.std_formatter in
       Shell.program_run := true;
-      Shell.run false channel arch syscall
+      ignore (Shell.run false channel arch history syscall)
     )
-    else Shell.shell arch label addr_debug line_debug syscall
+    else Shell.shell arch history label addr_debug line_debug syscall
   with
   | Assembler_error (ln, Lexing_error s) ->
       eprintf

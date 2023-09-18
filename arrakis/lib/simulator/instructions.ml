@@ -184,9 +184,20 @@ module S_type = struct
   let execute instruction rs1 rs2 memory =
     let addr = rs1 + instruction.imm in
     match instruction.funct3 with
-      | 0x0 -> Memory.set_byte  memory addr (rs2 && 0b11111111l)        (* SB *)
-      | 0x1 -> Memory.set_int16 memory addr (rs2 && 0b1111111111111111l)(* SH *)
-      | 0x2 -> Memory.set_int32 memory addr rs2                         (* SW *)
+      | 0x0 -> (* SB *)
+        let last_value = Memory.get_byte memory addr in
+        Memory.set_byte  memory addr (rs2 && 0b11111111l);
+        History.Change_Memory_8 (addr, last_value)
+      | 0x1 ->
+        (* SH *)
+        let last_value = Memory.get_int16 memory addr in
+        Memory.set_int16 memory addr (rs2 && 0b1111111111111111l);
+        History.Change_Memory_16 (addr, last_value)
+      | 0x2 ->
+        (* SW *)
+        let last_value = Memory.get_int32 memory addr in
+        Memory.set_int32 memory addr rs2;
+        History.Change_Memory_32 (addr, last_value)
       | _ -> Error.s_invalid instruction.funct3
 end
 

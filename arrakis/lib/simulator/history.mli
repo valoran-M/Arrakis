@@ -5,6 +5,7 @@ type change =
   | Change_Memory_16 of int32 * int32 (* addresse, value *)
   | Change_Memory_32 of int32 * int32 (* addresse, value *)
   | Change_Register  of int   * int32 (* register, value *)
+  | Change_Nothing
 
 type t
 

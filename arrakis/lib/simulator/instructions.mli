@@ -31,7 +31,7 @@ module S_type : sig
   val decode : int32 -> t
     (** [decode code] decode S instruction [code] *)
 
-  val execute : t -> int32 -> int32 -> Memory.t -> unit
+  val execute : t -> int32 -> int32 -> Memory.t -> History.change
     (** [execute inst rs1 rs2 mem] execute S [inst] with 
         [rs1] [rs2] register value *)
 end

@@ -14,6 +14,10 @@ let general channel =
 
     In debug mode: execute next instruction.
 
+ @{<fg_green>*@} (pr)ev
+
+    In debug mode: Recovery of the simulator's previous state
+
  @{<fg_green>*@} (n)ext
 
     Run to next breakpoint.

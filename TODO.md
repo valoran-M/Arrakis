@@ -6,10 +6,6 @@
 * Using up arrow to get last command
 * Using side arrow to modify current command
 
-## Syscall
-
-* sbrk syscall
-
 ## Assembler
 
 * Would be nice to have better errors.

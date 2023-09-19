@@ -12,7 +12,7 @@
 
 (maintainers "mvalo@proton.me" "gurvan@debauss.art")
 
-(license "CeCILL v2.1")
+(license "CeCILL-2.1")
 
 (documentation https://gitlab.com/valoranM/arrakis/-/wikis/)
 

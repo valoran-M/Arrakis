@@ -16,7 +16,7 @@ in OCaml, primarly designed for education.
 * Different type of environmental calls: either [UNIX syscalls](https://gitlab.com/valoranM/arrakis/-/wikis/risc_v/environment%20call)
   (default) or
   [Venus environmental calls emulation](https://github.com/kvakil/venus/wiki/Environmental-Calls).
-* Partial GNU `as` [assembler directives](https://gitlab.com/valoranM/arrakis/-/wikis/risc_v/directives).
+* Partial GNU `as` [assembler directives](https://gitlab.com/valoranM/arrakis/-/wikis/risc_v/Assembler-Directives).
 * A debugging system using breakpoints.
 * Complete [documentation](https://gitlab.com/valoranM/arrakis/-/wikis),
   covering not only Arrakis usage but also serve as a general guide on how to

@@ -66,11 +66,11 @@ let () =
       exit 4
   | Assembler_error (ln, Unknown_Label ul) ->
       eprintf
-        "@{<fg_red>Unknown label on line @{<fg_yellow>%d@}: '%s'@}@." ln ul;
+        "@{<fg_red>Error:@} Unknown label on line @{<fg_yellow>%d@}: '%s'@." ln ul;
       exit 5
   | Assembler_error (ln, Interval_imm (v, min, max)) ->
-      eprintf "@{<fg_red>Error on line @{<fg_yellow>%d@}: Imm out of bound.
-      Found %s but expected a value between %s and %s@}@." ln
+      eprintf "@{<fg_red>Error:@} on line @{<fg_yellow>%d@}: Imm out of bound.
+      Found '@{<fg_yellow>%s@}' but expected a value between %s and %s@}@." ln
       (Int32.to_string v) (Int32.to_string min) (Int32.to_string max);
       exit 6
   | Failure s ->

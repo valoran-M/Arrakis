@@ -37,7 +37,7 @@
 %token BYTES
 %token ASCIZ
 %token WORD
-%token GLOBL
+%token <int> GLOBL
 
 %start program
 %type <Program.program> program
@@ -199,8 +199,8 @@ program_line:
 | inst=pseudo_instruction END_LINE*
   { let line, str, inst = inst in
     Prog_Pseudo(line, str, inst) }
-| GLOBL COLON? i=IDENT  END_LINE+ { Prog_GLabel i }
-| i=IDENT COLON END_LINE*         { Prog_Label i  }
+| l=GLOBL COLON? i=IDENT  END_LINE+ { Prog_GLabel (l, i) }
+| i=IDENT COLON END_LINE*           { Prog_Label i  }
 ;
 
 data_line:
@@ -209,7 +209,7 @@ data_line:
 | ASCIZ   COLON? s=STRING END_LINE+ { Mem_Asciz s  }
 | WORD    COLON? INT*     END_LINE+ { Mem_Word (List.map fst $3) }
 | ZERO    COLON? i=INT    END_LINE+ { Mem_Zero (fst i)    }
-| GLOBL   COLON? i=IDENT  END_LINE+ { Mem_GLabel i  }
+| l=GLOBL COLON? i=IDENT  END_LINE+ { Mem_GLabel (l, i)  }
 | i=IDENT COLON           END_LINE* { Mem_Label  i  }
 
 program:

@@ -1,5 +1,4 @@
 open Error
-open Simulator
 open Program
 
 let ( * ) = Int32.mul
@@ -210,40 +209,44 @@ let loop_prog mem addr prog =
     translate inst mem addr l;
     addr + 4l
   | Prog_Label _  -> addr
-  | Prog_GLabel label ->
+  | Prog_GLabel (line, label) ->
     try
       Hashtbl.add global_label label (Hashtbl.find label_address label); addr
-    with Not_found -> failwith "TODO global address"
+    with Not_found ->
+      raise (Assembler_error (line, (Error.Unknown_Label label)))
 
 let loop_memory mem addr (prog : memory_line) =
   match prog with
-  | Mem_Value v     -> Memory.set_int32 mem addr v; addr + 4l
+  | Mem_Value v     -> Simulator.Memory.set_int32 mem addr v; addr + 4l
   | Mem_Bytes lb    ->
     List.fold_left (fun addr v ->
-      Memory.set_byte mem addr (Utils.char_to_int32 v); addr + 1l)
-      addr lb
+      Simulator.Memory.set_byte mem addr (Simulator.Utils.char_to_int32 v);
+      addr + 1l)
+    addr lb
   | Mem_Asciz s    ->
     let addr = String.fold_left (fun addr v ->
-      Memory.set_byte mem addr (Utils.char_to_int32 v); addr + 1l)
-      addr s in
-    Memory.set_byte mem addr 0l; (addr + 1l)
+      Simulator.Memory.set_byte mem addr (Simulator.Utils.char_to_int32 v);
+      addr + 1l)
+    addr s in
+    Simulator.Memory.set_byte mem addr 0l; (addr + 1l)
   | Mem_Word words  ->
     List.fold_left (fun addr v ->
-      Memory.set_int32 mem addr v; addr + 4l)
+      Simulator.Memory.set_int32 mem addr v; addr + 4l)
       addr words
   | Mem_Zero nz      ->
-    Memory.set_32b_zero mem addr nz;
+    Simulator.Memory.set_32b_zero mem addr nz;
     addr + 4l * nz
   | Mem_Label _      -> addr
-  | Mem_GLabel label ->
+  | Mem_GLabel (line, label) ->
     try
       Hashtbl.add global_label label (Hashtbl.find label_address label); addr
-    with Not_found -> failwith "TODO global address"
+    with Not_found ->
+      raise (Assembler_error (line, (Error.Unknown_Label label)))
 
 let translate code =
     let open Simulator.Segment in
   try
-    let mem  = Memory.make () in
+    let mem  = Simulator.Memory.make () in
     let prog = Parser.program Lexer.token code in
     get_label_address prog;
     ignore (List.fold_left (loop_memory mem) static_being prog.memory);

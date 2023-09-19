@@ -96,7 +96,7 @@ type program_line =
               (* line nb, original code *)
   | Prog_Pseudo of int *       string        * pseudo_instruction
   | Prog_Instr  of int *       string        * instruction
-  | Prog_GLabel of string
+  | Prog_GLabel of int * string
   | Prog_Label  of string
 
 (* Memory ------------------------------------------------------------------- *)
@@ -106,8 +106,8 @@ type memory_line =
   | Mem_Zero   of int32
   | Mem_Bytes  of char list
   | Mem_Asciz  of string
-  | Mem_Word   of Int32.t list
-  | Mem_GLabel of string
+  | Mem_Word   of int32 list
+  | Mem_GLabel of int * string
   | Mem_Label  of string
 
 (* Program ------------------------------------------------------------------ *)

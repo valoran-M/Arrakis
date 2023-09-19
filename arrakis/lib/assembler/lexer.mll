@@ -96,7 +96,7 @@ rule token = parse
   | space { token lexbuf }
   | integer as i { INT(Int32.of_string i, i) }
   (* Assembler directives *)
-  | ".globl" | ".global" { GLOBL  }
+  | ".globl" | ".global" { GLOBL !line  }
   | ".data"              { DATA   }
   | ".zero"              { ZERO   }
   | ".text"              { TEXT   }

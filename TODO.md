@@ -6,6 +6,10 @@
 * Using up arrow to get last command
 * Using side arrow to modify current command
 
+## Syscall
+
+* Channel for standard output/input
+
 ## Assembler
 
 * Would be nice to have better errors.
@@ -20,3 +24,4 @@
 
 * Would be fun to have a small gif in README displaying the use of breakpoints
   and printing stuff.
+* Ocaml 4.14 support

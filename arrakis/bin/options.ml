@@ -4,9 +4,8 @@ let input_file  = ref ""
 let set_input_file f =
   if not (Sys.file_exists f) then raise (Arg.Bad "Input file does not exists")
   else input_file := f
-
 let unix_socket = ref false
-let unix_file   = ref "./socket"
+let unix_file   = ref (Unix.getcwd () ^ "/socket")
 
 let no_color   = ref false
 let allow_root = ref false

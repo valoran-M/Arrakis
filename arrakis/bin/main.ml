@@ -77,14 +77,14 @@ let () =
       exit 5
   | Assembler_error (ln, Interval_imm (v, min, max)) ->
       eprintf "@{<fg_red>Error:@} on line @{<fg_yellow>%d@}: Imm out of bound.
-      Found '@{<fg_yellow>%s@}' but expected a value between %s and %s@}@." ln
+      Found @{<fg_yellow>'%s'@} but expected a value between %s and %s@}@." ln
       (Int32.to_string v) (Int32.to_string min) (Int32.to_string max);
       exit 6
   | Failure s ->
-      eprintf "@{<fg_red>Failure: @} %s@." s;
+      eprintf "@{<fg_red>Error: @} Failure (@{<fg_yellow>'%s'@}@." s;
       exit 6
   | Invalid_env s ->
-      eprintf "@{<fg_red>Error:@} Invalid environment '%s'@." s;
+      eprintf "@{<fg_red>Error:@} Invalid environment @{<fg_yellow>'%s'@}@." s;
       exit 7
   | Simulator_error Conversion_Failure ->
       eprintf "@{<fg_red>Error:@} Couldn't convert an int32 to an int. Time to \

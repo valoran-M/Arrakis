@@ -24,7 +24,13 @@ let print_character channel (arch : Arch.t) =
 
 let exit0 () = Exit 0
 
-let sbrk _arch = failwith "TODO: sbrk"
+let sbrk =
+  let heap_pointer = ref Simulator.Segment.heap_begin in
+  fun (arch : Arch.t) ->
+    let size = Simulator.Cpu.get_reg arch.cpu 11 in
+    heap_pointer := Int32.add !heap_pointer size;
+    Simulator.Cpu.set_reg arch.cpu 10 !heap_pointer;
+    Continue
 
 let exit (arch : Arch.t) =
   let status = Cpu.get_reg arch.cpu 11 in

@@ -2,6 +2,8 @@ open Types
 open Utils
 open Simulator
 
+let (>)  x y = Int32.unsigned_compare x y >  0
+
 let exit (arch : Arch.t) =
   let status = Cpu.get_reg arch.cpu 10 in
   Exit (Int32.to_int status)
@@ -56,8 +58,15 @@ let write (arch : Arch.t) =
   Cpu.set_reg arch.cpu 10 (Int32.of_int res);
   Continue
 
-let sbrk (_arch : Arch.t) =
-  failwith "TODO: sbrk"
+let brk (arch: Arch.t) =
+  let new_addr   = Simulator.Cpu.get_reg arch.cpu 10 in
+  let stack_addr = Simulator.Cpu.get_reg arch.cpu 2 in
+  (if new_addr < stack_addr && new_addr >= Simulator.Segment.heap_begin
+   then Cpu.set_reg arch.cpu 10 0l
+   else Cpu.set_reg arch.cpu 10 (-1l)
+  );
+
+  Continue
 
 let getuid (arch : Arch.t) =
   let uid = Unix.getuid () in
@@ -117,6 +126,6 @@ let syscall channel (arch : Arch.t) =
   | 129l -> kill      arch
   | 174l -> getuid    arch
   | 175l -> geteuid   arch
-  | 214l -> sbrk      arch
+  | 214l -> brk      arch
   | _    -> invalid_sysc channel reg
 

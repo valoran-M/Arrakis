@@ -2,8 +2,6 @@
 
 ## Shell
 
-* `clear` command.
-* `reset` command.
 * Breakpoint line may be hard to know. Printing line number could help.
 * Using up arrow to get last command
 * Using side arrow to modify current command

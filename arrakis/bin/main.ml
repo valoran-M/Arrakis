@@ -38,10 +38,8 @@ let () =
   in
 
 
-  if unix_socket then (
-    (* TODO *)
-  ) else (
-    Syscall.Utils.set_stdout Unix.stdin Unix.stdout Unix.stderr;
+  if not unix_socket then (
+    Syscall.Utils.set_stdout Unix.stdin Unix.stdout Unix.stderr
   );
   (* ------------------------------------------------------------------------ *)
   let channel = open_in input_file in

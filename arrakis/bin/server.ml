@@ -31,8 +31,9 @@ let start_server file arch history label addr_debug line_debug syscall =
   bind sock sockaddr;
   listen sock 5;
   let (s, _caller) = accept_non_intr sock in
-  let inchan = in_channel_of_descr s in
+  let inchan  = in_channel_of_descr s in
   let outchan = Format.formatter_of_out_channel (out_channel_of_descr s) in
+  Syscall.Utils.set_stdout s s s;
   ignore (loop arch history label addr_debug line_debug inchan outchan syscall);
   close sock;
   unlink file

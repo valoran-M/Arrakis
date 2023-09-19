@@ -19,3 +19,6 @@ val add_history : int32 -> change -> t -> t
 val step_back : Arch.t -> t -> t
   (** [step_back arch history] Resets the simulator to the previous state *)
 
+val reset : Arch.t -> t -> t
+  (** [reset arch history] Resets the simulator to the inital state *)
+

@@ -34,3 +34,5 @@ let step_back arch (history : t) =
   | []                -> raise History_Empty
   | change :: history -> recover_change change arch; history
 
+let reset arch (history : t) =
+  List.iter (fun c -> recover_change c arch) history; []

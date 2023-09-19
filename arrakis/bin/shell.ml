@@ -33,7 +33,6 @@ let rec run first channel (arch : Simulator.Arch.t) history syscall =
   if !program_end then history else
   let addr = Simulator.Cpu.get_pc arch.cpu in
   if first || not (Hashtbl.mem breakpoints addr) then (
-      Printf.printf "OK\n%!";
       let history = step channel arch history syscall in
       if !program_end
       then history

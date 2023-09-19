@@ -266,7 +266,7 @@ module J_type = struct
     let imm11 = (imm_31_20 && 0b1l) << 11l         in
     let imm10_1 = (imm_31_20 && 0b11111111110l)    in
     let imm20 = (imm_31_20 && 0b100000000000l)     in
-    let imm = Utils.sign_extended (imm20 || imm19_12 || imm11 || imm10_1) 20 in
+    let imm = Utils.sign_extended (imm20 || imm19_12 || imm11 || imm10_1) 21 in
 
     let (>>) = Int.shift_right_logical in
     let (&&) x y = Int32.to_int (x && y) in

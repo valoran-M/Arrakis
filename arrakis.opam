@@ -15,7 +15,7 @@ homepage: "https://gitlab.com/valoranM/arrakis"
 doc: "https://gitlab.com/valoranM/arrakis/-/wikis/"
 bug-reports: "https://gitlab.com/valoranM/arrakis/-/issues"
 depends: [
-  "ocaml" {>= "4.07" }
+  "ocaml"
   "dune" {>= "3.10"}
   "alcotest"
   "odoc" {with-doc}

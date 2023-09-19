@@ -22,6 +22,6 @@
  (description "A RISC-V simulator  with an integrated debugger.
 Support full RV32IM instruction set,
 along with pseudo instruction and several environmental calls.")
- (depends ocaml dune alcotest)
+ (depends (ocaml (>= 5.0)) dune alcotest)
  (tags
   ("RISC-V" "simulator" "emulation" "RV32IM" "education" "debugger" "debug")))

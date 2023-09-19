@@ -20,6 +20,7 @@ let spec = [
   ("--no-color",    Arg.Set no_color,          "Don't use color in output");
   ("--allow-root",  Arg.Set allow_root,        "Allow usage in root mode.");
   ("-ns",           Arg.Set no_shell,          "Run the program and exit.");
+  ("--no-shell",    Arg.Set no_shell,          "Run the program and exit.");
 ]
 
 let alspec = Arg.align spec

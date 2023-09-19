@@ -3,6 +3,8 @@ open Types
 
 (* Helper functions --------------------------------------------------------- *)
 
+let cwd = ref (Unix.getcwd ())
+
 let invalid_sysc channel id =
   Format.fprintf channel
     "@{<fg_red>Error:@} @{<fg_yellow>'%d'@} Invalid syscall.@."

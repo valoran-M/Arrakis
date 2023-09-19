@@ -15,7 +15,7 @@ let kill (arch : Arch.t) =
   Continue
 
 let openat (arch : Arch.t) =
-  (* TODO: Use dirfd.
+  (* TODO: Use dirfd/current working directory.
      If the pathname given in pathname is absolute, dirfd is ignored.
      If the pathname given in pathname is relative and pathname is the special
      value AT_FDCXD then pathname is interpreted relative to current working
@@ -100,7 +100,7 @@ let geteuid (arch : Arch.t) =
 let getcwd channel (arch : Arch.t) =
   let buf  = Cpu.get_reg arch.cpu 10 in
   let size = Cpu.get_reg arch.cpu 11 in
-  let str  = Unix.getcwd ()          in
+  let str  = !cwd              in
   (
     try Memory.set_str arch.memory buf str (Int32.to_int size)
     with _ ->
@@ -109,16 +109,10 @@ let getcwd channel (arch : Arch.t) =
   );
   Continue
 
-let chdir channel (arch : Arch.t) =
+let chdir (arch : Arch.t) =
   let path = Cpu.get_reg arch.cpu 10      in
   let path = get_str_pointed_by arch path in
-
-  (
-    try Unix.chdir path;
-    with _ ->
-      Format.fprintf channel "@{<fg_blue>Info:@} Syscall chdir failed@.";
-      Cpu.set_reg arch.cpu 10 (Int32.of_int (-1));
-  );
+  cwd := path;
   Continue
 
 let mkdirat (arch : Arch.t) =
@@ -135,7 +129,7 @@ let syscall channel (arch : Arch.t) =
   match reg with
   | 17l  -> getcwd    channel arch
   | 34l  -> mkdirat           arch
-  | 49l  -> chdir     channel arch
+  | 49l  -> chdir             arch
   | 56l  -> openat            arch
   | 57l  -> close             arch
   | 63l  -> read      channel arch

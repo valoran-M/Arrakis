@@ -8,7 +8,7 @@
 
 ## Syscall
 
-* Channel for standard output/input
+* openat (More detail in the file)
 
 ## Assembler
 

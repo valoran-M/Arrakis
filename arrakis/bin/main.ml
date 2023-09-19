@@ -29,12 +29,21 @@ let () =
   );
 
   try
+  (* Initialise syscall ----------------------------------------------------- *)
   let syscall =
     match Options.env with
     | "unix"  -> Syscall.Scunix.syscall
     | "venus" -> Syscall.Scvenus.syscall
     | s       -> raise (Invalid_env s)
   in
+
+
+  if unix_socket then (
+    (* TODO *)
+  ) else (
+    Syscall.Utils.set_stdout Unix.stdin Unix.stdout Unix.stderr;
+  );
+  (* ------------------------------------------------------------------------ *)
   let channel = open_in input_file in
   let lb = Lexing.from_channel channel in
     let mem, label, global_label, addr_debug, line_debug =

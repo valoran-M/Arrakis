@@ -9,14 +9,14 @@ let invalid_sysc channel id =
     (Int32.to_int id);
   Continue
 
-let opened_fd = Hashtbl.create 3
+let opened_fd : (int32, Unix.file_descr) Hashtbl.t= Hashtbl.create 3
 
-let () =
-  List.iter (fun (k, v) -> Hashtbl.add opened_fd k v)
+let set_stdout stdin stdout stderr =
+  List.iter (fun (k, v) -> Hashtbl.replace opened_fd k v)
   [
-    0l,    Unix.stdin;
-    1l,    Unix.stdout;
-    2l,    Unix.stderr;
+    0l,    stdin;
+    1l,    stdout;
+    2l,    stderr;
   ]
 
 let lfd = ref 3l
@@ -64,3 +64,4 @@ let open_flag_list_from_int i =
     (fun (x,_) -> (i&x) > 0l) fl
   in
   List.map (fun (_, y) -> y) contained
+

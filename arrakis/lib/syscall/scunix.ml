@@ -15,10 +15,17 @@ let kill (arch : Arch.t) =
   Continue
 
 let openat (arch : Arch.t) =
-  let _dfd  = Cpu.get_reg arch.cpu 10 in (* TODO: use? *)
-  let adr   = Cpu.get_reg arch.cpu 11 in
-  let flags = Cpu.get_reg arch.cpu 12 in
-  let mode  = Cpu.get_reg arch.cpu 13 in
+  (* TODO: Use dirfd.
+     If the pathname given in pathname is absolute, dirfd is ignored.
+     If the pathname given in pathname is relative and pathname is the special
+     value AT_FDCXD then pathname is interpreted relative to current working
+     directory.
+     Otherwise it is interpreted as relative to dirfd.
+  *)
+  let _dirfd  = Cpu.get_reg arch.cpu 10 in
+  let adr   = Cpu.get_reg arch.cpu 11   in
+  let flags = Cpu.get_reg arch.cpu 12   in
+  let mode  = Cpu.get_reg arch.cpu 13   in
 
   let path  = get_str_pointed_by arch adr   in
   let flags = open_flag_list_from_int flags in
@@ -47,6 +54,7 @@ let read channel (arch : Arch.t) =
     Cpu.set_reg arch.cpu 10 (Int32.of_int (res + 1));
     Continue
   with Not_found ->
+    Cpu.set_reg arch.cpu 10 (-1l);
     Format.fprintf channel
       "@{<fg_red>Error:@} Reading in unopened file descriptor.@.";
     Continue
@@ -56,16 +64,18 @@ let write channel (arch : Arch.t) =
     let buf   = Cpu.get_reg arch.cpu 11 in
     let count = Cpu.get_reg arch.cpu 12 in
 
-    try let fd  = Hashtbl.find opened_fd fd in
-    let mem = Memory.direct_access arch.memory in
-    let res = Unix.write fd mem (Int32.to_int buf) (Int32.to_int count) in
+    try
+      let fd  = Hashtbl.find opened_fd fd in
+      let mem = Memory.direct_access arch.memory in
+      let res = Unix.write fd mem (Int32.to_int buf) (Int32.to_int count) in
 
-    Cpu.set_reg arch.cpu 10 (Int32.of_int res);
-    Continue
-  with Not_found ->
-    Format.fprintf channel
-      "@{<fg_red>Error:@} Writing in unopened file descriptor.@.";
-    Continue
+      Cpu.set_reg arch.cpu 10 (Int32.of_int res);
+      Continue
+    with Not_found ->
+      Cpu.set_reg arch.cpu 10 (-1l);
+      Format.fprintf channel
+        "@{<fg_red>Error:@} Writing in unopened file descriptor.@.";
+      Continue
 
 let brk (arch: Arch.t) =
   let new_addr   = Simulator.Cpu.get_reg arch.cpu 10 in

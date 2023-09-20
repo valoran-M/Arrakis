@@ -81,14 +81,14 @@ let get_label_address (prog : program) =
 let imm_to_int32 line addr = function
   | Imm imm     -> imm
   | Label label ->
-    try Hashtbl.find label_address label - addr with
-    | Not_found -> raise (Assembler_error (line, Unknown_Label label))
+    try  Hashtbl.find label_address label - addr
+    with Not_found -> raise (Assembler_error (line, Unknown_Label label))
 
 let symbol_to_int32 line = function
   | Imm imm     -> imm
   | Label label ->
-    try Hashtbl.find label_address label with
-    | Not_found -> raise (Assembler_error (line, Unknown_Label label))
+    try  Hashtbl.find label_address label
+    with Not_found -> raise (Assembler_error (line, Unknown_Label label))
 
 
 let hi_lo imm addr line =

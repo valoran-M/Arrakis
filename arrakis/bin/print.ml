@@ -95,7 +95,7 @@ let i32_or_reg_of_str reg (arch : Arch.t) =
 let print_line channel (arch: Arch.t) line_address =
   fprintf channel "0x%08x" (Utils.int32_to_int line_address);
   for i = line_size - 1 downto 0 do
-    let addr = line_address + (Int32.of_int i) in
+    let addr  = line_address + (Int32.of_int i)  in
     let value = Memory.get_byte arch.memory addr in
     fprintf channel "  %02x" (Int32.to_int value)
   done;

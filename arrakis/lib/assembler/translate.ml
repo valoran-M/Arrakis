@@ -136,7 +136,7 @@ let translate_reg_offset (pseudo : reg_offset) rs offset mem addr =
   4l
 
 let translate_reg_reg_offset (pseudo : reg_reg_offset) rs rt offset mem addr =
-  (match pseudo with 
+  (match pseudo with
   | BGT  -> Inst_B.write_in_memory mem addr BLT  rt rs offset
   | BLE  -> Inst_B.write_in_memory mem addr BGE  rt rs offset
   | BGTU -> Inst_B.write_in_memory mem addr BLTU rt rs offset
@@ -224,10 +224,12 @@ let loop_memory mem addr (prog : memory_line) =
       addr + 1l)
     addr lb
   | Mem_Asciz s    ->
-    let addr = String.fold_left (fun addr v ->
-      Simulator.Memory.set_byte mem addr (Simulator.Utils.char_to_int32 v);
-      addr + 1l)
-    addr s in
+    let addr =
+      String.fold_left (fun addr v ->
+        Simulator.Memory.set_byte mem addr (Simulator.Utils.char_to_int32 v);
+        addr + 1l)
+      addr s
+    in
     Simulator.Memory.set_byte mem addr 0l; (addr + 1l)
   | Mem_Word words  ->
     List.fold_left (fun addr v ->

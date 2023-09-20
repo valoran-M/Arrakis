@@ -15,8 +15,8 @@ homepage: "https://gitlab.com/valoranM/arrakis"
 doc: "https://gitlab.com/valoranM/arrakis/-/wikis/"
 bug-reports: "https://gitlab.com/valoranM/arrakis/-/issues"
 depends: [
-  "ocaml" {>= "5.0"}
   "dune" {>= "3.10"}
+  "ocaml" {>= "4.14.0"}
   "alcotest"
   "odoc" {with-doc}
 ]
@@ -35,3 +35,4 @@ build: [
   ]
 ]
 dev-repo: "git+https://gitlab.com/valoranM/arrakis.git"
+available: [ os-family != windows & arch != arm32 & arch != x86_32 ]

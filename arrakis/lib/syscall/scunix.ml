@@ -15,14 +15,7 @@ let kill (arch : Arch.t) =
   Continue
 
 let openat (arch : Arch.t) =
-  (* TODO: Use dirfd/current working directory.
-     If the pathname given in pathname is absolute, dirfd is ignored.
-     If the pathname given in pathname is relative and pathname is the special
-     value AT_FDCXD then pathname is interpreted relative to current working
-     directory.
-     Otherwise it is interpreted as relative to dirfd.
-  *)
-  let _dirfd  = Cpu.get_reg arch.cpu 10 in
+  let dirfd = Cpu.get_reg arch.cpu 10 in
   let adr   = Cpu.get_reg arch.cpu 11   in
   let flags = Cpu.get_reg arch.cpu 12   in
   let mode  = Cpu.get_reg arch.cpu 13   in
@@ -30,10 +23,27 @@ let openat (arch : Arch.t) =
   let path  = get_str_pointed_by arch adr   in
   let flags = open_flag_list_from_int flags in
 
+  try
+  let path =
+    if (String.get path 0 = '/') then
+      path
+    else if dirfd = -100l then
+      !cwd ^ path
+    else
+      (* TODO:
+        Path is supposed to be relative to dirfd.
+        Failure to avoid incorrect semantics
+      *)
+      raise (Failure "#") (* Will be catched *)
+  in
+
   let fd = open_fd (Unix.openfile path flags (Int32.to_int mode)) in
 
   Cpu.set_reg arch.cpu 10 fd;
   Continue
+  with _ ->
+    Cpu.set_reg arch.cpu 10 (-1l);
+    Continue
 
 let close (arch : Arch.t) =
   let fd = Cpu.get_reg arch.cpu 10 in

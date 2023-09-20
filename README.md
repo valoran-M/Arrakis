@@ -19,8 +19,10 @@ in OCaml, primarly designed for education.
 * Partial GNU `as` [assembler directives](https://gitlab.com/valoranM/arrakis/-/wikis/risc_v/Assembler-Directives).
 * A debugging system using breakpoints.
 * Complete [documentation](https://gitlab.com/valoranM/arrakis/-/wikis),
-  covering not only Arrakis usage but also serve as a general guide on how to
+  covering not only Arrakis usage but also serving as a general guide on how to
   write RISC-V assembly code.
+* (WIP) A [vim plugin](https://gitlab.com/valoranM/arrakis.vim) to integrate
+  Arrakis with your favorite text editor.
 
 ## Installation
 

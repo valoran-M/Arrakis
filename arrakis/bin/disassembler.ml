@@ -71,14 +71,15 @@ let print_code _arch code =
     Format.sprintf "%s %s, %d(%s)"
       (Hashtbl.find s_to_string inst.funct3)
       (reg_to_str inst.rs2)
-      (Int32.to_int (Simulator.Utils.sign_extended inst.imm 12))
+      (Simulator.Utils.int32_to_int (Simulator.Utils.sign_extended inst.imm 12))
       (reg_to_str inst.rs1)
   (* B *)
   | 0b1100011l  ->
     let inst = Instructions.B_type.decode code in
     Format.sprintf "%s %s, %s, 0x%x"
       (Hashtbl.find b_to_string inst.funct3)
-      (reg_to_str inst.rs1) (reg_to_str inst.rs2) (Int32.to_int inst.imm)
+      (reg_to_str inst.rs1) (reg_to_str inst.rs2)
+      (Simulator.Utils.int32_to_int inst.imm)
   (* U *)
   | 0b0110111l | 0b0010111l  ->
     let inst = Instructions.U_type.decode code in

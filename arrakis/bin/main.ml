@@ -29,7 +29,7 @@ let () =
   );
 
   try
-  (* Initialise syscall ----------------------------------------------------- *)
+  (* Initialize syscall ----------------------------------------------------- *)
   let syscall =
     match Options.env with
     | "unix"  -> Syscall.Scunix.syscall
@@ -37,10 +37,10 @@ let () =
     | s       -> raise (Invalid_env s)
   in
 
-
   if not unix_socket then (
     Syscall.Utils.set_stdout Unix.stdin Unix.stdout Unix.stderr
   );
+
   (* ------------------------------------------------------------------------ *)
   let channel = open_in input_file in
   let lb = Lexing.from_channel channel in

@@ -62,8 +62,6 @@ let open_flag_list_from_int i =
       02000000l, O_CLOEXEC;
     ]
   in
-  let contained = List.filter
-    (fun (x,_) -> (i&x) > 0l) fl
-  in
+  let contained = List.filter (fun (x,_) -> (i&x) > 0l) fl in
   List.map (fun (_, y) -> y) contained
 

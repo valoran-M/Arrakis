@@ -24,23 +24,23 @@ let openat (arch : Arch.t) =
   let flags = open_flag_list_from_int flags in
 
   try
-  let path =
-    if (String.get path 0 = '/') then
-      path
-    else if dirfd = -100l then
-      !cwd ^ path
-    else
-      (* TODO:
-        Path is supposed to be relative to dirfd.
-        Failure to avoid incorrect semantics
-      *)
-      raise (Failure "#") (* Will be catched *)
-  in
+    let path =
+      if (String.get path 0 = '/') then
+        path
+      else if dirfd = -100l then
+        !cwd ^ path
+      else
+        (* TODO:
+          Path is supposed to be relative to dirfd.
+          Failure to avoid incorrect semantics
+        *)
+        raise (Failure "#") (* Will be catched *)
+    in
 
-  let fd = open_fd (Unix.openfile path flags (Int32.to_int mode)) in
+    let fd = open_fd (Unix.openfile path flags (Int32.to_int mode)) in
 
-  Cpu.set_reg arch.cpu 10 fd;
-  Continue
+    Cpu.set_reg arch.cpu 10 fd;
+    Continue
   with _ ->
     Cpu.set_reg arch.cpu 10 (-1l);
     Continue

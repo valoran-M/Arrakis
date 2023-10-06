@@ -5,6 +5,9 @@
 
 .globl _start
 
+## Change the working directory to the "/home/" directory, print the working
+# directory and then exit.
+#
 _start:
 
   li a7, 49    # Load the chdir syscall ID

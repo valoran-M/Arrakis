@@ -36,4 +36,4 @@ build: [
   ]
 ]
 dev-repo: "git+https://gitlab.com/valoranM/arrakis.git"
-available: [ arch != "arm32" & arch != "x86_32" ]
+available: arch != "arm32" & arch != "x86_32"

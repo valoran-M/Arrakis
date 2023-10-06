@@ -17,8 +17,8 @@ bug-reports: "https://gitlab.com/valoranM/arrakis/-/issues"
 depends: [
   "dune" {>= "3.10"}
   "ocaml" {>= "4.14.0"}
-  "menhir"
   "alcotest"
+  "menhir" {>= "20180528"}
   "odoc" {with-doc}
 ]
 build: [
@@ -36,4 +36,4 @@ build: [
   ]
 ]
 dev-repo: "git+https://gitlab.com/valoranM/arrakis.git"
-available: [ os-family != windows & arch != arm32 & arch != x86_32 ]
+available: [ arch != "arm32" & arch != "x86_32" ]

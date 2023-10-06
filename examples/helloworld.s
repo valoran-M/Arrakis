@@ -16,3 +16,4 @@ _start:
   li a7, 93     # Load the exit syscall ID (93)
   li a0, 0      # Use exit code 0 (Meaning that the program exited sucessfully)
   ecall
+

@@ -12,6 +12,7 @@ let () =
   else Color.setup ()
 
 let () =
+
   if input_file = "" then (
     print_endline usage;
     exit 1
@@ -22,14 +23,16 @@ let () =
       printf
       "@{<fg_yellow>Warning: Running in root mode. Proceed with caution.@}@."
     ) else (
-      eprintf "@{<fg_red>Error: Running in root mode is not allowed!@}@." ;
-      eprintf "@{<fg_yellow>Tip: Use --allow-root if you know what you are doing.@}@.";
+      eprintf "@{<fg_red>Error:@} Running in root mode is not allowed!@." ;
+      eprintf "@{<fg_yellow>Tip:@} Use --allow-root if you know what you are doing.@.";
       exit 2
     )
   );
 
   try
-  (* Initialize syscall ----------------------------------------------------- *)
+
+  (* Initialise syscall ----------------------------------------------------- *)
+
   let syscall =
     match Options.env with
     | "unix"  -> Syscall.Scunix.syscall
@@ -42,6 +45,7 @@ let () =
   );
 
   (* ------------------------------------------------------------------------ *)
+
   let channel = open_in input_file in
   let lb = Lexing.from_channel channel in
     let mem, label, global_label, addr_debug, line_debug =
@@ -87,7 +91,7 @@ let () =
       eprintf "@{<fg_red>Error:@} Invalid environment @{<fg_yellow>'%s'@}@." s;
       exit 7
   | Simulator_error Conversion_Failure ->
-      eprintf "@{<fg_red>Error:@} Couldn't convert an int32 to an int. Time to \
-      move to a 64 bit machine!";
+      eprintf "@{<fg_red>Error:@} Couldn't convert an int32 to an int. @.";
+      eprintf "Time to move to a 64 bit machine!";
       exit 8
 

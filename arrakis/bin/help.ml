@@ -8,7 +8,7 @@ let general channel =
 
  @{<fg_green>*@} (b)reakpoint
 
-    Create breakpoint
+    Create breakpoints.
 
  @{<fg_green>*@} (s)tep
 
@@ -16,11 +16,11 @@ let general channel =
 
  @{<fg_green>*@} (prv) prev
 
-    In debug mode: Recovery of the simulator's previous state
+    In debug mode: Recovery of the simulator's previous state.
 
 @{<fg_green>*@} (res)et
 
-    In debug mode: Recovery of the simulator's initial state
+    In debug mode: Recovery of the simulator's initial state.
 
  @{<fg_green>*@} (n)ext
 
@@ -78,8 +78,8 @@ let print channel =
 
   @{<fg_green>*@} (p)rint (r)egs <r_1> ... <r_n>
 
-      Print specified registers.
-      If the list is empty, display all of them.
+      Display value in specified registers.
+      If no register are specified, display all of them.
 
   @{<fg_green>*@} (p)rint (c)ode <offset> <noffset>
 

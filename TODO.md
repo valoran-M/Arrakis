@@ -2,9 +2,13 @@
 
 ## Shell
 
-* Breakpoint line may be hard to know. Printing line number could help.
 * Using up arrow to get last command
 * Using side arrow to modify current command
+
+## Main
+
+* Handle "No input_file" and "Bad input file" with exceptions in main.ml instead
+  of in options.
 
 ## Syscall
 
@@ -24,5 +28,9 @@
 
 * Would be fun to have a small gif in README displaying the use of breakpoints
   and printing stuff.
-* Ocaml 4.14 support
+
+## Documentation
+
+* Add documentation about usage of breakpoints
+* Complete documentation about errors
 

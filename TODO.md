@@ -10,6 +10,8 @@
 * Handle "No input_file" and "Bad input file" with exceptions in main.ml instead
   of in options.
 
+* Allow usage of program arguments
+
 ## Syscall
 
 * openat (More detail in the file)

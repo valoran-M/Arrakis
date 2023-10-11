@@ -4,13 +4,8 @@
 
 * Using up arrow to get last command
 * Using side arrow to modify current command
-* Better documentation for printing memory (Specify that you can do p m sp to
-  print the memory pointed at by sp)
 
 ## Main
-
-* Handle "No input_file" and "Bad input file" with exceptions in main.ml instead
-  of in options.
 
 * Allow usage of program arguments
 
@@ -34,9 +29,3 @@
 
 * Would be fun to have a small gif in README displaying the use of breakpoints
   and printing stuff.
-
-## Documentation
-
-* Add documentation about usage of breakpoints
-* Complete documentation about errors
-

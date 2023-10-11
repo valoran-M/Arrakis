@@ -29,6 +29,10 @@ in OCaml, primarly designed for education.
 Since Arrakis is written in OCaml, it can be installed using
 [opam](https://opam.ocaml.org/), OCaml Package Manager.
 
+First make sure that opam is up to date:
+
+`$ opam update`
+
 Simply run:
 
 `$ opam install arrakis`

@@ -4,6 +4,8 @@
 
 * Using up arrow to get last command
 * Using side arrow to modify current command
+* Better documentation for printing memory (Specify that you can do p m sp to
+  print the memory pointed at by sp)
 
 ## Main
 
@@ -25,6 +27,8 @@
   error would be to show how the instruction should be used.
   For example, ``bgt rs`` would give out:
   ``Syntax Error on line .... bgt instruction usage: bgt rs, rt, offset.``
+
+* Add support for other RISC-V extensions.
 
 ## Diverse
 

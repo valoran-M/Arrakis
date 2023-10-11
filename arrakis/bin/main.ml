@@ -5,33 +5,29 @@ open Assembler.Error
 open Simulator.Error
 
 exception Invalid_env of string
+exception No_Input_File
+exception Input_File_Dont_Exist
+exception Running_Root_Without_Opt
 
 let () =
-  if Options.no_color
-  then ()
-  else Color.setup ()
+  if not Options.no_color then Color.setup ()
 
 let () =
+  try
 
-  if input_file = "" then (
-    print_endline usage;
-    exit 1
-  );
+  (if input_file = "" then raise No_Input_File);
+  (if not (Sys.file_exists input_file) then raise Input_File_Dont_Exist);
 
   if Unix.getuid () == 0 then (
     if allow_root then (
       printf
       "@{<fg_yellow>Warning: Running in root mode. Proceed with caution.@}@."
     ) else (
-      eprintf "@{<fg_red>Error:@} Running in root mode is not allowed!@." ;
-      eprintf "@{<fg_yellow>Tip:@} Use --allow-root if you know what you are doing.@.";
-      exit 2
+      raise Running_Root_Without_Opt
     )
   );
 
-  try
-
-  (* Initialise syscall ----------------------------------------------------- *)
+  (* Init syscalls ---------------------------------------------------------- *)
 
   let syscall =
     match Options.env with
@@ -67,9 +63,16 @@ let () =
     )
     else Shell.shell arch history label addr_debug line_debug syscall
   with
+  | No_Input_File ->
+      eprintf "@{<fg_red>Error:@} Please specify an input file.@.";
+      exit 1
+  | Input_File_Dont_Exist ->
+      eprintf "@{<fg_red>Error:@} Specified input file '%s' doesn't exist.@."
+        input_file;
+      exit 2
   | Assembler_error (ln, Lexing_error s) ->
       eprintf
-        "@{<fg_red>Error:@}Lexical error on line @{<fg_yellow>%d@}: '%s'@." ln s;
+        "@{<fg_red>Error:@} Lexical error on line @{<fg_yellow>%d@}: '%s'@." ln s;
       exit 3
   | Assembler_error(ln, Parsing_error(s)) ->
       eprintf
@@ -94,4 +97,8 @@ let () =
       eprintf "@{<fg_red>Error:@} Couldn't convert an int32 to an int. @.";
       eprintf "Time to move to a 64 bit machine!";
       exit 8
+  | Running_Root_Without_Opt ->
+      eprintf "@{<fg_red>Error:@} Running in root mode is not allowed!@." ;
+      eprintf "@{<fg_yellow>Tip:@} Use --allow-root if you know what you are doing.@.";
+      exit 9
 

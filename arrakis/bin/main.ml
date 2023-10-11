@@ -87,9 +87,6 @@ let () =
       Found @{<fg_yellow>'%s'@} but expected a value between %s and %s@}@." ln
       (Int32.to_string v) (Int32.to_string min) (Int32.to_string max);
       exit 6
-  | Failure s ->
-      eprintf "@{<fg_red>Error: @} Failure (@{<fg_yellow>'%s'@}@." s;
-      exit 6
   | Invalid_env s ->
       eprintf "@{<fg_red>Error:@} Invalid environment @{<fg_yellow>'%s'@}@." s;
       exit 7
@@ -101,4 +98,7 @@ let () =
       eprintf "@{<fg_red>Error:@} Running in root mode is not allowed!@." ;
       eprintf "@{<fg_yellow>Tip:@} Use --allow-root if you know what you are doing.@.";
       exit 9
+  | Failure s ->
+      eprintf "@{<fg_red>Error: @} Failure (@{<fg_yellow>'%s'@}@." s;
+      exit 100
 

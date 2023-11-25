@@ -11,9 +11,8 @@ license: "CeCILL-2.1"
 tags: [
   "RISC-V" "simulator" "emulation" "RV32IM" "education" "debugger" "debug"
 ]
-homepage: "https://gitlab.com/valoranM/arrakis"
 doc: "https://gitlab.com/valoranM/arrakis/-/wikis/"
-bug-reports: "https://gitlab.com/valoranM/arrakis/-/issues"
+bug-reports: "https://codeberg.org/Arrakis/arrakis/issues"
 depends: [
   "dune" {>= "3.10"}
   "ocaml" {>= "4.14.0"}
@@ -35,5 +34,5 @@ build: [
     "@doc" {with-doc}
   ]
 ]
-dev-repo: "git+https://gitlab.com/valoranM/arrakis.git"
+dev-repo: "https://codeberg.org/Arrakis/arrakis"
 available: arch != "arm32" & arch != "x86_32"

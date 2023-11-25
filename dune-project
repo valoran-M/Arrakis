@@ -6,7 +6,9 @@
 (generate_opam_files true)
 
 (source
- (gitlab valoranM/arrakis))
+ (uri https://codeberg.org/Arrakis/arrakis))
+
+(bug_reports https://codeberg.org/Arrakis/arrakis/issues)
 
 (authors "Valeran Maytié" "Gurvan Debaussart")
 

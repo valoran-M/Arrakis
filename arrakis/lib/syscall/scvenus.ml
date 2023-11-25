@@ -19,7 +19,7 @@ let print_character channel (arch : Arch.t) =
     Format.fprintf channel "%c@." chr;
     Continue
   with _ ->
-    Format.fprintf channel "@{<fg_red>Error:@} Couldn't print character.";
+    Format.fprintf channel "@{<fg_red>Info:@} Syscall 'print_character' faield: Couldn't print character.";
     Continue
 
 let exit0 () = Exit 0

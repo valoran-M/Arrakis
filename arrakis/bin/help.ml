@@ -67,12 +67,11 @@ let print channel =
       Print memory segment.
       Starts at address <start> and displays <nb> 32 bits.
 
-
       <start> can either be an adress or a register.
       If it's a register, the actual start value will be the value stored inside
       the register.
 
-      default args:
+      @{<fg_yellow>default args:@}
         <start> : Starting data segement
         <nb>    : 0x10
 

@@ -1,3 +1,5 @@
+val show_version : bool
+
 val unix_socket : bool
 val unix_file   : string
 

@@ -9,23 +9,23 @@ exception No_Input_File
 exception Input_File_Dont_Exist
 exception Running_Root_Without_Opt
 
+let version = "1.0.1-dev"
+
 let () =
   if not Options.no_color then Color.setup ()
 
-let () =
+let main =
+  if show_version then printf "%s@." version else
   try
 
   (if input_file = "" then raise No_Input_File);
   (if not (Sys.file_exists input_file) then raise Input_File_Dont_Exist);
 
-  if Unix.getuid () == 0 then (
-    if allow_root then (
-      printf
-      "@{<fg_yellow>Warning: Running in root mode. Proceed with caution.@}@."
-    ) else (
-      raise Running_Root_Without_Opt
-    )
-  );
+  begin match Unix.getuid (), allow_root with
+  | 0, true  -> printf "@{<fg_yellow>Warning: Running in root mode. Proceed with caution.@}@."
+  | 0, false -> raise Running_Root_Without_Opt
+  | _, _     -> ()
+  end;
 
   (* Init syscalls ---------------------------------------------------------- *)
 

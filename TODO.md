@@ -1,8 +1,9 @@
 # TODO
 
-## Main
+## New features
 
 * Allow usage of program arguments
+* Add a '--version / -v' argument to print Arrakis version.
 
 ## Shell
 
@@ -29,3 +30,9 @@
 
 * Would be fun to have a small GIF in README displaying the use of breakpoints
   and printing stuff.
+
+## Fix
+
+* Alignment of program argument seems currently broken. It has currently been
+  disabled but should be enabled again when it is fixed.
+

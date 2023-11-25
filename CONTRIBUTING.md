@@ -4,6 +4,7 @@ Arrakis is open to contributors.
 
 One simple way to contribute is to simply [open an
 issue](https://codeberg.org/Arrakis/arrakis/issues).
+Be sure to include Arrakis version in your issue.
 
 Stuff that are currently planned can be looked at in [`TODO.md`](./TODO.md).
 
@@ -19,3 +20,10 @@ Submitted code must also respect the following coding style:
 * Use snake_case
 * Use space instead of tabulation
 * Remove any trailing whitespace
+
+## Making a release
+
+Please be sure to update Arrakis version in [main.ml](./arrakis/bin/main.ml).
+It should end with suffix '-dev' while being developed but the suffix should be
+dropped before any release are made.
+

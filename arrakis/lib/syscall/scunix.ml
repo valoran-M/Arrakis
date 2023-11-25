@@ -16,9 +16,9 @@ let kill (arch : Arch.t) =
 
 let openat (arch : Arch.t) =
   let dirfd = Cpu.get_reg arch.cpu 10 in
-  let adr   = Cpu.get_reg arch.cpu 11   in
-  let flags = Cpu.get_reg arch.cpu 12   in
-  let mode  = Cpu.get_reg arch.cpu 13   in
+  let adr   = Cpu.get_reg arch.cpu 11 in
+  let flags = Cpu.get_reg arch.cpu 12 in
+  let mode  = Cpu.get_reg arch.cpu 13 in
 
   let path  = get_str_pointed_by arch adr   in
   let flags = open_flag_list_from_int flags in
@@ -66,7 +66,7 @@ let read channel (arch : Arch.t) =
   with Not_found ->
     Cpu.set_reg arch.cpu 10 (-1l);
     Format.fprintf channel
-      "@{<fg_red>Error:@} Reading in unopened file descriptor.@.";
+      "@{<fg_red>Info:@} Syscall 'read' failed: Reading in unopened file descriptor.@.";
     Continue
 
 let write channel (arch : Arch.t) =
@@ -84,17 +84,18 @@ let write channel (arch : Arch.t) =
     with Not_found ->
       Cpu.set_reg arch.cpu 10 (-1l);
       Format.fprintf channel
-        "@{<fg_red>Error:@} Writing in unopened file descriptor.@.";
+        "@{<fg_red>Info:@} Syscall 'write' failed: Writing in unopened file descriptor.@.";
       Continue
 
 let brk (arch: Arch.t) =
   let new_addr   = Simulator.Cpu.get_reg arch.cpu 10 in
-  let stack_addr = Simulator.Cpu.get_reg arch.cpu 2 in
-  (if new_addr < stack_addr && new_addr >= Simulator.Segment.heap_begin
-   then Cpu.set_reg arch.cpu 10 0l
-   else Cpu.set_reg arch.cpu 10 (-1l)
-  );
-
+  let stack_addr = Simulator.Cpu.get_reg arch.cpu 2  in
+  let success =
+    if new_addr < stack_addr && new_addr >= Simulator.Segment.heap_begin
+    then 0l
+    else -1l
+  in
+  Cpu.set_reg arch.cpu 10 success;
   Continue
 
 let getuid (arch : Arch.t) =
@@ -110,11 +111,11 @@ let geteuid (arch : Arch.t) =
 let getcwd channel (arch : Arch.t) =
   let buf  = Cpu.get_reg arch.cpu 10 in
   let size = Cpu.get_reg arch.cpu 11 in
-  let str  = !cwd              in
+  let str  = !cwd in
   (
     try Memory.set_str arch.memory buf str (Int32.to_int size)
     with _ ->
-      Format.fprintf channel "@{<fg_blue>Info:@} Syscall getcwd failed@.";
+      Format.fprintf channel "@{<fg_blue>Info:@} Syscall 'getcwd' failed@.";
       Cpu.set_reg arch.cpu 10 0l
   );
   Continue

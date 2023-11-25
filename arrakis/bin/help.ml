@@ -18,7 +18,7 @@ let general channel =
 
     In debug mode: Recovery of the simulator's previous state.
 
-@{<fg_green>*@} (res)et
+ @{<fg_green>*@} (res)et
 
     In debug mode: Recovery of the simulator's initial state.
 

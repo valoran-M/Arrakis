@@ -16,7 +16,7 @@
 
 (license "CeCILL-2.1")
 
-(documentation https://gitlab.com/valoranM/arrakis/-/wikis/)
+(documentation https://codeberg.org/Arrakis/arrakis/wiki)
 
 (package
  (name arrakis)

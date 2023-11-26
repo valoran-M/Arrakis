@@ -12,13 +12,13 @@ in OCaml, primarly designed for education.
 
 ## Features
 
-* Fully supported RV32IM instruction set, with [most pseudo instructions](https://gitlab.com/valoranM/arrakis/-/wikis/risc_v/pseudo%20instructions).
-* Different type of environmental calls: either [UNIX syscalls](https://gitlab.com/valoranM/arrakis/-/wikis/risc_v/environment%20call)
+* Fully supported RV32IM instruction set, with [most pseudo instructions](https://codeberg.org/Arrakis/arrakis/wiki/RV_Pseudo-Instructions).
+* Different type of environmental calls: either [UNIX syscalls](https://codeberg.org/Arrakis/arrakis/wiki/RV_Environment-call)
   (default) or
-  [Venus environmental calls emulation](https://github.com/kvakil/venus/wiki/Environmental-Calls).
-* Partial GNU `as` [assembler directives](https://gitlab.com/valoranM/arrakis/-/wikis/risc_v/Assembler-Directives).
+  [Venus environmental calls emulation](https://codeberg.org/Arrakis/arrakis/wiki/RV_Environment-call).
+* Partial GNU `as` [assembler directives](https://codeberg.org/Arrakis/arrakis/wiki/RV_Assembler-Directives).
 * A debugging system using breakpoints.
-* Complete [documentation](https://gitlab.com/valoranM/arrakis/-/wikis),
+* Complete [documentation](https://codeberg.org/Arrakis/arrakis/wiki),
   covering not only Arrakis usage but also serving as a general guide on how to
   write RISC-V assembly code.
 * (WIP) A [vim plugin](https://codeberg.org/Arrakis/arrakis.vim) to integrate
@@ -36,7 +36,7 @@ Simply run:
 ## Documentation
 
 Documentation about Arrakis usage is available
-[here](https://gitlab.com/ValoranM/arrakis/-/wikis)
+[here](https://codeberg.org/Arrakis/arrakis/wiki)
 
 ## Development
 

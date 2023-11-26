@@ -3,7 +3,6 @@
 ## New features
 
 * Allow usage of program arguments
-* Add a '--version / -v' argument to print Arrakis version.
 
 ## Shell
 
@@ -35,4 +34,7 @@
 
 * Alignment of program argument seems currently broken. It has currently been
   disabled but should be enabled again when it is fixed.
+* Altough only one input file can currently be used, no warking are specified if
+  multiple are passed in arguments. Should change "input_file" to a string
+  option and exit with an error if multiple files are given.
 

@@ -21,6 +21,8 @@ Submitted code must also respect the following coding style:
 * Use space instead of tabulation
 * Remove any trailing whitespace
 
+You can also contribute to [Arrakis Wiki](https://codeberg.org/Arrakis/arrakis/wiki).
+
 ## Making a release
 
 Please be sure to update Arrakis version in [main.ml](./arrakis/bin/main.ml).

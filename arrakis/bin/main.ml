@@ -6,7 +6,8 @@ open Simulator.Error
 
 exception Invalid_env of string
 exception No_Input_File
-exception Input_File_Dont_Exist
+exception Too_Much_Input_File
+exception Input_File_Dont_Exist of string
 exception Running_Root_Without_Opt
 
 let version = "1.0.1-dev"
@@ -18,8 +19,15 @@ let main =
   if show_version then printf "%s@." version else
   try
 
-  (if input_file = "" then raise No_Input_File);
-  (if not (Sys.file_exists input_file) then raise Input_File_Dont_Exist);
+  let input_file =
+    match input_file with
+    | []        -> raise No_Input_File
+    | hd :: []  -> hd
+    | _         -> raise Too_Much_Input_File
+  in
+
+  (if not (Sys.file_exists input_file)
+    then raise (Input_File_Dont_Exist input_file));
 
   begin match Unix.getuid (), allow_root with
   | 0, true  -> printf "@{<fg_yellow>Warning: Running in root mode. Proceed with caution.@}@."
@@ -66,9 +74,8 @@ let main =
   | No_Input_File ->
       eprintf "@{<fg_red>Error:@} Please specify an input file.@.";
       exit 1
-  | Input_File_Dont_Exist ->
-      eprintf "@{<fg_red>Error:@} Specified input file '%s' doesn't exist.@."
-        input_file;
+  | Input_File_Dont_Exist f ->
+      eprintf "@{<fg_red>Error:@} Specified input file '%s' doesn't exist.@." f;
       exit 2
   | Assembler_error (ln, Lexing_error s) ->
       eprintf
@@ -95,9 +102,14 @@ let main =
       eprintf "Time to move to a 64 bit machine!";
       exit 8
   | Running_Root_Without_Opt ->
-      eprintf "@{<fg_red>Error:@} Running in root mode is not allowed!@." ;
+      eprintf "@{<fg_red>Error:@} Running in root mode is not allowed!@.";
       eprintf "@{<fg_yellow>Tip:@} Use --allow-root if you know what you are doing.@.";
       exit 9
+  | Too_Much_Input_File  ->
+      let inps = List.map (fun s -> "'"^s^"'") input_file in
+      eprintf "@{<fg_red>Error:@} Too much input file specified!@.";
+      eprintf "I got @{<fg_yellow>%s@} but expected only one.@." (String.concat " " inps);
+      exit 10
   | Failure s ->
       eprintf "@{<fg_red>Error: @} Failure (@{<fg_yellow>'%s'@}@." s;
       exit 100

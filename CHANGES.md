@@ -5,6 +5,7 @@
 - Fixed a misalignment issue in shell help
 - Fixed a misalignment issue in '--help'
 - Changed message from 'Error' to 'Info' in case of failed system call
+- Error message when providing too much input files
 
 # 1.0.0 (2023-19-9)
 

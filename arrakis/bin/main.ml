@@ -81,7 +81,7 @@ let main =
       eprintf
         "@{<fg_red>Error:@} Lexical error on line @{<fg_yellow>%d@}: '%s'@." ln s;
       exit 3
-  | Assembler_error(ln, Parsing_error(s)) ->
+  | Assembler_error (ln, Parsing_error s) ->
       eprintf
         "@{<fg_red>Error:@} Syntax error on line @{<fg_yellow>%d@}: '%s'@." ln s;
       exit 4
@@ -105,7 +105,7 @@ let main =
       eprintf "@{<fg_red>Error:@} Running in root mode is not allowed!@.";
       eprintf "@{<fg_yellow>Tip:@} Use --allow-root if you know what you are doing.@.";
       exit 9
-  | Too_Much_Input_File  ->
+  | Too_Much_Input_File ->
       let inps = List.map (fun s -> "'"^s^"'") input_file in
       eprintf "@{<fg_red>Error:@} Too much input file specified!@.";
       eprintf "I got @{<fg_yellow>%s@} but expected only one.@." (String.concat " " inps);

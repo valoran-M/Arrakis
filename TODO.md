@@ -29,6 +29,7 @@
 
 * Would be fun to have a small GIF in README displaying the use of breakpoints
   and printing stuff.
+* Zsh and Bash completion
 
 ## Fix
 

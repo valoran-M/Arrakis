@@ -40,7 +40,7 @@ Documentation about Arrakis usage is available
 
 ## Development
 
-The `main` branch is currently developped using `OCaml 5.1` and `Dune 3.10`.
+The `main` branch is currently developed using `OCaml 5.0` and `Dune 3.10`.
 
 For contributions, please take a look at [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 

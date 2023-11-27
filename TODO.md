@@ -31,9 +31,3 @@
   and printing stuff.
 * Zsh and Bash completion
 
-## Fix
-
-* Altough only one input file can currently be used, no warking are specified if
-  multiple are passed in arguments. Should change "input_file" to a string
-  option and exit with an error if multiple files are given.
-

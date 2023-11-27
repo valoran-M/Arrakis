@@ -11,7 +11,7 @@ license: "CeCILL-2.1"
 tags: [
   "RISC-V" "simulator" "emulation" "RV32IM" "education" "debugger" "debug"
 ]
-doc: "https://gitlab.com/valoranM/arrakis/-/wikis/"
+doc: "https://codeberg.org/Arrakis/arrakis/wiki"
 bug-reports: "https://codeberg.org/Arrakis/arrakis/issues"
 depends: [
   "dune" {>= "3.10"}

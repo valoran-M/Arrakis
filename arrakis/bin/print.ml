@@ -43,7 +43,7 @@ let print_code_part channel (arch : Arch.t) debug breakpoints offset noffset =
         if code = 0l
         then (fprintf channel "     End without syscall@."; raise Break)
         else print_addr channel arch debug breakpoints addr pc code
-        )
+      )
     done
   with _ -> ()
 
@@ -66,15 +66,15 @@ let decode_code_args channel (arch : Arch.t) args debug breakpoints =
   match args with
   | offset :: [] -> (
     try
-      let offset  = int_of_string   offset  in
+      let offset  = int_of_string offset in
       print_code_part channel arch debug breakpoints offset 0
-    with _ -> printf "@{<fg_red>Error:@} Incorrect argument to print code. @.")
+    with _ -> printf "@{<fg_red>Error:@} Incorrect argument to print code.@.")
   | offset :: noffset :: _ -> (
     try
       let offset  = int_of_string offset  in
       let noffset = int_of_string noffset in
       print_code_part channel arch debug breakpoints offset noffset
-    with _ -> printf "@{<fg_red>Error:@} Incorrect argument to print code. @.")
+    with _ -> printf "@{<fg_red>Error:@} Incorrect argument to print code.@.")
   | _ -> print_code_full channel arch debug breakpoints
 
 (* Memory ------------------------------------------------------------------- *)
@@ -117,16 +117,14 @@ let decode_memory_args channel (arch: Arch.t) args =
       let start = i32_or_reg_of_str start arch in
       print_memory channel arch start size_default
     with _ ->
-        printf
-        "@{<fg_red>Error:@} Incorrect argument to print memory. @.")
+        printf "@{<fg_red>Error:@} Incorrect argument to print memory. @.")
   | [start; size] -> (
       try
         let start = i32_or_reg_of_str start arch in
         let size = int_of_string size            in
         print_memory channel arch start size
       with _ ->
-        printf
-        "@{<fg_red>Error:@} Incorrect argument to print memory. @.")
+        printf "@{<fg_red>Error:@} Incorrect argument to print memory. @.")
   | _ -> ()
 
 (* Regs --------------------------------------------------------------------- *)

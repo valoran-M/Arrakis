@@ -29,4 +29,5 @@
 
 * Zsh and Bash completion
 * Clean up code
+* Add a feedback for command 's': Print new pc
 

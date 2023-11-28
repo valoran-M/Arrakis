@@ -2,7 +2,7 @@
 
 ## ???
 
-* openat (More detail in the file [scunix.ml](./arrakis/lib/syscall/scunix.ml]))
+* openat (More detail in the file [scunix.ml](./arrakis/lib/syscall/scunix.ml))
 * Would be nice to have better errors.
   Some that could be interesting would be 'Did you mean...' errors, for example
   when an instruction is misspelled.

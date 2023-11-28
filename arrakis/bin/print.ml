@@ -162,7 +162,7 @@ let print_list_regs channel (arch: Arch.t) =
           "  %s -> 0x%08x\n" regs.(i)
           (Simulator.Utils.int32_to_int (Cpu.get_reg arch.cpu i))
     with _ ->
-      fprintf channel "@{<fg_red>Error@}: \"%s\" isn't a register@." reg
+      fprintf channel "@{<fg_red>Error@}: '%s' isn't a register@." reg
   )
 
 let decode_regs_args channel (arch: Arch.t) args =

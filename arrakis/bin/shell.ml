@@ -130,18 +130,18 @@ exception Shell_exit
 let parse_command channel arch history command args
                   label addr_debug line_debug syscall =
   match command with
-  | "run"         | "r" ->
+  | "run"        | "r" ->
       program_run := true;
       run false channel arch history syscall;
-  | "breakpoint"  | "b"  -> set_breakpoint channel args label line_debug; history
-  | "step"        | "s"  -> step channel arch history syscall
-  | "next"        | "n"  -> run true channel arch history syscall
-  | "help"        | "h"  -> Help.general channel; history
-  | "quit"        | "q"  -> raise Shell_exit
-  | "prev"        | "prv"-> prev channel arch history
-  | "reset"       | "res"-> reset arch history
-  | "print"       | "p"  ->
-    Print.decode_print channel arch args addr_debug breakpoints; history
+  | "breakpoint" | "b"  -> set_breakpoint channel args label line_debug; history
+  | "step"       | "s"  -> step channel arch history syscall
+  | "next"       | "n"  -> run true channel arch history syscall
+  | "help"       | "h"  -> Help.general channel; history
+  | "quit"       | "q"  -> raise Shell_exit
+  | "prev"       | "pre"-> prev channel arch history
+  | "reset"      | "res"-> reset arch history
+  | "print"      | "p"  ->
+      Print.decode_print channel arch args addr_debug breakpoints; history
   | _ ->
       Format.fprintf channel
       "@{<fg_red>Error:@} Undefined command: @{<fg_yellow>\"%s\"@}. \

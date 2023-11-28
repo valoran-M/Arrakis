@@ -14,7 +14,7 @@ let general channel =
 
     In debug mode: execute next instruction.
 
- @{<fg_green>*@} (prv) prev
+ @{<fg_green>*@} (pre)v
 
     In debug mode: Recovery of the simulator's previous state.
 

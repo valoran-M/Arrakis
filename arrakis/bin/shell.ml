@@ -42,8 +42,7 @@ let rec run first channel (arch : Simulator.Arch.t) history syscall =
 let prev channel arch history =
   try Simulator.History.step_back arch history
   with Simulator.History.History_Empty ->
-    Format.fprintf channel
-  "\n@{<fg_red>Error:@} History is empty.@."; history
+    Format.fprintf channel "\n@{<fg_red>Error:@} History is empty.@."; history
 
 let reset arch history = Simulator.History.reset arch history
 
@@ -51,8 +50,8 @@ let reset arch history = Simulator.History.reset arch history
 
 let line_breakpoint channel line_debug arg =
   match int_of_string_opt arg with
-  | None      -> Format.fprintf channel
-                  "@{<fg_red>Error:@} \"%s\" is not a number.@." arg
+  | None      ->
+      Format.fprintf channel "@{<fg_red>Error:@} '%s' is not a number.@." arg
   | Some line ->
     try
       let number = Hashtbl.length breakpoints   in
@@ -82,7 +81,7 @@ let addr_breakpoint channel label arg =
         number (Int32.to_int addr)
     with Not_found ->
       Format.fprintf channel
-        "@{<fg_red>Error:@} Function \"%s\" not defined.@." arg
+        "@{<fg_red>Error:@} Function '%s' not defined.@." arg
 
 exception End_loop
 
@@ -93,14 +92,14 @@ let remove_breakpoint channel arg =
       if line = breakpoint then (
         Hashtbl.remove breakpoints addr;
         Format.fprintf channel
-          "@{<fg_blue>Info:@}Breakpoint %d was removed.@." breakpoint;
+          "@{<fg_blue>Info:@}Breakpoint '%d' was removed.@." breakpoint;
         raise End_loop
     )) breakpoints
   with
     | End_loop -> ()
     | _        ->
       Format.fprintf channel
-        "@{<fg_red>Error:@} Breakpoint \"%s\" does not exist.@." arg
+        "@{<fg_red>Error:@} Breakpoint '%s' does not exist.@." arg
 
 let iter channel f l =
   if List.length l == 0 then
@@ -144,8 +143,8 @@ let parse_command channel arch history command args
       Print.decode_print channel arch args addr_debug breakpoints; history
   | _ ->
       Format.fprintf channel
-      "@{<fg_red>Error:@} Undefined command: @{<fg_yellow>\"%s\"@}. \
-      Try @{<fg_green>\"help\"@}.@." command; history
+      "@{<fg_red>Error:@} Undefined command: @{<fg_yellow>'%s'@}. \
+      Try @{<fg_green>'help'@}.@." command; history
 
 let rec shell arch history label addr_debug line_debug syscall =
   if !program_run && not !program_end then

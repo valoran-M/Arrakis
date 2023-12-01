@@ -13,7 +13,7 @@ exception Running_Root_Without_Opt
 let version = "1.0.1-dev"
 
 let () =
-  if not Options.no_color then Color.setup ()
+  if not Options.no_color then Colorsh.setup_std ()
 
 let main =
   if show_version then printf "%s@." version else

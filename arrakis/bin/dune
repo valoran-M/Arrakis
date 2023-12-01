@@ -1,4 +1,4 @@
 (executable
  (public_name arrakis)
  (name main)
- (libraries unix simulator assembler syscall))
+ (libraries unix simulator assembler syscall colorsh))

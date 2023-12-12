@@ -1,3 +1,10 @@
+(******************************************************************************)
+(* Copyright 2023 - Arrakis contributors                                      *)
+(*                                                                            *)
+(* This file is part of Arrakis, a RISC-V simulator.                          *)
+(* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
+(******************************************************************************)
+
 open Simulator
 open Disassembler
 open Format
@@ -6,7 +13,6 @@ exception Break
 
 let ( + ) = Int32.add
 let ( * ) = Int32.mul
-
 
 (* Progam ------------------------------------------------------------------  *)
 

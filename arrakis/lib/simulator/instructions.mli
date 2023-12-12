@@ -1,3 +1,10 @@
+(******************************************************************************)
+(* Copyright 2023 - Arrakis contributors                                      *)
+(*                                                                            *)
+(* This file is part of Arrakis, a RISC-V simulator.                          *)
+(* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
+(******************************************************************************)
+
 module R_type : sig
   type t = { funct7 : int; funct3: int;
              rs1: int; rs2: int; rd: int; }
@@ -32,7 +39,7 @@ module S_type : sig
     (** [decode code] decode S instruction [code] *)
 
   val execute : t -> int32 -> int32 -> Memory.t -> History.change
-    (** [execute inst rs1 rs2 mem] execute S [inst] with 
+    (** [execute inst rs1 rs2 mem] execute S [inst] with
         [rs1] [rs2] register value *)
 end
 
@@ -43,7 +50,7 @@ module B_type : sig
     (** [decode code] decode S instruction [code] *)
 
   val execute : t -> int32 -> int32 -> int32
-    (** [execute inst rs1 rs2] execute S [inst] with 
+    (** [execute inst rs1 rs2] execute S [inst] with
         [rs1] [rs2] register value return value
         added to pc *)
 end

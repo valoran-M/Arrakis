@@ -14,6 +14,7 @@
 * Would be fun to have a small GIF in README displaying the use of breakpoints
   and printing stuff.
 * Remove alcotest dependency
+* Add a feedback for command 's': Print new pc
 
 ## 1.1.0
 
@@ -28,6 +29,4 @@
 ## 1.0.1
 
 * Zsh and Bash completion
-* Clean up code
-* Add a feedback for command 's': Print new pc
 

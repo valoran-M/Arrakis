@@ -5,8 +5,8 @@
 (using menhir 2.1)
 (generate_opam_files true)
 
-(source (uri https://codeberg.org/Arrakis/arrakis))
-
+(source (uri git+https://codeberg.org/Arrakis/arrakis.git))
+(homepage https://codeberg.org/Arrakis/arrakis)
 (bug_reports https://codeberg.org/Arrakis/arrakis/issues)
 
 (authors "Valeran Maytié" "Gurvan Debaussart")

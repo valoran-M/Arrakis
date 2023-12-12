@@ -2,7 +2,7 @@
 opam-version: "2.0"
 synopsis: "A RISC-V simulator"
 description: """
-A RISC-V simulator  with an integrated debugger.
+A RISC-V simulator with an integrated debugger.
 Support full RV32IM instruction set,
 along with pseudo instruction and several environmental calls."""
 maintainer: ["mvalo@proton.me" "gurvan@debauss.art"]
@@ -11,6 +11,7 @@ license: "CeCILL-2.1"
 tags: [
   "RISC-V" "simulator" "emulation" "RV32IM" "education" "debugger" "debug"
 ]
+homepage: "https://codeberg.org/Arrakis/arrakis"
 doc: "https://codeberg.org/Arrakis/arrakis/wiki"
 bug-reports: "https://codeberg.org/Arrakis/arrakis/issues"
 depends: [
@@ -34,5 +35,5 @@ build: [
     "@doc" {with-doc}
   ]
 ]
-dev-repo: "https://codeberg.org/Arrakis/arrakis"
+dev-repo: "git+https://codeberg.org/Arrakis/arrakis.git"
 available: arch != "arm32" & arch != "x86_32"

@@ -5,6 +5,8 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
+val spec : (string * Arg.spec * string) list
+
 val show_version : bool
 
 val unix_socket : bool

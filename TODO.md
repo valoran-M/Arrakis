@@ -32,4 +32,5 @@
 * Allow switching between multiple isa with a --isa option, taking a string as
   an argument that must be parsed. (Example: RV32IM, RV32I, ...).
 * Add a new command to allow saving the logs of the current execution to a file
+* Provide arrakis as system package for different linux distributions.
 

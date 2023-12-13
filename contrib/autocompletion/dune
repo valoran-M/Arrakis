@@ -1,0 +1,13 @@
+(executable
+  (name build_sh_completion)
+  (libraries options))
+
+(rule
+  (alias sh-completion)
+  (targets completion.zsh completion.bash completion.fish)
+  (deps (universe))
+  (action (run %{exe:build_sh_completion.exe} %{targets})))
+
+(install
+  (section share)
+  (files completion.zsh completion.bash completion.fish))

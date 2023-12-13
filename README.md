@@ -21,8 +21,6 @@ in OCaml, primarly designed for education.
 * Complete [documentation](https://codeberg.org/Arrakis/arrakis/wiki),
   covering not only Arrakis usage but also serving as a general guide on how to
   write RISC-V assembly code.
-* (WIP) A [vim plugin](https://codeberg.org/Arrakis/arrakis.vim) to integrate
-  Arrakis with your favorite text editor.
 
 ## Installation
 

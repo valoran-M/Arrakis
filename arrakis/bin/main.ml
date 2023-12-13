@@ -71,7 +71,7 @@ let main =
     if unix_socket
     then Server.start_server unix_file arch history label
                              addr_debug line_debug syscall
-    else if no_shell then (
+    else if just_run then (
       let channel = Format.std_formatter in
       Shell.program_run := true;
       ignore (Shell.run false channel arch history syscall)

@@ -8,6 +8,7 @@
 * Error message when providing too much input files
 * Renamed command 'prv' to 'pre'
 * Provide 'zsh', 'bash' and 'fish' completion files through `argsh`
+* Changed the '--no_shell` option to `--just_run` and `-ns` to `-r`
 
 # 1.0.0 (2023-19-9)
 

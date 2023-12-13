@@ -19,4 +19,4 @@ val no_color   : bool
 val allow_root : bool
 
 val env        : string
-val no_shell   : bool
+val just_run   : bool

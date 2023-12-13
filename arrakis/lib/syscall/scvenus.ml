@@ -26,7 +26,7 @@ let print_character channel (arch : Arch.t) =
     Format.fprintf channel "%c@." chr;
     Continue
   with _ ->
-    Format.fprintf channel "@{<fg_red>Info:@} Syscall 'print_character' faield: Couldn't print character.";
+    Format.fprintf channel "@{<fg_red>Info:@} Syscall 'print_character' failed";
     Continue
 
 let exit0 () = Exit 0
@@ -53,5 +53,5 @@ let syscall channel (arch : Arch.t) =
   | 10l -> exit0           ()
   | 11l -> print_character channel arch
   | 17l -> exit            arch
-  | _   -> invalid_sysc    channel reg
+  | _   -> invalid_sc      channel reg
 

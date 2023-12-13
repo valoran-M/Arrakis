@@ -145,17 +145,17 @@ let mkdirat (arch : Arch.t) =
 let syscall channel (arch : Arch.t) =
   let reg = Cpu.get_reg arch.cpu 17 in
   match reg with
-  | 17l  -> getcwd    channel arch
-  | 34l  -> mkdirat           arch
-  | 49l  -> chdir             arch
-  | 56l  -> openat            arch
-  | 57l  -> close             arch
-  | 63l  -> read      channel arch
-  | 64l  -> write     channel arch
-  | 93l  -> exit              arch
-  | 129l -> kill              arch
-  | 174l -> getuid            arch
-  | 175l -> geteuid           arch
-  | 214l -> brk               arch
-  | _    -> invalid_sysc channel reg
+  | 17l  -> getcwd     channel arch
+  | 34l  -> mkdirat            arch
+  | 49l  -> chdir              arch
+  | 56l  -> openat             arch
+  | 57l  -> close              arch
+  | 63l  -> read       channel arch
+  | 64l  -> write      channel arch
+  | 93l  -> exit               arch
+  | 129l -> kill               arch
+  | 174l -> getuid             arch
+  | 175l -> geteuid            arch
+  | 214l -> brk                arch
+  | _    -> invalid_sc channel reg
 

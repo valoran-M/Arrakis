@@ -1,6 +1,20 @@
 # TODO
 
-## ???
+## 1.0.1
+
+* Change alcotest and argsh to optional dependencies
+
+## 1.1.0
+
+* Allow usage of program arguments: Use syntax `arrakis helloworld.s -- hello`
+
+### Improve shell user experience
+
+* Using up/down arrow to get last commands
+* Using side arrow to modify current command
+* Autocompletion of commands
+
+## ??? (Future work without attributed planned version)
 
 * openat (More detail in the file [scunix.ml](./arrakis/lib/syscall/scunix.ml))
 * Would be nice to have better errors.
@@ -10,23 +24,12 @@
   error would be to show how the instruction should be used.
   For example, ``bgt rs`` would give out:
   ``Syntax Error on line .... bgt instruction usage: bgt rs, rt, offset.``
-* Add support for other RISC-V extensions.
 * Would be fun to have a small GIF in README displaying the use of breakpoints
   and printing stuff.
-* Remove alcotest dependency
 * Add a feedback for command 's': Print new pc
-
-## 1.1.0
-
-* Allow usage of program arguments: Use syntax arrakis helloworld.s -- hello
-
-### Improve shell user experience
-
-* Using up/down arrow to get last commands
-* Using side arrow to modify current command
-* Autocompletion of commands
-
-## 1.0.1
-
-* Zsh and Bash completion
+* Add support for other RISC-V extensions.
+* Specify exactly which version of RISC-V ISA is currently implemented.
+* Allow switching between multiple isa with a --isa option, taking a string as
+  an argument that must be parsed. (Example: RV32IM, RV32I, ...).
+* Add a new command to allow saving the logs of the current execution to a file
 

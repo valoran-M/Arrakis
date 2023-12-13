@@ -6,5 +6,5 @@
 (******************************************************************************)
 
 let () =
-  Alcotest.run "Risc V test"
+  Alcotest.run "arrakis"
     [Simulator_test.Tests.tests; Assembler_test.Tests.tests]

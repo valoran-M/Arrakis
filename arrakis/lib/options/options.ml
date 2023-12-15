@@ -32,10 +32,8 @@ let spec = [
   ("--version",     Arg.Set show_version,      " Show version number and exit"    );
 ]
 
-let spec = Arg.align spec
-
 let () =
-  Arg.parse spec set_input_file usage
+  Arg.parse (Arg.align spec) set_input_file usage
 
 let show_version = !show_version
 

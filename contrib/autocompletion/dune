@@ -1,6 +1,6 @@
 (executable
   (name build_sh_completion)
-  (libraries options))
+  (libraries options argsh))
 
 (rule
   (alias sh-completion)

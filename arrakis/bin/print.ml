@@ -16,18 +16,24 @@ let ( * ) = Int32.mul
 
 (* Progam ------------------------------------------------------------------  *)
 
+let print_program_header channel =
+  Format.fprintf channel "%3s | %2s%2s @{<bold>%10s@} | @{<bold>%12s@} | @{<bold>%-18s@} | @{<bold>%-18s@} |\n"
+    "" "" "" "Adress" "Machine Code" "Basic Code" "Original Code"
+
 let print_addr channel arch debug breakpoints addr pc code =
     let breakpoint_str  =
       try  sprintf "%d " (Hashtbl.find breakpoints addr)
       with Not_found -> "  "
     in
-    let addr_pc               = if addr = pc then "->" else "  "  in
-    let addr_str              = Utils.int32_to_int addr           in
-    let machinec_str          = Utils.int32_to_int code           in
-    let basicc_str            = (print_code arch code)            in
-    let linenb, orignal_code  = Hashtbl.find debug addr           in
+    let addr_pc               = if addr = pc then "->" else "  "     in
+    let addr_str              = Utils.int32_to_int addr              in
+    let addr_str              = Format.sprintf "0x%08x" addr_str     in
+    let machinec_str          = Utils.int32_to_int code              in
+    let machinec_str          = Format.sprintf "0x%08x" machinec_str in
+    let basicc_str            = print_code arch code                 in
+    let linenb, orignal_code  = Hashtbl.find debug addr              in
 
-    fprintf channel "%03d | %s%s 0x%08x\t\t0x%08x\t\t%-24s%s@."
+    fprintf channel "%03d | %s%s %10s | %12s | %-18s | %-18s |\n"
       linenb
       breakpoint_str
       addr_pc
@@ -39,8 +45,7 @@ let print_addr channel arch debug breakpoints addr pc code =
 let print_code_part channel (arch : Arch.t) debug breakpoints offset noffset =
   let pc = Cpu.get_pc arch.cpu in
   try
-    fprintf channel
-        "           Adress\t\tMachine Code\t\tBasic Code\t\tOriginal Code@.";
+    print_program_header channel;
     for i=noffset to offset-1 do
       let addr = (pc + Int32.of_int i * 0x4l) in
       if addr >= 0l then (
@@ -58,8 +63,7 @@ let print_code_full channel (arch : Arch.t) debug breakpoints =
   let addr = ref 0l in
   let code = ref (Memory.get_int32 arch.memory !addr) in
   try
-    fprintf channel
-        "           Adress\t\tMachine Code\t\tBasic Code\t\tOriginal Code@.";
+    print_program_header channel;
     while !code != 0l do
       print_addr channel arch debug breakpoints !addr pc !code;
       addr := !addr + 0x4l;

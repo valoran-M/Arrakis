@@ -9,6 +9,8 @@
 * Renamed command 'prv' to 'pre'
 * Provide 'zsh', 'bash' and 'fish' completion files through `argsh`
 * Changed the '--no_shell` option to `--just_run` and `-ns` to `-r`
+* Improved code printing: Now alwayw 80 character wide, more readeable and
+  easier to parse
 
 # 1.0.0 (2023-19-9)
 

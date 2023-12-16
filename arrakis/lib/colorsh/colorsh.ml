@@ -61,6 +61,7 @@ let init () =
   [
     (* Tag       Open   Close  *)
     "bold",      1,     22;
+    "italic",    3,     23;
     "underline", 4,     24;
   ]
 

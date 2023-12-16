@@ -9,39 +9,39 @@ let general channel =
   Format.fprintf channel {|
   @{<fg_green>General help:@}
 
-  @{<fg_green>*@} (r)un
-
-    Run code.
-
- @{<fg_green>*@} (b)reakpoint
-
-    Create breakpoints.
-
- @{<fg_green>*@} (s)tep
-
-    In debug mode: execute next instruction.
-
- @{<fg_green>*@} (pre)v
-
-    In debug mode: Recovery of the simulator's previous state.
-
- @{<fg_green>*@} (res)et
-
-    In debug mode: Recovery of the simulator's initial state.
-
- @{<fg_green>*@} (n)ext
-
-    Run to next breakpoint.
-
- @{<fg_green>*@} (p)rint
-
-    Print informations about CPU.
-
- @{<fg_green>*@} (h)elp
+  @{<fg_green>*@} (h)elp
 
     Show this help.
 
- @{<fg_green>*@} (q)uit
+  @{<fg_green>*@} (b)reakpoint
+
+    Create breakpoints.
+
+  @{<fg_green>*@} (s)tep
+
+    Execute next instruction.
+
+  @{<fg_green>*@} (pre)v
+
+    Recovery of the simulator's previous state.
+
+  @{<fg_green>*@} (res)et
+
+    Recovery of the simulator's initial state.
+
+  @{<fg_green>*@} (n)ext
+
+    Run to next breakpoint.
+
+  @{<fg_green>*@} (r)un
+
+    Run code until the end.
+
+  @{<fg_green>*@} (p)rint
+
+    Print informations about CPU.
+
+  @{<fg_green>*@} (q)uit
 @.|}
 
 let breakpoint channel =

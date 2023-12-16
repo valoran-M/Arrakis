@@ -22,10 +22,10 @@ let print_program_header channel =
 
 let print_addr channel arch debug breakpoints addr pc code =
     let breakpoint_str  =
-      try  sprintf "%d " (Hashtbl.find breakpoints addr)
-      with Not_found -> "  "
+      try  sprintf "%02d" (Hashtbl.find breakpoints addr)
+      with Not_found -> ""
     in
-    let addr_pc               = if addr = pc then "->" else "  "     in
+    let addr_pc               = if addr = pc then ">" else ""        in
     let addr_str              = Utils.int32_to_int addr              in
     let addr_str              = Format.sprintf "0x%08x" addr_str     in
     let machinec_str          = Utils.int32_to_int code              in
@@ -33,7 +33,7 @@ let print_addr channel arch debug breakpoints addr pc code =
     let basicc_str            = print_code arch code                 in
     let linenb, orignal_code  = Hashtbl.find debug addr              in
 
-    fprintf channel "%03d | %s%s %10s | %12s | %-18s | %-18s |\n"
+    fprintf channel "%03d | %2s%2s %10s | %12s | %-18s | %-18s |\n"
       linenb
       breakpoint_str
       addr_pc

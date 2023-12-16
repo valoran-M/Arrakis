@@ -39,7 +39,7 @@ let step channel arch history syscall =
 let rec run first channel (arch : Simulator.Arch.t) history syscall =
   if !program_end then history else
   let addr = Simulator.Cpu.get_pc arch.cpu in
-  if first || not (Hashtbl.mem breakpoints addr) then (
+  if first || !program_run || not (Hashtbl.mem breakpoints addr) then (
       let history = step channel arch history syscall in
       if !program_end
       then history
@@ -51,7 +51,10 @@ let prev channel arch history =
   with Simulator.History.History_Empty ->
     Format.fprintf channel "\n@{<fg_red>Error:@} History is empty.@."; history
 
-let reset arch history = Simulator.History.reset arch history
+let reset arch history =
+  program_run := false;
+  program_end := false;
+  Simulator.History.reset arch history
 
 (* Breakpoints -------------------------------------------------------------- *)
 
@@ -138,7 +141,7 @@ let parse_command channel arch history command args
   match command with
   | "run"        | "r" ->
       program_run := true;
-      run false channel arch history syscall;
+      run false channel arch history syscall
   | "breakpoint" | "b"  -> set_breakpoint channel args label line_debug; history
   | "step"       | "s"  -> step channel arch history syscall
   | "next"       | "n"  -> run true channel arch history syscall
@@ -158,7 +161,7 @@ let rec shell arch history label addr_debug line_debug syscall =
     Print.print_code_part
     (Format.formatter_of_out_channel stdout) arch addr_debug breakpoints 8 0;
   Format.printf "> %!";
-  let line = read_line () in
+  let line  = read_line ()                  in
   let words = String.split_on_char ' ' line in
   try match words with
   | command :: args ->

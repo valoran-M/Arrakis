@@ -1,8 +1,7 @@
 (******************************************************************************)
-(*  Colorsh                                                                   *)
-(*  License: MIT                                                              *)
-(*  Author:  Gurvan Debaussart                                                *)
-(*  Source:  https://codeberg.org/gurvan/colorsh                              *)
+(*  Copyright 2023 Gurvan Debaussart                                          *)
+(*  This file is distributed under the MIT license.                           *)
+(*  https://codeberg.org/gurvan/colorsh                                       *)
 (******************************************************************************)
 
 open Format
@@ -51,7 +50,7 @@ let init () =
     "bg_white",   47;
   ];
 
-  (* Bold, Underline -------------------------------------------------------- *)
+  (* Text style ------------------------------------------------------------- *)
 
   List.iter (fun (tag, oint, cint) ->
     let ostr = sprintf "[%dm" oint in
@@ -61,8 +60,11 @@ let init () =
   [
     (* Tag       Open   Close  *)
     "bold",      1,     22;
+    "dim",       2,     22;
     "italic",    3,     23;
     "underline", 4,     24;
+    "reversed",  7,     27;
+    "strike",    9,     29;
   ]
 
 (* -------------------------------------------------------------------------- *)

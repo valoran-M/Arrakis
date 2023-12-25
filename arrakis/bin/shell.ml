@@ -58,14 +58,14 @@ let reset arch history =
 
 (* Breakpoints -------------------------------------------------------------- *)
 
-let line_breakpoint channel line_debug arg =
+let line_breakpoint channel debug arg =
   match int_of_string_opt arg with
   | None      ->
       Format.fprintf channel "@{<fg_red>Error:@} '%s' is not a number.@." arg
   | Some line ->
     try
       let number = Hashtbl.length breakpoints   in
-      let addr   = Hashtbl.find line_debug line in
+      let addr   = Assembler.Debug.get_addr debug line in
       Hashtbl.add breakpoints addr number;
       Format.fprintf channel
         "@{<fg_blue>Info:@} Created breakpoint %d at 0x%x@."
@@ -117,10 +117,10 @@ let iter channel f l =
         "@{<fg_red>Error:@} Command require at least one argument.@."
   else List.iter f l
 
-let set_breakpoint channel args label line_debug =
+let set_breakpoint channel args label debug =
   match args with
   | "line"   :: args
-  | "l"      :: args -> iter channel (line_breakpoint channel line_debug) args
+  | "l"      :: args -> iter channel (line_breakpoint channel debug) args
   | "addr"   :: args
   | "a"      :: args -> iter channel (addr_breakpoint channel label) args
   | "remove" :: args
@@ -137,12 +137,12 @@ let set_breakpoint channel args label line_debug =
 exception Shell_exit
 
 let parse_command channel arch history command args
-                  label addr_debug line_debug syscall =
+                  label debug syscall =
   match command with
   | "run"        | "r" ->
       program_run := true;
       run false channel arch history syscall
-  | "breakpoint" | "b"  -> set_breakpoint channel args label line_debug; history
+  | "breakpoint" | "b"  -> set_breakpoint channel args label debug; history
   | "step"       | "s"  -> step channel arch history syscall
   | "next"       | "n"  -> run true channel arch history syscall
   | "help"       | "h"  -> Help.general channel; history
@@ -150,24 +150,24 @@ let parse_command channel arch history command args
   | "prev"       | "pre"-> prev channel arch history
   | "reset"      | "res"-> reset arch history
   | "print"      | "p"  ->
-      Print.decode_print channel arch args addr_debug breakpoints; history
+      Print.decode_print channel arch args debug breakpoints; history
   | _ ->
       Format.fprintf channel
       "@{<fg_red>Error:@} Undefined command: @{<fg_yellow>'%s'@}. \
       Try @{<fg_green>'help'@}.@." command; history
 
-let rec shell arch history label addr_debug line_debug syscall =
+let rec shell arch history label debug syscall =
   if !program_run && not !program_end then
     Print.print_code_part
-    (Format.formatter_of_out_channel stdout) arch addr_debug breakpoints 8 0;
+    (Format.formatter_of_out_channel stdout) arch debug breakpoints 8 0;
   Format.printf "> %!";
   let line  = read_line ()                  in
   let words = String.split_on_char ' ' line in
   try match words with
   | command :: args ->
     let history = parse_command Format.std_formatter arch history
-        command args label addr_debug line_debug syscall in
-    shell arch history label addr_debug line_debug syscall
-  | _ -> shell arch history label addr_debug line_debug syscall
+        command args label debug syscall in
+    shell arch history label debug syscall
+  | _ -> shell arch history label debug syscall
   with Shell_exit -> ()
 

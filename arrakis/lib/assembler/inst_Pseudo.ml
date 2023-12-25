@@ -47,3 +47,25 @@ let () =
       BLEU, "bleu";
     ]
 
+let pseudo_length (pseudo : pseudo_instruction) =
+  match pseudo with
+  | NOP       -> 0x4l
+  | LA (_, _) -> 0x8l
+  | J _       -> 0x4l
+  | JALP _    -> 0x4l
+  | JR _      -> 0x4l
+  | JALRP _   -> 0x0l
+  | RET       -> 0x4l
+  | CALL _    -> 0x8l
+  | TAIL _    -> 0x8l
+  | LGlob (_, _, _)       -> 0x8l
+  | SGlob (_, _, _, _)    -> 0x8l
+  | Two_Regs (_, _, _)    -> 0x4l
+  | Regs_Offset (_, _, _) -> 0x4l
+  | Regs_Regs_Offset (_, _, _, _) -> 0x4l
+  | LI (_, imm) ->
+    match imm with
+    | Label _ -> assert false
+    | Imm imm -> if -2048l <= imm && imm <= 2048l
+                 then 0x4l else 0x8l
+

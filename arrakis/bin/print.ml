@@ -31,7 +31,7 @@ let print_addr channel arch debug breakpoints addr pc code =
     let machinec_str          = Utils.int32_to_int code              in
     let machinec_str          = Format.sprintf "0x%08x" machinec_str in
     let basicc_str            = print_code arch code                 in
-    let linenb, orignal_code  = Hashtbl.find debug addr              in
+    let linenb, orignal_code  = Assembler.Debug.get_line debug addr  in
 
     fprintf channel "%03d | %2s%2s %10s | %12s | %-18s | %-18s |\n"
       linenb

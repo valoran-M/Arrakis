@@ -100,10 +100,10 @@ type instruction =
   | J of j_instruction * int32 * imm
 
 type program_line =
-              (* line nb, original code *)
-  | Prog_Pseudo of int *       string        * pseudo_instruction
-  | Prog_Instr  of int *       string        * instruction
-  | Prog_GLabel of int * string
+                (* line nb, original code *)
+  | Prog_Pseudo of int      * string        * pseudo_instruction
+  | Prog_Instr  of int      * string        * instruction
+  | Prog_GLabel of int      * string
   | Prog_Label  of string
 
 (* Memory ------------------------------------------------------------------- *)
@@ -121,6 +121,7 @@ type memory_line =
 
 type program =
   {
-    memory  : memory_line list;
+    memory  : memory_line  list;
     program : program_line list;
   }
+

@@ -17,7 +17,7 @@
 *)
 
 type t = {
-  line_to_addr : (int,   int32)        Hashtbl.t; (* TODO: usefull ? *)
+  line_to_addr : (int,   int32)        Hashtbl.t;
   addr_to_line : (int32, int * string) Hashtbl.t
 }
 

@@ -5,11 +5,32 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
+open Program
+open Error
+
+let (&)  = Int32.logand
+let (<<) = Int32.shift_left
+let (>>) = Int32.shift_right_logical
+
 let get_interval imm i j =
   let open Int32 in
-  let (<<) = shift_left in
-  let (>>) = shift_right_logical in
-  let (&&) = logand in
   let mask = lognot (-1l << (i - j + 1)) in
-  (imm >> j) && mask
+  (imm >> j) & mask
+
+let ( * ) = Int32.mul
+let ( + ) = Int32.add
+let ( - ) = Int32.sub
+
+let (<=) x y = Int32.compare x y <=  0
+let (>=) x y = Int32.compare x y >=  0
+
+let imm_to_int32 label_address line addr = function
+  | Imm imm     -> imm
+  | Label label ->
+    try  Hashtbl.find label_address label - addr
+    with Not_found -> raise (Assembler_error (line, Unknown_Label label))
+
+let hi_lo imm addr line label_address =
+  let imm = imm_to_int32 label_address line addr imm in
+  ((imm + 0x800l) >> 12, imm & 0b111111111111l)
 

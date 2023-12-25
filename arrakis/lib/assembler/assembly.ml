@@ -5,19 +5,9 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
+open Utils
 open Error
 open Program
-
-let ( * ) = Int32.mul
-let ( + ) = Int32.add
-let ( - ) = Int32.sub
-
-let (&)  = Int32.logand
-let (<<) = Int32.shift_left
-let (>>) = Int32.shift_right_logical
-
-let (<=) x y = Int32.compare x y <=  0
-let (>=) x y = Int32.compare x y >=  0
 
 (* Get address  ------------------------------------------------------------  *)
 

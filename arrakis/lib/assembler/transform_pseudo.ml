@@ -5,7 +5,7 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-open Error
+open Utils
 open Program
 
 (*
@@ -13,26 +13,6 @@ open Program
   transform them into pure RISC-V instructions to make the final assembly
   easier.
 *)
-
-let ( * ) = Int32.mul
-let ( + ) = Int32.add
-let ( - ) = Int32.sub
-
-let (&)  = Int32.logand
-let (<<) = Int32.shift_left
-let (>>) = Int32.shift_right_logical
-
-
-let imm_to_int32 label_address line addr = function
-  | Imm imm     -> imm
-  | Label label ->
-    try  Hashtbl.find label_address label - addr
-    with Not_found -> raise (Assembler_error (line, Unknown_Label label))
-
-let hi_lo imm addr line label_address =
-  let imm = imm_to_int32 label_address line addr imm in
-  Printf.printf "%s %s\n" (Int32.to_string imm) (Int32.to_string addr);
-  ((imm + 0x800l) >> 12, imm & 0b111111111111l)
 
 (*
   Function that translates pseudo instructions
@@ -150,7 +130,6 @@ let remove_pseudo prog label_address =
       iterator prog (addr + 4l * Int32.of_int size) (instr @ acc)
     | (Prog_Instr _ as inst) :: prog -> iterator prog (addr + 4l) (inst :: acc)
     | (_ as inst)            :: prog -> iterator prog addr        (inst :: acc)
-
   in
   let open Simulator.Segment in
   iterator prog text_begin [] |> List.rev

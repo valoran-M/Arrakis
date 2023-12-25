@@ -1,3 +1,0 @@
-(library
- (libraries simulator)
- (name command))

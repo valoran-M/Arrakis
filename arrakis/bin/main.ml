@@ -59,21 +59,22 @@ let main =
 
   let channel = open_in input_file in
   let lb = Lexing.from_channel channel in
-    let mem, label, global_label, debug = Assembler.Assembly.assembly lb in
+    let mem, labels, debug = Assembler.Assembly.assembly lb in
     let history = History.create_history () in
     let pc =
-      try Hashtbl.find global_label "_start"
-      with Not_found -> Simulator.Segment.text_begin
+      match Assembler.Label.get_global labels "_start" with
+      | Some pc -> pc
+      | None    -> Simulator.Segment.text_begin
     in
     let arch = Arch.init pc mem in
     if unix_socket
-    then Server.start_server unix_file arch history label debug syscall
+    then Server.start_server unix_file arch history labels debug syscall
     else if just_run then (
       let channel = Format.std_formatter in
       Shell.program_run := true;
       ignore (Shell.run false channel arch history syscall)
     )
-    else Shell.shell arch history label debug syscall
+    else Shell.shell arch history labels debug syscall
   with
   | No_Input_File ->
       eprintf "@{<fg_red>Error:@} Please specify an input file.@.";

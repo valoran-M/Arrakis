@@ -6,7 +6,6 @@
 (******************************************************************************)
 
 open Program
-open Error
 
 let (&)  = Int32.logand
 let (<<) = Int32.shift_left
@@ -24,11 +23,9 @@ let ( - ) = Int32.sub
 let (<=) x y = Int32.compare x y <=  0
 let (>=) x y = Int32.compare x y >=  0
 
-let imm_to_int32 label_address line addr = function
+let imm_to_int32 labels line addr = function
   | Imm imm     -> imm
-  | Label label ->
-    try  Hashtbl.find label_address label - addr
-    with Not_found -> raise (Assembler_error (line, Unknown_Label label))
+  | Label label -> Label.get_address labels label line - addr
 
 let hi_lo imm addr line label_address =
   let imm = imm_to_int32 label_address line addr imm in

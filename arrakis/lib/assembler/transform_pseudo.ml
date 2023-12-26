@@ -22,20 +22,20 @@ open Program
   /!\ If the pseudo instruction generates several instructions, the instructions
       must be reversed.
 *)
-let translate_pseudo pseudo line code addr label_address =
+let translate_pseudo pseudo line code addr labels =
 
   let translate_j offset =
-    let imm = imm_to_int32 label_address line addr offset in
+    let imm = imm_to_int32 labels line addr offset in
     [Prog_Instr (line, code, J(JAL, 0l, Imm imm))]
   in
 
   let translate_jalp offset =
-    let imm = imm_to_int32 label_address line addr offset in
+    let imm = imm_to_int32 labels line addr offset in
     [Prog_Instr (line, code, J(JAL, 1l, Imm imm))]
   in
 
   let translate_li rd imm =
-    let (hi, lo) = hi_lo imm addr line label_address in
+    let (hi, lo) = hi_lo imm addr line labels in
     if hi = 0l
     then [Prog_Instr (line, code, I(ADDI, rd, 0l, Imm lo))]
     else [ Prog_Instr (line, code, I(ADDI, rd, 0l, Imm lo));
@@ -43,31 +43,31 @@ let translate_pseudo pseudo line code addr label_address =
   in
 
   let translate_la rd label =
-    let (hi, lo) = hi_lo label addr line label_address in
+    let (hi, lo) = hi_lo label addr line labels in
     [ Prog_Instr (line, code, I(ADDI,  rd, rd, Imm lo));
       Prog_Instr (line, code, U(AUIPC, rd,     Imm hi))]
   in
 
   let translate_call offset =
-    let (hi, lo) = hi_lo offset addr line label_address in
+    let (hi, lo) = hi_lo offset addr line labels in
     [ Prog_Instr (line, code, I(JALR,  1l, 1l, Imm lo));
       Prog_Instr (line, code, U(AUIPC, 1l,     Imm hi))]
   in
 
   let translate_tail offset =
-    let (hi, lo) = hi_lo offset addr line label_address in
+    let (hi, lo) = hi_lo offset addr line labels in
     [ Prog_Instr (line, code, I(JALR,  0l, 6l, Imm lo));
       Prog_Instr (line, code, U(AUIPC, 6l,     Imm hi))]
   in
 
   let translate_lglob rd symbol load =
-    let (hi, lo) = hi_lo symbol addr line label_address in
+    let (hi, lo) = hi_lo symbol addr line labels in
     [ Prog_Instr (line, code, I(load,  rd, rd, Imm lo));
       Prog_Instr (line, code, U(AUIPC, rd,     Imm hi))]
   in
 
   let translate_sglob rd symbol rt store =
-    let (hi, lo) = hi_lo symbol addr line label_address in
+    let (hi, lo) = hi_lo symbol addr line labels in
     [ Prog_Instr (line, code, S(store, rd, rt, Imm lo));
       Prog_Instr (line, code, U(AUIPC, rd,     Imm hi))]
   in
@@ -84,7 +84,7 @@ let translate_pseudo pseudo line code addr label_address =
   in
 
   let translate_reg_offset inst rs offset =
-    let imm = Imm (imm_to_int32 label_address line addr offset) in
+    let imm = Imm (imm_to_int32 labels line addr offset) in
     match inst with
     | BEQZ -> [Prog_Instr(line, code, B(BEQ, rs, 0l, imm))]
     | BNEZ -> [Prog_Instr(line, code, B(BNE, rs, 0l, imm))]
@@ -95,7 +95,7 @@ let translate_pseudo pseudo line code addr label_address =
   in
 
   let translate_reg_reg_offset inst rs rt offset =
-    let imm = Imm (imm_to_int32 label_address line addr offset) in
+    let imm = Imm (imm_to_int32 labels line addr offset) in
     match inst with
     | BGT  -> [Prog_Instr(line, code, B(BLT,  rt, rs, imm))]
     | BLE  -> [Prog_Instr(line, code, B(BGE,  rt, rs, imm))]
@@ -120,12 +120,12 @@ let translate_pseudo pseudo line code addr label_address =
   | Regs_Offset (inst, rs, offset)      -> translate_reg_offset inst rs offset
   | Regs_Regs_Offset(inst,rs,rt,offset) -> translate_reg_reg_offset inst rs rt offset
 
-let remove_pseudo prog label_address =
+let remove_pseudo prog labels =
   let rec iterator prog addr acc =
     match prog with
     | [] -> acc
     | Prog_Pseudo (line, code, inst) :: prog ->
-      let instr = translate_pseudo inst line code addr label_address in
+      let instr = translate_pseudo inst line code addr labels in
       let size = List.length instr in
       iterator prog (addr + 4l * Int32.of_int size) (instr @ acc)
     | (Prog_Instr _ as inst) :: prog -> iterator prog (addr + 4l) (inst :: acc)

@@ -9,7 +9,7 @@
   In assembler code there are labels which are strings of characters
   representing addresses.
 
-  You can also declare global labels which are stored in a separate array.
+  You can also declare global labels. So we want a list of global labels.
 *)
 
 (* open Utils *)

@@ -1,5 +1,5 @@
 (******************************************************************************)
-(*  Copyright 2023 Gurvan Debaussart                                          *)
+(*  Copyright 2023-2024 Gurvan Debaussart                                     *)
 (*  This file is distributed under the MIT license.                           *)
 (*  https://codeberg.org/gurvan/colorsh                                       *)
 (******************************************************************************)

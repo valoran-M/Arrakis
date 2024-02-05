@@ -8,6 +8,8 @@
 open Options
 open Format
 
+(* Entry point to Arrakis *)
+
 let version = "1.0.1-dev"
 
 let main =

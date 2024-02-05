@@ -1,4 +1,19 @@
+(******************************************************************************)
+(* Copyright 2023-2024 - Arrakis contributors                                 *)
+(*                                                                            *)
+(* This file is part of Arrakis, a RISC-V simulator.                          *)
+(* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
+(******************************************************************************)
+
 open Format
+
+(*
+  This file is here to manage errors at the entry point of Arrakis.
+
+  It's split into 2 parts :
+  - Declaration of user interface errors
+  - Error display functions
+*)
 
 (* Ui Error ----------------------------------------------------------------- *)
 

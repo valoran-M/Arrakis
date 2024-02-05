@@ -1,4 +1,19 @@
+(******************************************************************************)
+(* Copyright 2023-2024 - Arrakis contributors                                 *)
+(*                                                                            *)
+(* This file is part of Arrakis, a RISC-V simulator.                          *)
+(* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
+(******************************************************************************)
+
 open Error
+
+(*
+  File conatining all the functions used to initialise Arrakis :
+  - colors
+  - input file
+  - super user check
+  - syscall initialisation
+*)
 
 let colors_init () =
   if not Options.no_color then Colorsh.setup_std ()

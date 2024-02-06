@@ -11,6 +11,10 @@
 * Using side arrow to modify current command
 * Autocompletion of commands
 
+### Improve documentation
+
+* Document the starting pc when there is a label _start
+
 ## ??? (Future work without attributed planned version)
 
 * openat (More detail in the file [scunix.ml](./arrakis/lib/syscall/scunix.ml))

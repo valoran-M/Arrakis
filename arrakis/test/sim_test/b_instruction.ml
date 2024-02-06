@@ -8,10 +8,10 @@
 open Simulator
 
 let cpu = Cpu.make 0l
-
 let mem = Memory.make ()
 
 let test () =
+
   (* BEQ *)
   Cpu.set_reg cpu 1 3l;
   Cpu.set_reg cpu 2 3l;

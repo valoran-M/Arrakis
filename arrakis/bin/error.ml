@@ -15,67 +15,59 @@ open Format
   - Error display functions
 *)
 
-(* UI Error ----------------------------------------------------------------- *)
-
-type main_error =
-  | Invalid_env of string
-  | No_Input_File
-  | Too_Much_Input_File
-  | Input_File_Dont_Exist of string
-  | Running_Root_Without_Opt
-
-exception Main_error of main_error
-
 (* Error Printing  ---------------------------------------------------------- *)
 
-let error_main error =
-  match error with
+let error fmt () =
+  fprintf fmt "@{<fg_red>Error:@}"
+
+let init e =
+  let open Init in
+  match e with
   | No_Input_File ->
-    eprintf "@{<fg_red>Error:@} Please specify an input file.@.";
+    eprintf "%a Please specify an input file.@." error ();
     exit 1
   | Input_File_Dont_Exist f ->
-    eprintf "@{<fg_red>Error:@} Specified input file '%s' doesn't exist.@." f;
+    eprintf "%a Specified input file '%s' doesn't exist.@." error () f;
     exit 2
   | Invalid_env s ->
-    eprintf "@{<fg_red>Error:@} Invalid environment @{<fg_yellow>'%s'@}@." s;
+    eprintf "%a Invalid environment @{<fg_yellow>'%s'@}@." error () s;
     exit 7
   | Running_Root_Without_Opt ->
-    eprintf "@{<fg_red>Error:@} Running in root mode is not allowed!@.";
+    eprintf "%a Running in root mode is not allowed!@." error ();
     eprintf "@{<fg_yellow>Tip:@} Use --allow-root if you know what you are doing.@.";
     exit 9
   | Too_Much_Input_File ->
     let inps = List.map (fun s -> "'"^s^"'") Options.input_file in
-    eprintf "@{<fg_red>Error:@} Too much input file specified!@.";
+    eprintf "%a Too much input file specified!@." error ();
     eprintf "I got @{<fg_yellow>%s@} but expected only one.@." (String.concat " " inps);
     exit 10
 
-let error_assembly line error =
+let assembler line e =
   let open Assembler.Error in
-  match error with
+  match e with
   | Lexing_error s ->
-    eprintf "@{<fg_red>Error:@} Lexical error on line @{<fg_yellow>%d@}: '%s'@."
+    eprintf "%a Lexical error on line @{<fg_yellow>%d@}: '%s'@." error ()
       line s;
     exit 3
   | Parsing_error s ->
-    eprintf "@{<fg_red>Error:@} Syntax error on line @{<fg_yellow>%d@}: '%s'@."
+    eprintf "%a Syntax error on line @{<fg_yellow>%d@}: '%s'@." error ()
       line s;
     exit 4
   | Unknown_Label ul ->
-    eprintf "@{<fg_red>Error:@} Unknown label on line @{<fg_yellow>%d@}: '%s'@."
+    eprintf "%a Unknown label on line @{<fg_yellow>%d@}: '%s'@." error ()
       line ul;
     exit 5
   | Interval_imm (v, min, max) ->
-    eprintf
-      "@{<fg_red>Error:@} on line @{<fg_yellow>%d@}: Imm out of bound.
-        Found @{<fg_yellow>'%s'@} but expected a value between %s and %s@}@."
-      line (Int32.to_string v) (Int32.to_string min) (Int32.to_string max);
+    eprintf "%a on line @{<fg_yellow>%d@}: Imm out of bound." error () line;
+    eprintf "Found @{<fg_yellow>'%s'@} but expected a value between %s and %s@."
+      (Int32.to_string v) (Int32.to_string min) (Int32.to_string max);
     exit 6
 
-let error_simulator error =
+let simulator e =
   let open Simulator.Error in
-  match error with
+  match e with
   | Conversion_Failure ->
-    eprintf "@{<fg_red>Error:@} Couldn't convert an int32 to an int. @.";
+    eprintf "%a Couldn't convert an int32 to an int. @." error ();
     eprintf "Time to move to a 64 bit machine!";
     exit 8
   | _ -> assert false (* TODO *)

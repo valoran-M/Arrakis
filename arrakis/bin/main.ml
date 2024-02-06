@@ -44,10 +44,7 @@ let main =
       )
       else Shell.shell arch history labels debug syscall
   with
-  | Error.Main_error error ->
-      Error.error_main error
-  | Assembler.Error.Assembler_error (line, error) ->
-      Error.error_assembly line error
-  | Simulator.Error.Simulator_error error ->
-      Error.error_simulator error
+  | Init.Init_error e                      -> Error.init e
+  | Assembler.Error.Assembler_error (l, e) -> Error.assembler l e
+  | Simulator.Error.Simulator_error e      -> Error.simulator e
 

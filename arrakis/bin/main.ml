@@ -23,19 +23,20 @@ let main =
     let input_file = Init.get_input_file () in
     let syscall    = Init.init_syscall   () in
 
-    (* Main ----------------------------------------------------------------- *)
-
     let channel = open_in input_file in
     let lb = Lexing.from_channel channel in
-      let mem, labels, debug = Assembler.Assembly.assembly lb in
-      let pc =
-        match Assembler.Label.get_global labels "_start" with
-        | Some pc -> pc
-        | None    -> Simulator.Segment.text_begin
-      in
-      let arch = Simulator.Arch.init pc mem in
-      let shell = Shell.create arch syscall debug labels in
-      Shell.run shell
+    let mem, labels, debug = Assembler.Assembly.assembly lb in
+    let pc =
+      match Assembler.Label.get_global labels "_start" with
+      | Some pc -> pc
+      | None    -> Simulator.Segment.text_begin
+    in
+    let arch  = Simulator.Arch.init pc mem in
+    let shell = Shell.create arch syscall debug labels in
+
+    (* Main ----------------------------------------------------------------- *)
+
+    Shell.run shell
       (* if unix_socket *)
       (* then Server.start_server unix_file arch history labels debug syscall *)
       (* else if just_run then ( *)

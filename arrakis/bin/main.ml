@@ -28,21 +28,22 @@ let main =
     let channel = open_in input_file in
     let lb = Lexing.from_channel channel in
       let mem, labels, debug = Assembler.Assembly.assembly lb in
-      let history = Simulator.History.create_history () in
       let pc =
         match Assembler.Label.get_global labels "_start" with
         | Some pc -> pc
         | None    -> Simulator.Segment.text_begin
       in
       let arch = Simulator.Arch.init pc mem in
-      if unix_socket
-      then Server.start_server unix_file arch history labels debug syscall
-      else if just_run then (
-        let channel = Format.std_formatter in
-        Shell.program_run := true;
-        ignore (Shell.run false channel arch history syscall)
-      )
-      else Shell.shell arch history labels debug syscall
+      let shell = Shell.create arch syscall debug labels in
+      Shell.run shell
+      (* if unix_socket *)
+      (* then Server.start_server unix_file arch history labels debug syscall *)
+      (* else if just_run then ( *)
+      (*   let channel = Format.std_formatter in *)
+      (*   Shell.program_run := true; *)
+      (*   ignore (Shell.run false channel arch history syscall) *)
+      (* ) *)
+      (* else Shell.shell arch history labels debug syscall *)
   with
   | Init.Init_error e                      -> Error.init e
   | Assembler.Error.Assembler_error (l, e) -> Error.assembler l e

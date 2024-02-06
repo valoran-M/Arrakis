@@ -16,7 +16,6 @@ type change =
 
 type t
 
-
 val create_history : unit -> t
   (** [create_history ()] create new empty history *)
 

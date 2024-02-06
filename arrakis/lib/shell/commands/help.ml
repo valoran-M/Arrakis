@@ -5,44 +5,17 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-let general channel =
-  Format.fprintf channel {|
-  @{<fg_green>General help:@}
+open Format
 
-  @{<fg_green>*@} (h)elp
+let general (state : Types.state) =
 
-    Show this help.
+  fprintf state.out_channel "%2s@{<fg_green>General help:@}\n\n" "";
 
-  @{<fg_green>*@} (b)reakpoint
-
-    Create breakpoints.
-
-  @{<fg_green>*@} (s)tep
-
-    Execute next instruction.
-
-  @{<fg_green>*@} (pre)v
-
-    Recovery of the simulator's previous state.
-
-  @{<fg_green>*@} (res)et
-
-    Recovery of the simulator's initial state.
-
-  @{<fg_green>*@} (n)ext
-
-    Run to next breakpoint.
-
-  @{<fg_green>*@} (r)un
-
-    Run code until the end.
-
-  @{<fg_green>*@} (p)rint
-
-    Print informations about CPU.
-
-  @{<fg_green>*@} (q)uit
-@.|}
+  Hashtbl.iter (fun k (cmd : Types.command) ->
+    if k = cmd.long_form then
+    fprintf state.out_channel "%2s@{<fg_green>*@} %s\n\n%4s%s\n\n"
+    "" cmd.name "" cmd.description)
+  state.commands
 
 let breakpoint channel =
   Format.fprintf channel {|
@@ -95,3 +68,18 @@ let print channel =
 
 @.|}
 
+let execute args (state : Types.state) =
+  begin match args with
+  | "print"      :: _ -> print      state.out_channel
+  | "breakpoint" :: _ -> breakpoint state.out_channel
+  | _                 -> general    state
+  end;
+  state
+
+let help : Types.command = {
+  long_form   = "help";
+  short_form  = "h";
+  name        = "(h)elp";
+  description = "Show this help";
+  execute     = execute;
+}

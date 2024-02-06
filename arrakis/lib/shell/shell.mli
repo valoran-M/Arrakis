@@ -5,6 +5,7 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-type syscall_ret = Exit of int | Continue
+val create : Simulator.Arch.t -> Syscall.Types.syscall -> Assembler.Debug.t ->
+  Assembler.Label.t -> Types.state
 
-type syscall = Format.formatter -> Simulator.Arch.t -> syscall_ret
+val run    : Types.state -> unit

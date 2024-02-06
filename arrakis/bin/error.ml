@@ -9,10 +9,7 @@ open Format
 
 (*
   This file is here to manage errors at the entry point of Arrakis.
-
-  It's split into 2 parts :
-  - Declaration of user interface errors
-  - Error display functions
+  It will display errors properly in the terminal.
 *)
 
 (* Error Printing  ---------------------------------------------------------- *)

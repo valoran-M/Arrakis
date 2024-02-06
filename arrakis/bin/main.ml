@@ -14,7 +14,7 @@ let version = "1.0.1-dev"
 
 let main =
   try
-    if show_version then printf "%s@." version else
+    if show_version then (printf "%s@." version; exit 0);
 
     (* Init ----------------------------------------------------------------- *)
 

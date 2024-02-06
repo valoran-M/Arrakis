@@ -5,42 +5,45 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
+open Common
+open Format
+
 exception End_loop
 
 let line_breakpoint (state : Types.state) arg =
   match int_of_string_opt arg with
   | None      ->
-      Format.fprintf state.out_channel "@{<fg_red>Error:@} '%s' is not a number.@." arg
+      fprintf state.out_channel "%a '%s' is not a number.@." error () arg
   | Some line ->
     try
       let number = Hashtbl.length state.breakpoints in
       let addr   = Assembler.Debug.get_addr state.debug line in
       Hashtbl.add state.breakpoints addr number;
-      Format.fprintf state.out_channel
-        "@{<fg_blue>Info:@} Created breakpoint %d at 0x%x@."
-        number (Int32.to_int addr)
+      fprintf state.out_channel
+        "%a Created breakpoint %d at 0x%x@."
+        info () number (Int32.to_int addr)
     with Not_found ->
-      Format.fprintf state.out_channel
-        "@{<fg_red>Error:@} Line %d does not contain code.@." line
+      fprintf state.out_channel
+        "%a Line %d does not contain code.@." error () line
 
 let addr_breakpoint (state : Types.state) arg =
   let number = Hashtbl.length state.breakpoints in
   match Int32.of_string_opt arg with
   | Some addr ->
     Hashtbl.add state.breakpoints addr number;
-    Format.fprintf state.out_channel
-      "@{<fg_blue>Info:@} Created breakpoint %d at 0x%x.@."
-      number (Int32.to_int addr)
+    fprintf state.out_channel
+      "%a Created breakpoint %d at 0x%x.@."
+      info () number (Int32.to_int addr)
   | None ->
     match Assembler.Label.get_address_opt state.labels arg with
     | None ->
-      Format.fprintf state.out_channel
-        "@{<fg_red>Error:@} Function '%s' not defined.@." arg
+      fprintf state.out_channel
+        "%a Function '%s' not defined.@." error () arg
     | Some addr ->
       Hashtbl.add state.breakpoints addr number;
-      Format.fprintf state.out_channel
-        "@{<fg_blue>Info:@} Created breakpoint %d at 0x%x.@."
-        number (Int32.to_int addr)
+      fprintf state.out_channel
+        "%a Created breakpoint %d at 0x%x.@."
+        info () number (Int32.to_int addr)
 
 let remove_breakpoint (state : Types.state) arg =
   try
@@ -48,20 +51,19 @@ let remove_breakpoint (state : Types.state) arg =
     Hashtbl.iter (fun addr line ->
       if line = breakpoint then (
         Hashtbl.remove state.breakpoints addr;
-        Format.fprintf state.out_channel
-          "@{<fg_blue>Info:@}Breakpoint '%d' was removed.@." breakpoint;
+        fprintf state.out_channel
+          "%a Breakpoint '%d' was removed.@." info () breakpoint;
         raise End_loop
     )) state.breakpoints
   with
     | End_loop -> ()
     | _        ->
-      Format.fprintf state.out_channel
-        "@{<fg_red>Error:@} Breakpoint '%s' does not exist.@." arg
+      fprintf state.out_channel "%a Breakpoint '%s' does not exist.@."
+        error () arg
 
 let iter f l (state : Types.state) =
   if List.length l == 0 then
-      Format.fprintf state.out_channel
-        "@{<fg_red>Error:@} Command require at least one argument.@."
+      fprintf state.out_channel "%a Command require at least one argument.@." error ()
   else List.iter f l
 
 let execute args (state : Types.state) =
@@ -75,7 +77,7 @@ let execute args (state : Types.state) =
   | "print"  :: _
   | "p"      :: _    ->
       Hashtbl.iter (fun addr number ->
-        Format.fprintf state.out_channel "%3d -> 0x%08x@."
+        fprintf state.out_channel "%3d -> 0x%08x@."
         number (Simulator.Utils.int32_to_int addr)) state.breakpoints
   | _ -> Help.breakpoint state.out_channel
   end;

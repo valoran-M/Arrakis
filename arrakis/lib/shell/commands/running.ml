@@ -5,7 +5,10 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-(* This file define the following commands:
+open Common
+
+(*
+   This file define the following commands:
   - step
   - run
   - prev
@@ -21,21 +24,22 @@ let step_execute _args (state : Types.state) =
     if state.program_end
     then (
     Format.fprintf state.out_channel
-        "\n@{<fg_red>Error:@} Program has exited, can't run further.@.";
+        "\n%a Program has exited, can't run further.@." error ();
     true, state.history
   ) else
     match exec_instruction state.arch state.history with
     | Continue (_, history)  -> state.program_end, history
     | Zero        ->
       Format.fprintf state.out_channel
-        "\n@{<fg_yellow>Warning:@} Exiting without an exit syscall.@.";
+        "\n%a Exiting without an exit syscall.@." warning ();
       true, state.history
     | Sys_call history  ->
       match state.syscall state.out_channel state.arch with
       | Continue  -> state.program_end, history
       | Exit code ->
         Format.fprintf state.out_channel
-          "\n@{<fg_blue>Info:@} Exiting with code @{<fg_yellow>'%d'@}.@."
+          "\n@%a Exiting with code @{<fg_yellow>'%d'@}.@."
+          info ()
           code;
           true, history
     in
@@ -79,7 +83,7 @@ let prev_execute _args (state : Types.state) =
   let history =
   try Simulator.History.step_back state.arch state.history
   with Simulator.History.History_Empty ->
-    Format.fprintf state.out_channel "\n@{<fg_red>Error:@} History is empty.@.";
+    Format.fprintf state.out_channel "\n%a History is empty.@." error ();
     state.history
   in
   { state with history }

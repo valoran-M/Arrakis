@@ -5,11 +5,12 @@
 * Allow usage of program arguments: Use syntax `arrakis helloworld.s -- hello`
 * Change alcotest and argsh to optional dependencies
 
-### Improve shell user experience
+### Improve shell
 
 * Using up/down arrow to get last commands
 * Using side arrow to modify current command
 * Autocompletion of commands
+* Handle syscall failure at shell level
 
 ## ??? (Future work without attributed planned version)
 

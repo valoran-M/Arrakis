@@ -11,7 +11,7 @@ let error fmt () =
   fprintf fmt "@{<bold>@{<fg_red>Error:@}@}"
 
 let info fmt () =
-  fprintf fmt "@{<fg_blue>Info:@}@"
+  fprintf fmt "@{<fg_blue>Info:@}"
 
 let warning fmt () =
-  fprintf fmt "@{<fg_yellow>Warning:@}@"
+  fprintf fmt "@{<fg_yellow>Warning:@}"

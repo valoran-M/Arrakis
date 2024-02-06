@@ -7,7 +7,7 @@
 
 open Arch
 open Sim_utils
-open Sim_utils.Integer 
+open Sim_utils.Integer
 
 (* Instructions format ------------------------------------------------------ *)
 

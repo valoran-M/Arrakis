@@ -15,7 +15,7 @@ open Format
 (* Error Printing  ---------------------------------------------------------- *)
 
 let error fmt () =
-  fprintf fmt "@{<fg_red>Error:@}"
+  fprintf fmt "@{<bold>@{<fg_red>Error:@}@}"
 
 let init e =
   let open Init in
@@ -24,7 +24,8 @@ let init e =
     eprintf "%a Please specify an input file.@." error ();
     exit 1
   | Input_File_Dont_Exist f ->
-    eprintf "%a Specified input file '%s' doesn't exist.@." error () f;
+    eprintf "%a Specified input file @{<fg_yellow>'%s'@} doesn't exist.@."
+      error () f;
     exit 2
   | Invalid_env s ->
     eprintf "%a Invalid environment @{<fg_yellow>'%s'@}@." error () s;

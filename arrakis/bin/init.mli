@@ -21,5 +21,5 @@ val get_input_file : unit -> string
 val check_root : unit -> unit
 
 val init_syscall :
-  unit -> Format.formatter -> Simulator.Arch.t -> Syscall.Types.syscall_ret
+  unit -> Format.formatter -> Arch.Riscv.t -> Syscall.Types.syscall_ret
 

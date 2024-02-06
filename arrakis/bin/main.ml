@@ -29,9 +29,9 @@ let main =
     let pc =
       match Assembler.Label.get_global labels "_start" with
       | Some pc -> pc
-      | None    -> Simulator.Segment.text_begin
+      | None    -> Arch.Segment.text_begin
     in
-    let arch  = Simulator.Arch.init pc mem in
+    let arch  = Arch.Riscv.init pc mem in
     let shell = Shell.create arch syscall debug labels in
 
     (* Main ----------------------------------------------------------------- *)
@@ -48,5 +48,5 @@ let main =
   with
   | Init.Init_error e                      -> Error.init e
   | Assembler.Error.Assembler_error (l, e) -> Error.assembler l e
-  | Simulator.Error.Simulator_error e      -> Error.simulator e
+  | Sim_utils.Error.Simulator_error e      -> Error.simulator e
 

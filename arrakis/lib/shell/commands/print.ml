@@ -5,10 +5,11 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-open Simulator
+open Arch
 open Disassembler
 open Format
 open Common
+open Sim_utils.Integer
 
 exception Break
 
@@ -27,9 +28,9 @@ let print_addr (state : Types.state) addr pc code =
       with Not_found -> ""
     in
     let addr_pc               = if addr = pc then ">" else ""              in
-    let addr_str              = Utils.int32_to_int addr                    in
+    let addr_str              = int32_to_int addr                    in
     let addr_str              = sprintf "0x%08x" addr_str                  in
-    let machinec_str          = Utils.int32_to_int code                    in
+    let machinec_str          = int32_to_int code                    in
     let machinec_str          = sprintf "0x%08x" machinec_str              in
     let basicc_str            = print_code state.arch code                 in
     let linenb, orignal_code  = Assembler.Debug.get_line state.debug addr  in
@@ -60,7 +61,7 @@ let print_code_part (state : Types.state) offset noffset =
   with _ -> ()
 
 let print_code_full (state : Types.state) =
-  let pc = Cpu.get_pc state.arch.cpu in
+  let pc   = Cpu.get_pc state.arch.cpu in
   let addr = ref 0l in
   let code = ref (Memory.get_int32 state.arch.memory !addr) in
   try
@@ -101,14 +102,14 @@ let line_size   = 0x4
 let line_size32 = 0x4l
 
 (* Return either reg as a Int32 or if it's a register the register content *)
-let i32_or_reg_of_str reg (arch : Arch.t) =
+let i32_or_reg_of_str reg (arch : Riscv.t) =
   try
     let r = Assembler.Regs.of_string reg in
     Cpu.get_reg arch.cpu (Int32.to_int r)
   with _ -> Int32.of_string reg
 
 let print_line (state : Types.state) line_address =
-  fprintf state.out_channel "0x%08x" (Utils.int32_to_int line_address);
+  fprintf state.out_channel "0x%08x" (int32_to_int line_address);
   for i = line_size - 1 downto 0 do
     let addr  = line_address + (Int32.of_int i)  in
     let value = Memory.get_byte state.arch.memory addr in
@@ -158,7 +159,7 @@ let regs = [|
 let print_all_regs (state : Types.state) =
   for i = 0 to 31 do
     fprintf state.out_channel "  %s -> 0x%08x\n" regs.(i)
-      (Simulator.Utils.int32_to_int (Cpu.get_reg state.arch.cpu i))
+      (int32_to_int (Cpu.get_reg state.arch.cpu i))
   done
 
 let print_list_regs (state : Types.state) =
@@ -167,7 +168,7 @@ let print_list_regs (state : Types.state) =
       if reg = "pc" then
         fprintf state.out_channel
           "  pc -> 0x%08x\n"
-          (Simulator.Utils.int32_to_int (Cpu.get_pc state.arch.cpu))
+          (int32_to_int (Cpu.get_pc state.arch.cpu))
       else
         let i =
           try Int32.to_int (Assembler.Regs.of_string reg)
@@ -175,7 +176,7 @@ let print_list_regs (state : Types.state) =
         in
         fprintf state.out_channel
           "  %s -> 0x%08x\n" regs.(i)
-          (Simulator.Utils.int32_to_int (Cpu.get_reg state.arch.cpu i))
+          (int32_to_int (Cpu.get_reg state.arch.cpu i))
     with _ ->
       fprintf state.out_channel
         "@{<fg_red>Error@}: '%s' isn't a register.@." reg

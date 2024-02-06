@@ -6,7 +6,6 @@
 (******************************************************************************)
 
 open Error
-open Simulator
 open Program
 
 let i_instructions = Hashtbl.create 17
@@ -51,5 +50,5 @@ let write_in_memory mem addr instruction rd rs1 imm line =
     let (opcode, funct3, _) = Hashtbl.find i_instructions instruction in
     let code = (imm << 20) || (rs1 << 15) || (funct3 << 12) ||
                (rd << 7) || opcode in
-    Memory.set_int32 mem addr code)
+    Arch.Memory.set_int32 mem addr code)
 

@@ -38,5 +38,5 @@ let write_in_memory mem addr instruction rs1 rs2 imm =
   let code = (imm12 << 31) || (imm10_5 << 25) || (rs2 << 20)   ||
              (rs1 << 15)   || (funct3 << 12)  || (imm4_1 << 8) ||
              (imm11 << 7)  || opcode in
-  Simulator.Memory.set_int32 mem addr code
+  Arch.Memory.set_int32 mem addr code
 

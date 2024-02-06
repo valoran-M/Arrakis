@@ -62,7 +62,7 @@ let assembler line e =
     exit 6
 
 let simulator e =
-  let open Simulator.Error in
+  let open Sim_utils.Error in
   match e with
   | Conversion_Failure ->
     eprintf "%a Couldn't convert an int32 to an int. @." error ();

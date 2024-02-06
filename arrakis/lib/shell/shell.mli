@@ -5,7 +5,7 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-val create : Simulator.Arch.t -> Syscall.Types.syscall -> Assembler.Debug.t ->
+val create : Arch.Riscv.t -> Syscall.Types.syscall -> Assembler.Debug.t ->
   Assembler.Label.t -> Types.state
 
 val run    : Types.state -> unit

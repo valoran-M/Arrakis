@@ -5,7 +5,6 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-open Simulator
 open Program
 
 let u_instructions = Hashtbl.create 2
@@ -29,5 +28,5 @@ let write_in_memory mem addr instruction rd imm =
   let (||) = Int32.logor in
   let (opcode, _) = Hashtbl.find u_instructions instruction in
   let code = (imm << 12) || (rd << 7) || opcode in
-  Memory.set_int32 mem addr code
+  Arch.Memory.set_int32 mem addr code
 

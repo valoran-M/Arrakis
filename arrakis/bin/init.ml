@@ -56,6 +56,6 @@ let init_syscall () =
     | s       -> raise (Init_error (Invalid_env s))
   in
   if not Options.unix_socket
-  then Syscall.Utils.set_stdout Unix.stdin Unix.stdout Unix.stderr;
+  then Syscall.Sutils.set_stdout Unix.stdin Unix.stdout Unix.stderr;
   syscall
 

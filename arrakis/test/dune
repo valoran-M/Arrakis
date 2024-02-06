@@ -1,3 +1,0 @@
-(test
- (name arrakis)
- (libraries alcotest simulator_test assembler_test))

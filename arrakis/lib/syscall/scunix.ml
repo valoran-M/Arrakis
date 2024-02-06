@@ -6,22 +6,22 @@
 (******************************************************************************)
 
 open Types
-open Utils
-open Simulator
+open Arch
+open Sutils
 
 let (>)  x y = Int32.unsigned_compare x y >  0
 
-let exit (arch : Arch.t) =
-  let status = Cpu.get_reg arch.cpu 10 in
+let exit (arch : Riscv.t) =
+  let status = Arch.Cpu.get_reg arch.cpu 10 in
   Exit (Int32.to_int status)
 
-let kill (arch : Arch.t) =
+let kill (arch : Riscv.t) =
   let pid = Cpu.get_reg arch.cpu 10    in
   let signal = Cpu.get_reg arch.cpu 11 in
   Unix.kill (Int32.to_int pid) (Int32.to_int signal);
   Continue
 
-let openat (arch : Arch.t) =
+let openat (arch : Riscv.t) =
   let dirfd = Cpu.get_reg arch.cpu 10 in
   let adr   = Cpu.get_reg arch.cpu 11 in
   let flags = Cpu.get_reg arch.cpu 12 in
@@ -52,12 +52,12 @@ let openat (arch : Arch.t) =
     Cpu.set_reg arch.cpu 10 (-1l);
     Continue
 
-let close (arch : Arch.t) =
+let close (arch : Riscv.t) =
   let fd = Cpu.get_reg arch.cpu 10 in
   close_fd fd;
   Continue
 
-let read channel (arch : Arch.t) =
+let read channel (arch : Riscv.t) =
   let fd    = Cpu.get_reg arch.cpu 10 in
   let buf   = Cpu.get_reg arch.cpu 11 in
   let count = Cpu.get_reg arch.cpu 12 in
@@ -76,7 +76,7 @@ let read channel (arch : Arch.t) =
       "@{<fg_red>Info:@} Syscall 'read' failed: Reading in unopened file descriptor.@.";
     Continue
 
-let write channel (arch : Arch.t) =
+let write channel (arch : Riscv.t) =
     let fd    = Cpu.get_reg arch.cpu 10 in
     let buf   = Cpu.get_reg arch.cpu 11 in
     let count = Cpu.get_reg arch.cpu 12 in
@@ -94,28 +94,28 @@ let write channel (arch : Arch.t) =
         "@{<fg_red>Info:@} Syscall 'write' failed: Writing in unopened file descriptor.@.";
       Continue
 
-let brk (arch: Arch.t) =
-  let new_addr   = Simulator.Cpu.get_reg arch.cpu 10 in
-  let stack_addr = Simulator.Cpu.get_reg arch.cpu 2  in
+let brk (arch: Riscv.t) =
+  let new_addr   = Cpu.get_reg arch.cpu 10 in
+  let stack_addr = Cpu.get_reg arch.cpu 2  in
   let success =
-    if new_addr < stack_addr && new_addr >= Simulator.Segment.heap_begin
+    if new_addr < stack_addr && new_addr >= Segment.heap_begin
     then 0l
     else -1l
   in
   Cpu.set_reg arch.cpu 10 success;
   Continue
 
-let getuid (arch : Arch.t) =
+let getuid (arch : Riscv.t) =
   let uid = Unix.getuid () in
   Cpu.set_reg arch.cpu 10 (Int32.of_int uid);
   Continue
 
-let geteuid (arch : Arch.t) =
+let geteuid (arch : Riscv.t) =
   let euid = Unix.geteuid () in
   Cpu.set_reg arch.cpu 10 (Int32.of_int euid);
   Continue
 
-let getcwd channel (arch : Arch.t) =
+let getcwd channel (arch : Riscv.t) =
   let buf  = Cpu.get_reg arch.cpu 10 in
   let size = Cpu.get_reg arch.cpu 11 in
   let str  = !cwd in
@@ -127,13 +127,13 @@ let getcwd channel (arch : Arch.t) =
   );
   Continue
 
-let chdir (arch : Arch.t) =
+let chdir (arch : Riscv.t) =
   let path = Cpu.get_reg arch.cpu 10      in
   let path = get_str_pointed_by arch path in
   cwd := path;
   Continue
 
-let mkdirat (arch : Arch.t) =
+let mkdirat (arch : Riscv.t) =
   let pathname = Cpu.get_reg arch.cpu 10 in
   let mode = Cpu.get_reg arch.cpu 11     in
 
@@ -142,7 +142,7 @@ let mkdirat (arch : Arch.t) =
   Continue
 
 (* Source: https://jborza.com/post/2021-05-11-riscv-linux-syscalls/ *)
-let syscall channel (arch : Arch.t) =
+let syscall channel (arch : Riscv.t) =
   let reg = Cpu.get_reg arch.cpu 17 in
   match reg with
   | 17l  -> getcwd     channel arch

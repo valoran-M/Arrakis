@@ -1,1 +1,3 @@
-(library (name simulator))
+(library
+  (libraries arch)
+  (name simulator))

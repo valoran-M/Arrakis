@@ -3,7 +3,7 @@
 
   let int_list_to_char_list =
     List.map (fun (i, s) ->
-      try Char.chr (Simulator.Utils.int32_to_int i)
+      try Char.chr (Sim_utils.Integer.int32_to_int i)
       with Invalid_argument _ ->
         raise (Error.Assembler_error
         (0, (Error.Parsing_error (s ^ " is not int [0,255]")))))

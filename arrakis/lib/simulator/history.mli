@@ -22,9 +22,9 @@ val create_history : unit -> t
 val add_history : int32 -> change -> t -> t
   (** [add_history pc change history] Add a new item to the history *)
 
-val step_back : Arch.t -> t -> t
+val step_back : Arch.Riscv.t -> t -> t
   (** [step_back arch history] Resets the simulator to the previous state *)
 
-val reset : Arch.t -> t -> t
+val reset : Arch.Riscv.t -> t -> t
   (** [reset arch history] Resets the simulator to the inital state *)
 

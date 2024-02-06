@@ -1,3 +1,0 @@
-(library
- (name assembler_test)
- (libraries alcotest assembler))

@@ -9,5 +9,5 @@ val init : Init.init_error -> unit
 
 val assembler : int -> Assembler.Error.t -> unit
 
-val simulator : Simulator.Error.t -> unit
+val simulator : Sim_utils.Error.t -> unit
 

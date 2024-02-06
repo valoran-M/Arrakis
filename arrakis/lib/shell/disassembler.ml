@@ -6,6 +6,7 @@
 (******************************************************************************)
 
 open Simulator
+open Sim_utils.Integer
 
 exception Invalid_instruction
 
@@ -64,13 +65,13 @@ let print_code _arch code =
     Format.sprintf "%s %s, %s, %d"
       (Hashtbl.find i_to_string (opcode, inst.funct3))
       (reg_to_str inst.rd) (reg_to_str inst.rs1)
-      (Int32.to_int (Simulator.Utils.sign_extended inst.imm 12))
+      (Int32.to_int (sign_extended inst.imm 12))
   | 0b0000011l ->
     let inst = Instructions.I_type.decode code in
     Format.sprintf "%s %s, %d(%s)"
       (Hashtbl.find i_to_string (opcode, inst.funct3))
       (reg_to_str inst.rd)
-      (Int32.to_int (Simulator.Utils.sign_extended inst.imm 12))
+      (Int32.to_int (sign_extended inst.imm 12))
       (reg_to_str inst.rs1)
   (* S *)
   | 0b0100011l ->
@@ -78,7 +79,7 @@ let print_code _arch code =
     Format.sprintf "%s %s, %d(%s)"
       (Hashtbl.find s_to_string inst.funct3)
       (reg_to_str inst.rs2)
-      (Simulator.Utils.int32_to_int (Simulator.Utils.sign_extended inst.imm 12))
+      (int32_to_int (sign_extended inst.imm 12))
       (reg_to_str inst.rs1)
   (* B *)
   | 0b1100011l  ->
@@ -86,7 +87,7 @@ let print_code _arch code =
     Format.sprintf "%s %s, %s, 0x%x"
       (Hashtbl.find b_to_string inst.funct3)
       (reg_to_str inst.rs1) (reg_to_str inst.rs2)
-      (Simulator.Utils.int32_to_int inst.imm)
+      (int32_to_int inst.imm)
   (* U *)
   | 0b0110111l | 0b0010111l  ->
     let inst = Instructions.U_type.decode code in

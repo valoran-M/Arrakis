@@ -5,6 +5,10 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
+open Arch
+open Sim_utils
+open Sim_utils.Integer 
+
 (* Instructions format ------------------------------------------------------ *)
 
 (* Instruction format :
@@ -144,7 +148,7 @@ module I_type = struct
     }
 
   let execute_arith instruction rs1 =
-    let imm = Utils.sign_extended instruction.imm 12 in
+    let imm = sign_extended instruction.imm 12 in
     (* if imm[5:11] = 0x20 or 0x00 for shift *)
     let arith = Int32.shift_right_logical imm 5 = 0x20l in
     let logic = Int32.shift_right_logical imm 5 = 0x00l in
@@ -161,12 +165,12 @@ module I_type = struct
     | _ -> Error.i_invalid_arith instruction.funct3 instruction.imm
 
   let execute_load instruction rs1 memory =
-    let imm = Utils.sign_extended instruction.imm 12 in
+    let imm = sign_extended instruction.imm 12 in
     let addr = rs1 + imm in
     match instruction.funct3 with
-    | 0x0 -> Utils.sign_extended (Memory.get_byte memory addr) 8   (* LB  *)
-    | 0x1 -> Utils.sign_extended (Memory.get_int16 memory addr) 16 (* LH  *)
-    | 0x2 -> Utils.sign_extended (Memory.get_int32 memory addr) 32 (* LW  *)
+    | 0x0 -> sign_extended (Memory.get_byte memory addr) 8   (* LB  *)
+    | 0x1 -> sign_extended (Memory.get_int16 memory addr) 16 (* LH  *)
+    | 0x2 -> sign_extended (Memory.get_int32 memory addr) 32 (* LW  *)
     | 0x4 -> Memory.get_byte memory addr                           (* LBU *)
     | 0x5 -> Memory.get_int16 memory addr                          (* LHU *)
     | _ -> Error.i_invalid_load instruction.funct3
@@ -184,7 +188,7 @@ module S_type = struct
       funct3 = (code && func3_mask) >> 12;
       rs1 = (code && rs1_mask) >> 15;
       rs2 = (code && rs2_mask) >> 20;
-      imm = Utils.sign_extended (Int32.logor
+      imm = sign_extended (Int32.logor
               (Int32.shift_right_logical (Int32.logand code func7_mask) 20)
               (Int32.shift_right_logical (Int32.logand code rd_mask) 7)) 12;
     }
@@ -223,7 +227,7 @@ module B_type = struct
     let imm10_5 = (imm_7 && 0b0111111l) << 5l in
     let imm11   = (imm_5 && 0b00001l) << 11l  in
     let imm4_1  = imm_5 && 0b11110l           in
-    let imm = Utils.sign_extended (imm12 || imm11 || imm10_5 || imm4_1) 13 in
+    let imm = sign_extended (imm12 || imm11 || imm10_5 || imm4_1) 13 in
 
     let (>>) = Int.shift_right_logical in
     let (&&) x y = Int32.to_int (x && y) in
@@ -274,7 +278,7 @@ module J_type = struct
     let imm11 = (imm_31_20 && 0b1l) << 11l         in
     let imm10_1 = (imm_31_20 && 0b11111111110l)    in
     let imm20 = (imm_31_20 && 0b100000000000l)     in
-    let imm = Utils.sign_extended (imm20 || imm19_12 || imm11 || imm10_1) 21 in
+    let imm = sign_extended (imm20 || imm19_12 || imm11 || imm10_1) 21 in
 
     let (>>) = Int.shift_right_logical in
     let (&&) x y = Int32.to_int (x && y) in

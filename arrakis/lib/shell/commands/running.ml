@@ -61,7 +61,7 @@ let step : Types.command = {
 
 let run_execute args (state : Types.state) =
     let rec sub first (state : Types.state) =
-      let addr = Simulator.Cpu.get_pc state.arch.cpu in
+      let addr = Arch.Cpu.get_pc state.arch.cpu in
       if first || state.program_run || not (Hashtbl.mem state.breakpoints addr) then
         let new_state = step_execute args state in
         sub false new_state

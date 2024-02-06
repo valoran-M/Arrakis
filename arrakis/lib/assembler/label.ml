@@ -78,7 +78,7 @@ let rec get_label_address_memory (memory : memory_line list) labels addr =
     get_label_address_memory l labels addr
 
 let get_label_address (prog : program) =
-  let open Simulator.Segment in
+  let open Arch.Segment in
   let labels =
     {
       label_to_address = Hashtbl.create 16;

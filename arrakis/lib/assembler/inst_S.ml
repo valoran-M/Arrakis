@@ -32,5 +32,5 @@ let write_in_memory mem addr instruction rs2 rs1 imm =
   let imm4_0  = Utils.get_interval imm  4 0 in
   let code = (imm11_5 << 25) || (rs2 << 20)   || (rs1 << 15)
           || (funct3 << 12)  || (imm4_0 << 7) || opcode in
-  Simulator.Memory.set_int32 mem addr code
+  Arch.Memory.set_int32 mem addr code
 

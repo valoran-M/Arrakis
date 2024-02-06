@@ -129,6 +129,6 @@ let remove_pseudo prog labels =
     | (Prog_Instr _ as inst) :: prog -> iterator prog (addr + 4l) (inst :: acc)
     | (_ as inst)            :: prog -> iterator prog addr        (inst :: acc)
   in
-  let open Simulator.Segment in
+  let open Arch.Segment in
   iterator prog text_begin [] |> List.rev
 

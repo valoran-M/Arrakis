@@ -5,8 +5,8 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-open Cpu
-open Memory
+open Arch.Cpu
+open Arch.Memory
 
 exception History_Empty
 
@@ -27,8 +27,8 @@ let create_history () = []
 let add_history last_pc change history =
   { last_pc; change} :: history
 
-let recover_change (change : sim_change) (arch : Arch.t) =
-  Cpu.set_pc arch.cpu change.last_pc;
+let recover_change (change : sim_change) (arch : Arch.Riscv.t) =
+  Arch.Cpu.set_pc arch.cpu change.last_pc;
   match change.change with
   | Change_Memory_8  (addr, value) -> set_byte  arch.memory addr value
   | Change_Memory_16 (addr, value) -> set_int16 arch.memory addr value

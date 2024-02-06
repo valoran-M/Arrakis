@@ -6,6 +6,7 @@
 (******************************************************************************)
 
 open History
+open Arch
 open Cpu
 
 type return =
@@ -49,19 +50,19 @@ let exec (instruction : Int32.t) (cpu : Cpu.t) memory =
     next_pc cpu; Change_Register (decode.rd, last_value)
   | 0b1100111l ->
     let decode = I_type.decode instruction in
-    let imm    = Utils.sign_extended decode.imm 12 in
+    let imm    = Sim_utils.Integer.sign_extended decode.imm 12 in
     let rs1 = Regs.get cpu.regs decode.rs1 in
     (match decode.funct3 with
      | 0x0 ->                                       (* JALR *)
         let last_value = Regs.get cpu.regs decode.rd in
         set_reg cpu decode.rd (Int32.add (get_pc cpu) 4l);
         set_pc cpu (Int32.add rs1 imm); Change_Register (decode.rd, last_value)
-     | _ -> Error.i_invalid decode.funct3 opcode decode.imm)
+     | _ -> Sim_utils.Error.i_invalid decode.funct3 opcode decode.imm)
   | 0b1110011l ->
     let decode = I_type.decode instruction in
     if Int32.equal decode.imm 0x0l
     then (next_pc cpu; raise Syscall)
-    else Error.i_invalid decode.funct3 opcode decode.imm
+    else Sim_utils.Error.i_invalid decode.funct3 opcode decode.imm
   (* S type *)
   | 0b0100011l ->
     let decode = S_type.decode instruction in
@@ -93,9 +94,9 @@ let exec (instruction : Int32.t) (cpu : Cpu.t) memory =
     let last_value = get_reg cpu decode.rd in
     set_reg cpu decode.rd (Int32.add (get_pc cpu) 4l);
     add_pc cpu decode.imm; Change_Register (decode.rd, last_value)
-  | _ -> Error.opcode_invalid opcode
+  | _ -> Sim_utils.Error.opcode_invalid opcode
 
-let exec_instruction (arch : Arch.t) (history : History.t) =
+let exec_instruction (arch : Riscv.t) (history : History.t) =
   let open History in
   let code = Memory.get_int32 arch.memory (Cpu.get_pc arch.cpu) in
   let last_pc = Cpu.get_pc arch.cpu in

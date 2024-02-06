@@ -29,7 +29,7 @@ and state = {
     out_channel : Format.formatter;
 
     history     : Simulator.History.t;
-    arch        : Simulator.Arch.t;
+    arch        : Arch.Riscv.t;
     debug       : Assembler.Debug.t;
     labels      : Assembler.Label.t;
 

@@ -27,7 +27,7 @@ module I_type : sig
     (** [execute_arith inst rs1] execute arith I [inst]
         with [rs1] register value *)
 
-  val execute_load  : t -> int32 -> Memory.t -> int32
+  val execute_load  : t -> int32 -> Arch.Memory.t -> int32
     (** [execute_load inst rs1 mem] execute load I [inst]
         with [rs1] register value *)
 end
@@ -38,7 +38,7 @@ module S_type : sig
   val decode : int32 -> t
     (** [decode code] decode S instruction [code] *)
 
-  val execute : t -> int32 -> int32 -> Memory.t -> History.change
+  val execute : t -> int32 -> int32 -> Arch.Memory.t -> History.change
     (** [execute inst rs1 rs2 mem] execute S [inst] with
         [rs1] [rs2] register value *)
 end

@@ -7,4 +7,4 @@
 
 type syscall_ret = Exit of int | Continue
 
-type syscall = Format.formatter -> Simulator.Arch.t -> syscall_ret
+type syscall = Format.formatter -> Arch.Riscv.t -> syscall_ret

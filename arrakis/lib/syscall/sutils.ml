@@ -5,7 +5,7 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-open Simulator
+open Arch 
 open Types
 
 let invalid_sc channel id =
@@ -40,7 +40,7 @@ let open_fd fd =
 
 (* Random ------------------------------------------------------------------- *)
 
-let get_str_pointed_by (arch : Arch.t) adr =
+let get_str_pointed_by (arch : Riscv.t) adr =
   let res = ref "" in
   let adr = ref adr in
   let c   = ref (Memory.get_byte arch.memory !adr) in

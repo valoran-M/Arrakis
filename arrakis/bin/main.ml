@@ -10,7 +10,7 @@ open Format
 
 (* Entry point to Arrakis *)
 
-let version = "1.0.1-dev"
+let version = "1.1.0-dev"
 
 let main =
   try

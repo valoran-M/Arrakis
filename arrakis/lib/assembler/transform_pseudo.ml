@@ -15,8 +15,6 @@ open Program
 *)
 
 (*
-  Function that translates pseudo instructions
-
   To obtain a terminal recurrence, one inverts the generated list.
 
   /!\ If the pseudo instruction generates several instructions, the instructions
@@ -37,7 +35,7 @@ let translate_pseudo pseudo line code addr labels =
   let translate_li rd imm =
     let (hi, lo) = hi_lo imm addr line labels in
     if hi = 0l
-    then [Prog_Instr (line, code, I(ADDI, rd, 0l, Imm lo))]
+    then [ Prog_Instr (line, code, I(ADDI, rd, 0l, Imm lo))]
     else [ Prog_Instr (line, code, I(ADDI, rd, 0l, Imm lo));
            Prog_Instr (line, code, U(LUI,  rd,     Imm hi))]
   in

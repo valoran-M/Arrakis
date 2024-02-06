@@ -12,7 +12,6 @@
   You can also declare global labels. So we want a list of global labels.
 *)
 
-(* open Utils *)
 open Error
 open Program
 
@@ -20,7 +19,7 @@ let ( * ) = Int32.mul
 let ( + ) = Int32.add
 let ( - ) = Int32.sub
 
-type t = 
+type t =
   {
     label_to_address : (string, int32) Hashtbl.t;
     global_label     : (string, int32) Hashtbl.t;
@@ -62,8 +61,8 @@ let rec get_label_address_program prog labels addr =
 let rec get_label_address_memory (memory : memory_line list) labels addr =
   match memory with
   | [] -> ()
-  | Mem_Value _  ::l -> get_label_address_memory l labels (addr + 0x4l)
-  | Mem_Bytes bs ::l ->
+  | Mem_Value _  :: l -> get_label_address_memory l labels (addr + 0x4l)
+  | Mem_Bytes bs :: l ->
     let new_addr = addr + Int32.of_int (List.length bs) in
     get_label_address_memory l labels new_addr
   | Mem_Asciz s    :: l ->
@@ -72,15 +71,15 @@ let rec get_label_address_memory (memory : memory_line list) labels addr =
   | Mem_Word lw     :: l ->
     let offset = 0x4l * Int32.of_int (List.length lw) in
     get_label_address_memory l labels (addr + offset)
-  | Mem_Zero nz    ::l -> get_label_address_memory l labels (addr+4l*nz)
-  | Mem_GLabel _   ::l -> get_label_address_memory l labels addr
-  | Mem_Label label::l ->
+  | Mem_Zero nz     :: l -> get_label_address_memory l labels (addr+4l*nz)
+  | Mem_GLabel _    :: l -> get_label_address_memory l labels addr
+  | Mem_Label label :: l ->
     add_address labels label addr;
     get_label_address_memory l labels addr
 
 let get_label_address (prog : program) =
   let open Simulator.Segment in
-  let labels = 
+  let labels =
     {
       label_to_address = Hashtbl.create 16;
       global_label     = Hashtbl.create 16;

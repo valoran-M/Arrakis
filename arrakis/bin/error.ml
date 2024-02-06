@@ -71,7 +71,6 @@ let error_assembly line error =
       line (Int32.to_string v) (Int32.to_string min) (Int32.to_string max);
     exit 6
 
-
 let error_simulator error =
   let open Simulator.Error in
   match error with

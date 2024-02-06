@@ -1,4 +1,4 @@
-# 1.0.1 (???)
+# 1.1.0 (???)
 
 * Migration to codeberg
 * Added a '--version' to display current arrakis version

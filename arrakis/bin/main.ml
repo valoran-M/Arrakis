@@ -17,10 +17,11 @@ let main =
     if show_version then printf "%s@." version else
 
     (* Init ----------------------------------------------------------------- *)
+
     Init.colors_init ();
     Init.check_root  ();
     let input_file = Init.get_input_file () in
-    let syscall = Init.init_syscall () in
+    let syscall    = Init.init_syscall   () in
 
     (* Main ----------------------------------------------------------------- *)
 
@@ -44,9 +45,9 @@ let main =
       else Shell.shell arch history labels debug syscall
   with
   | Error.Main_error error ->
-    Error.error_main error
+      Error.error_main error
   | Assembler.Error.Assembler_error (line, error) ->
-    Error.error_assembly line error
+      Error.error_assembly line error
   | Simulator.Error.Simulator_error error ->
-    Error.error_simulator error
+      Error.error_simulator error
 

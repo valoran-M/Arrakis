@@ -19,7 +19,7 @@ open Error
 open Program
 
 let translate (instruction : instruction) mem addr line labels =
-  let imm_to_int32 = Utils.imm_to_int32 labels in
+  let imm_to_int32 = imm_to_int32 labels in
 
   match instruction with
   | R (inst, rd, rs1, rs2) -> Inst_R.write_in_memory mem addr inst rd rs1 rs2

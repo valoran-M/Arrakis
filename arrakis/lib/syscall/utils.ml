@@ -10,7 +10,7 @@ open Types
 
 let invalid_sc channel id =
   Format.fprintf channel
-    "@{<fg_red>Error:@} @{<fg_yellow>'%d'@} Invalid syscall.@."
+    "@{<fg_blue>Info:@} @{<fg_yellow>'%d'@} Invalid syscall.@."
     (Int32.to_int id);
   Continue
 

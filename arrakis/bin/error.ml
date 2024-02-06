@@ -15,7 +15,7 @@ open Format
   - Error display functions
 *)
 
-(* Ui Error ----------------------------------------------------------------- *)
+(* UI Error ----------------------------------------------------------------- *)
 
 type main_error =
   | Invalid_env of string

@@ -19,17 +19,18 @@
   +-----------------------------------------------------------------------+
 *)
 
-let rd_mask     = Int32.of_int 0b00000000000000000000111110000000
-let func3_mask  = Int32.of_int 0b00000000000000000111000000000000
-let rs1_mask    = Int32.of_int 0b00000000000011111000000000000000
-let rs2_mask    = Int32.of_int 0b00000001111100000000000000000000
-let func7_mask  = Int32.of_int 0b11111110000000000000000000000000
-let imm12_mask  = Int32.of_int 0b11111111111100000000000000000000
-let imm20_mask  = Int32.of_int 0b11111111111111111111000000000000
+let rd_mask    = Int32.of_int 0b00000000000000000000111110000000
+let func3_mask = Int32.of_int 0b00000000000000000111000000000000
+let rs1_mask   = Int32.of_int 0b00000000000011111000000000000000
+let rs2_mask   = Int32.of_int 0b00000001111100000000000000000000
+let func7_mask = Int32.of_int 0b11111110000000000000000000000000
+let imm12_mask = Int32.of_int 0b11111111111100000000000000000000
+let imm20_mask = Int32.of_int 0b11111111111111111111000000000000
 
 (* Int 32 operator ---------------------------------------------------------- *)
 
 (* Basic arithmetic *)
+
 let (-)   = Int32.sub
 let (+)   = Int32.add
 let (^)   = Int32.logxor
@@ -69,8 +70,8 @@ let mulhsu x y =
 
 (* Logical base *)
 
-let (<<)  x y = Int32.shift_left x (Int32.to_int y)
-let (>>)  x y = Int32.shift_right x (Int32.to_int y)
+let (<<)  x y = Int32.shift_left          x (Int32.to_int y)
+let (>>)  x y = Int32.shift_right         x (Int32.to_int y)
 let (>>>) x y = Int32.shift_right_logical x (Int32.to_int y)
 
 let (=) = Int32.equal
@@ -236,12 +237,12 @@ module B_type = struct
   let execute instruction rs1 rs2 =
     let test f x y = if f x y then instruction.imm else 4l in
     match instruction.funct3 with
-    | 0x0 -> test (=)   rs1 rs2         (* BEQ  *)
-    | 0x1 -> test (<>)  rs1 rs2         (* BNE  *)
-    | 0x4 -> test (<)  rs1 rs2          (* BLT  *)
-    | 0x5 -> test (>=)  rs1 rs2         (* BGE  *)
-    | 0x6 -> test (<.) rs1 rs2          (* BLTU *)
-    | 0x7 -> test (>=.) rs1 rs2         (* BGEU *)
+    | 0x0 -> test (=)   rs1 rs2 (* BEQ  *)
+    | 0x1 -> test (<>)  rs1 rs2 (* BNE  *)
+    | 0x4 -> test (<)   rs1 rs2 (* BLT  *)
+    | 0x5 -> test (>=)  rs1 rs2 (* BGE  *)
+    | 0x6 -> test (<.)  rs1 rs2 (* BLTU *)
+    | 0x7 -> test (>=.) rs1 rs2 (* BGEU *)
     | _ -> Error.b_invalid instruction.funct3
 end
 

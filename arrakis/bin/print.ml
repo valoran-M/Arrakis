@@ -17,7 +17,7 @@ let ( * ) = Int32.mul
 (* Progam ------------------------------------------------------------------  *)
 
 let print_program_header channel =
-  Format.fprintf channel "%3s | %2s%2s @{<bold>%10s@} | @{<bold>%12s@} | @{<bold>%-18s@} | @{<bold>%-18s@} |\n"
+  fprintf channel "%3s | %2s%2s @{<bold>%10s@} | @{<bold>%12s@} | @{<bold>%-18s@} | @{<bold>%-18s@} |\n"
     "" "" "" "Adress" "Machine Code" "Basic Code" "Original Code"
 
 let print_addr channel arch debug breakpoints addr pc code =
@@ -27,9 +27,9 @@ let print_addr channel arch debug breakpoints addr pc code =
     in
     let addr_pc               = if addr = pc then ">" else ""        in
     let addr_str              = Utils.int32_to_int addr              in
-    let addr_str              = Format.sprintf "0x%08x" addr_str     in
+    let addr_str              = sprintf "0x%08x" addr_str            in
     let machinec_str          = Utils.int32_to_int code              in
-    let machinec_str          = Format.sprintf "0x%08x" machinec_str in
+    let machinec_str          = sprintf "0x%08x" machinec_str        in
     let basicc_str            = print_code arch code                 in
     let linenb, orignal_code  = Assembler.Debug.get_line debug addr  in
 
@@ -127,14 +127,14 @@ let decode_memory_args channel (arch: Arch.t) args =
       let start = i32_or_reg_of_str start arch in
       print_memory channel arch start size_default
     with _ ->
-        printf "@{<fg_red>Error:@} Incorrect argument to print memory. @.")
+        printf "@{<fg_red>Error:@} Incorrect argument to print memory.@.")
   | [start; size] -> (
       try
         let start = i32_or_reg_of_str start arch in
-        let size = int_of_string size            in
+        let size  = int_of_string size           in
         print_memory channel arch start size
       with _ ->
-        printf "@{<fg_red>Error:@} Incorrect argument to print memory. @.")
+        printf "@{<fg_red>Error:@} Incorrect argument to print memory.@.")
   | _ -> ()
 
 (* Regs --------------------------------------------------------------------- *)
@@ -172,7 +172,7 @@ let print_list_regs channel (arch: Arch.t) =
           "  %s -> 0x%08x\n" regs.(i)
           (Simulator.Utils.int32_to_int (Cpu.get_reg arch.cpu i))
     with _ ->
-      fprintf channel "@{<fg_red>Error@}: '%s' isn't a register@." reg
+      fprintf channel "@{<fg_red>Error@}: '%s' isn't a register.@." reg
   )
 
 let decode_regs_args channel (arch: Arch.t) args =

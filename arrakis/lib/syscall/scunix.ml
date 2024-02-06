@@ -135,7 +135,7 @@ let chdir (arch : Arch.t) =
 
 let mkdirat (arch : Arch.t) =
   let pathname = Cpu.get_reg arch.cpu 10 in
-  let mode = Cpu.get_reg arch.cpu 11 in
+  let mode = Cpu.get_reg arch.cpu 11     in
 
   let pathname = get_str_pointed_by arch pathname in
   Unix.mkdir pathname (Int32.to_int mode);

@@ -6,6 +6,7 @@
 (******************************************************************************)
 
 open Format
+open Common
 
 let all_commands = [
   Running.reset;
@@ -43,9 +44,10 @@ let parse_command args (state : Types.state) command =
   match Hashtbl.find_opt state.commands command with
   | Some cmd -> cmd.execute args state
   | None     ->
-      Format.fprintf state.out_channel
-      "@{<fg_red>Error:@} Undefined command: @{<fg_yellow>'%s'@}. \
-      Try @{<fg_green>'help'@}.@." command; state
+      fprintf state.out_channel "%a Undefined command: @{<fg_yellow>'%s'@}. "
+        error () command;
+      fprintf state.out_channel "Try @{<fg_green>'help'@}.@.";
+      state
 
 let rec run (state : Types.state) =
   fprintf state.out_channel "> %!";

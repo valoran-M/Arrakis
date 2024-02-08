@@ -3,7 +3,6 @@
 ## 1.1.0
 
 * Allow usage of program arguments: Use syntax `arrakis helloworld.s -- hello`
-* Change alcotest and argsh to optional dependencies
 
 ### Improve shell
 

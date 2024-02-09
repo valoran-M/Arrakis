@@ -12,6 +12,7 @@
 * Improved code printing: Now always 80 character wide, more readeable and
   easier to parse
 * Greatly improved the codebase
+* Support for `.ascii` assembler directive
 
 # 1.0.0 (2023-19-9)
 

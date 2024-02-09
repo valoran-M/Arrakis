@@ -63,6 +63,10 @@ let loop_memory mem labels addr (prog : memory_line) =
       Memory.set_byte mem addr (char_to_int32 v);
       addr + 1l)
     addr lb
+  | Mem_Ascii s ->
+    String.fold_left
+      (fun addr v -> Memory.set_byte mem addr (char_to_int32 v); addr + 1l)
+      addr s
   | Mem_Asciz s ->
     let addr =
       String.fold_left (fun addr v ->

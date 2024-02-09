@@ -112,6 +112,7 @@ type memory_line =
   | Mem_Value  of int32
   | Mem_Zero   of int32
   | Mem_Bytes  of char list
+  | Mem_Ascii  of string
   | Mem_Asciz  of string
   | Mem_Word   of int32 list
   | Mem_GLabel of int * string

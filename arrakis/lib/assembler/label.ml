@@ -65,7 +65,10 @@ let rec get_label_address_memory (memory : memory_line list) labels addr =
   | Mem_Bytes bs :: l ->
     let new_addr = addr + Int32.of_int (List.length bs) in
     get_label_address_memory l labels new_addr
-  | Mem_Asciz s    :: l ->
+  | Mem_Ascii s :: l ->
+    let new_addr = addr + Int32.of_int (String.length s) in
+    get_label_address_memory l labels new_addr
+  | Mem_Asciz s :: l ->
     let new_addr = addr + Int32.of_int (String.length s) + 1l in
     get_label_address_memory l labels new_addr
   | Mem_Word lw     :: l ->

@@ -38,7 +38,7 @@ let step_execute _args (state : Types.state) =
       | Continue  -> state.program_end, history
       | Exit code ->
         Format.fprintf state.out_channel
-          "\n@%a Exiting with code @{<fg_yellow>'%d'@}.@."
+          "\n%a Exiting with code @{<fg_yellow>'%d'@}.@."
           info ()
           code;
           true, history
@@ -49,7 +49,7 @@ let step_execute _args (state : Types.state) =
       history;
     }
 
-let step : Types.command = {
+let step : Types.cmd = {
   long_form   = "step";
   short_form  = "s";
   name        = "(s)tep";
@@ -62,14 +62,14 @@ let step : Types.command = {
 let run_execute args (state : Types.state) =
     let rec sub first (state : Types.state) =
       let addr = Arch.Cpu.get_pc state.arch.cpu in
-      if first || state.program_run || not (Hashtbl.mem state.breakpoints addr) then
+      if not state.program_end && (first || state.program_run || not (Hashtbl.mem state.breakpoints addr)) then
         let new_state = step_execute args state in
         sub false new_state
       else state
     in
     sub true state
 
-let step : Types.command = {
+let step : Types.cmd = {
   long_form   = "run";
   short_form  = "r";
   name        = "(r)un";
@@ -88,7 +88,7 @@ let prev_execute _args (state : Types.state) =
   in
   { state with history }
 
-let prev : Types.command = {
+let prev : Types.cmd = {
   long_form   = "previous";
   short_form  = "pre";
   name        = "(pre)vious";
@@ -106,7 +106,7 @@ let reset_execute _args (state : Types.state) =
     history     = Simulator.History.reset state.arch state.history;
   }
 
-let reset : Types.command = {
+let reset : Types.cmd = {
   long_form   = "reset";
   short_form  = "res";
   name        = "(res)et";

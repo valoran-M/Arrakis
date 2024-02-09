@@ -198,7 +198,7 @@ let execute args (state : Types.state) =
   end;
   state
 
-let print : Types.command = {
+let print : Types.cmd = {
   long_form   = "print";
   short_form  = "p";
   name        = "(p)rint";

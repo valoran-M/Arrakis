@@ -19,35 +19,36 @@ let all_commands = [
 ]
 
 let create arch syscall debug labels : Types.state =
-  let commands = Hashtbl.create 64 in
-  List.iter (fun (cmd : Types.command) ->
-    Hashtbl.add commands cmd.short_form cmd;
-    Hashtbl.add commands cmd.long_form cmd)
+  let cmds = Hashtbl.create (List.length all_commands) in
+  List.iter (fun (cmd : Types.cmd) ->
+    Hashtbl.add cmds cmd.short_form cmd;
+    Hashtbl.add cmds cmd.long_form  cmd)
   all_commands;
   {
-    out_channel = Format.std_formatter;
+    (* Shell state *)
+    out_channel  = Format.std_formatter;
+    cmds;
+    cmds_history = [||];
+    breakpoints  = Hashtbl.create 64;
+    program_run  = false;
+    program_end  = false;
 
-    history     = Simulator.History.create_history ();
+    (* Program state *)
+    history = Simulator.History.create_history ();
     arch;
     debug;
     labels;
-
-    breakpoints = Hashtbl.create 64;
-    program_run = false;
-    program_end = false;
     syscall;
-
-    commands;
   }
 
-let parse_command args (state : Types.state) command =
-  match Hashtbl.find_opt state.commands command with
+let parse_command args (state : Types.state) cmd =
+  match Hashtbl.find_opt state.cmds cmd with
   | Some cmd -> cmd.execute args state
   | None     ->
-      fprintf state.out_channel "%a Undefined command: @{<fg_yellow>'%s'@}. "
-        error () command;
-      fprintf state.out_channel "Try @{<fg_green>'help'@}.@.";
-      state
+    fprintf state.out_channel "%a Undefined command: @{<fg_yellow>'%s'@}. "
+      error () cmd;
+    fprintf state.out_channel "Try @{<fg_green>'help'@}.@.";
+    state
 
 let rec run (state : Types.state) =
   fprintf state.out_channel "> %!";

@@ -5,7 +5,7 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-type command = {
+type cmd = {
 
   (* Name to type to invoke said command *)
   long_form   : string;
@@ -26,18 +26,19 @@ type command = {
 
 and state = {
 
-    out_channel : Format.formatter;
+  (* Shell state *)
+  out_channel  : Format.formatter;
+  cmds         : (string, cmd) Hashtbl.t;
+  cmds_history : string array;
+  breakpoints  : (int32,  int) Hashtbl.t;
+  program_run  : bool;
+  program_end  : bool;
 
-    history     : Simulator.History.t;
-    arch        : Arch.Riscv.t;
-    debug       : Assembler.Debug.t;
-    labels      : Assembler.Label.t;
+  (* Program state *)
+  history      : Simulator.History.t;
+  arch         : Arch.Riscv.t;
+  debug        : Assembler.Debug.t;
+  labels       : Assembler.Label.t;
+  syscall      : Syscall.Types.syscall;
 
-    breakpoints : (int32, int) Hashtbl.t;
-    program_run : bool;
-    program_end : bool;
-    syscall     : Syscall.Types.syscall;
-
-    commands    : (string, command) Hashtbl.t;
-
-  }
+}

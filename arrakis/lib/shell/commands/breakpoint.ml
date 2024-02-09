@@ -83,7 +83,7 @@ let execute args (state : Types.state) =
   end;
   state (* As we changed it's hashtbl, the state is actually changed here *)
 
-let breakpoint : Types.command = {
+let breakpoint : Types.cmd = {
   long_form   = "breakpoint";
   short_form  = "b";
   name        = "(b)reakpoint";

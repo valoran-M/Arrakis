@@ -11,11 +11,11 @@ let general (state : Types.state) =
 
   fprintf state.out_channel "%2s@{<fg_green>General help:@}\n\n" "";
 
-  Hashtbl.iter (fun k (cmd : Types.command) ->
+  Hashtbl.iter (fun k (cmd : Types.cmd) ->
     if k = cmd.long_form then
     fprintf state.out_channel "%2s@{<fg_green>*@} %s\n\n%4s%s\n\n"
     "" cmd.name "" cmd.description)
-  state.commands
+  state.cmds
 
 let breakpoint channel =
   Format.fprintf channel {|
@@ -76,7 +76,7 @@ let execute args (state : Types.state) =
   end;
   state
 
-let help : Types.command = {
+let help : Types.cmd = {
   long_form   = "help";
   short_form  = "h";
   name        = "(h)elp";

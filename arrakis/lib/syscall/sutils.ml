@@ -5,7 +5,7 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-open Arch 
+open Arch
 open Types
 
 let invalid_sc channel id =

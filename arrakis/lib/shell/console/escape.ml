@@ -23,4 +23,5 @@ let cursor_forward n = sprintf "%s%dC" csi n
 let cursor_back    n = sprintf "%s%dD" csi n
 
 (* Display *)
-let display_erase  n = sprintf "%s%dJ" csi n
+let erase_display n = sprintf "%s%dJ" csi n
+let erase_line    n = sprintf "%s%dJ" csi n

@@ -24,7 +24,7 @@ let (<=) x y = Int32.compare x y <=  0
 let (>=) x y = Int32.compare x y >=  0
 
 let imm_to_int32 labels line addr = function
-  | Imm imm     -> imm
+  | Imm   imm   -> imm
   | Label label -> Label.get_address labels label line - addr
 
 let hi_lo imm addr line label_address =

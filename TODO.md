@@ -3,6 +3,8 @@
 ## 1.1.0
 
 * Allow usage of program arguments: Use syntax `arrakis helloworld.s -- hello`
+* Re-enable the `just-run` option
+* In `CONTRIBUTING.md`, write a contributor guide on where to find stuff
 
 ### Improve shell
 

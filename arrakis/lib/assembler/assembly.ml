@@ -6,7 +6,7 @@
 (******************************************************************************)
 
 (*
-  The assembly code is transformed in byte code.
+  Translation of assembly code to byte code.
 
   parser ->
   get_label_address ->
@@ -55,13 +55,12 @@ let loop_prog mem debug labels addr prog  =
 
 let loop_memory mem labels addr (prog : memory_line) =
   match prog with
-  | Mem_Label _              -> addr
   | Mem_GLabel (line, label) -> Label.made_global labels label line; addr
-  | Mem_Value v              -> Memory.set_int32 mem addr v; addr + 4l
+  | Mem_Label _  -> addr
+  | Mem_Value v  -> Memory.set_int32 mem addr v; addr + 4l
   | Mem_Bytes lb ->
-    List.fold_left (fun addr v ->
-      Memory.set_byte mem addr (char_to_int32 v);
-      addr + 1l)
+    List.fold_left
+      (fun addr v -> Memory.set_byte mem addr (char_to_int32 v); addr + 1l)
     addr lb
   | Mem_Ascii s ->
     String.fold_left
@@ -69,15 +68,14 @@ let loop_memory mem labels addr (prog : memory_line) =
       addr s
   | Mem_Asciz s ->
     let addr =
-      String.fold_left (fun addr v ->
-        Memory.set_byte mem addr (char_to_int32 v);
-        addr + 1l)
+      String.fold_left
+      (fun addr v -> Memory.set_byte mem addr (char_to_int32 v); addr + 1l)
       addr s
     in
     Memory.set_byte mem addr 0l; (addr + 1l)
   | Mem_Word words ->
-    List.fold_left (fun addr v ->
-      Memory.set_int32 mem addr v; addr + 4l)
+    List.fold_left
+      (fun addr v -> Memory.set_int32 mem addr v; addr + 4l)
       addr words
   | Mem_Zero nz ->
     Memory.set_32b_zero mem addr nz;
@@ -92,11 +90,9 @@ let assembly code =
     let prog = Parser.program Lexer.token code in
 
     let labels = Label.get_label_address prog in
-    ignore (List.fold_left (loop_memory mem labels)
-      static_being prog.memory);
+    ignore (List.fold_left (loop_memory mem labels) static_being prog.memory);
     let prog = Transform_pseudo.remove_pseudo prog.program labels in
-    ignore (List.fold_left (loop_prog mem debug labels)
-      text_begin prog);
+    ignore (List.fold_left (loop_prog mem debug labels) text_begin prog);
 
     (mem, labels, debug)
   with Parser.Error ->

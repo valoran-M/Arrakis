@@ -7,7 +7,7 @@
 
 type t
 
-(** Create a deubg interface *)
+(** Create a debug interface *)
 val generate_debug : unit -> t
 
 val add_line_to_addr : t -> int -> int32 -> unit

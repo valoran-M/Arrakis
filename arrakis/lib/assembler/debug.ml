@@ -7,7 +7,7 @@
 
 (*
   In the interface, we want to display information
-  about the original program :
+  about the original program:
 
   - Line in the file where the code pointer is located
   - The original code before assembly

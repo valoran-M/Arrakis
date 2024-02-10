@@ -9,7 +9,7 @@ open Types
 open Arch
 open Sutils
 
-let (>)  x y = Int32.unsigned_compare x y >  0
+let (>) x y = Int32.unsigned_compare x y >  0
 
 let exit (arch : Riscv.t) =
   let status = Arch.Cpu.get_reg arch.cpu 10 in
@@ -94,7 +94,7 @@ let write channel (arch : Riscv.t) =
         "@{<fg_red>Info:@} Syscall 'write' failed: Writing in unopened file descriptor.@.";
       Continue
 
-let brk (arch: Riscv.t) =
+let brk (arch : Riscv.t) =
   let new_addr   = Cpu.get_reg arch.cpu 10 in
   let stack_addr = Cpu.get_reg arch.cpu 2  in
   let success =

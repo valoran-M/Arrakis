@@ -22,7 +22,7 @@ open Insts
 open Program
 open Arch
 
-let translate (instruction : instruction) mem addr line labels =
+let translate (instruction : instruction) addr line labels =
   let imm_to_int32 = imm_to_int32 labels in
   match instruction with
   | R (inst, rd, rs1, rs2) -> Inst_R.code inst rd rs1 rs2
@@ -47,7 +47,7 @@ let loop_prog mem debug labels addr prog  =
   | Prog_Instr (l, s, inst) ->
     Debug.add_addr_to_line debug addr l s;
     Debug.add_line_to_addr debug l addr;
-    let code = translate inst mem addr l labels in
+    let code = translate inst addr l labels in
     Arch.Memory.set_int32 mem addr code;
     addr + 4l
   | Prog_Label _  -> addr

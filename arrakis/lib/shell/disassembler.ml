@@ -5,6 +5,7 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
+open Instructions
 open Simulator
 open Sim_utils.Integer
 
@@ -28,27 +29,27 @@ let () =
   (* R *)
   Hashtbl.iter (fun _ (_, funct3, funct7, str) ->
       Hashtbl.add r_to_string (Int32.to_int funct3, Int32.to_int funct7) str)
-    Assembler.Inst_R.r_instructions;
+    Inst_R.instructions;
   (* I *)
   Hashtbl.iter (fun _ (opcode, funct3, str) ->
       Hashtbl.add i_to_string (opcode, Int32.to_int funct3) str)
-    Assembler.Inst_I.i_instructions;
+    Inst_I.instructions;
   (* S *)
   Hashtbl.iter (fun _ (_, funct3, str) ->
       Hashtbl.add s_to_string (Int32.to_int funct3) str)
-    Assembler.Inst_S.s_instructions;
+    Inst_S.instructions;
   (* B *)
   Hashtbl.iter (fun _ (_, funct3, str) ->
       Hashtbl.add b_to_string (Int32.to_int funct3) str)
-    Assembler.Inst_B.b_instructions;
+    Inst_B.instructions;
   (* U *)
   Hashtbl.iter (fun _ (opcode, str) ->
       Hashtbl.add u_to_string opcode str)
-    Assembler.Inst_U.u_instructions;
+    Inst_U.instructions;
   (* J *)
   Hashtbl.iter (fun _ (opcode, str) ->
       Hashtbl.add j_to_string opcode str)
-    Assembler.Inst_J.j_instructions
+    Inst_J.instructions
 
 let print_code _arch code =
   let opcode = Int32.logand 0b1111111l code in

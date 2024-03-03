@@ -34,6 +34,8 @@ let instructions =
 
 let instructions, str_table = create_tables instructions (fun (_, _, _, v) -> v)
 
+(* code and decode ---------------------------------------------------------- *)
+
 let code instruction rd rs1 rs2 =
   let (<<) = Int32.shift_left in
   let (||) = Int32.logor in

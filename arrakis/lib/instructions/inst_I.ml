@@ -10,8 +10,6 @@ open Iutils
 
 type t = { funct3: int; rs1: int; imm: int32; rd: int }
 
-(* memory ------------------------------------------------------------------- *)
-
 let instructions =
   [
 (*  inst    Opcode        funct3  str      *)

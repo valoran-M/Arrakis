@@ -5,8 +5,6 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-open Instructions
-open Simulator
 open Sim_utils.Integer
 
 exception Invalid_instruction
@@ -29,29 +27,30 @@ let () =
   (* R *)
   Hashtbl.iter (fun _ (_, funct3, funct7, str) ->
       Hashtbl.add r_to_string (Int32.to_int funct3, Int32.to_int funct7) str)
-    Inst_R.instructions;
+    Instructions.R.instructions;
   (* I *)
   Hashtbl.iter (fun _ (opcode, funct3, str) ->
       Hashtbl.add i_to_string (opcode, Int32.to_int funct3) str)
-    Inst_I.instructions;
+    Instructions.I.instructions;
   (* S *)
   Hashtbl.iter (fun _ (_, funct3, str) ->
       Hashtbl.add s_to_string (Int32.to_int funct3) str)
-    Inst_S.instructions;
+    Instructions.S.instructions;
   (* B *)
   Hashtbl.iter (fun _ (_, funct3, str) ->
       Hashtbl.add b_to_string (Int32.to_int funct3) str)
-    Inst_B.instructions;
+    Instructions.B.instructions;
   (* U *)
   Hashtbl.iter (fun _ (opcode, str) ->
       Hashtbl.add u_to_string opcode str)
-    Inst_U.instructions;
+    Instructions.U.instructions;
   (* J *)
   Hashtbl.iter (fun _ (opcode, str) ->
       Hashtbl.add j_to_string opcode str)
-    Inst_J.instructions
+    Instructions.J.instructions
 
 let print_code _arch code =
+  let open Simulator in
   let opcode = Int32.logand 0b1111111l code in
   match opcode with
   (* R *)

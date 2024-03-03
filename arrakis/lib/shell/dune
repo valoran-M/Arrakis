@@ -1,5 +1,5 @@
 (include_subdirs unqualified)
 
 (library
-  (libraries simulator syscall assembler)
+  (libraries simulator syscall assembler instructions)
   (name shell))

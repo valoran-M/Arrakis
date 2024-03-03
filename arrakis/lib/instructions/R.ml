@@ -41,5 +41,5 @@ let code instruction rd rs1 rs2 =
   let (||) = Int32.logor in
   let (opcode, funct3, funct7, _) = Hashtbl.find instructions instruction in
   (funct7 << 25) || (rs2 << 20) || (rs1 << 15) || (funct3 << 12) ||
-  (rd << 7) || opcode
+  (rd     <<  7) || opcode
 

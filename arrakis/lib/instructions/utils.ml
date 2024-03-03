@@ -93,8 +93,8 @@ let get_interval imm i j =
   let open Int32 in
   let (-) = Int.sub in
   let (+) = Int.add in
-  let (<<)  x y = Int32.shift_left  x y in
-  let (>>)  x y = Int32.shift_right x y in
+  let (<<) x y = Int32.shift_left  x y in
+  let (>>) x y = Int32.shift_right x y in
   let mask = lognot (-1l << (i - j + 1)) in
   (imm >> j) & mask
 

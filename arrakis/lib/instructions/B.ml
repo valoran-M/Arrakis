@@ -31,7 +31,7 @@ let code instruction rs1 rs2 imm =
   let imm11   = get_interval imm 11 11 in
   let imm10_5 = get_interval imm 10 5  in
   let imm4_1  = get_interval imm 4  1  in
-  (imm12 << 31) || (imm10_5 << 25) || (rs2 << 20)   ||
-  (rs1 << 15)   || (funct3 << 12)  || (imm4_1 << 8) ||
-  (imm11 << 7)  || opcode
+  (imm12 << 31) || (imm10_5 << 25) || (rs2    << 20) ||
+  (rs1   << 15) || (funct3  << 12) || (imm4_1 <<  8) ||
+  (imm11 <<  7) || opcode
 

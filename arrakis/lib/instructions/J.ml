@@ -26,6 +26,6 @@ let code instruction rd imm =
   let imm19_12 = get_interval imm 19 12 in
   let imm11    = get_interval imm 11 11 in
   let imm10_1  = get_interval imm 10 1  in
-  (imm20 << 31)    || (imm10_1 << 21) || (imm11 << 20) ||
-  (imm19_12 << 12) || (rd << 7) || opcode
+  (imm20    << 31) || (imm10_1 << 21) || (imm11 << 20) ||
+  (imm19_12 << 12) || (rd      <<  7) || opcode
 

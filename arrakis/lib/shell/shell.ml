@@ -50,14 +50,17 @@ let parse_command args (state : Types.state) cmd =
     fprintf state.out_channel "Try @{<fg_green>'help'@}.@.";
     state
 
-let rec run (state : Types.state) =
+let rec start (state : Types.state) =
   fprintf state.out_channel "> %!";
   let line  = read_line ()                  in
   let words = String.split_on_char ' ' line in
   try match words with
   | command :: args ->
     let new_state = parse_command args state command in
-    run new_state
-  | _ -> run state
+    start new_state
+  | _ -> start state
   with Quit.Shell_Exit -> ()
+
+let run (state : Types.state) =
+  ignore (Running.run_execute [] state)
 

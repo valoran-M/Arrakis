@@ -3,7 +3,6 @@
 ## 1.1.0
 
 * Allow usage of program arguments. Use syntax `arrakis helloworld.s -- hello`
-* Re-enable the `--run` option
 
 ### Improve shell
 
@@ -11,6 +10,7 @@
 * Using side arrow to modify current command
 * Autocompletion of commands
 * Handle syscall failure at shell level
+* 'Clear' command
 
 ## ??? (Future work without attributed planned version)
 
@@ -25,7 +25,6 @@
 * Would be fun to have a small GIF in README displaying the use of breakpoints
   and printing stuff.
 * Add a feedback for command 's': Print new pc
-* Add support for other RISC-V extensions.
 * Specify exactly which version of RISC-V ISA is currently implemented.
 * Allow switching between multiple isa with a --isa option, taking a string as
   an argument that must be parsed. (Example: RV32IM, RV32I, ...).

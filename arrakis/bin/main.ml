@@ -34,7 +34,8 @@ let main =
     let arch  = Arch.Riscv.init pc mem in
     let shell = Shell.create arch syscall debug labels in
 
-    Shell.run shell
+    if run then Shell.run   shell
+           else Shell.start shell
   with
   | Init.Init_error e                      -> Error.init e
   | Assembler.Error.Assembler_error (l, e) -> Error.assembler l e

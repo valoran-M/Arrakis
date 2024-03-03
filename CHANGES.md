@@ -7,8 +7,7 @@
 * Changed message from `Error` to `Info` in case of failed system call
 * Error message when providing too much input files
 * Renamed command `prv` to `pre`
-* Provide `zsh`, `bash` and `fish` completion files through `argsh`
-* Changed the `--no-shell` option to `--just-run` and `-ns` to `-r`
+* Changed the `--no-shell` option to `--run` and `-ns` to `-r`
 * Improved code printing: Now always 80 character wide, more readeable and
   easier to parse
 * Greatly improved the codebase

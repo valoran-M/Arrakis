@@ -6,10 +6,10 @@
 (******************************************************************************)
 
 (*
-  File conatining all the functions used to initialise Arrakis :
+  File containing all the functions used to initialise Arrakis :
   - colors
   - input file
-  - super user check
+  - super user security check
   - syscall initialisation
 *)
 
@@ -55,7 +55,6 @@ let init_syscall () =
     | "venus" -> Syscall.Scvenus.syscall
     | s       -> raise (Init_error (Invalid_env s))
   in
-  if not Options.unix_socket
-  then Syscall.Sutils.set_stdout Unix.stdin Unix.stdout Unix.stderr;
+  Syscall.Sutils.set_stdout Unix.stdin Unix.stdout Unix.stderr;
   syscall
 

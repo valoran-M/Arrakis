@@ -8,7 +8,7 @@
 open Format
 
 (*
-  This file is here to manage errors at the entry point of Arrakis.
+  File managing errors at the entry point of Arrakis.
   It will display errors properly in the terminal.
 *)
 

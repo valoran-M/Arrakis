@@ -9,9 +9,6 @@ val spec : (string * Arg.spec * string) list
 
 val show_version : bool
 
-val unix_socket : bool
-val unix_file   : string
-
 val usage      : string
 val input_file : string list
 
@@ -19,4 +16,4 @@ val no_color   : bool
 val allow_root : bool
 
 val env        : string
-val just_run   : bool
+val run        : bool

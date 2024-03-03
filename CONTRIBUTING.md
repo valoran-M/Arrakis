@@ -30,3 +30,4 @@ It should end with suffix '-dev' while being developed but the suffix should be
 dropped before any release are made.
 
 Be sure to run `dune build` so that `arrakis.opam` is up to date.
+

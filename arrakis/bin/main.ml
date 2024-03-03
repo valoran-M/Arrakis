@@ -8,15 +8,15 @@
 open Options
 open Format
 
-(* Entry point to Arrakis *)
+(*
+   Entry point to Arrakis
+*)
 
 let version = "1.1.0-dev"
 
 let main =
   try
     if show_version then (printf "%s@." version; exit 0);
-
-    (* Init ----------------------------------------------------------------- *)
 
     Init.colors_init ();
     Init.check_root  ();
@@ -34,17 +34,7 @@ let main =
     let arch  = Arch.Riscv.init pc mem in
     let shell = Shell.create arch syscall debug labels in
 
-    (* Main ----------------------------------------------------------------- *)
-
     Shell.run shell
-      (* if unix_socket *)
-      (* then Server.start_server unix_file arch history labels debug syscall *)
-      (* else if just_run then ( *)
-      (*   let channel = Format.std_formatter in *)
-      (*   Shell.program_run := true; *)
-      (*   ignore (Shell.run false channel arch history syscall) *)
-      (* ) *)
-      (* else Shell.shell arch history labels debug syscall *)
   with
   | Init.Init_error e                      -> Error.init e
   | Assembler.Error.Assembler_error (l, e) -> Error.assembler l e

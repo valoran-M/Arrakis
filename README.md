@@ -10,7 +10,7 @@
 [Arrakis](https://en.wikipedia.org/wiki/Arrakis) is a RISC-V simulator written
 in OCaml, primarly designed for education.
 
-## Features
+## ✨ Features
 
 * Fully supported RV32IM instruction set, with [most pseudo instructions](https://codeberg.org/Arrakis/arrakis/wiki/RV_Pseudo-Instructions).
 * Different type of environmental calls: either [UNIX syscalls](https://codeberg.org/Arrakis/arrakis/wiki/RV_Environment-call)
@@ -22,7 +22,7 @@ in OCaml, primarly designed for education.
   covering not only Arrakis usage but also serving as a general guide on how to
   write RISC-V assembly code.
 
-## Installation
+## 📦 Installation
 
 Since Arrakis is written in OCaml, it can be installed using
 [opam](https://opam.ocaml.org/), OCaml Package Manager.
@@ -31,22 +31,18 @@ Simply run:
 
 `$ opam install arrakis`
 
-## Documentation
+## 📚 Documentation
 
 Documentation about Arrakis usage is available
 [here](https://codeberg.org/Arrakis/arrakis/wiki)
 
-## Development
+## 🧪 Development
 
 The `main` branch is currently developed using `OCaml 5.0` and `Dune 3.10`.
 
 For contributions, please take a look at [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
-## Resources
+## ⚖️  License
 
-* [riscv-card](https://github.com/jameslzhu/riscv-card), a comprehensive
-  reference sheet for RISC-V.
-* [Venus](https://github.com/kvakil/venus), a RISC-V simulator written in
-  Kotlin, which inspired Arrakis.
-* [CeCILL](http://www.cecill.info/index.en.html), Arrakis License.
+Arrakis is distributed under the [CeCILL 2.1 license](./LICENSE).
 

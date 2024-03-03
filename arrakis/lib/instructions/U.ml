@@ -5,8 +5,8 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-open Iutils
 open Insts
+open Utils
 
 let instructions =
     [
@@ -17,7 +17,7 @@ let instructions =
 
 let instructions, str_table = create_tables instructions (fun (_, v) -> v)
 
-(* code and decode ---------------------------------------------------------- *)
+(* Code and decode ---------------------------------------------------------- *)
 
 let code instruction rd imm =
   let (<<) = Int32.shift_left in

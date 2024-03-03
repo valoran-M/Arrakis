@@ -5,8 +5,8 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-open Iutils
 open Insts
+open Utils
 
 let instructions =
     [

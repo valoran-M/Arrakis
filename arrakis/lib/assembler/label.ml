@@ -12,7 +12,6 @@
   You can also declare global labels. So we want a list of global labels.
 *)
 
-open Instructions
 open Error
 open Program
 
@@ -50,7 +49,7 @@ let rec get_label_address_program prog labels addr =
   match prog with
   | [] -> ()
   | Prog_Pseudo (_, _, instruction) :: l ->
-    let new_addr = addr + Inst_Pseudo.pseudo_length instruction in
+    let new_addr = addr + Instructions.Pseudo.pseudo_length instruction in
     get_label_address_program l labels new_addr
   | Prog_Instr (_,_,_)::l -> get_label_address_program l labels (addr + 0x4l)
   | Prog_GLabel _::l      -> get_label_address_program l labels addr

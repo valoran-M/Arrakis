@@ -17,30 +17,29 @@
 open Utils
 open Sim_utils.Integer
 open Error
-open Instructions
-open Insts
+open Instructions.Insts
 open Program
 open Arch
 
 let translate (instruction : instruction) addr line labels =
   let imm_to_int32 = imm_to_int32 labels in
   match instruction with
-  | R (inst, rd, rs1, rs2) -> Inst_R.code inst rd rs1 rs2
+  | R (inst, rd, rs1, rs2) -> Instructions.R.code inst rd rs1 rs2
   | I (inst, rd, rs1, imm) ->
     let imm = imm_to_int32 line addr imm in
-    Inst_I.code inst rd rs1 imm
+    Instructions.I.code inst rd rs1 imm
   | S (inst, rs2, rs1, imm) ->
     let imm = imm_to_int32 line addr imm in
-    Inst_S.code inst rs2 rs1 imm
+    Instructions.S.code inst rs2 rs1 imm
   | B (inst, rs1, rs2, imm) ->
     let imm = imm_to_int32 line addr imm in
-    Inst_B.code inst rs1 rs2 imm
+    Instructions.B.code inst rs1 rs2 imm
   | U (inst, rd, imm) ->
     let imm = imm_to_int32 line addr imm in
-    Inst_U.code inst rd imm
+    Instructions.U.code inst rd imm
   | J (inst, rd, imm) ->
     let imm = imm_to_int32 line addr imm in
-    Inst_J.code inst rd imm
+    Instructions.J.code inst rd imm
 
 let loop_prog mem debug labels addr prog  =
   match prog with

@@ -6,7 +6,7 @@
 (******************************************************************************)
 
 open Insts
-open Iutils
+open Utils
 
 let two_regs_str = Hashtbl.create 7
 

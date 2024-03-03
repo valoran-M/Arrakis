@@ -9,20 +9,19 @@
   open Error
   open Parser
   open Regs
-  open Instructions
 
   let line = ref 1
 
-  let r_inst = Inst_R.str_table
-  let i_inst = Inst_I.str_table
-  let s_inst = Inst_S.str_table
-  let b_inst = Inst_B.str_table
-  let u_inst = Inst_U.str_table
-  let j_inst = Inst_J.str_table
+  let r_inst = Instructions.R.str_table
+  let i_inst = Instructions.I.str_table
+  let s_inst = Instructions.S.str_table
+  let b_inst = Instructions.B.str_table
+  let u_inst = Instructions.U.str_table
+  let j_inst = Instructions.J.str_table
 
-  let tr_inst  = Inst_Pseudo.two_regs_str
-  let ro_inst  = Inst_Pseudo.regs_offset_str
-  let rro_inst = Inst_Pseudo.regs_regs_offset_str
+  let tr_inst  = Instructions.Pseudo.two_regs_str
+  let ro_inst  = Instructions.Pseudo.regs_offset_str
+  let rro_inst = Instructions.Pseudo.regs_regs_offset_str
 
   let string_buffer = Buffer.create 256
   let reset_stored_string () = Buffer.reset string_buffer

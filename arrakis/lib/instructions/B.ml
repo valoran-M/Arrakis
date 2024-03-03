@@ -6,7 +6,7 @@
 (******************************************************************************)
 
 open Insts
-open Iutils
+open Utils
 
 let instructions =
   [
@@ -21,7 +21,7 @@ let instructions =
 
 let instructions, str_table = create_tables instructions (fun (_, _, v) -> v)
 
-(* code and decode ---------------------------------------------------------- *)
+(* Code and decode ---------------------------------------------------------- *)
 
 let code instruction rs1 rs2 imm =
   let (<<) = Int32.shift_left in

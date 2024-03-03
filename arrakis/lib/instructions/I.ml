@@ -6,7 +6,7 @@
 (******************************************************************************)
 
 open Insts
-open Iutils
+open Utils
 
 type t = { funct3: int; rs1: int; imm: int32; rd: int }
 
@@ -34,7 +34,7 @@ let instructions =
 
 let instructions, str_table = create_tables instructions (fun (_, _, v) -> v)
 
-(* code and decode ---------------------------------------------------------- *)
+(* Code and decode ---------------------------------------------------------- *)
 
 let decode code =
   let (>>) = Int.shift_right_logical in
@@ -48,7 +48,7 @@ let decode code =
 
 let code instruction rd rs1 imm =
   if 4096l < (imm & 0b11111111111l)
-  then raise (Ierror.Instruction_error (Interval_imm (imm, -2048l, 2027l)))
+  then raise (Error.Instruction_error (Interval_imm (imm, -2048l, 2027l)))
   else (
     let (<<) = Int32.shift_left in
     let (||) = Int32.logor in

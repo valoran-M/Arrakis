@@ -5,7 +5,7 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-open Program
+open Instructions.Insts
 
 let (&)  = Int32.logand
 let (<<) = Int32.shift_left

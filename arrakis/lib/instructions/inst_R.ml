@@ -5,12 +5,10 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-open Program
+open Iutils
+open Insts
 
-let r_instructions = Hashtbl.create 18
-
-let () =
-  List.iter (fun (k, v) -> Hashtbl.add r_instructions k v)
+let instructions =
     [
   (*  inst    Opcode       funct3 funct7 str      *)
       ADD,    (0b0110011l, 0x0l,  0x00l, "add"    );
@@ -34,16 +32,12 @@ let () =
       REMU,   (0b0110011l, 0x7l,  0x01l, "remu"   );
     ]
 
-let str_table =
-  let s = Hashtbl.create (Hashtbl.length r_instructions) in
-  Hashtbl.iter (fun v (_,_,_,k) -> Hashtbl.add s k v) r_instructions;
-  s
+let instructions, str_table = create_tables instructions (fun (_, _, _, v) -> v)
 
-let write_in_memory mem addr instruction rd rs1 rs2 =
+let code instruction rd rs1 rs2 =
   let (<<) = Int32.shift_left in
   let (||) = Int32.logor in
-  let (opcode, funct3, funct7, _) = Hashtbl.find r_instructions instruction in
-  let code = (funct7 << 25) || (rs2 << 20) || (rs1 << 15) || (funct3 << 12) ||
-             (rd << 7) || opcode in
-  Arch.Memory.set_int32 mem addr code
+  let (opcode, funct3, funct7, _) = Hashtbl.find instructions instruction in
+  (funct7 << 25) || (rs2 << 20) || (rs1 << 15) || (funct3 << 12) ||
+  (rd << 7) || opcode
 

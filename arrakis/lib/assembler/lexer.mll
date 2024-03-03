@@ -9,6 +9,7 @@
   open Error
   open Parser
   open Regs
+  open Instructions
 
   let line = ref 1
 

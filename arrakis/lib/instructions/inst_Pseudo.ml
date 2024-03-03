@@ -5,7 +5,8 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-open Program
+open Insts
+open Iutils
 
 let two_regs_str = Hashtbl.create 7
 
@@ -41,7 +42,6 @@ let regs_regs_offset_str = Hashtbl.create 4
 let () =
   List.iter (fun (v, k) -> Hashtbl.add regs_regs_offset_str k v)
     [
-  (*  inst  str   *)
       BGT,  "bgt";
       BLE,  "ble";
       BGTU, "bgtu";
@@ -59,9 +59,9 @@ let pseudo_length (pseudo : pseudo_instruction) =
   | RET       -> 0x4l
   | CALL _    -> 0x8l
   | TAIL _    -> 0x8l
-  | LGlob       (_, _, _) -> 0x8l
-  | SGlob    (_, _, _, _) -> 0x8l
-  | Two_Regs    (_, _, _) -> 0x4l
+  | LGlob (_, _, _)       -> 0x8l
+  | SGlob (_, _, _, _)    -> 0x8l
+  | Two_Regs (_, _, _)    -> 0x4l
   | Regs_Offset (_, _, _) -> 0x4l
   | Regs_Regs_Offset (_, _, _, _) -> 0x4l
   | LI (_, imm) ->

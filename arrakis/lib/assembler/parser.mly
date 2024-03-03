@@ -1,4 +1,5 @@
 %{
+  open Instructions.Insts
   open Program
 
   let int_list_to_char_list =
@@ -12,22 +13,22 @@
 %token COMMA COLON
 %token END_LINE EOF
 %token LPAR RPAR
-%token <int * string * Program.r_instruction> INST_R
-%token <int * string * Program.i_instruction> INST_I
-%token <int * string * Program.i_instruction> INST_I_LOAD
-%token <int * string * Program.i_instruction> INST_SYST
-%token <int * string * Program.s_instruction> INST_S
-%token <int * string * Program.b_instruction> INST_B
-%token <int * string * Program.u_instruction> INST_U
-%token <int * string * Program.j_instruction> INST_J
+%token <int * string * Instructions.Insts.r_instruction> INST_R
+%token <int * string * Instructions.Insts.i_instruction> INST_I
+%token <int * string * Instructions.Insts.i_instruction> INST_I_LOAD
+%token <int * string * Instructions.Insts.i_instruction> INST_SYST
+%token <int * string * Instructions.Insts.s_instruction> INST_S
+%token <int * string * Instructions.Insts.b_instruction> INST_B
+%token <int * string * Instructions.Insts.u_instruction> INST_U
+%token <int * string * Instructions.Insts.j_instruction> INST_J
 %token <Int32.t * string> INT
 %token <Int32.t * string> REG
 %token <string> IDENT
 /* Pseudo instructions */
 %token <int> NOP LI LA J JALP JR JALRP RET CALL TAIL
-%token <int * string * Program.reg_offset>      REGS_OFFSET
-%token <int * string * Program.reg_reg_offset>  REGS_REGS_OFFSET
-%token <int * string * Program.two_reg>         TWO_REGS
+%token <int * string * Instructions.Insts.reg_offset>      REGS_OFFSET
+%token <int * string * Instructions.Insts.reg_reg_offset>  REGS_REGS_OFFSET
+%token <int * string * Instructions.Insts.two_reg>         TWO_REGS
 
 %token <string> STRING
 

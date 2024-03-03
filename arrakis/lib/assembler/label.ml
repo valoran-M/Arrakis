@@ -12,6 +12,7 @@
   You can also declare global labels. So we want a list of global labels.
 *)
 
+open Instructions
 open Error
 open Program
 

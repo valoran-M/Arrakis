@@ -5,5 +5,5 @@
 (ocamllex lexer)
 
 (library
- (libraries simulator)
+ (libraries simulator instructions)
  (name assembler))

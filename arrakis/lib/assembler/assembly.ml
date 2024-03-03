@@ -17,41 +17,43 @@
 open Utils
 open Sim_utils.Integer
 open Error
+open Instructions
+open Insts
 open Program
 open Arch
 
 let translate (instruction : instruction) mem addr line labels =
   let imm_to_int32 = imm_to_int32 labels in
-
   match instruction with
-  | R (inst, rd, rs1, rs2) -> Inst_R.write_in_memory mem addr inst rd rs1 rs2
+  | R (inst, rd, rs1, rs2) -> Inst_R.code inst rd rs1 rs2
   | I (inst, rd, rs1, imm) ->
     let imm = imm_to_int32 line addr imm in
-    Inst_I.write_in_memory mem addr inst rd rs1 imm line
+    Inst_I.code inst rd rs1 imm
   | S (inst, rs2, rs1, imm) ->
     let imm = imm_to_int32 line addr imm in
-    Inst_S.write_in_memory mem addr inst rs2 rs1 imm
+    Inst_S.code inst rs2 rs1 imm
   | B (inst, rs1, rs2, imm) ->
     let imm = imm_to_int32 line addr imm in
-    Inst_B.write_in_memory mem addr inst rs1 rs2 imm
+    Inst_B.code inst rs1 rs2 imm
   | U (inst, rd, imm) ->
     let imm = imm_to_int32 line addr imm in
-    Inst_U.write_in_memory mem addr inst rd imm
+    Inst_U.code inst rd imm
   | J (inst, rd, imm) ->
     let imm = imm_to_int32 line addr imm in
-    Inst_J.write_in_memory mem addr inst rd imm
+    Inst_J.code inst rd imm
 
 let loop_prog mem debug labels addr prog  =
   match prog with
   | Prog_Instr (l, s, inst) ->
     Debug.add_addr_to_line debug addr l s;
     Debug.add_line_to_addr debug l addr;
-    translate inst mem addr l labels;
+    let code = translate inst mem addr l labels in
+    Arch.Memory.set_int32 mem addr code;
     addr + 4l
   | Prog_Label _  -> addr
-  (* No more pseudo instructions after remove_pseudo *)
-  | Prog_Pseudo _ -> assert false
   | Prog_GLabel (line, label) -> Label.made_global labels label line; addr
+(*No more pseudo instructions after remove_pseudo *)
+  | Prog_Pseudo _ -> assert false
 
 let loop_memory mem labels addr (prog : memory_line) =
   match prog with

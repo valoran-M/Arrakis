@@ -8,8 +8,8 @@
 * Error message when providing too much input files
 * Renamed command `prv` to `pre`
 * Changed the `--no-shell` option to `--run` and `-ns` to `-r`
-* Improved code printing: Now always 80 character wide, more readeable and
-  easier to parse
+* Improved `print` command: Now always at most 80 character wide, more readeable
+  and easier to parse
 * Support for `.ascii` assembler directive
 * Greatly improved the codebase
 

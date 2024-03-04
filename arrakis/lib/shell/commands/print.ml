@@ -109,7 +109,7 @@ let i32_or_reg_of_str reg (arch : Riscv.t) =
   with _ -> Int32.of_string reg
 
 let print_line (state : Types.state) line_address =
-  fprintf state.out_channel "0x%08x" (int32_to_int line_address);
+  fprintf state.out_channel "0x%08x |" (int32_to_int line_address);
   for i = line_size - 1 downto 0 do
     let addr  = line_address + (Int32.of_int i)  in
     let value = Memory.get_byte state.arch.memory addr in
@@ -118,7 +118,8 @@ let print_line (state : Types.state) line_address =
   fprintf state.out_channel "@."
 
 let print_memory (state : Types.state) start size =
-  fprintf state.out_channel " Address    +3  +2  +1  +0\n";
+  fprintf state.out_channel " @{<bold>%9s@} |  @{<bold>+3@}  @{<bold>+2@}  @{<bold>+1@}  @{<bold>+0@}\n"
+    "Adress";
   let line_address = ref (Int32.logand start (Int32.lognot line_size32)) in
   for _ = 1 to size do
     print_line state !line_address;
@@ -146,40 +147,43 @@ let decode_memory_args args (state : Types.state) =
 (* Regs --------------------------------------------------------------------- *)
 
 let regs = [|
-  "    zero"; " ra (x1)"; " sp (x2)"; " gp (x3)";
-  " tp (x4)"; " t0 (x5)"; " t0 (x6)"; " t1 (x7)";
-  " s0 (x8)"; " s1 (x9)"; "a0 (x10)"; "a1 (x11)";
-  "a2 (x12)"; "a3 (x13)"; "a4 (x14)"; "a5 (x15)";
-  "a6 (x16)"; "a7 (x17)"; "s2 (x18)"; "s3 (x19)";
-  "s4 (x20)"; "s5 (x21)"; "s6 (x22)"; "s7 (x23)";
-  "s8 (x24)"; "s9 (x25)"; "s10(x26)"; "s11(x27)";
-  "t3 (x28)"; "t4 (x29)"; "t5 (x30)"; "t6 (x31)";
+  "zero (x0)"; "ra   (x1)"; "sp   (x2)"; "gp   (x3)";
+  "tp   (x4)"; "t0   (x5)"; "t0   (x6)"; "t1   (x7)";
+  "s0   (x8)"; "s1   (x9)"; "a0  (x10)"; "a1  (x11)";
+  "a2  (x12)"; "a3  (x13)"; "a4  (x14)"; "a5  (x15)";
+  "a6  (x16)"; "a7  (x17)"; "s2  (x18)"; "s3  (x19)";
+  "s4  (x20)"; "s5  (x21)"; "s6  (x22)"; "s7  (x23)";
+  "s8  (x24)"; "s9  (x25)"; "s10 (x26)"; "s11 (x27)";
+  "t3  (x28)"; "t4  (x29)"; "t5  (x30)"; "t6  (x31)";
 |]
 
+let print_reg_header (state : Types.state) =
+  fprintf state.out_channel "@{<bold>%9s@} | @{<bold>%10s@} |\n" "Name" "Value"
+
 let print_all_regs (state : Types.state) =
+  print_reg_header state;
   for i = 0 to 31 do
-    fprintf state.out_channel "  %s -> 0x%08x\n" regs.(i)
+    fprintf state.out_channel "%s | 0x%08x |\n" regs.(i)
       (int32_to_int (Cpu.get_reg state.arch.cpu i))
   done
 
 let print_list_regs (state : Types.state) =
+  print_reg_header state;
   List.iter (fun reg ->
     try
       if reg = "pc" then
-        fprintf state.out_channel
-          "  pc -> 0x%08x\n"
+        fprintf state.out_channel "pc | 0x%08x |\n"
           (int32_to_int (Cpu.get_pc state.arch.cpu))
       else
         let i =
           try Int32.to_int (Assembler.Regs.of_string reg)
           with _ -> int_of_string reg
         in
-        fprintf state.out_channel
-          "  %s -> 0x%08x\n" regs.(i)
-          (int32_to_int (Cpu.get_reg state.arch.cpu i))
+        fprintf state.out_channel "%s | 0x%08x |\n"
+          regs.(i) (int32_to_int (Cpu.get_reg state.arch.cpu i))
     with _ ->
-      fprintf state.out_channel
-        "@{<fg_red>Error@}: '%s' isn't a register.@." reg
+      fprintf state.out_channel "%a @{<fg_yellow>'%s'@} isn't a register.@."
+        error () reg
   )
 
 let decode_regs_args args (state : Types.state) =

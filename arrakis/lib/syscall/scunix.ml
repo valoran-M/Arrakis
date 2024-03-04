@@ -7,7 +7,8 @@
 
 open Types
 open Arch
-open Sutils
+open Utils
+open Global_utils.Print
 
 let (>) x y = Int32.unsigned_compare x y >  0
 
@@ -16,7 +17,7 @@ let exit (arch : Riscv.t) =
   Exit (Int32.to_int status)
 
 let kill (arch : Riscv.t) =
-  let pid = Cpu.get_reg arch.cpu 10    in
+  let pid    = Cpu.get_reg arch.cpu 10 in
   let signal = Cpu.get_reg arch.cpu 11 in
   Unix.kill (Int32.to_int pid) (Int32.to_int signal);
   Continue
@@ -52,7 +53,7 @@ let openat channel (arch : Riscv.t) =
     let open Format in
     Cpu.set_reg arch.cpu 10 (-1l);
     fprintf channel
-      "@{<fg_blue>Info:@} Syscall 'openat' failed@.";
+      "%a Syscall @{<fg_yellow>'openat'@} failed@." info ();
     Continue
 
 let close (arch : Riscv.t) =
@@ -78,12 +79,14 @@ let read channel (arch : Riscv.t) =
     let open Format in
     Cpu.set_reg arch.cpu 10 (-1l);
     fprintf channel
-      "@{<fg_blue>Info:@} Syscall 'read' failed: Reading in unopened file descriptor.@.";
+      "%a Syscall @{<fg_yellow>'read'@} failed: Reading in unopened file descriptor.@."
+      info ();
     Continue
   | Invalid_argument _ ->
     let open Format in
     Cpu.set_reg arch.cpu 10 (-1l);
-    fprintf channel "@{<fg_blue>Info:@} Syscall 'write' failed: Invalid argument@.";
+    fprintf channel "%a Syscall @{<fg_yellow>'write'@} failed: Invalid argument@."
+      info ();
     Continue
 
 let write channel (arch : Riscv.t) =
@@ -102,12 +105,16 @@ let write channel (arch : Riscv.t) =
     | Not_found ->
       let open Format in
       Cpu.set_reg arch.cpu 10 (-1l);
-      fprintf channel "@{<fg_blue>Info:@} Syscall 'write' failed: Writing in unopened file descriptor.@.";
+      fprintf channel
+        "%a Syscall @{<fg_yellow>'write'@} failed: Writing in unopened file descriptor.@."
+        info ();
       Continue
     | Invalid_argument _ ->
       let open Format in
       Cpu.set_reg arch.cpu 10 (-1l);
-      fprintf channel "@{<fg_blue>Info:@} Syscall 'write' failed: (Invalid argument)@.";
+      fprintf channel
+        "%a Syscall @{<fg_yellow>'write'@} failed: (Invalid argument)@."
+        info ();
       Continue
 
 let brk (arch : Riscv.t) =
@@ -138,7 +145,8 @@ let getcwd channel (arch : Riscv.t) =
   (
     try Memory.set_str arch.memory buf str (Int32.to_int size)
     with _ ->
-      Format.fprintf channel "@{<fg_blue>Info:@} Syscall 'getcwd' failed@.";
+      Format.fprintf channel "%a Syscall @{<fg_yellow>'getcwd'@} failed@."
+        info ();
       Cpu.set_reg arch.cpu 10 0l
   );
   Continue

@@ -26,10 +26,10 @@ exception Init_error of init_error
 
 (* Actual initialisation ---------------------------------------------------- *)
 
-let colors_init () =
+let colors () =
   if not Options.no_color then Colorsh.setup_std ()
 
-let get_input_file () =
+let input_file () =
   let file =
     match Options.input_file with
     | []        -> raise (Init_error No_Input_File)
@@ -48,13 +48,13 @@ let check_root () =
   | 0, false -> raise (Init_error Running_Root_Without_Opt)
   | _, _     -> ()
 
-let init_syscall () =
+let syscall () =
   let syscall =
     match Options.env with
     | "unix"  -> Syscall.Scunix.syscall
     | "venus" -> Syscall.Scvenus.syscall
     | s       -> raise (Init_error (Invalid_env s))
   in
-  Syscall.Sutils.set_stdout Unix.stdin Unix.stdout Unix.stderr;
+  Syscall.Utils.set_stdout Unix.stdin Unix.stdout Unix.stderr;
   syscall
 

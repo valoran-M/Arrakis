@@ -18,10 +18,10 @@ let main =
   try
     if show_version then (printf "%s@." version; exit 0);
 
-    Init.colors_init ();
+    Init.colors ();
     Init.check_root  ();
-    let input_file = Init.get_input_file () in
-    let syscall    = Init.init_syscall   () in
+    let input_file = Init.input_file () in
+    let syscall    = Init.syscall    () in
 
     let channel = open_in input_file in
     let lb = Lexing.from_channel channel in

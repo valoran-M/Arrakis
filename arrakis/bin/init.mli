@@ -14,12 +14,12 @@ type init_error =
 
 exception Init_error of init_error
 
-val colors_init : unit -> unit
+val colors : unit -> unit
 
-val get_input_file : unit -> string
+val input_file : unit -> string
 
 val check_root : unit -> unit
 
-val init_syscall :
+val syscall :
   unit -> Format.formatter -> Arch.Riscv.t -> Syscall.Types.syscall_ret
 

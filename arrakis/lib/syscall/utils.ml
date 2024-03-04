@@ -7,10 +7,12 @@
 
 open Arch
 open Types
+open Global_utils.Print
 
 let invalid_sc channel id =
   Format.fprintf channel
-    "@{<fg_blue>Info:@} @{<fg_yellow>'%d'@} Invalid syscall.@."
+    "%a Invalid syscall : @{<fg_yellow>'%d'@}.@."
+    info ()
     (Int32.to_int id);
   Continue
 

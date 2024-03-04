@@ -6,8 +6,9 @@
 (******************************************************************************)
 
 open Types
-open Sutils
+open Utils
 open Arch
+open Global_utils.Print
 
 let print_int channel (arch : Riscv.t) =
   Format.fprintf channel "%d@." (Int32.to_int (Cpu.get_reg arch.cpu 11));
@@ -26,7 +27,7 @@ let print_character channel (arch : Riscv.t) =
     Format.fprintf channel "%c@." chr;
     Continue
   with _ ->
-    Format.fprintf channel "@{<fg_red>Info:@} Syscall 'print_character' failed";
+    Format.fprintf channel "%a Syscall 'print_character' failed" info ();
     Continue
 
 let exit0 () = Exit 0

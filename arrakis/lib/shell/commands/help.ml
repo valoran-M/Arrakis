@@ -48,12 +48,10 @@ let print channel =
       Starts at address <start> and displays <nb> 32 bits.
 
       <start> can either be an adress or a register.
-      If it's a register, the actual start value will be the value stored inside
-      the register.
 
       @{<fg_yellow>default args:@}
-        <start> : Starting data segement
-        <nb>    : 0x10
+        <start> Starting data segement
+        <nb>    0x10
 
   @{<fg_green>*@} (p)rint (r)egs <r_1> ... <r_n>
 

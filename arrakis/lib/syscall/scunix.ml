@@ -21,7 +21,7 @@ let kill (arch : Riscv.t) =
   Unix.kill (Int32.to_int pid) (Int32.to_int signal);
   Continue
 
-let openat (arch : Riscv.t) =
+let openat channel (arch : Riscv.t) =
   let dirfd = Cpu.get_reg arch.cpu 10 in
   let adr   = Cpu.get_reg arch.cpu 11 in
   let flags = Cpu.get_reg arch.cpu 12 in
@@ -49,7 +49,10 @@ let openat (arch : Riscv.t) =
     Cpu.set_reg arch.cpu 10 fd;
     Continue
   with _ ->
+    let open Format in
     Cpu.set_reg arch.cpu 10 (-1l);
+    fprintf channel
+      "@{<fg_blue>Info:@} Syscall 'openat' failed@.";
     Continue
 
 let close (arch : Riscv.t) =
@@ -70,10 +73,17 @@ let read channel (arch : Riscv.t) =
 
     Cpu.set_reg arch.cpu 10 (Int32.of_int (res + 1));
     Continue
-  with Not_found ->
+  with
+  | Not_found ->
+    let open Format in
     Cpu.set_reg arch.cpu 10 (-1l);
-    Format.fprintf channel
-      "@{<fg_red>Info:@} Syscall 'read' failed: Reading in unopened file descriptor.@.";
+    fprintf channel
+      "@{<fg_blue>Info:@} Syscall 'read' failed: Reading in unopened file descriptor.@.";
+    Continue
+  | Invalid_argument _ ->
+    let open Format in
+    Cpu.set_reg arch.cpu 10 (-1l);
+    fprintf channel "@{<fg_blue>Info:@} Syscall 'write' failed: Invalid argument@.";
     Continue
 
 let write channel (arch : Riscv.t) =
@@ -88,10 +98,16 @@ let write channel (arch : Riscv.t) =
 
       Cpu.set_reg arch.cpu 10 (Int32.of_int res);
       Continue
-    with Not_found ->
+    with
+    | Not_found ->
+      let open Format in
       Cpu.set_reg arch.cpu 10 (-1l);
-      Format.fprintf channel
-        "@{<fg_red>Info:@} Syscall 'write' failed: Writing in unopened file descriptor.@.";
+      fprintf channel "@{<fg_blue>Info:@} Syscall 'write' failed: Writing in unopened file descriptor.@.";
+      Continue
+    | Invalid_argument _ ->
+      let open Format in
+      Cpu.set_reg arch.cpu 10 (-1l);
+      fprintf channel "@{<fg_blue>Info:@} Syscall 'write' failed: (Invalid argument)@.";
       Continue
 
 let brk (arch : Riscv.t) =
@@ -148,7 +164,7 @@ let syscall channel (arch : Riscv.t) =
   | 17l  -> getcwd     channel arch
   | 34l  -> mkdirat            arch
   | 49l  -> chdir              arch
-  | 56l  -> openat             arch
+  | 56l  -> openat     channel arch
   | 57l  -> close              arch
   | 63l  -> read       channel arch
   | 64l  -> write      channel arch

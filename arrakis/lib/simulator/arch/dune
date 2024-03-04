@@ -1,4 +1,4 @@
 (library
-  (libraries sim_utils)
+  (libraries global_utils)
   (name arch))
 

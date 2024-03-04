@@ -6,7 +6,7 @@
 (******************************************************************************)
 
 open Format
-open Common
+open Global_utils.Print
 
 let all_commands = [
   Running.reset;

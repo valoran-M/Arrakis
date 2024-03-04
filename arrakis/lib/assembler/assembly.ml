@@ -15,7 +15,7 @@
 *)
 
 open Utils
-open Sim_utils.Integer
+open Global_utils.Integer
 open Error
 open Instructions.Insts
 open Program

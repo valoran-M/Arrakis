@@ -14,7 +14,6 @@ type t =
   | Invalid_S           of int
   | Invalid_B           of int
   | Invalid_U           of int32
-  | Conversion_Failure
 
 exception Simulator_error of t
 

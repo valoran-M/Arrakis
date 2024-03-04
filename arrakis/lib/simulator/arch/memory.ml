@@ -5,7 +5,7 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-open Sim_utils.Integer
+open Global_utils.Integer
 
 (* 2^32 memory size *)
 let size = 0x1_0000_0000

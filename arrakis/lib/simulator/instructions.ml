@@ -6,8 +6,7 @@
 (******************************************************************************)
 
 open Arch
-open Sim_utils
-open Sim_utils.Integer
+open Global_utils.Integer
 
 (* Instructions format ------------------------------------------------------ *)
 

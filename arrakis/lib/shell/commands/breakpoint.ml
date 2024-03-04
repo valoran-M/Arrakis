@@ -5,8 +5,8 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-open Common
 open Format
+open Global_utils.Print
 
 exception End_loop
 
@@ -78,7 +78,7 @@ let execute args (state : Types.state) =
   | "p"      :: _    ->
       Hashtbl.iter (fun addr number ->
         fprintf state.out_channel "%3d -> 0x%08x@."
-        number (Sim_utils.Integer.int32_to_int addr)) state.breakpoints
+        number (Global_utils.Integer.int32_to_int addr)) state.breakpoints
   | _ -> Help.breakpoint state.out_channel
   end;
   state (* As we changed it's hashtbl, the state is actually changed here *)

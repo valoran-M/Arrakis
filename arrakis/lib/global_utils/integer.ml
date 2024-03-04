@@ -5,9 +5,15 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-val init : Init.init_error -> unit
+open Error
 
-val assembler : int -> Assembler.Error.t -> unit
+let int32_to_int i =
+  match Int32.unsigned_to_int i with
+  | Some i -> i
+  | None   -> raise (Utils_error Conversion_Failure)
 
-val simulator : Simulator.Error.t -> unit
+let sign_extended i size =
+  Int32.shift_right (Int32.shift_left i (32 - size)) (32 - size)
 
+let char_to_int32 c = Int32.of_int (Char.code c)
+let char_of_int32 c = Char.chr     (Int32.to_int c)

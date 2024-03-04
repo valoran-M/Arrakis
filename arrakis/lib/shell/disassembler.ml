@@ -5,7 +5,7 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-open Sim_utils.Integer
+open Global_utils.Integer
 
 exception Invalid_instruction
 

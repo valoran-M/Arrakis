@@ -18,7 +18,6 @@ depends: [
   "dune" {>= "3.10"}
   "ocaml" {>= "4.14.0"}
   "menhir" {>= "20180528"}
-  "argsh"
   "odoc" {with-doc}
 ]
 build: [

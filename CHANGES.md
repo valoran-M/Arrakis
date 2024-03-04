@@ -10,8 +10,8 @@
 * Changed the `--no-shell` option to `--run` and `-ns` to `-r`
 * Improved code printing: Now always 80 character wide, more readeable and
   easier to parse
-* Greatly improved the codebase
 * Support for `.ascii` assembler directive
+* Greatly improved the codebase
 
 # 1.0.0 (2023-19-9)
 

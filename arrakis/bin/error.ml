@@ -6,6 +6,7 @@
 (******************************************************************************)
 
 open Format
+open Global_utils.Print
 
 (*
   File managing errors at the entry point of Arrakis.
@@ -13,9 +14,6 @@ open Format
 *)
 
 (* Error Printing  ---------------------------------------------------------- *)
-
-let error fmt () =
-  fprintf fmt "@{<bold>@{<fg_red>Error:@}@}"
 
 let init e =
   let open Init in
@@ -62,11 +60,7 @@ let assembler line e =
     exit 6
 
 let simulator e =
-  let open Sim_utils.Error in
+  (* let open Simulator.Error in *)
   match e with
-  | Conversion_Failure ->
-    eprintf "%a Couldn't convert an int32 to an int. @." error ();
-    eprintf "Time to move to a 64 bit machine!";
-    exit 8
   | _ -> assert false (* TODO *)
 

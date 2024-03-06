@@ -19,7 +19,7 @@ let ( * ) = Int32.mul
 (* Progam ------------------------------------------------------------------  *)
 
 let print_program_header channel =
-  fprintf channel "%3s | %2s%2s @{<bold>%10s@} | @{<bold>%12s@} | @{<bold>%-18s@} | @{<bold>%-18s@} |\n"
+  fprintf channel "%3s | %2s%2s @{<bold>%-10s@} | @{<bold>%-12s@} | @{<bold>%-18s@} | @{<bold>%-18s@} |\n"
     "" "" "" "Adress" "Machine Code" "Basic Code" "Original Code"
 
 let print_addr (state : Types.state) addr pc code =
@@ -115,10 +115,10 @@ let print_line (state : Types.state) line_address =
     let value = Memory.get_byte state.arch.memory addr in
     fprintf state.out_channel "  %02x" (Int32.to_int value)
   done;
-  fprintf state.out_channel "@."
+  fprintf state.out_channel " |\n"
 
 let print_memory (state : Types.state) start size =
-  fprintf state.out_channel " @{<bold>%9s@} |  @{<bold>+3@}  @{<bold>+2@}  @{<bold>+1@}  @{<bold>+0@}\n"
+  fprintf state.out_channel " @{<bold>%-9s@} |  @{<bold>+3@}  @{<bold>+2@}  @{<bold>+1@}  @{<bold>+0@} |\n"
     "Adress";
   let line_address = ref (Int32.logand start (Int32.lognot line_size32)) in
   for _ = 1 to size do
@@ -158,7 +158,7 @@ let regs = [|
 |]
 
 let print_reg_header (state : Types.state) =
-  fprintf state.out_channel "@{<bold>%9s@} | @{<bold>%10s@} |\n" "Name" "Value"
+  fprintf state.out_channel "@{<bold>%-9s@} | @{<bold>%-10s@} |\n" "Name" "Value"
 
 let print_all_regs (state : Types.state) =
   print_reg_header state;

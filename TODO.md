@@ -11,6 +11,7 @@
 * Autocompletion of commands
 * Handle syscall failure at shell level
 * 'Clear' command
+* 'step 10' -> do 10 steps
 
 ## ??? (Future work without attributed planned version)
 

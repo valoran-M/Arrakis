@@ -12,6 +12,8 @@ let all_commands = [
   Running.reset;
   Running.prev;
   Running.step;
+  Running.run;
+  Running.next;
   Help.help;
   Print.print;
   Breakpoint.breakpoint;

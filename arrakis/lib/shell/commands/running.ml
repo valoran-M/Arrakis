@@ -11,6 +11,7 @@ open Global_utils.Print
    This file define the following commands:
   - step
   - run
+  - next
   - prev
   - reset
 *)
@@ -61,6 +62,25 @@ let step : Types.cmd = {
 
 let run_execute args (state : Types.state) =
     let rec sub first (state : Types.state) =
+      if not state.program_end && (first || state.program_run) then
+        let new_state = step_execute args state in
+        sub false new_state
+      else state
+    in
+    sub true state
+
+let run : Types.cmd = {
+  long_form   = "run";
+  short_form  = "r";
+  name        = "(r)un";
+  description = "Run code until the end.";
+  execute     = run_execute;
+}
+
+(* Next --------------------------------------------------------------------- *)
+
+let next_execute args (state : Types.state) =
+    let rec sub first (state : Types.state) =
       let addr = Arch.Cpu.get_pc state.arch.cpu in
       if not state.program_end && (first || state.program_run || not (Hashtbl.mem state.breakpoints addr)) then
         let new_state = step_execute args state in
@@ -69,12 +89,12 @@ let run_execute args (state : Types.state) =
     in
     sub true state
 
-let step : Types.cmd = {
-  long_form   = "run";
-  short_form  = "r";
-  name        = "(r)un";
-  description = "Run code until the end.";
-  execute     = run_execute;
+let next : Types.cmd = {
+  long_form   = "next";
+  short_form  = "n";
+  name        = "(n)ext";
+  description = "Run code until the next breakpoint.";
+  execute     = next_execute;
 }
 
 (* Prev --------------------------------------------------------------------- *)

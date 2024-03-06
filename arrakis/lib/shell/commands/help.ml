@@ -13,13 +13,13 @@ let general (state : Types.state) =
 
   Hashtbl.iter (fun k (cmd : Types.cmd) ->
     if k = cmd.long_form then
-    fprintf state.out_channel "%2s@{<fg_green>*@} %s\n\n%4s%s\n\n"
+    fprintf state.out_channel "%2s@{<fg_green>*@} %-15s%2s%s\n"
     "" cmd.name "" cmd.description)
   state.cmds
 
 let breakpoint channel =
-  Format.fprintf channel {|
-  @{<fg_green> Breakpoint help:@}
+  Format.fprintf channel
+{|  @{<fg_green> Breakpoint help:@}
 
   @{<fg_green>*@} (b)reakpoint (l)ine <l_1> ... <l_n>
 
@@ -35,12 +35,11 @@ let breakpoint channel =
 
   @{<fg_green>*@} (b)reakpoint (p)rint
 
-    Print all breakpoints.
-@.|}
+    Print all breakpoints.@.|}
 
 let print channel =
-  Format.fprintf channel {|
-  @{<fg_green>Print help:@}
+  Format.fprintf channel
+{|  @{<fg_green>Print help:@}
 
   @{<fg_green>*@} (p)rint (m)emory <start> <nb>
 
@@ -62,9 +61,7 @@ let print channel =
 
       If no offset is specified, print code from start to finish.
       If offset is specified, print code from pc to pc+offset.
-      If noffset is also specified, print code from pc-noffset to pc+offset.
-
-@.|}
+      If noffset is also specified, print code from pc-noffset to pc+offset.@.|}
 
 let execute args (state : Types.state) =
   begin match args with

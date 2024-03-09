@@ -8,6 +8,15 @@
 open Insts
 open Utils
 
+(* Instruction format :
+   31                                       12 11         7 6            0
+  +-----------------------------------------------------------------------+
+  | imm[31:12]                                | rd         | opcode       | U
+  +-----------------------------------------------------------------------+
+*)
+
+type t = { rd: int; imm_shift : int32; }
+
 let instructions =
     [
   (*  inst   Opcode       str    *)
@@ -24,4 +33,12 @@ let code instruction rd imm =
   let (||) = Int32.logor in
   let (opcode, _) = Hashtbl.find instructions instruction in
   (imm << 12) || (rd << 7) || opcode
+
+let decode code =
+  let (>>) = Int.shift_right_logical   in
+  let (&&) x y = Int32.to_int (x & y) in
+  {
+    rd = (code && rd_mask) >> 7;
+    imm_shift = Int32.logand code imm20_mask;
+  }
 

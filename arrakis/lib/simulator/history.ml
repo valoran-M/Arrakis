@@ -26,6 +26,13 @@ let create_history () = []
 let add_history last_pc change history =
   { last_pc; change} :: history
 
+let create_write_mem length addr last_value =
+  match length with
+  | 8  -> Change_Memory_8  (addr, last_value)
+  | 16 -> Change_Memory_16 (addr, last_value)
+  | 32 -> Change_Memory_32 (addr, last_value)
+  | _  -> failwith "not a real length"
+
 let recover_change (change : sim_change) (arch : Arch.Riscv.t) =
   Arch.Cpu.set_pc arch.cpu change.last_pc;
   match change.change with

@@ -5,8 +5,17 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
+open Arch
 open Insts
 open Utils
+open Global_utils.Integer
+
+(* Instruction format :
+   31                     20 19      15 14  12 11         7 6            0
+  +-----------------------------------------------------------------------+
+  | imm[11:0]               | rs1      |funct3| rd         | opcode       | I
+  +-----------------------------------------------------------------------+
+*)
 
 type t = { funct3: int; rs1: int; imm: int32; rd: int }
 
@@ -36,6 +45,16 @@ let instructions, str_table = create_tables instructions (fun (_, _, v) -> v)
 
 (* Code and decode ---------------------------------------------------------- *)
 
+let code instruction rd rs1 imm =
+  if 4096l < (imm & 0b11111111111l)
+  then raise (Error.Instruction_error (Interval_imm (imm, -2048l, 2027l)))
+  else (
+    let (<<) = Int32.shift_left in
+    let (||) = Int32.logor in
+    let (opcode, funct3, _) = Hashtbl.find instructions instruction in
+    (imm << 20) || (rs1 << 15) || (funct3 << 12) || (rd << 7) || opcode
+  )
+
 let decode code =
   let (>>) = Int.shift_right_logical in
   let (&&) x y = Int32.to_int (x & y) in
@@ -46,13 +65,33 @@ let decode code =
     rd  = (rd_mask && code) >> 7;
   }
 
-let code instruction rd rs1 imm =
-  if 4096l < (imm & 0b11111111111l)
-  then raise (Error.Instruction_error (Interval_imm (imm, -2048l, 2027l)))
-  else (
-    let (<<) = Int32.shift_left in
-    let (||) = Int32.logor in
-    let (opcode, funct3, _) = Hashtbl.find instructions instruction in
-    (imm << 20) || (rs1 << 15) || (funct3 << 12) || (rd << 7) || opcode
-  )
+(* Exectuion ---------------------------------------------------------------- *)
+
+let execute_arith instruction rs1 =
+  let imm = sign_extended instruction.imm 12 in
+  (* if imm[5:11] = 0x20 or 0x00 for shift *)
+  let arith = Int32.shift_right_logical imm 5 = 0x20l in
+  let logic = Int32.shift_right_logical imm 5 = 0x00l in
+  match instruction.funct3 with
+  | 0x0 -> rs1 +  imm                           (* ADDI  *)
+  | 0x4 -> rs1 ^  imm                           (* XORI  *)
+  | 0x6 -> rs1 || imm                           (* ORI   *)
+  | 0x7 -> rs1 &  imm                           (* ANDI  *)
+  | 0x1 when logic -> rs1 <<  imm               (* SLLI  *)
+  | 0x5 when logic -> rs1 >>> imm               (* SRLI  *)
+  | 0x5 when arith -> rs1 >>  (imm &  0b11111l) (* SRAI  *)
+  | 0x2 -> if rs1 < imm then 1l else 0l         (* SLTI  *)
+  | 0x3 -> if rs1 <.imm then 1l else 0l         (* SLTIU *)
+  | _ -> Error.i_invalid_arith instruction.funct3 instruction.imm
+
+let execute_load instruction rs1 memory =
+  let imm = sign_extended instruction.imm 12 in
+  let addr = rs1 + imm in
+  match instruction.funct3 with
+  | 0x0 -> sign_extended (Memory.get_byte memory addr) 8   (* LB  *)
+  | 0x1 -> sign_extended (Memory.get_int16 memory addr) 16 (* LH  *)
+  | 0x2 -> sign_extended (Memory.get_int32 memory addr) 32 (* LW  *)
+  | 0x4 -> Memory.get_byte memory addr                     (* LBU *)
+  | 0x5 -> Memory.get_int16 memory addr                    (* LHU *)
+  | _ -> Error.i_invalid_load instruction.funct3
 

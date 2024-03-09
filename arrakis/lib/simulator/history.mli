@@ -22,6 +22,10 @@ val create_history : unit -> t
 val add_history : int32 -> change -> t -> t
   (** [add_history pc change history] Add a new item to the history *)
 
+val create_write_mem : int -> int32 -> int32 -> change
+  (** [add_wirte_mem pc length addr last_value history] Add a new change of the
+      memory in the history *)
+
 val step_back : Arch.Riscv.t -> t -> t
   (** [step_back arch history] Resets the simulator to the previous state *)
 

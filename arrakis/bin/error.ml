@@ -59,8 +59,3 @@ let assembler line e =
       (Int32.to_string v) (Int32.to_string min) (Int32.to_string max);
     exit 6
 
-let simulator e =
-  (* let open Simulator.Error in *)
-  match e with
-  | _ -> assert false (* TODO *)
-

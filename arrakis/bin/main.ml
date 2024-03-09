@@ -39,5 +39,4 @@ let main =
   with
   | Init.Init_error e                      -> Error.init e
   | Assembler.Error.Assembler_error (l, e) -> Error.assembler l e
-  | Simulator.Error.Simulator_error e      -> Error.simulator e
 

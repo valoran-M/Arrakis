@@ -5,7 +5,11 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-val init : Init.init_error -> unit
+open Arch
 
-val assembler : int -> Assembler.Error.t -> unit
+type return =
+  | Sys_call of History.t
+  | Zero
+  | Continue of int32 * History.t
 
+val exec_instruction : Riscv.t -> History.t -> return

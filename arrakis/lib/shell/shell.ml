@@ -32,7 +32,6 @@ let create arch syscall debug labels : Types.state =
     cmds;
     cmds_history = [||];
     breakpoints  = Hashtbl.create 64;
-    program_run  = false;
     program_end  = false;
 
     (* Program state *)

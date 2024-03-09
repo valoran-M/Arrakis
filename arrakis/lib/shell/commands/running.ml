@@ -58,36 +58,17 @@ let step : Types.cmd = {
   execute     = step_execute;
 }
 
-(* Run ---------------------------------------------------------------------- *)
-
-let run_execute args (state : Types.state) =
-    let rec sub first (state : Types.state) =
-      if not state.program_end && (first || state.program_run) then
-        let new_state = step_execute args state in
-        sub false new_state
-      else state
-    in
-    sub true state
-
-let run : Types.cmd = {
-  long_form   = "run";
-  short_form  = "r";
-  name        = "(r)un";
-  description = "Run code until the end.";
-  execute     = run_execute;
-}
-
 (* Next --------------------------------------------------------------------- *)
 
 let next_execute args (state : Types.state) =
-    let rec sub first (state : Types.state) =
-      let addr = Arch.Cpu.get_pc state.arch.cpu in
-      if not state.program_end && (first || state.program_run || not (Hashtbl.mem state.breakpoints addr)) then
-        let new_state = step_execute args state in
-        sub false new_state
-      else state
-    in
-    sub true state
+  let rec sub first (state : Types.state) =
+    let addr = Arch.Cpu.get_pc state.arch.cpu in
+    if not state.program_end && (first || not (Hashtbl.mem state.breakpoints addr)) then
+      let new_state = step_execute args state in
+      sub false new_state
+    else state
+  in
+  sub true state
 
 let next : Types.cmd = {
   long_form   = "next";
@@ -95,6 +76,22 @@ let next : Types.cmd = {
   name        = "(n)ext";
   description = "Run code until the next breakpoint.";
   execute     = next_execute;
+}
+
+(* Run ---------------------------------------------------------------------- *)
+
+let rec run_execute args (state : Types.state) =
+  if not state.program_end then
+    let new_state = step_execute args state in
+    run_execute args new_state
+  else state
+
+let run : Types.cmd = {
+  long_form   = "run";
+  short_form  = "r";
+  name        = "(r)un";
+  description = "Run code until the end.";
+  execute     = run_execute;
 }
 
 (* Prev --------------------------------------------------------------------- *)
@@ -112,7 +109,7 @@ let prev : Types.cmd = {
   long_form   = "previous";
   short_form  = "pre";
   name        = "(pre)vious";
-  description = "Run code until the end.";
+  description = "Revert previous step.";
   execute     = prev_execute;
 }
 
@@ -121,7 +118,6 @@ let prev : Types.cmd = {
 let reset_execute _args (state : Types.state) =
   {
     state with
-    program_run = false;
     program_end = false;
     history     = Simulator.History.reset state.arch state.history;
   }

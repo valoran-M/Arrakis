@@ -31,7 +31,6 @@ and state = {
   cmds         : (string, cmd) Hashtbl.t;
   cmds_history : string array;
   breakpoints  : (int32,  int) Hashtbl.t;
-  program_run  : bool;
   program_end  : bool;
 
   (* Program state *)

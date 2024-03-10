@@ -10,7 +10,7 @@ open Arch
 open Utils
 open Global_utils.Print
 
-let (>) x y = Int32.unsigned_compare x y >  0
+let (>) x y = Int32.unsigned_compare x y > 0
 
 let exit (arch : Riscv.t) =
   let status = Arch.Cpu.get_reg arch.cpu 10 in
@@ -24,11 +24,11 @@ let kill (arch : Riscv.t) =
 
 let openat channel (arch : Riscv.t) =
   let dirfd = Cpu.get_reg arch.cpu 10 in
-  let adr   = Cpu.get_reg arch.cpu 11 in
+  let addr  = Cpu.get_reg arch.cpu 11 in
   let flags = Cpu.get_reg arch.cpu 12 in
   let mode  = Cpu.get_reg arch.cpu 13 in
 
-  let path  = get_str_pointed_by arch adr   in
+  let path  = get_str_pointed_by arch addr   in
   let flags = open_flag_list_from_int flags in
 
   try

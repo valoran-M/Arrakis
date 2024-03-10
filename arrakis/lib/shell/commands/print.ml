@@ -81,7 +81,7 @@ let decode_code_args args (state : Types.state) =
       let offset  = int_of_string offset in
       print_code_part state offset 0
     with _ ->
-      fprintf state.out_channel "%a Incorrect argument to print code.@."
+      fprintf state.out_channel "%a Incorrect argument to print code@."
         error ())
   | offset :: noffset :: _ -> (
     try
@@ -89,7 +89,7 @@ let decode_code_args args (state : Types.state) =
       let noffset = int_of_string noffset in
       print_code_part state offset noffset
     with _ ->
-      fprintf state.out_channel "%a Incorrect argument to print code.@."
+      fprintf state.out_channel "%a Incorrect argument to print code@."
       error ())
   | _ -> print_code_full state
 
@@ -134,14 +134,14 @@ let decode_memory_args args (state : Types.state) =
       let start = i32_or_reg_of_str start state.arch in
       print_memory state start size_default
     with _ ->
-        printf "%a Incorrect argument to print memory.@." error ())
+        printf "%a Incorrect argument to print memory@." error ())
   | [start; size] -> (
       try
         let start = i32_or_reg_of_str start state.arch in
         let size  = int_of_string size in
         print_memory state start size
       with _ ->
-        printf "%a Incorrect argument to print memory.@." error ())
+        printf "%a Incorrect argument to print memory@." error ())
   | _ -> ()
 
 (* Regs --------------------------------------------------------------------- *)
@@ -182,7 +182,7 @@ let print_list_regs (state : Types.state) =
         fprintf state.out_channel "%s | 0x%08x |\n"
           regs.(i) (int32_to_int (Cpu.get_reg state.arch.cpu i))
     with _ ->
-      fprintf state.out_channel "%a @{<fg_yellow>'%s'@} isn't a register.@."
+      fprintf state.out_channel "%a @{<fg_yellow>'%s'@} isn't a register@."
         error () reg
   )
 

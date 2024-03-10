@@ -63,7 +63,7 @@ let remove_breakpoint (state : Types.state) arg =
 
 let iter f l (state : Types.state) =
   if List.length l == 0 then
-      fprintf state.out_channel "%a Command require at least one argument.@." error ()
+      fprintf state.out_channel "%a Command require at least one argument@." error ()
   else List.iter f l
 
 let execute args (state : Types.state) =

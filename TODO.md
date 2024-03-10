@@ -10,13 +10,15 @@
 * Using side arrow to modify current command
 * Autocompletion of commands
 * Handle syscall failure at shell level
-* 'Clear' command
-* 'step 10' -> do 10 steps
+* 'clear' command
+* Improve how subcommand are managed and how printing their help is made.
+  Ideally, we would like all help to look like the general help, and if possible
+  manage everything easily
 
 ## ??? (Future work without attributed planned version)
 
 * openat (More detail in the file [scunix.ml](./arrakis/lib/syscall/scunix.ml))
-* Would be nice to have better errors.
+* Would be nice to improve errors.
   Some that could be interesting would be 'Did you mean...' errors, for example
   when an instruction is misspelled.
   If there is a start of instruction and the rest is not correct, an interesting
@@ -30,5 +32,5 @@
 * Allow switching between multiple isa with a --isa option, taking a string as
   an argument that must be parsed. (Example: RV32IM, RV32I, ...).
 * Add a new command to allow saving the logs of the current execution to a file
-* Provide arrakis as system package for different linux distributions.
+* Provide arrakis as system package for different linux distributions
 

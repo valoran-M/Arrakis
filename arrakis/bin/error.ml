@@ -19,10 +19,10 @@ let init e =
   let open Init in
   match e with
   | No_Input_File ->
-    eprintf "%a Please specify an input file.@." error ();
+    eprintf "%a Please specify an input file@." error ();
     exit 1
   | Input_File_Dont_Exist f ->
-    eprintf "%a Specified input file @{<fg_yellow>'%s'@} doesn't exist.@."
+    eprintf "%a Specified input file @{<fg_yellow>'%s'@} doesn't exist@."
       error () f;
     exit 2
   | Invalid_env s ->
@@ -30,12 +30,12 @@ let init e =
     exit 7
   | Running_Root_Without_Opt ->
     eprintf "%a Running in root mode is not allowed!@." error ();
-    eprintf "@{<fg_yellow>Tip:@} Use --allow-root if you know what you are doing.@.";
+    eprintf "@{<fg_yellow>Tip:@} Use --allow-root if you know what you are doing@.";
     exit 9
   | Too_Much_Input_File ->
     let inps = List.map (fun s -> "'"^s^"'") Options.input_file in
     eprintf "%a Too much input file specified!@." error ();
-    eprintf "I got @{<fg_yellow>%s@} but expected only one.@." (String.concat " " inps);
+    eprintf "I got @{<fg_yellow>%s@} but expected only one@." (String.concat " " inps);
     exit 10
 
 let assembler line e =
@@ -54,7 +54,7 @@ let assembler line e =
       line ul;
     exit 5
   | Interval_imm (v, min, max) ->
-    eprintf "%a on line @{<fg_yellow>%d@}: Imm out of bound." error () line;
+    eprintf "%a on line @{<fg_yellow>%d@}: Immediate out of bound" error () line;
     eprintf "Found @{<fg_yellow>'%s'@} but expected a value between %s and %s@."
       (Int32.to_string v) (Int32.to_string min) (Int32.to_string max);
     exit 6

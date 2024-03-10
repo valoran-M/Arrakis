@@ -106,14 +106,14 @@ let write channel (arch : Riscv.t) =
       let open Format in
       Cpu.set_reg arch.cpu 10 (-1l);
       fprintf channel
-        "%a Syscall @{<fg_yellow>'write'@} failed: Writing in unopened file descriptor.@."
+        "%a Syscall @{<fg_yellow>'write'@} failed: Writing in unopened file descriptor@."
         info ();
       Continue
     | Invalid_argument _ ->
       let open Format in
       Cpu.set_reg arch.cpu 10 (-1l);
       fprintf channel
-        "%a Syscall @{<fg_yellow>'write'@} failed: (Invalid argument)@."
+        "%a Syscall @{<fg_yellow>'write'@} failed: Invalid argument@."
         info ();
       Continue
 

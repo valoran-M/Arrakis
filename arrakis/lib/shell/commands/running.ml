@@ -16,39 +16,70 @@ open Global_utils.Print
   - reset
 *)
 
-(* Step ---------------------------------------------------------------------- *)
+(* Utils -------------------------------------------------------------------- *)
 
-let step_execute _args (state : Types.state) =
+(* Take one step forward *)
+let one_step (state : Types.state) =
   let open Syscall.Types     in
   let open Simulator.Execute in
   let program_end, history =
-    if state.program_end
-    then (
-    Format.fprintf state.out_channel
+    if state.program_end then (
+      Format.fprintf state.out_channel
         "%a Program has exited, can't run further.@." error ();
-    true, state.history
-  ) else
+      true, state.history
+    ) else
     match exec_instruction state.arch state.history with
     | Continue (_, history)  -> state.program_end, history
-    | Zero        ->
+    | Zero ->
       Format.fprintf state.out_channel
-        "%a Exiting without an exit syscall.@." warning ();
+        "%a Exiting without an exit syscall@." warning ();
       true, state.history
     | Sys_call history  ->
       match state.syscall state.out_channel state.arch with
       | Continue  -> state.program_end, history
       | Exit code ->
         Format.fprintf state.out_channel
-          "%a Exiting with code @{<fg_yellow>'%d'@}.@."
-          info ()
-          code;
-          true, history
-    in
-    {
-      state with
-      program_end;
-      history;
-    }
+          "%a Exiting with code @{<fg_yellow>'%d'@}@." info () code;
+        true, history
+  in
+  {
+    state with
+    program_end;
+    history;
+  }
+
+(* Take n step forward *)
+let rec n_step n state =
+  if n > 0 then n_step (n-1) (one_step state)
+           else state
+
+(* Take one step backward *)
+
+let one_bstep (state : Types.state) =
+  let history =
+  try Simulator.History.step_back state.arch state.history
+  with Simulator.History.History_Empty ->
+    Format.fprintf state.out_channel "%a History is empty.@." error ();
+    state.history
+  in
+  { state with history }
+
+(* Take n step backward *)
+let rec n_bstep n state =
+  if n > 0 then n_bstep (n-1) (one_bstep state)
+           else state
+
+(* Step ---------------------------------------------------------------------- *)
+
+let step_execute args (state : Types.state) =
+  match args with
+  | []         -> one_step state
+  | count :: _ ->
+      try
+        n_step (int_of_string count) state
+      with _ ->
+        Format.printf "%a Incorrect argument @{<fg_yellow>'%s'@}@." error () count;
+        state
 
 let step : Types.cmd = {
   long_form   = "step";
@@ -60,12 +91,11 @@ let step : Types.cmd = {
 
 (* Next --------------------------------------------------------------------- *)
 
-let next_execute args (state : Types.state) =
+let next_execute _args (state : Types.state) =
   let rec sub first (state : Types.state) =
     let addr = Arch.Cpu.get_pc state.arch.cpu in
     if not state.program_end && (first || not (Hashtbl.mem state.breakpoints addr)) then
-      let new_state = step_execute args state in
-      sub false new_state
+      sub false (one_step state)
     else state
   in
   sub true state
@@ -96,14 +126,15 @@ let run : Types.cmd = {
 
 (* Prev --------------------------------------------------------------------- *)
 
-let prev_execute _args (state : Types.state) =
-  let history =
-  try Simulator.History.step_back state.arch state.history
-  with Simulator.History.History_Empty ->
-    Format.fprintf state.out_channel "%a History is empty.@." error ();
-    state.history
-  in
-  { state with history }
+let prev_execute args (state : Types.state) =
+  match args with
+  | []         -> one_bstep state
+  | count :: _ ->
+      try
+        n_bstep (int_of_string count) state
+      with _ ->
+        Format.printf "%a Incorrect argument @{<fg_yellow>'%s'@}@." error () count;
+        state
 
 let prev : Types.cmd = {
   long_form   = "previous";

@@ -46,7 +46,7 @@ let parse_command args (state : Types.state) cmd =
   match Hashtbl.find_opt state.cmds cmd with
   | Some cmd -> cmd.execute args state
   | None     ->
-    fprintf state.out_channel "%a Undefined command: @{<fg_yellow>'%s'@}. "
+    fprintf state.out_channel "%a Undefined command @{<fg_yellow>'%s'@}. "
       error () cmd;
     fprintf state.out_channel "Try @{<fg_green>'help'@}.@.";
     state

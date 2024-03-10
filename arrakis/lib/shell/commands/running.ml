@@ -25,21 +25,21 @@ let step_execute _args (state : Types.state) =
     if state.program_end
     then (
     Format.fprintf state.out_channel
-        "\n%a Program has exited, can't run further.@." error ();
+        "%a Program has exited, can't run further.@." error ();
     true, state.history
   ) else
     match exec_instruction state.arch state.history with
     | Continue (_, history)  -> state.program_end, history
     | Zero        ->
       Format.fprintf state.out_channel
-        "\n%a Exiting without an exit syscall.@." warning ();
+        "%a Exiting without an exit syscall.@." warning ();
       true, state.history
     | Sys_call history  ->
       match state.syscall state.out_channel state.arch with
       | Continue  -> state.program_end, history
       | Exit code ->
         Format.fprintf state.out_channel
-          "\n%a Exiting with code @{<fg_yellow>'%d'@}.@."
+          "%a Exiting with code @{<fg_yellow>'%d'@}.@."
           info ()
           code;
           true, history
@@ -54,7 +54,7 @@ let step : Types.cmd = {
   long_form   = "step";
   short_form  = "s";
   name        = "(s)tep";
-  description = "Execute next instruction.";
+  description = "Execute next instruction";
   execute     = step_execute;
 }
 
@@ -74,7 +74,7 @@ let next : Types.cmd = {
   long_form   = "next";
   short_form  = "n";
   name        = "(n)ext";
-  description = "Run code until the next breakpoint.";
+  description = "Run code until the next breakpoint";
   execute     = next_execute;
 }
 
@@ -90,7 +90,7 @@ let run : Types.cmd = {
   long_form   = "run";
   short_form  = "r";
   name        = "(r)un";
-  description = "Run code until the end.";
+  description = "Run code until the end";
   execute     = run_execute;
 }
 
@@ -100,7 +100,7 @@ let prev_execute _args (state : Types.state) =
   let history =
   try Simulator.History.step_back state.arch state.history
   with Simulator.History.History_Empty ->
-    Format.fprintf state.out_channel "\n%a History is empty.@." error ();
+    Format.fprintf state.out_channel "%a History is empty.@." error ();
     state.history
   in
   { state with history }
@@ -109,7 +109,7 @@ let prev : Types.cmd = {
   long_form   = "previous";
   short_form  = "pre";
   name        = "(pre)vious";
-  description = "Revert previous step.";
+  description = "Revert previous step";
   execute     = prev_execute;
 }
 
@@ -126,6 +126,6 @@ let reset : Types.cmd = {
   long_form   = "reset";
   short_form  = "res";
   name        = "(res)et";
-  description = "Recovery of the simulator's initial state.";
+  description = "Recovery of the simulator's initial state";
   execute     = reset_execute;
 }

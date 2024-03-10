@@ -87,6 +87,6 @@ let breakpoint : Types.cmd = {
   long_form   = "breakpoint";
   short_form  = "b";
   name        = "(b)reakpoint";
-  description = "Create breakpoints.";
+  description = "Create breakpoints";
   execute;
 }

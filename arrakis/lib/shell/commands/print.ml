@@ -206,6 +206,6 @@ let print : Types.cmd = {
   long_form   = "print";
   short_form  = "p";
   name        = "(p)rint";
-  description = "Print informations about CPU.";
+  description = "Print informations about CPU";
   execute;
 }

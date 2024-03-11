@@ -14,21 +14,23 @@ type cmd = {
   short_form  : string;
 
   (* Shown in the help menu *)
-  name        : string;
-  description : string;
+  name       : string;
+  short_desc : string;
+  long_desc  : string;
 
   (* Do the actual action of the command *)
   (* Please note that as the state contain mutable values, the execute function
     may alter the state given as argument *)
-  execute     : string list -> state -> state
+  execute     : string list -> state -> state;
 
+  sub         : cmd list;
 }
 
 and state = {
 
   (* Shell state *)
   out_channel  : Format.formatter;
-  cmds         : (string, cmd) Hashtbl.t;
+  cmds         : cmd list;
   cmds_history : string array;
   breakpoints  : (int32,  int) Hashtbl.t;
   program_end  : bool;
@@ -41,3 +43,4 @@ and state = {
   syscall      : Syscall.Types.syscall;
 
 }
+

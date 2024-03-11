@@ -1,7 +1,3 @@
-let complete (state : Types.state) (input : string) =
-  let ok = String.starts_with ~prefix:input in
-  Hashtbl.fold (fun n _ acc -> if ok n then n :: acc else acc) state.cmds []
-
 (* Read a line from stdin:
   - Auto complete when '\t' is read
   - Go back in history with arrows

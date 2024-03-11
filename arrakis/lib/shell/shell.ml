@@ -21,15 +21,10 @@ let all_commands = [
 ]
 
 let create arch syscall debug labels : Types.state =
-  let cmds = Hashtbl.create (List.length all_commands) in
-  List.iter (fun (cmd : Types.cmd) ->
-    Hashtbl.add cmds cmd.short_form cmd;
-    Hashtbl.add cmds cmd.long_form  cmd)
-  all_commands;
   {
     (* Shell state *)
     out_channel  = Format.std_formatter;
-    cmds;
+    cmds         = all_commands;
     cmds_history = [||];
     breakpoints  = Hashtbl.create 64;
     program_end  = false;
@@ -42,24 +37,30 @@ let create arch syscall debug labels : Types.state =
     syscall;
   }
 
-let parse_command args (state : Types.state) cmd =
-  match Hashtbl.find_opt state.cmds cmd with
-  | Some cmd -> cmd.execute args state
-  | None     ->
-    fprintf state.out_channel "%a Undefined command @{<fg_yellow>'%s'@}. "
-      error () cmd;
-    fprintf state.out_channel "Try @{<fg_green>'help'@}.@.";
-    state
+let rec parse_command command args cmds state =
+  let cmd = List.find (Utils.cmd_eq command) cmds in
+  match args with
+  | []            -> cmd.execute args state
+  | command' :: args' ->
+      try parse_command command' args' cmd.sub state
+      with Not_found -> cmd.execute args state
 
 let rec start (state : Types.state) =
   fprintf state.out_channel "> %!";
   let line  = read_line ()                  in
   let words = String.split_on_char ' ' line in
   try match words with
+  | []              -> start state
   | command :: args ->
-    let new_state = parse_command args state command in
+    let new_state =
+      try parse_command command args state.cmds state
+      with Not_found ->
+        fprintf state.out_channel "%a Undefined command @{<fg_yellow>'%s'@}. "
+          error () command;
+        fprintf state.out_channel "Try @{<fg_green>'help'@}.@.";
+        state
+    in
     start new_state
-  | _ -> start state
   with Quit.Shell_Exit -> ()
 
 let run (state : Types.state) =

@@ -82,11 +82,13 @@ let step_execute args (state : Types.state) =
         state
 
 let step : Types.cmd = {
-  long_form   = "step";
-  short_form  = "s";
-  name        = "(s)tep";
-  description = "Execute next instruction";
-  execute     = step_execute;
+  long_form  = "step";
+  short_form = "s";
+  name       = "(s)tep";
+  short_desc = "Execute next instruction";
+  long_desc  = "";
+  execute    = step_execute;
+  sub        = [];
 }
 
 (* Next --------------------------------------------------------------------- *)
@@ -104,8 +106,10 @@ let next : Types.cmd = {
   long_form   = "next";
   short_form  = "n";
   name        = "(n)ext";
-  description = "Run code until the next breakpoint";
+  short_desc  = "Run code until the next breakpoint";
+  long_desc   = "";
   execute     = next_execute;
+  sub         = []
 }
 
 (* Run ---------------------------------------------------------------------- *)
@@ -120,8 +124,10 @@ let run : Types.cmd = {
   long_form   = "run";
   short_form  = "r";
   name        = "(r)un";
-  description = "Run code until the end";
+  short_desc  = "Run code until the end";
+  long_desc   = "";
   execute     = run_execute;
+  sub         = []
 }
 
 (* Prev --------------------------------------------------------------------- *)
@@ -140,8 +146,10 @@ let prev : Types.cmd = {
   long_form   = "previous";
   short_form  = "pre";
   name        = "(pre)vious";
-  description = "Revert previous step";
+  short_desc  = "Revert previous step";
+  long_desc   = "";
   execute     = prev_execute;
+  sub         = []
 }
 
 (* Reset -------------------------------------------------------------------- *)
@@ -157,6 +165,8 @@ let reset : Types.cmd = {
   long_form   = "reset";
   short_form  = "res";
   name        = "(res)et";
-  description = "Recovery of the simulator's initial state";
+  short_desc  = "Recovery of the simulator's initial state";
+  long_desc   = "";
   execute     = reset_execute;
+  sub         = []
 }

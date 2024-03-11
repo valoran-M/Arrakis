@@ -7,15 +7,20 @@
 
 open Format
 
-let general (state : Types.state) =
-
-  fprintf state.out_channel "%2s@{<fg_green>General help:@}\n\n" "";
-
-  Hashtbl.iter (fun k (cmd : Types.cmd) ->
-    if k = cmd.long_form then
+let print (name : string) (desc : string) (sub : Types.cmd list) (state : Types.state) =
+  fprintf state.out_channel "%2s@{<fg_green>%s@}\n" "" name;
+  (if desc != "" then fprintf state.out_channel "%2s%s\n" "" desc);
+  List.iter (fun (cmd : Types.cmd) ->
     fprintf state.out_channel "%2s@{<fg_green>*@} %-15s%2s%s\n"
-    "" cmd.name "" cmd.description)
-  state.cmds
+    "" cmd.name "" cmd.short_desc)
+  sub;
+  state
+
+let general (state : Types.state) =
+  print "General" "" state.cmds state
+
+let command (cmd : Types.cmd) (state : Types.state) =
+  print (String.capitalize_ascii cmd.long_form) cmd.long_desc cmd.sub state
 
 let breakpoint channel =
   Format.fprintf channel
@@ -64,17 +69,19 @@ let print channel =
       If noffset is also specified, print code from pc-noffset to pc+offset.@.|}
 
 let execute args (state : Types.state) =
-  begin match args with
-  | "print"      :: _ -> print      state.out_channel
-  | "breakpoint" :: _ -> breakpoint state.out_channel
-  | _                 -> general    state
-  end;
-  state
+  match args with
+  | []       -> general state
+  | hd :: _  ->
+    try               command (List.find (Utils.cmd_eq hd) state.cmds) state
+    with Not_found -> general state
 
 let help : Types.cmd = {
   long_form   = "help";
   short_form  = "h";
   name        = "(h)elp";
-  description = "Show this help";
+  short_desc  = "Show this help";
+  long_desc   = "";
   execute     = execute;
+  sub         = [];
 }
+

@@ -5,6 +5,7 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
+open Arch
 open Insts
 open Utils
 
@@ -65,7 +66,7 @@ let code instruction rd rs1 rs2 =
 
 (* Exectuion ---------------------------------------------------------------- *)
 
-let execute instruction rs1 rs2 =
+let execute_aux rs1 rs2 instruction =
   match instruction.funct3, instruction.funct7 with
   (* RV32I *)
   | 0x0, 0x00 -> rs1 +  rs2                   (* ADD    *)
@@ -80,12 +81,23 @@ let execute instruction rs1 rs2 =
   | 0x3, 0x00 -> if rs1 <.rs2 then 1l else 0l (* SLTU   *)
   (* RV32M *)
   | 0x0, 0x01 -> rs1 * rs2                    (* MUL    *)
-  | 0x1, 0x01 -> mulh rs1 rs2                 (* MULH   *)
+  | 0x1, 0x01 -> mulh   rs1 rs2               (* MULH   *)
   | 0x2, 0x01 -> mulhsu rs1 rs2               (* MULHSU *)
-  | 0x3, 0X01 -> mulhu rs1 rs2                (* MULHU  *)
+  | 0x3, 0X01 -> mulhu  rs1 rs2               (* MULHU  *)
   | 0x4, 0x01 -> rs1 / rs2                    (* DIV    *)
   | 0x5, 0x01 -> rs1 /. rs2                   (* DIVU   *)
   | 0x6, 0x01 -> rs1 % rs2                    (* REM    *)
   | 0x7, 0x01 -> rs1 %. rs2                   (* REMU   *)
   | _, _ -> Error.r_invalid instruction.funct3 instruction.funct7
+
+let execute (cpu : Cpu.t) instruction =
+  let open Cpu in
+  let decode = decode instruction           in
+  let rs1    = Regs.get cpu.regs decode.rs1 in
+  let rs2    = Regs.get cpu.regs decode.rs2 in
+  let res    = execute_aux rs1 rs2 decode   in
+  let last_v = Regs.get cpu.regs decode.rd  in
+  Regs.set cpu.regs decode.rd res;
+  next_pc cpu;
+  (decode.rd, last_v)
 

@@ -25,14 +25,8 @@ let exec (instruction : Int32.t) (cpu : Cpu.t) memory =
   let opcode = Int32.logand opcode_mask instruction in
   match opcode with
   (* R type *)
-  | 0b0110011l ->
-    let decode = R.decode instruction in
-    let rs1 = Regs.get cpu.regs decode.rs1 in
-    let rs2 = Regs.get cpu.regs decode.rs2 in
-    let return = R.execute decode rs1 rs2 in
-    let last_value = Regs.get cpu.regs decode.rd in
-    Regs.set cpu.regs decode.rd return;
-    next_pc cpu; Change_Register (decode.rd, last_value)
+  | 0b0110011l -> let (reg, last_v) = R.execute cpu instruction in
+                  Change_Register (reg, last_v)
   (* I type *)
   | 0b0010011l ->
     let decode = I.decode instruction in
@@ -99,13 +93,14 @@ let exec (instruction : Int32.t) (cpu : Cpu.t) memory =
 
 let exec_instruction (arch : Riscv.t) (history : History.t) =
   let open History in
-  let code = Memory.get_int32 arch.memory (Cpu.get_pc arch.cpu) in
+  let code    = Memory.get_int32 arch.memory (Cpu.get_pc arch.cpu) in
   let last_pc = Cpu.get_pc arch.cpu in
-  if code = 0l
-  then Zero
-  else try
-    let last = exec code arch.cpu arch.memory in
-    Continue (Cpu.get_pc arch.cpu, add_history last_pc last history)
-  with Syscall -> Sys_call (add_history last_pc Change_Nothing history)
 
+  try
+    if code = 0l then Zero
+    else (
+      let last = exec code arch.cpu arch.memory in
+      Continue (Cpu.get_pc arch.cpu, add_history last_pc last history)
+    )
+  with Syscall -> Sys_call (add_history last_pc Change_Nothing history)
 

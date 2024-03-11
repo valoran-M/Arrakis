@@ -1,3 +1,11 @@
+open Types
+
+let complete (cmd : string) (cmds : cmd list) =
+  let ok = String.starts_with ~prefix:cmd in
+  let long  = List.filter (fun (cmd : cmd) -> ok cmd.long_form)  cmds in
+  let short = List.filter (fun (cmd : cmd) -> ok cmd.short_form) cmds in
+  short @ long
+
 (* Read a line from stdin:
   - Auto complete when '\t' is read
   - Go back in history with arrows

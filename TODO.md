@@ -17,6 +17,7 @@
 
 ## ??? (Future work without attributed planned version)
 
+* Change `shell/types.ml > state` to be fully immutable and not use hashtbl
 * openat (More detail in the file [scunix.ml](./arrakis/lib/syscall/scunix.ml))
 * Would be nice to improve errors.
   Some that could be interesting would be 'Did you mean...' errors, for example

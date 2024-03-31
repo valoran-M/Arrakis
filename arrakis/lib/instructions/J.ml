@@ -44,10 +44,10 @@ let decode code =
   (* Imm interval *)
   let imm_31_20 = (code & (func7_mask || rs2_mask)) >> 20l in
   (* Imm's bits *)
-  let imm19_12 = code & 0b11111111000000000000l in
-  let imm11 = (imm_31_20 & 0b1l) << 11l         in
-  let imm10_1 = (imm_31_20 & 0b11111111110l)    in
-  let imm20 = (imm_31_20 & 0b100000000000l)     in
+  let imm19_12  = code & 0b11111111000000000000l  in
+  let imm11     = (imm_31_20 & 0b1l) << 11l       in
+  let imm10_1   = (imm_31_20 & 0b11111111110l)    in
+  let imm20     = (imm_31_20 & 0b100000000000l)   in
   let imm = sign_extended (imm20 || imm19_12 || imm11 || imm10_1) 21 in
 
   let (>>) = Int.shift_right_logical in

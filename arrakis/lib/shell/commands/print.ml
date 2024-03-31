@@ -20,7 +20,7 @@ let ( * ) = Int32.mul
 
 let print_program_header channel =
   fprintf channel "%3s | %2s%2s @{<bold>%-10s@} | @{<bold>%-12s@} | @{<bold>%-18s@} | @{<bold>%-18s@} |\n"
-    "" "" "" "Adress" "Machine Code" "Basic Code" "Original Code"
+    "" "" "" "Address" "Machine Code" "Basic Code" "Original Code"
 
 let print_addr (state : Types.state) addr pc code =
     let breakpoint_str  =
@@ -131,7 +131,7 @@ let print_line (state : Types.state) line_address =
 
 let print_memory (state : Types.state) start size =
   fprintf state.out_channel " @{<bold>%-9s@} |  @{<bold>+3@}  @{<bold>+2@}  @{<bold>+1@}  @{<bold>+0@} |\n"
-    "Adress";
+    "Address";
   let line_address = ref (Int32.logand start (Int32.lognot line_size32)) in
   for _ = 1 to size do
     print_line state !line_address;

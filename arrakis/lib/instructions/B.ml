@@ -38,7 +38,7 @@ let instructions, str_table = create_tables instructions (fun (_, _, v) -> v)
 let decode code =
   (* Imm interval *)
   let imm_7 = (code & func7_mask) >> 25l in
-  let imm_5 = (code & rd_mask) >> 7l in
+  let imm_5 = (code & rd_mask) >> 7l     in
   (* Imm's bits *)
   let imm12   = (imm_7 & 0b1000000l) << 6l in
   let imm10_5 = (imm_7 & 0b0111111l) << 5l in
@@ -57,7 +57,7 @@ let decode code =
 
 let code instruction rs1 rs2 imm =
   let (<<) = Int32.shift_left in
-  let (||) = Int32.logor in
+  let (||) = Int32.logor      in
   let (opcode, funct3, _) = Hashtbl.find instructions instruction in
   let imm12   = get_interval imm 12 12 in
   let imm11   = get_interval imm 11 11 in

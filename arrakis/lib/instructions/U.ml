@@ -16,7 +16,7 @@ open Utils
   +-----------------------------------------------------------------------+
 *)
 
-type t = { rd: int; imm_shift : int32; }
+type t = { rdt: int; imm : int32; }
 
 let instructions =
     [
@@ -39,8 +39,8 @@ let decode code =
   let (>>) = Int.shift_right_logical   in
   let (&&) x y = Int32.to_int (x & y) in
   {
-    rd = (code && rd_mask) >> 7;
-    imm_shift = Int32.logand code imm20_mask;
+    rdt = (code && rdt_mask) >> 7;
+    imm = Int32.logand code i20_mask;
   }
 
 (* Exectuion ---------------------------------------------------------------- *)
@@ -49,13 +49,13 @@ let execute opcode instruction (arch : Arch.Riscv.t) =
   let open  Arch.Cpu in
   let cpu = arch.cpu in
   let ins = decode instruction in
-  let lst = get_reg cpu ins.rd in
+  let lst = get_reg cpu ins.rdt in
   let res =
     match opcode with
-    | 0b0110111l -> ins.imm_shift               (* LUI *)
-    | 0b0010111l -> get_pc cpu + ins.imm_shift  (* AUIPC *)
+    | 0b0110111l -> ins.imm               (* LUI *)
+    | 0b0010111l -> get_pc cpu + ins.imm  (* AUIPC *)
     | _ -> assert false     (* opcode in { 0110111; 0010111 } *)
   in
-  set_reg cpu ins.rd res;
-  next_pc cpu; Change_Register (ins.rd, lst)
+  set_reg cpu ins.rdt res;
+  next_pc cpu; Change_Register (ins.rdt, lst)
 

@@ -57,27 +57,27 @@ let print_code _arch code =
   | 0b0110011l ->
     let inst = R.decode code in
     Format.sprintf "%s %s, %s, %s"
-      (Hashtbl.find r_to_string (inst.funct3, inst.funct7))
-      (reg_to_str inst.rd) (reg_to_str inst.rs1) (reg_to_str inst.rs2)
+      (Hashtbl.find r_to_string (inst.fc3, inst.fc7))
+      (reg_to_str inst.rdt) (reg_to_str inst.rs1) (reg_to_str inst.rs2)
   (* I *)
   | 0b0010011l | 0b1100111l | 0b1110011l ->
     let inst = I.decode code in
     Format.sprintf "%s %s, %s, %d"
-      (Hashtbl.find i_to_string (opcode, inst.funct3))
-      (reg_to_str inst.rd) (reg_to_str inst.rs1)
+      (Hashtbl.find i_to_string (opcode, inst.fc3))
+      (reg_to_str inst.rdt) (reg_to_str inst.rs1)
       (Int32.to_int (sign_extended inst.imm 12))
   | 0b0000011l ->
     let inst = I.decode code in
     Format.sprintf "%s %s, %d(%s)"
-      (Hashtbl.find i_to_string (opcode, inst.funct3))
-      (reg_to_str inst.rd)
+      (Hashtbl.find i_to_string (opcode, inst.fc3))
+      (reg_to_str inst.rdt)
       (Int32.to_int (sign_extended inst.imm 12))
       (reg_to_str inst.rs1)
   (* S *)
   | 0b0100011l ->
     let inst = S.decode code in
     Format.sprintf "%s %s, %d(%s)"
-      (Hashtbl.find s_to_string inst.funct3)
+      (Hashtbl.find s_to_string inst.fc3)
       (reg_to_str inst.rs2)
       (int32_to_int (sign_extended inst.imm 12))
       (reg_to_str inst.rs1)
@@ -85,15 +85,15 @@ let print_code _arch code =
   | 0b1100011l  ->
     let inst = B.decode code in
     Format.sprintf "%s %s, %s, 0x%x"
-      (Hashtbl.find b_to_string inst.funct3)
+      (Hashtbl.find b_to_string inst.fc3)
       (reg_to_str inst.rs1) (reg_to_str inst.rs2)
       (int32_to_int inst.imm)
   (* U *)
   | 0b0110111l | 0b0010111l  ->
     let inst = U.decode code in
     Format.sprintf "%s %s, %d" (Hashtbl.find u_to_string opcode)
-      (reg_to_str inst.rd) (Int32.to_int (Int32.shift_right_logical
-        inst.imm_shift 12))
+      (reg_to_str inst.rdt) (Int32.to_int (Int32.shift_right_logical
+        inst.imm 12))
   (* J *)
   | 0b1101111l   ->
     let inst = J.decode code in

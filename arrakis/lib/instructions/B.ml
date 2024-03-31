@@ -18,7 +18,7 @@ open Global_utils.Integer
   +-----------------------------------------------------------------------+
 *)
 
-type t = { funct3: int; rs1: int; rs2: int; imm: int32; }
+type t = { fc3: int; rs1: int; rs2: int; imm: int32; }
 
 let instructions =
   [
@@ -37,48 +37,47 @@ let instructions, str_table = create_tables instructions (fun (_, _, v) -> v)
 
 let decode code =
   (* Imm interval *)
-  let imm_7 = (code & func7_mask) >> 25l in
-  let imm_5 = (code & rd_mask) >> 7l     in
+  let imm_7 = (code & fc7_mask) >> 25l in
+  let imm_5 = (code & rdt_mask) >> 07l in
   (* Imm's bits *)
-  let imm12   = (imm_7 & 0b1000000l) << 6l in
-  let imm10_5 = (imm_7 & 0b0111111l) << 5l in
-  let imm11   = (imm_5 & 0b00001l) << 11l  in
-  let imm4_1  = imm_5 & 0b11110l           in
-  let imm = sign_extended (imm12 || imm11 || imm10_5 || imm4_1) 13 in
+  let imm12_12 = (imm_7 & 0b1000000l) << 06l in
+  let imm10_05 = (imm_7 & 0b0111111l) << 05l in
+  let imm11_11 = (imm_5 & 0b0000001l) << 11l in
+  let imm04_01 = (imm_5 & 0b0011110l)        in
+  let imm = sign_extended (imm12_12 || imm11_11 || imm10_05 || imm04_01) 13 in
 
   let (>>) = Int.shift_right_logical in
   let (&&) x y = Int32.to_int (x & y) in
   {
-    funct3 = (code && func3_mask) >> 12;
+    fc3 = (code && fc3_mask) >> 12;
     rs1 = (code && rs1_mask) >> 15;
     rs2 = (code && rs2_mask) >> 20;
-    imm = imm;
+    imm;
   }
 
 let code instruction rs1 rs2 imm =
   let (<<) = Int32.shift_left in
   let (||) = Int32.logor      in
   let (opcode, funct3, _) = Hashtbl.find instructions instruction in
-  let imm12   = get_interval imm 12 12 in
-  let imm11   = get_interval imm 11 11 in
-  let imm10_5 = get_interval imm 10 5  in
-  let imm4_1  = get_interval imm 4  1  in
-  (imm12 << 31) || (imm10_5 << 25) || (rs2    << 20) ||
-  (rs1   << 15) || (funct3  << 12) || (imm4_1 <<  8) ||
-  (imm11 <<  7) || opcode
+  let imm12_12 = get_interval imm 12 12 in
+  let imm11_11 = get_interval imm 11 11 in
+  let imm10_05 = get_interval imm 10 05 in
+  let imm04_01 = get_interval imm 04 01 in
+  (imm12_12 << 31) || (imm10_05 << 25) || (rs2 << 20) || (funct3  << 12) ||
+  (imm04_01 <<  8) || (imm11_11 <<  7) || (rs1 << 15) || opcode
 
 (* Exectuion ---------------------------------------------------------------- *)
 
 let execute_tests instruction rs1 rs2 =
   let test f x y = if f x y then instruction.imm else 4l in
-  match instruction.funct3 with
-  | 0x0 -> test (=)   rs1 rs2 (* BEQ  *)
-  | 0x1 -> test (<>)  rs1 rs2 (* BNE  *)
-  | 0x4 -> test (<)   rs1 rs2 (* BLT  *)
-  | 0x5 -> test (>=)  rs1 rs2 (* BGE  *)
-  | 0x6 -> test (<.)  rs1 rs2 (* BLTU *)
+  match instruction.fc3 with
+  | 0x0 -> test (=  ) rs1 rs2 (* BEQ  *)
+  | 0x1 -> test (<> ) rs1 rs2 (* BNE  *)
+  | 0x4 -> test (<  ) rs1 rs2 (* BLT  *)
+  | 0x5 -> test (>= ) rs1 rs2 (* BGE  *)
+  | 0x6 -> test (<. ) rs1 rs2 (* BLTU *)
   | 0x7 -> test (>=.) rs1 rs2 (* BGEU *)
-  | _ -> Error.b_invalid instruction.funct3
+  | _ -> Error.b_invalid instruction.fc3
 
 let execute _opcode instruction (arch : Riscv.t) =
   let open Cpu in

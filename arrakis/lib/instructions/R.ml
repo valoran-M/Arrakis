@@ -1,4 +1,4 @@
-(******************************************************************************)
+(*************************************0*****************************************)
 (* Copyright 2023-2024 - Arrakis contributors                                 *)
 (*                                                                            *)
 (* This file is part of Arrakis, a RISC-V simulator.                          *)
@@ -17,7 +17,7 @@ open Utils
   +-----------------------------------------------------------------------+
 *)
 
-type t = { funct7 : int; funct3: int; rs1: int; rs2: int; rd: int; }
+type t = { fc7 : int; fc3: int; rs1: int; rs2: int; rdt: int; }
 
 let instructions =
     [
@@ -51,24 +51,23 @@ let decode code =
     let (>>) = Int.shift_right_logical in
     let (&&) x y = Int32.to_int (x &  y) in
     {
-      funct7 = (func7_mask && code) >> 25;
-      funct3 = (func3_mask && code) >> 12;
+      fc7 = (fc7_mask && code) >> 25;
+      fc3 = (fc3_mask && code) >> 12;
       rs1 = (rs1_mask && code) >> 15;
       rs2 = (rs2_mask && code) >> 20;
-      rd = (rd_mask && code) >> 7;
+      rdt = (rdt_mask && code) >> 07;
     }
 
-let code instruction rd rs1 rs2 =
+let code instruction rd r1 r2 =
   let (<<) = Int32.shift_left in
   let (||) = Int32.logor in
-  let (opcode, funct3, funct7, _) = Hashtbl.find instructions instruction in
-  (funct7 << 25) || (rs2 << 20) || (rs1 << 15) || (funct3 << 12) ||
-  (rd     <<  7) || opcode
+  let (opcode, f3, f7, _) = Hashtbl.find instructions instruction in
+  (f7 << 25) || (r2 << 20) || (r1 << 15) || (f3 << 12) || (rd <<  7) || opcode
 
 (* Exectuion ---------------------------------------------------------------- *)
 
 let execute_instr rs1 rs2 instruction =
-  match instruction.funct3, instruction.funct7 with
+  match instruction.fc3, instruction.fc7 with
   (* RV32I *)
   | 0x0, 0x00 -> rs1 +  rs2                   (* ADD    *)
   | 0x0, 0x20 -> rs1 -  rs2                   (* SUB    *)
@@ -89,7 +88,7 @@ let execute_instr rs1 rs2 instruction =
   | 0x5, 0x01 -> rs1 /. rs2                   (* DIVU   *)
   | 0x6, 0x01 -> rs1 % rs2                    (* REM    *)
   | 0x7, 0x01 -> rs1 %. rs2                   (* REMU   *)
-  | _, _ -> Error.r_invalid instruction.funct3 instruction.funct7
+  | _, _ -> Error.r_invalid instruction.fc3 instruction.fc7
 
 let execute _opcode instruction (arch : Riscv.t) =
   let open Cpu in
@@ -98,8 +97,8 @@ let execute _opcode instruction (arch : Riscv.t) =
   let rs1 = Regs.get cpu.regs ins.rs1 in
   let rs2 = Regs.get cpu.regs ins.rs2 in
   let res = execute_instr rs1 rs2 ins in
-  let lst = Regs.get cpu.regs ins.rd  in
-  Regs.set cpu.regs ins.rd res;
+  let lst = Regs.get cpu.regs ins.rdt in
+  Regs.set cpu.regs ins.rdt res;
   next_pc cpu;
-  Change_Register (ins.rd, lst)
+  Change_Register (ins.rdt, lst)
 

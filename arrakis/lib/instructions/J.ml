@@ -5,6 +5,7 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
+open History
 open Insts
 open Utils
 open Global_utils.Integer
@@ -55,4 +56,14 @@ let decode code =
     rd = (code && rd_mask) >> 7;
     imm = imm;
   }
+
+(* Exectuion ---------------------------------------------------------------- *)
+
+let execute _opcode instruction cpu _memory =
+  let open Arch.Cpu in
+  let ins = decode instruction in
+  let lst = get_reg cpu ins.rd in
+  (* JAL *)
+  set_reg cpu ins.rd (Int32.add (get_pc cpu) 4l);
+  add_pc cpu ins.imm; Change_Register (ins.rd, lst)
 

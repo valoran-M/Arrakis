@@ -30,7 +30,7 @@ let create arch syscall debug labels : Types.state =
     program_end  = false;
 
     (* Program state *)
-    history = Simulator.History.create_history ();
+    history = History.create_history ();
     arch;
     debug;
     labels;

@@ -9,6 +9,7 @@ open Types
 open Arch
 open Utils
 open Global_utils.Print
+open Global_utils.Integer
 
 let (>) x y = Int32.unsigned_compare x y > 0
 
@@ -97,7 +98,7 @@ let write channel (arch : Riscv.t) =
     try
       let fd  = Hashtbl.find opened_fd fd in
       let mem = Memory.direct_access arch.memory in
-      let res = Unix.write fd mem (Int32.to_int buf) (Int32.to_int count) in
+      let res = Unix.write fd mem (int32_to_int buf) (int32_to_int count) in
 
       Cpu.set_reg arch.cpu 10 (Int32.of_int res);
       Continue

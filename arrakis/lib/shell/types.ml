@@ -36,7 +36,7 @@ and state = {
   program_end  : bool;
 
   (* Program state *)
-  history      : Simulator.History.t;
+  history      : History.t;
   arch         : Arch.Riscv.t;
   debug        : Assembler.Debug.t;
   labels       : Assembler.Label.t;

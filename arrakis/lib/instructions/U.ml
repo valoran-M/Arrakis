@@ -5,6 +5,7 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
+open History
 open Insts
 open Utils
 
@@ -41,4 +42,19 @@ let decode code =
     rd = (code && rd_mask) >> 7;
     imm_shift = Int32.logand code imm20_mask;
   }
+
+(* Exectuion ---------------------------------------------------------------- *)
+
+let execute opcode instruction cpu _memory =
+  let open Arch.Cpu in
+  let ins = decode instruction in
+  let lst = get_reg cpu ins.rd in
+  let res =
+    match opcode with
+    | 0b0110111l -> ins.imm_shift               (* LUI *)
+    | 0b0010111l -> get_pc cpu + ins.imm_shift  (* AUIPC *)
+    | _ -> assert false     (* opcode in { 0110111; 0010111 } *)
+  in
+  set_reg cpu ins.rd res;
+  next_pc cpu; Change_Register (ins.rd, lst)
 

@@ -54,7 +54,7 @@ let decode code =
 
 (* Exectuion ---------------------------------------------------------------- *)
 
-let execute instruction rs1 rs2 memory =
+let execute_st instruction rs1 rs2 memory =
   let addr = rs1 + instruction.imm in
   match instruction.funct3 with
   | 0x0 -> (* SB *)
@@ -72,4 +72,13 @@ let execute instruction rs1 rs2 memory =
     Memory.set_int32 memory addr rs2;
     (32, addr, last_value)
   | _ -> Error.s_invalid instruction.funct3
+
+let execute _opcode instruction (cpu : Cpu.t) memory =
+  let open Cpu in
+  let ins = decode instruction        in
+  let rs1 = Regs.get cpu.regs ins.rs1 in
+  let rs2 = Regs.get cpu.regs ins.rs2 in
+  let (length, addr, lst) = execute_st ins rs1 rs2 memory in
+  let history = History.create_write_mem length addr lst  in
+  next_pc cpu; history 
 

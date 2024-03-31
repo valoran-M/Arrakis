@@ -57,8 +57,8 @@ let rec n_step n state =
 
 let one_bstep (state : Types.state) =
   let history =
-  try Simulator.History.step_back state.arch state.history
-  with Simulator.History.History_Empty ->
+  try History.step_back state.arch state.history
+  with History.History_Empty ->
     Format.fprintf state.out_channel "%a History is empty.@." error ();
     state.history
   in
@@ -158,7 +158,7 @@ let reset_execute _args (state : Types.state) =
   {
     state with
     program_end = false;
-    history     = Simulator.History.reset state.arch state.history;
+    history     = History.reset state.arch state.history;
   }
 
 let reset : Types.cmd = {

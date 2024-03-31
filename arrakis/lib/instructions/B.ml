@@ -5,6 +5,8 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
+open Arch
+open History
 open Insts
 open Utils
 open Global_utils.Integer
@@ -67,7 +69,7 @@ let code instruction rs1 rs2 imm =
 
 (* Exectuion ---------------------------------------------------------------- *)
 
-let execute instruction rs1 rs2 =
+let execute_tests instruction rs1 rs2 =
   let test f x y = if f x y then instruction.imm else 4l in
   match instruction.funct3 with
   | 0x0 -> test (=)   rs1 rs2 (* BEQ  *)
@@ -77,4 +79,12 @@ let execute instruction rs1 rs2 =
   | 0x6 -> test (<.)  rs1 rs2 (* BLTU *)
   | 0x7 -> test (>=.) rs1 rs2 (* BGEU *)
   | _ -> Error.b_invalid instruction.funct3
+
+let execute _opcode instruction cpu _memory =
+  let open Cpu in
+  let ins = decode instruction        in
+  let rs1 = Regs.get cpu.regs ins.rs1 in
+  let rs2 = Regs.get cpu.regs ins.rs2 in
+  let imm = execute_tests ins rs1 rs2 in
+  add_pc cpu imm; Change_Nothing
 

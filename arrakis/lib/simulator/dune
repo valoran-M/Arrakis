@@ -1,3 +1,3 @@
 (library
-  (libraries arch instructions)
+  (libraries arch instructions history)
   (name simulator))

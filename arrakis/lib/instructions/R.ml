@@ -5,6 +5,7 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
+open History
 open Arch
 open Insts
 open Utils
@@ -66,7 +67,7 @@ let code instruction rd rs1 rs2 =
 
 (* Exectuion ---------------------------------------------------------------- *)
 
-let execute_aux rs1 rs2 instruction =
+let execute_instr rs1 rs2 instruction =
   match instruction.funct3, instruction.funct7 with
   (* RV32I *)
   | 0x0, 0x00 -> rs1 +  rs2                   (* ADD    *)
@@ -90,14 +91,14 @@ let execute_aux rs1 rs2 instruction =
   | 0x7, 0x01 -> rs1 %. rs2                   (* REMU   *)
   | _, _ -> Error.r_invalid instruction.funct3 instruction.funct7
 
-let execute (cpu : Cpu.t) instruction =
+let execute _opcode instruction cpu _memory =
   let open Cpu in
-  let decode = decode instruction           in
-  let rs1    = Regs.get cpu.regs decode.rs1 in
-  let rs2    = Regs.get cpu.regs decode.rs2 in
-  let res    = execute_aux rs1 rs2 decode   in
-  let last_v = Regs.get cpu.regs decode.rd  in
-  Regs.set cpu.regs decode.rd res;
+  let ins = decode instruction        in
+  let rs1 = Regs.get cpu.regs ins.rs1 in
+  let rs2 = Regs.get cpu.regs ins.rs2 in
+  let res = execute_instr rs1 rs2 ins in
+  let lst = Regs.get cpu.regs ins.rd  in
+  Regs.set cpu.regs ins.rd res;
   next_pc cpu;
-  (decode.rd, last_v)
+  Change_Register (ins.rd, lst)
 

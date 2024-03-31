@@ -17,22 +17,22 @@ type return =
 
 let opcode_mask = 0b1111111l
 
-let exec (instruction : Int32.t) (cpu : Cpu.t) memory =
+let exec (instruction : Int32.t) (arch : Riscv.t)  =
   let opcode = Int32.logand opcode_mask instruction in
   match opcode with
   (* R type *)
-  | 0b0110011l -> R.execute opcode instruction cpu memory
+  | 0b0110011l -> R.execute opcode instruction arch
   (* S type *)
-  | 0b0100011l -> S.execute opcode instruction cpu memory
+  | 0b0100011l -> S.execute opcode instruction arch
   (* B type *)
-  | 0b1100011l -> B.execute opcode instruction cpu memory 
+  | 0b1100011l -> B.execute opcode instruction arch
   (* J Type *)
-  | 0b1101111l -> J.execute opcode instruction cpu memory
+  | 0b1101111l -> J.execute opcode instruction arch
   (* I type *)
   | 0b0010011l | 0b0000011l
-  | 0b1100111l | 0b1110011l -> I.execute opcode instruction cpu memory
+  | 0b1100111l | 0b1110011l -> I.execute opcode instruction arch
   (* U type *)
-  | 0b0110111l | 0b0010111l -> U.execute opcode instruction cpu memory
+  | 0b0110111l | 0b0010111l -> U.execute opcode instruction arch
   (* Error *)
   | _ -> Error.opcode_invalid opcode
 
@@ -44,7 +44,7 @@ let exec_instruction (arch : Riscv.t) (history : History.t) =
   try
     if code = 0l then Zero
     else (
-      let last = exec code arch.cpu arch.memory in
+      let last = exec code arch in
       Continue (Cpu.get_pc arch.cpu, add_history last_pc last history)
     )
   with I.Syscall -> Sys_call (add_history last_pc Change_Nothing history)

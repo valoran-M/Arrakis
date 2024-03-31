@@ -91,9 +91,10 @@ let execute_instr rs1 rs2 instruction =
   | 0x7, 0x01 -> rs1 %. rs2                   (* REMU   *)
   | _, _ -> Error.r_invalid instruction.funct3 instruction.funct7
 
-let execute _opcode instruction cpu _memory =
+let execute _opcode instruction (arch : Riscv.t) =
   let open Cpu in
-  let ins = decode instruction        in
+  let cpu = arch.cpu in
+  let ins = decode instruction in
   let rs1 = Regs.get cpu.regs ins.rs1 in
   let rs2 = Regs.get cpu.regs ins.rs2 in
   let res = execute_instr rs1 rs2 ins in

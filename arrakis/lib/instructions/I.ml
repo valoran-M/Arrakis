@@ -106,9 +106,10 @@ let execute_jmp instruction rs1 pc =
   | 0x0 -> (pc + 4l, rs1 + imm)                           (* JALR *)
   | _   -> Error.i_invalid_load instruction.funct3
 
-let execute opcode instruction (cpu : Cpu.t) memory =
+let execute opcode instruction (arch : Riscv.t) =
   let open Cpu in
-  let ins = decode instruction        in
+  let cpu = arch.cpu in
+  let ins = decode instruction in
   let rs1 = Regs.get cpu.regs ins.rs1 in
   let lst = Regs.get cpu.regs ins.rd  in
   match opcode with
@@ -118,7 +119,7 @@ let execute opcode instruction (cpu : Cpu.t) memory =
       next_pc cpu;
       Change_Register (ins.rd, lst)
   | 0b0000011l ->
-      let res = execute_load ins rs1 memory in
+      let res = execute_load ins rs1 arch.memory in
       Regs.set cpu.regs ins.rd res;
       next_pc cpu; Change_Register (ins.rd, lst)
   | 0b1100111l ->

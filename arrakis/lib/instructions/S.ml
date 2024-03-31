@@ -73,12 +73,13 @@ let execute_st instruction rs1 rs2 memory =
     (32, addr, last_value)
   | _ -> Error.s_invalid instruction.funct3
 
-let execute _opcode instruction (cpu : Cpu.t) memory =
+let execute _opcode instruction (arch : Riscv.t) =
   let open Cpu in
-  let ins = decode instruction        in
+  let cpu = arch.cpu in
+  let ins = decode instruction in
   let rs1 = Regs.get cpu.regs ins.rs1 in
   let rs2 = Regs.get cpu.regs ins.rs2 in
-  let (length, addr, lst) = execute_st ins rs1 rs2 memory in
-  let history = History.create_write_mem length addr lst  in
+  let (length, addr, lst) = execute_st ins rs1 rs2 arch.memory in
+  let history = History.create_write_mem length addr lst in
   next_pc cpu; history 
 

@@ -80,9 +80,10 @@ let execute_tests instruction rs1 rs2 =
   | 0x7 -> test (>=.) rs1 rs2 (* BGEU *)
   | _ -> Error.b_invalid instruction.funct3
 
-let execute _opcode instruction cpu _memory =
+let execute _opcode instruction (arch : Riscv.t) =
   let open Cpu in
-  let ins = decode instruction        in
+  let cpu = arch.cpu in
+  let ins = decode instruction in
   let rs1 = Regs.get cpu.regs ins.rs1 in
   let rs2 = Regs.get cpu.regs ins.rs2 in
   let imm = execute_tests ins rs1 rs2 in

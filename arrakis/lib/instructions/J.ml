@@ -59,8 +59,9 @@ let decode code =
 
 (* Exectuion ---------------------------------------------------------------- *)
 
-let execute _opcode instruction cpu _memory =
+let execute _opcode instruction (arch : Arch.Riscv.t) =
   let open Arch.Cpu in
+  let cpu = arch.cpu in
   let ins = decode instruction in
   let lst = get_reg cpu ins.rd in
   (* JAL *)

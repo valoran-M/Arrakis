@@ -50,20 +50,9 @@ let () =
 
 let pseudo_length (pseudo : pseudo_instruction) =
   match pseudo with
-  | NOP       -> 0x4l
-  | LA (_, _) -> 0x8l
-  | J _       -> 0x4l
-  | JALP _    -> 0x4l
-  | JR _      -> 0x4l
-  | JALRP _   -> 0x0l
-  | RET       -> 0x4l
-  | CALL _    -> 0x8l
-  | TAIL _    -> 0x8l
-  | LGlob (_, _, _)       -> 0x8l
-  | SGlob (_, _, _, _)    -> 0x8l
-  | Two_Regs (_, _, _)    -> 0x4l
-  | Regs_Offset (_, _, _) -> 0x4l
-  | Regs_Regs_Offset (_, _, _, _) -> 0x4l
+  | NOP  | RET  | J _  | JALP _  | JR _ | JALRP _
+  | Two_Regs _  | Regs_Offset _  | Regs_Regs_Offset _ -> 0x4l
+  | CALL _  | TAIL _ | LA _ | LGlob _ | SGlob _       -> 0x8l
   | LI (_, imm) ->
     match imm with
     | Label _ -> assert false

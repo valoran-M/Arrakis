@@ -48,12 +48,10 @@ let decode code =
 
   let (>>) = Int.shift_right_logical in
   let (&&) x y = Int32.to_int (x & y) in
-  {
-    fc3 = (code && fc3_mask) >> 12;
+  { fc3 = (code && fc3_mask) >> 12;
     rs1 = (code && rs1_mask) >> 15;
     rs2 = (code && rs2_mask) >> 20;
-    imm;
-  }
+    imm; }
 
 let code instruction rs1 rs2 imm =
   let (<<) = Int32.shift_left in

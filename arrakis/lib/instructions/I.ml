@@ -61,12 +61,10 @@ let decode code =
   let (>>) = Int.shift_right_logical in
   let (&&) x y = Int32.to_int (x & y) in
   let imm11_0 = (i12_mask & code) >>> 20l in
-  {
-    fc3 = (fc3_mask && code) >> 12;
+  { fc3 = (fc3_mask && code) >> 12;
     rs1 = (rs1_mask && code) >> 15;
     imm = sign_extended imm11_0 12;
-    rdt = (rdt_mask && code) >> 07;
-  }
+    rdt = (rdt_mask && code) >> 07; }
 
 (* Exectuion ---------------------------------------------------------------- *)
 

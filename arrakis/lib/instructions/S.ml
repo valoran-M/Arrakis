@@ -43,13 +43,11 @@ let code instruction rs2 rs1 imm =
 let decode code =
   let (>>) = Int.shift_right_logical  in
   let (&&) x y = Int32.to_int (x & y) in
-  {
-    fc3 = (code && fc3_mask) >> 12;
+  { fc3 = (code && fc3_mask) >> 12;
     rs1 = (code && rs1_mask) >> 15;
     rs2 = (code && rs2_mask) >> 20;
     imm = sign_extended (((code || fc7_mask) >>> 20l) ||
-                         ((code || rdt_mask) >>> 07l)) 12;
-  }
+                         ((code || rdt_mask) >>> 07l)) 12; }
 
 (* Exectuion ---------------------------------------------------------------- *)
 
@@ -79,6 +77,5 @@ let execute _opcode instruction (arch : Riscv.t) =
   let rs1 = Regs.get cpu.regs ins.rs1 in
   let rs2 = Regs.get cpu.regs ins.rs2 in
   let (length, addr, lst) = execute_st ins rs1 rs2 arch.memory in
-  let history = History.create_write_mem length addr lst in
-  next_pc cpu; history
+  next_pc cpu; History.create_write_mem length addr lst
 

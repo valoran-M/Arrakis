@@ -50,43 +50,40 @@ let instructions, str_table = create_tables instructions (fun (_, _, _, v) -> v)
 let decode code =
     let (>>) = Int.shift_right_logical in
     let (&&) x y = Int32.to_int (x &  y) in
-    {
-      fc7 = (fc7_mask && code) >> 25;
+    { fc7 = (fc7_mask && code) >> 25;
       fc3 = (fc3_mask && code) >> 12;
       rs1 = (rs1_mask && code) >> 15;
       rs2 = (rs2_mask && code) >> 20;
-      rdt = (rdt_mask && code) >> 07;
-    }
+      rdt = (rdt_mask && code) >> 07; }
 
 let code instruction rd r1 r2 =
   let (<<) = Int32.shift_left in
-  let (||) = Int32.logor in
   let (opcode, f3, f7, _) = Hashtbl.find instructions instruction in
-  (f7 << 25) || (r2 << 20) || (r1 << 15) || (f3 << 12) || (rd <<  7) || opcode
+  (f7 << 25) || (r2 << 20) || (r1 << 15) || (f3 << 12) || (rd << 7) || opcode
 
 (* Exectuion ---------------------------------------------------------------- *)
 
 let execute_instr rs1 rs2 instruction =
   match instruction.fc3, instruction.fc7 with
   (* RV32I *)
-  | 0x0, 0x00 -> rs1 +  rs2                   (* ADD    *)
-  | 0x0, 0x20 -> rs1 -  rs2                   (* SUB    *)
-  | 0x4, 0x00 -> rs1 ^  rs2                   (* XOR    *)
-  | 0x6, 0x00 -> rs1 || rs2                   (* OR     *)
-  | 0x7, 0x00 -> rs1 &  rs2                   (* AND    *)
-  | 0x1, 0x00 -> rs1 << rs2                   (* SLL    *)
+  | 0x0, 0x00 -> rs1 +   rs2                  (* ADD    *)
+  | 0x0, 0x20 -> rs1 -   rs2                  (* SUB    *)
+  | 0x4, 0x00 -> rs1 ^   rs2                  (* XOR    *)
+  | 0x6, 0x00 -> rs1 ||  rs2                  (* OR     *)
+  | 0x7, 0x00 -> rs1 &   rs2                  (* AND    *)
+  | 0x1, 0x00 -> rs1 <<  rs2                  (* SLL    *)
   | 0x5, 0x00 -> rs1 >>> rs2                  (* SRL    *)
   | 0x5, 0x20 -> rs1 >>  rs2                  (* SRA    *)
   | 0x2, 0x00 -> if rs1 < rs2 then 1l else 0l (* SLT    *)
   | 0x3, 0x00 -> if rs1 <.rs2 then 1l else 0l (* SLTU   *)
   (* RV32M *)
-  | 0x0, 0x01 -> rs1 * rs2                    (* MUL    *)
+  | 0x0, 0x01 -> rs1 *  rs2                   (* MUL    *)
   | 0x1, 0x01 -> mulh   rs1 rs2               (* MULH   *)
   | 0x2, 0x01 -> mulhsu rs1 rs2               (* MULHSU *)
   | 0x3, 0X01 -> mulhu  rs1 rs2               (* MULHU  *)
-  | 0x4, 0x01 -> rs1 / rs2                    (* DIV    *)
+  | 0x4, 0x01 -> rs1 /  rs2                   (* DIV    *)
   | 0x5, 0x01 -> rs1 /. rs2                   (* DIVU   *)
-  | 0x6, 0x01 -> rs1 % rs2                    (* REM    *)
+  | 0x6, 0x01 -> rs1 %  rs2                   (* REM    *)
   | 0x7, 0x01 -> rs1 %. rs2                   (* REMU   *)
   | _, _ -> Error.r_invalid instruction.fc3 instruction.fc7
 
@@ -98,7 +95,6 @@ let execute _opcode instruction (arch : Riscv.t) =
   let rs2 = Regs.get cpu.regs ins.rs2 in
   let res = execute_instr rs1 rs2 ins in
   let lst = Regs.get cpu.regs ins.rdt in
-  Regs.set cpu.regs ins.rdt res;
-  next_pc cpu;
+  Regs.set cpu.regs ins.rdt res; next_pc cpu;
   Change_Register (ins.rdt, lst)
 

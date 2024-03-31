@@ -17,7 +17,7 @@ open Global_utils.Integer
   +-----------------------------------------------------------------------+
 *)
 
-type t = { rd: int; imm : int32; }
+type t = { rdt: int; imm : int32; }
 
 let instructions =
     [
@@ -52,10 +52,7 @@ let decode code =
 
   let (>>) = Int.shift_right_logical in
   let (&&) x y = Int32.to_int (x & y) in
-  {
-    rd = (code && rdt_mask) >> 7;
-    imm = imm;
-  }
+  { rdt = (code && rdt_mask) >> 7; imm }
 
 (* Exectuion ---------------------------------------------------------------- *)
 
@@ -63,8 +60,8 @@ let execute _opcode instruction (arch : Arch.Riscv.t) =
   let open Arch.Cpu in
   let cpu = arch.cpu in
   let ins = decode instruction in
-  let lst = get_reg cpu ins.rd in
+  let lst = get_reg cpu ins.rdt in
   (* JAL *)
-  set_reg cpu ins.rd (Int32.add (get_pc cpu) 4l);
-  add_pc cpu ins.imm; Change_Register (ins.rd, lst)
+  set_reg cpu ins.rdt (Int32.add (get_pc cpu) 4l);
+  add_pc cpu ins.imm; Change_Register (ins.rdt, lst)
 

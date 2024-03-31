@@ -38,10 +38,7 @@ let code instruction rd imm =
 let decode code =
   let (>>) = Int.shift_right_logical   in
   let (&&) x y = Int32.to_int (x & y) in
-  {
-    rdt = (code && rdt_mask) >> 7;
-    imm = Int32.logand code i20_mask;
-  }
+  { rdt = (code && rdt_mask) >> 7; imm = Int32.logand code i20_mask; }
 
 (* Exectuion ---------------------------------------------------------------- *)
 

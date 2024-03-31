@@ -5,6 +5,7 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
+open Instructions
 open Arch
 
 type return =
@@ -17,7 +18,6 @@ type return =
 let opcode_mask = 0b1111111l
 
 let exec (instruction : Int32.t) (cpu : Cpu.t) memory =
-  let open Instructions in
   let opcode = Int32.logand opcode_mask instruction in
   match opcode with
   (* R type *)
@@ -47,6 +47,5 @@ let exec_instruction (arch : Riscv.t) (history : History.t) =
       let last = exec code arch.cpu arch.memory in
       Continue (Cpu.get_pc arch.cpu, add_history last_pc last history)
     )
-  with Instructions.I.Syscall ->
-    Sys_call (add_history last_pc Change_Nothing history)
+  with I.Syscall -> Sys_call (add_history last_pc Change_Nothing history)
 

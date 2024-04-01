@@ -46,5 +46,5 @@ val get_str : t -> int32 -> string
   (** [get_str memory addr] *)
 
 val set_str : t -> int32 -> string -> int -> unit
-  (** [set_str memory addr value] *)
+  (** [set_str memory addr value size] *)
 

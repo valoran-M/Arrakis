@@ -13,7 +13,7 @@ open Arch
     sp    +-addresses-+     +-------------arguments-------------+
     |     |           |     |                                   |
   +----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
-<-| nb | *a1 | ... | *an |a1[0]| ... |a1[x]| ... |an[0]| ... |an[z]| stack_begin
+<-| nb | *a1 | ... | *an |an[0]| ... |an[x]| ... |a1[0]| ... |a1[z]| stack_begin
   +----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
                                                                 |
                                                            0x7fff_fff0
@@ -23,3 +23,4 @@ let write_arguments (arch : Riscv.t) (_args : string list) =
   let _sp = Cpu.get_reg arch.cpu 0x2 in
   (* TODO *)
   assert false
+

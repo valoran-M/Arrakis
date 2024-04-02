@@ -43,9 +43,8 @@ let exec_instruction (arch : Riscv.t) (history : History.t) =
 
   try
     if code = 0l then Zero
-    else (
+    else
       let last = exec code arch in
       Continue (Cpu.get_pc arch.cpu, add_history last_pc last history)
-    )
   with I.Syscall -> Sys_call (add_history last_pc Change_Nothing history)
 

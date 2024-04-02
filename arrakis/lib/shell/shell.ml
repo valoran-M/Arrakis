@@ -46,22 +46,23 @@ let rec parse_command command args cmds state =
       with Not_found -> cmd.execute args state
 
 let rec start (state : Types.state) =
-  fprintf state.out_channel "> %!";
-  let line  = read_line ()                  in
-  let words = String.split_on_char ' ' line in
-  try match words with
-  | []              -> start state
-  | command :: args ->
-    let new_state =
-      try parse_command command args state.cmds state
-      with Not_found ->
-        fprintf state.out_channel "%a Undefined command @{<fg_yellow>'%s'@}. "
-          error () command;
-        fprintf state.out_channel "Try @{<fg_green>'help'@}.@.";
-        state
-    in
-    start new_state
-  with Quit.Shell_Exit -> ()
+  try
+    fprintf state.out_channel "> %!";
+    let line  = read_line ()                  in
+    let words = String.split_on_char ' ' line in
+    match words with
+    | []              -> start state
+    | command :: args ->
+      let new_state =
+        try parse_command command args state.cmds state
+        with Not_found ->
+          fprintf state.out_channel "%a Undefined command @{<fg_yellow>'%s'@}. "
+            error () command;
+          fprintf state.out_channel "Try @{<fg_green>'help'@}.@.";
+          state
+      in
+      start new_state
+  with Quit.Shell_Exit | End_of_file -> Printf.printf "\nGoodbye :)\n"
 
 let run (state : Types.state) =
   ignore (Running.run_execute [] state)

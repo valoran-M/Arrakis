@@ -73,13 +73,13 @@ let translate_pseudo pseudo line code addr labels =
 
   let translate_two_reg inst rd rs =
     match inst with
-    | MV   -> [Prog_Instr(line, code, I (ADDI, rd, rs, Imm 0l   ))]
-    | NOT  -> [Prog_Instr(line, code, I (XORI, rd, rs, Imm (-1l)))]
-    | NEG  -> [Prog_Instr(line, code, R (SUB,  rd, 0l, rs       ))]
-    | SEQZ -> [Prog_Instr(line, code, I (SLTIU,rd, rs, Imm 1l   ))]
-    | SNEZ -> [Prog_Instr(line, code, R (SLTU, rd, rs, 0l       ))]
-    | SLTZ -> [Prog_Instr(line, code, R (SLT,  rd, rs, 0l       ))]
-    | SGTZ -> [Prog_Instr(line, code, R (SLT,  rd, 0l, rs       ))]
+    | MV   -> [Prog_Instr(line, code, I (ADDI,  rd, rs, Imm 0l   ))]
+    | NOT  -> [Prog_Instr(line, code, I (XORI,  rd, rs, Imm (-1l)))]
+    | NEG  -> [Prog_Instr(line, code, R (SUB,   rd, 0l, rs       ))]
+    | SEQZ -> [Prog_Instr(line, code, I (SLTIU, rd, rs, Imm 1l   ))]
+    | SNEZ -> [Prog_Instr(line, code, R (SLTU,  rd, rs, 0l       ))]
+    | SLTZ -> [Prog_Instr(line, code, R (SLT,   rd, rs, 0l       ))]
+    | SGTZ -> [Prog_Instr(line, code, R (SLT,   rd, 0l, rs       ))]
   in
 
   let translate_reg_offset inst rs offset =

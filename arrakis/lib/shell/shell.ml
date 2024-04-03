@@ -9,8 +9,8 @@ open Format
 open Global_utils.Print
 
 let all_commands = [
-  Running.reset;
-  Running.prev;
+  Running.finish;
+  Running.pre;
   Running.step;
   Running.run;
   Running.continue;
@@ -26,7 +26,7 @@ let create arch syscall debug labels : Types.state =
     cmds         = all_commands;
     cmds_history = [||];
     breakpoints  = Hashtbl.create 64;
-    program_end  = false;
+    program_run  = false;
 
     (* Program state *)
     history = History.create_history ();

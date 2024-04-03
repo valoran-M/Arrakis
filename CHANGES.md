@@ -9,9 +9,11 @@
 - Changed the `--no-shell` option to `--run` and `-ns` to `-r`
 - Support for `.ascii` assembler directive
 - Renamed commands to be closer to `gdb`:
-  + `prv` is now `pre`
+  + `prv` is now `p`
   + `next` is now `continue`
   + `print` is now `info`
+  + `run` is now `finish`
+  + `reset` is now `run`
 - Improved `info` command: Now always at most 80 character wide, more readable
   and easier to parse
 - Greatly improved the codebase

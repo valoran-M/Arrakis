@@ -37,12 +37,12 @@ let execute_line (state : Types.state) arg =
 
 let breakpoint_line : Types.cmd =
   { long_form   = "line";
-  short_form  = "l";
-  name        = "(l)ine";
-  short_desc  = "Add breakpoints on specified lines";
-  long_desc   = "";
-  execute     = iter execute_line;
-  sub         = []; }
+    short_form  = "l";
+    name        = "(l)ine";
+    short_desc  = "Add breakpoints on specified lines";
+    long_desc   = "";
+    execute     = iter execute_line;
+    sub         = []; }
 
 (* Addr --------------------------------------------------------------------- *)
 

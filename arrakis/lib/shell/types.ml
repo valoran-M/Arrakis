@@ -8,10 +8,10 @@
 type cmd = {
 
   (* Name to type to invoke said command *)
-  long_form   : string;
+  long_form  : string;
 
   (* Short way to invoke command, should try to be one character max *)
-  short_form  : string;
+  short_form : string;
 
   (* Shown in the help menu *)
   name       : string;
@@ -33,7 +33,7 @@ and state = {
   cmds         : cmd list;
   cmds_history : string array;
   breakpoints  : (int32,  int) Hashtbl.t;
-  program_end  : bool;
+  program_run  : bool;
 
   (* Program state *)
   history      : History.t;

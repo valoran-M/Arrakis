@@ -22,28 +22,26 @@ open Global_utils.Print
 let one_step (state : Types.state) =
   let open Syscall.Types     in
   let open Simulator.Execute in
-  let program_end, history =
-    if state.program_end then (
-      Format.fprintf state.out_channel
-        "%a Program has exited, can't run further.@." error ();
-      true, state.history
-    ) else
-    match exec_instruction state.arch state.history with
-    | Continue (_, history)  -> state.program_end, history
+  let program_run, history =
+    if not state.program_run then (
+      Format.fprintf state.out_channel "%a Program is not running.@." error ();
+      false, state.history
+    ) else match exec_instruction state.arch state.history with
+    | Continue (_, history)  -> state.program_run, history
     | Zero ->
       Format.fprintf state.out_channel
         "%a Exiting without an exit syscall@." warning ();
-      true, state.history
+      false, state.history
     | Sys_call history  ->
       match state.syscall state.out_channel state.arch with
-      | Continue  -> state.program_end, history
+      | Continue  -> state.program_run, history
       | Exit code ->
         Format.fprintf state.out_channel
           "%a Exiting with code @{<fg_yellow>'%d'@}@." info () code;
-        true, history
+        false, history
   in
   { state with
-    program_end;
+    program_run;
     history; }
 
 (* Take n step forward *)
@@ -93,7 +91,7 @@ let step : Types.cmd =
 let continue_execute _args (state : Types.state) =
   let rec sub first (state : Types.state) =
     let addr = Arch.Cpu.get_pc state.arch.cpu in
-    if not state.program_end && (first || not (Hashtbl.mem state.breakpoints addr)) then
+    if state.program_run && (first || not (Hashtbl.mem state.breakpoints addr)) then
       sub false (one_step state)
     else state
   in
@@ -108,26 +106,26 @@ let continue : Types.cmd =
     execute     = continue_execute;
     sub         = []; }
 
-(* Run ---------------------------------------------------------------------- *)
+(* Finish ------------------------------------------------------------------- *)
 
-let rec run_execute args (state : Types.state) =
-  if not state.program_end then
+let rec finish_execute args (state : Types.state) =
+  if state.program_run then
     let new_state = step_execute args state in
-    run_execute args new_state
+    finish_execute args new_state
   else state
 
-let run : Types.cmd =
-  { long_form   = "run";
-    short_form  = "r";
-    name        = "(r)un";
+let finish: Types.cmd =
+  { long_form   = "finish";
+    short_form  = "f";
+    name        = "(f)inish";
     short_desc  = "Run code until the end";
     long_desc   = "";
-    execute     = run_execute;
+    execute     = finish_execute;
     sub         = [] }
 
-(* Prev --------------------------------------------------------------------- *)
+(* Previous ----------------------------------------------------------------- *)
 
-let prev_execute args (state : Types.state) =
+let pre_execute args (state : Types.state) =
   match args with
   | []         -> one_bstep state
   | count :: _ ->
@@ -137,27 +135,27 @@ let prev_execute args (state : Types.state) =
         Format.printf "%a Incorrect argument @{<fg_yellow>'%s'@}@." error () count;
         state
 
-let prev : Types.cmd =
+let pre : Types.cmd =
   { long_form   = "previous";
-    short_form  = "pre";
-    name        = "(pre)vious";
+    short_form  = "p";
+    name        = "(p)revious";
     short_desc  = "Revert previous step";
     long_desc   = "";
-    execute     = prev_execute;
+    execute     = pre_execute;
     sub         = []; }
 
 (* Reset -------------------------------------------------------------------- *)
 
-let reset_execute _args (state : Types.state) =
+let run_execute _args (state : Types.state) =
   { state with
-    program_end = false;
+    program_run = true;
     history     = History.reset state.arch state.history; }
 
-let reset : Types.cmd =
-  { long_form   = "reset";
-    short_form  = "res";
-    name        = "(res)et";
-    short_desc  = "Recovery of the simulator's initial state";
+let run : Types.cmd =
+  { long_form   = "run";
+    short_form  = "r";
+    name        = "(r)un";
+    short_desc  = "Start the execution";
     long_desc   = "";
-    execute     = reset_execute;
+    execute     = run_execute;
     sub         = []; }

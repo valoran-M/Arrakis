@@ -1,5 +1,5 @@
 (******************************************************************************)
-(*  Copyright 2023-2024 Gurvan Debaussart                                     *)
+(*  Copyright 2023-2024 Gurvan Debaussart (https://debauss.art)               *)
 (*  This file is distributed under the MIT license.                           *)
 (*  https://codeberg.org/gurvan/colorsh                                       *)
 (******************************************************************************)
@@ -15,8 +15,8 @@ let init () =
   (* Foreground Color ------------------------------------------------------- *)
 
   List.iter (fun (tag, sint) ->
-    let ostr = sprintf  "[%dm" sint in
-    let cstr =          "[39m"      in
+    let ostr = sprintf  "\x1b[%dm" sint in
+    let cstr =          "\x1b[39m"      in
     Hashtbl.add tag_table tag (ostr, cstr)
   )
   [
@@ -34,8 +34,8 @@ let init () =
   (* Background Color ------------------------------------------------------- *)
 
   List.iter (fun (tag, sint) ->
-    let ostr = sprintf  "[%dm" sint in
-    let cstr =          "[49m"      in
+    let ostr = sprintf  "\x1b[%dm" sint in
+    let cstr =          "\x1b[49m"      in
     Hashtbl.add tag_table tag (ostr, cstr)
   )
   [
@@ -53,8 +53,8 @@ let init () =
   (* Text style ------------------------------------------------------------- *)
 
   List.iter (fun (tag, oint, cint) ->
-    let ostr = sprintf "[%dm" oint in
-    let cstr = sprintf "[%dm" cint in
+    let ostr = sprintf "\x1b[%dm" oint in
+    let cstr = sprintf "\x1b[%dm" cint in
     Hashtbl.add tag_table tag (ostr, cstr)
   )
   [
@@ -86,7 +86,7 @@ let close_tag = function
   | _ -> ""
 
 let setup_fmt fmt =
-  (if !inited = false then init ());
+  (if not !inited then init ());
   pp_set_tags fmt true;
   let sf = pp_get_formatter_stag_functions fmt () in
   pp_set_formatter_stag_functions fmt

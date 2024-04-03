@@ -11,7 +11,7 @@ open Global_utils.Print
    This file define the following commands:
   - step
   - run
-  - next
+  - continue
   - prev
   - reset
 *)
@@ -81,7 +81,7 @@ let step_execute args (state : Types.state) =
         Format.printf "%a Incorrect argument @{<fg_yellow>'%s'@}@." error () count;
         state
 
-let step : Types.cmd = 
+let step : Types.cmd =
   {
     long_form  = "step";
     short_form = "s";
@@ -92,9 +92,9 @@ let step : Types.cmd =
     sub        = [];
   }
 
-(* Next --------------------------------------------------------------------- *)
+(* Continue --------------------------------------------------------------------- *)
 
-let next_execute _args (state : Types.state) =
+let continue_execute _args (state : Types.state) =
   let rec sub first (state : Types.state) =
     let addr = Arch.Cpu.get_pc state.arch.cpu in
     if not state.program_end && (first || not (Hashtbl.mem state.breakpoints addr)) then
@@ -103,14 +103,14 @@ let next_execute _args (state : Types.state) =
   in
   sub true state
 
-let next : Types.cmd = 
+let continue : Types.cmd =
   {
-    long_form   = "next";
-    short_form  = "n";
-    name        = "(n)ext";
+    long_form   = "continue";
+    short_form  = "c";
+    name        = "(c)ontinue";
     short_desc  = "Run code until the next breakpoint";
     long_desc   = "";
-    execute     = next_execute;
+    execute     = continue_execute;
     sub         = []
   }
 
@@ -144,7 +144,7 @@ let prev_execute args (state : Types.state) =
         Format.printf "%a Incorrect argument @{<fg_yellow>'%s'@}@." error () count;
         state
 
-let prev : Types.cmd = 
+let prev : Types.cmd =
   {
     long_form   = "previous";
     short_form  = "pre";
@@ -164,7 +164,7 @@ let reset_execute _args (state : Types.state) =
     history     = History.reset state.arch state.history;
   }
 
-let reset : Types.cmd = 
+let reset : Types.cmd =
   {
     long_form   = "reset";
     short_form  = "res";

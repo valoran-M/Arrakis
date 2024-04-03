@@ -13,7 +13,7 @@ let all_commands = [
   Running.prev;
   Running.step;
   Running.run;
-  Running.next;
+  Running.continue;
   Help.help;
   Print.print;
   Breakpoint.breakpoint;

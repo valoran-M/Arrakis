@@ -7,6 +7,7 @@
 * Changed message from `Error` to `Info` in case of failed system call
 * Error message when providing too much input files
 * Renamed command `prv` to `pre`
+* Renamed command `next` to `continue`
 * Changed the `--no-shell` option to `--run` and `-ns` to `-r`
 * Improved `print` command: Now always at most 80 character wide, more readeable
   and easier to parse

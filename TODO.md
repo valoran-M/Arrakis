@@ -11,6 +11,7 @@
 * Autocompletion of commands
 * Handle syscall failure at shell level
 * command clear shell (CTRL+L)
+* Add argument to 'continue' command
 
 ## ??? (Future work without attributed planned version)
 

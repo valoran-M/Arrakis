@@ -44,7 +44,7 @@ let print_addr (state : Types.state) addr pc code =
       basicc_str
       orignal_code
 
-let print_code_part (state : Types.state) offset noffset =
+let info_code_part (state : Types.state) offset noffset =
   let pc = Cpu.get_pc state.arch.cpu in
   try
     print_program_header state.out_channel;
@@ -60,7 +60,7 @@ let print_code_part (state : Types.state) offset noffset =
     done
   with _ -> ()
 
-let print_code_full (state : Types.state) =
+let info_code_full (state : Types.state) =
   let pc   = Cpu.get_pc state.arch.cpu in
   let addr = ref 0l in
   let code = ref (Memory.get_int32 state.arch.memory !addr) in
@@ -74,12 +74,12 @@ let print_code_full (state : Types.state) =
     fprintf state.out_channel "     End without syscall@."
   with _ -> ()
 
-let execute_print_code args (state : Types.state) =
+let execute_info_code args (state : Types.state) =
   begin match args with
   | offset :: [] -> (
     try
       let offset  = int_of_string offset in
-      print_code_part state offset 0
+      info_code_part state offset 0
     with _ ->
       fprintf state.out_channel "%a Incorrect argument to print code@."
         error ())
@@ -87,21 +87,21 @@ let execute_print_code args (state : Types.state) =
     try
       let offset  = int_of_string offset  in
       let noffset = int_of_string noffset in
-      print_code_part state offset noffset
+      info_code_part state offset noffset
     with _ ->
       fprintf state.out_channel "%a Incorrect argument to print code@."
       error ())
-  | _ -> print_code_full state
+  | _ -> info_code_full state
   end;
   state
 
-let print_code : Types.cmd = 
+let info_code : Types.cmd =
   { long_form   = "code";
     short_form  = "c";
     name        = "(c)ode";
     short_desc  = "Print code";
     long_desc   = "";
-    execute     = execute_print_code;
+    execute     = execute_info_code;
     sub         = []; }
 
 (* Memory ------------------------------------------------------------------- *)
@@ -137,7 +137,7 @@ let print_memory (state : Types.state) start size =
     line_address := !line_address + line_size32
   done
 
-let execute_print_memory args (state : Types.state) =
+let execute_info_memory args (state : Types.state) =
   begin match args with
   | []      -> print_memory state start_default size_default
   | [start] -> (
@@ -157,13 +157,13 @@ let execute_print_memory args (state : Types.state) =
   end;
   state
 
-let print_memory : Types.cmd = 
+let info_memory : Types.cmd =
   { long_form   = "memory";
     short_form  = "m";
     name        = "(m)emory";
     short_desc  = "Print memory segment";
     long_desc   = "";
-    execute     = execute_print_memory;
+    execute     = execute_info_memory;
     sub         = []; }
 
 (* Regs --------------------------------------------------------------------- *)
@@ -182,14 +182,14 @@ let regs = [|
 let print_reg_header (state : Types.state) =
   fprintf state.out_channel "@{<bold>%-9s@} | @{<bold>%-10s@} |\n" "Name" "Value"
 
-let print_all_regs (state : Types.state) =
+let info_all_regs (state : Types.state) =
   print_reg_header state;
   for i = 0 to 31 do
     fprintf state.out_channel "%s | 0x%08x |\n" regs.(i)
       (int32_to_int (Cpu.get_reg state.arch.cpu i))
   done
 
-let print_list_regs (state : Types.state) =
+let info_list_regs (state : Types.state) =
   print_reg_header state;
   List.iter (fun reg ->
     try
@@ -208,30 +208,30 @@ let print_list_regs (state : Types.state) =
         error () reg
   )
 
-let execute_print_regs args (state : Types.state) =
+let execute_info_registers args (state : Types.state) =
   begin match args with
-  | [] -> print_all_regs  state
-  | _  -> print_list_regs state args
+  | [] -> info_all_regs  state
+  | _  -> info_list_regs state args
   end;
   state
 
-let print_regs : Types.cmd = {
-  long_form   = "regs";
+let info_registers : Types.cmd = {
+  long_form   = "registers";
   short_form  = "r";
-  name        = "(r)egs";
+  name        = "(r)egisters";
   short_desc  = "Display value in specified registers";
   long_desc   = "";
-  execute     = execute_print_regs;
+  execute     = execute_info_registers;
   sub         = [];
 }
 
 (* Decode ------------------------------------------------------------------- *)
 
-let rec print : Types.cmd = 
-  { long_form   = "print";
-    short_form  = "p";
-    name        = "(p)rint";
+let rec info : Types.cmd =
+  { long_form   = "info";
+    short_form  = "i";
+    name        = "(i)nfo";
     short_desc  = "Print informations about CPU";
     long_desc   = "";
-    execute     = (fun _ state -> Help.command print state);
-    sub         = [print_memory; print_regs; print_code]; }
+    execute     = (fun _ state -> Help.command info state);
+    sub         = [info_memory; info_registers; info_code]; }

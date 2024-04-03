@@ -15,7 +15,7 @@ let all_commands = [
   Running.run;
   Running.continue;
   Help.help;
-  Print.print;
+  Info.info;
   Breakpoint.breakpoint;
   Quit.quit;
 ]
@@ -60,7 +60,7 @@ let rec start (state : Types.state) =
           state
       in
       start new_state
-  with Quit.Shell_Exit | End_of_file -> Printf.printf "\nGoodbye :)\n"
+  with Quit.Shell_Exit | End_of_file -> Format.printf "\n@{<fg_purple>Goodbye :)@}@."
 
 let run (state : Types.state) =
   ignore (Running.run_execute [] state)

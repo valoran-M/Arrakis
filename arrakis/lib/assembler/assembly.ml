@@ -51,7 +51,7 @@ let loop_prog mem debug labels addr prog  =
     addr + 4l
   | Prog_Label _  -> addr
   | Prog_GLabel (line, label) -> Label.made_global labels label line; addr
-(*No more pseudo instructions after remove_pseudo *)
+(* No more pseudo instructions after remove_pseudo *)
   | Prog_Pseudo _ -> assert false
 
 let loop_memory mem labels addr (prog : memory_line) =

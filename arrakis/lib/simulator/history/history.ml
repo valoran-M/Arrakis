@@ -24,7 +24,7 @@ type t = sim_change list
 let create_history () = []
 
 let add_history last_pc change history =
-  { last_pc; change} :: history
+  { last_pc; change } :: history
 
 let create_write_mem length addr last_value =
   match length with

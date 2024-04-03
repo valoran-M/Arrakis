@@ -28,8 +28,7 @@ type memory_line =
 
 (* Program ------------------------------------------------------------------ *)
 
-type program =
-  {
+type program = {
     memory  : memory_line  list;
     program : program_line list;
   }

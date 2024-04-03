@@ -30,13 +30,11 @@ let execute args (state : Types.state) =
     with Not_found -> general state
 
 let help : Types.cmd = 
-  {
-    long_form   = "help";
+  { long_form   = "help";
     short_form  = "h";
     name        = "(h)elp";
     short_desc  = "Show this help";
     long_desc   = "";
     execute     = execute;
-    sub         = [];
-  }
+    sub         = []; }
 

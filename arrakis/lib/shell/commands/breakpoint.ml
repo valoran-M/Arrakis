@@ -35,15 +35,14 @@ let execute_line (state : Types.state) arg =
       fprintf state.out_channel
         "%a Line %d does not contain code.@." error () line
 
-let breakpoint_line : Types.cmd = {
-  long_form   = "line";
+let breakpoint_line : Types.cmd =
+  { long_form   = "line";
   short_form  = "l";
   name        = "(l)ine";
   short_desc  = "Add breakpoints on specified lines";
   long_desc   = "";
   execute     = iter execute_line;
-  sub         = [];
-}
+  sub         = []; }
 
 (* Addr --------------------------------------------------------------------- *)
 
@@ -66,16 +65,14 @@ let execute_addr (state : Types.state) arg =
         "%a Created breakpoint %d at 0x%x.@."
         info () number (Int32.to_int addr)
 
-let breakpoint_addr : Types.cmd = 
-  {
-    long_form   = "addr";
+let breakpoint_addr : Types.cmd =
+  { long_form   = "addr";
     short_form  = "a";
     name        = "(a)ddr";
     short_desc  = "Add breakpoints on specified address";
     long_desc   = "";
     execute     = iter execute_addr;
-    sub         = [];
-  }
+    sub         = []; }
 
 (* Print -------------------------------------------------------------------- *)
 
@@ -85,16 +82,14 @@ let execute_print _args (state : Types.state) =
     fprintf state.out_channel "%3d -> 0x%08x@." number (int32_to_int addr))
   state.breakpoints
 
-let breakpoint_print : Types.cmd = 
-  {
-    long_form   = "print";
+let breakpoint_print : Types.cmd =
+  { long_form   = "print";
     short_form  = "p";
     name        = "(p)rint";
     short_desc  = "Print all breakpoints";
     long_desc   = "";
     execute     = iter execute_addr;
-    sub         = [];
-  }
+    sub         = []; }
 
 (* Remove ------------------------------------------------------------------- *)
 
@@ -114,20 +109,17 @@ let execute_remove (state : Types.state) arg =
       fprintf state.out_channel "%a Breakpoint '%s' does not exist.@."
         error () arg
 
-let breakpoint_remove : Types.cmd = 
-  {
-    long_form   = "remove";
+let breakpoint_remove : Types.cmd =
+  { long_form   = "remove";
     short_form  = "r";
     name        = "(r)emove";
     short_desc  = "Remove specified breakpoints";
     long_desc   = "";
     execute     = iter execute_remove;
-    sub         = [];
-  }
+    sub         = []; }
 
-let rec breakpoint : Types.cmd = 
-  {
-    long_form   = "breakpoint";
+let rec breakpoint : Types.cmd =
+  { long_form   = "breakpoint";
     short_form  = "b";
     name        = "(b)reakpoint";
     short_desc  = "Create breakpoints";
@@ -138,5 +130,4 @@ let rec breakpoint : Types.cmd =
       breakpoint_line;
       breakpoint_print;
       breakpoint_remove;
-    ];
-  }
+    ]; }

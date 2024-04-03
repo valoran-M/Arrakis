@@ -19,8 +19,7 @@ let ( * ) = Int32.mul
 let ( + ) = Int32.add
 let ( - ) = Int32.sub
 
-type t =
-  {
+type t = {
     label_to_address : (string, int32) Hashtbl.t;
     global_label     : (string, int32) Hashtbl.t;
   }

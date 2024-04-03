@@ -95,15 +95,14 @@ let execute_print_code args (state : Types.state) =
   end;
   state
 
-let print_code : Types.cmd = {
-  long_form   = "code";
-  short_form  = "c";
-  name        = "(c)ode";
-  short_desc  = "Print code";
-  long_desc   = "";
-  execute     = execute_print_code;
-  sub         = [];
-}
+let print_code : Types.cmd = 
+  { long_form   = "code";
+    short_form  = "c";
+    name        = "(c)ode";
+    short_desc  = "Print code";
+    long_desc   = "";
+    execute     = execute_print_code;
+    sub         = []; }
 
 (* Memory ------------------------------------------------------------------- *)
 
@@ -158,15 +157,14 @@ let execute_print_memory args (state : Types.state) =
   end;
   state
 
-let print_memory : Types.cmd = {
-  long_form   = "memory";
-  short_form  = "m";
-  name        = "(m)emory";
-  short_desc  = "Print memory segment";
-  long_desc   = "";
-  execute     = execute_print_memory;
-  sub         = [];
-}
+let print_memory : Types.cmd = 
+  { long_form   = "memory";
+    short_form  = "m";
+    name        = "(m)emory";
+    short_desc  = "Print memory segment";
+    long_desc   = "";
+    execute     = execute_print_memory;
+    sub         = []; }
 
 (* Regs --------------------------------------------------------------------- *)
 
@@ -230,12 +228,10 @@ let print_regs : Types.cmd = {
 (* Decode ------------------------------------------------------------------- *)
 
 let rec print : Types.cmd = 
-  {
-    long_form   = "print";
+  { long_form   = "print";
     short_form  = "p";
     name        = "(p)rint";
     short_desc  = "Print informations about CPU";
     long_desc   = "";
     execute     = (fun _ state -> Help.command print state);
-    sub         = [print_memory; print_regs; print_code];
-  }
+    sub         = [print_memory; print_regs; print_code]; }

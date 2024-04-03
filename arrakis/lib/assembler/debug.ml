@@ -16,17 +16,14 @@
   retrieve this information
 *)
 
-type t =
-  {
+type t = {
     line_to_addr : (int,   int32)        Hashtbl.t;
     addr_to_line : (int32, int * string) Hashtbl.t;
   }
 
 let generate_debug () =
-  {
-    line_to_addr = Hashtbl.create 32;
-    addr_to_line = Hashtbl.create 32;
-  }
+  { line_to_addr = Hashtbl.create 32;
+    addr_to_line = Hashtbl.create 32; }
 
 let add_line_to_addr (debug : t) line addr =
   Hashtbl.replace (debug.line_to_addr) line addr

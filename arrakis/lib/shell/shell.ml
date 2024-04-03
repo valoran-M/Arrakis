@@ -21,8 +21,7 @@ let all_commands = [
 ]
 
 let create arch syscall debug labels : Types.state =
-  {
-    (* Shell state *)
+  { (* Shell state *)
     out_channel  = Format.std_formatter;
     cmds         = all_commands;
     cmds_history = [||];
@@ -34,8 +33,7 @@ let create arch syscall debug labels : Types.state =
     arch;
     debug;
     labels;
-    syscall;
-  }
+    syscall; }
 
 let rec parse_command command args cmds state =
   let cmd = List.find (Utils.cmd_eq command) cmds in

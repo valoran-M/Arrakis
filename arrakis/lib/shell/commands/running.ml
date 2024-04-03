@@ -42,11 +42,9 @@ let one_step (state : Types.state) =
           "%a Exiting with code @{<fg_yellow>'%d'@}@." info () code;
         true, history
   in
-  {
-    state with
+  { state with
     program_end;
-    history;
-  }
+    history; }
 
 (* Take n step forward *)
 let rec n_step n state =
@@ -82,15 +80,13 @@ let step_execute args (state : Types.state) =
         state
 
 let step : Types.cmd =
-  {
-    long_form  = "step";
+  { long_form  = "step";
     short_form = "s";
     name       = "(s)tep";
     short_desc = "Execute next instruction";
     long_desc  = "";
     execute    = step_execute;
-    sub        = [];
-  }
+    sub        = []; }
 
 (* Continue --------------------------------------------------------------------- *)
 
@@ -104,15 +100,13 @@ let continue_execute _args (state : Types.state) =
   sub true state
 
 let continue : Types.cmd =
-  {
-    long_form   = "continue";
+  { long_form   = "continue";
     short_form  = "c";
     name        = "(c)ontinue";
     short_desc  = "Run code until the next breakpoint";
     long_desc   = "";
     execute     = continue_execute;
-    sub         = []
-  }
+    sub         = []; }
 
 (* Run ---------------------------------------------------------------------- *)
 
@@ -122,15 +116,14 @@ let rec run_execute args (state : Types.state) =
     run_execute args new_state
   else state
 
-let run : Types.cmd = {
-  long_form   = "run";
-  short_form  = "r";
-  name        = "(r)un";
-  short_desc  = "Run code until the end";
-  long_desc   = "";
-  execute     = run_execute;
-  sub         = []
-}
+let run : Types.cmd =
+  { long_form   = "run";
+    short_form  = "r";
+    name        = "(r)un";
+    short_desc  = "Run code until the end";
+    long_desc   = "";
+    execute     = run_execute;
+    sub         = [] }
 
 (* Prev --------------------------------------------------------------------- *)
 
@@ -145,32 +138,26 @@ let prev_execute args (state : Types.state) =
         state
 
 let prev : Types.cmd =
-  {
-    long_form   = "previous";
+  { long_form   = "previous";
     short_form  = "pre";
     name        = "(pre)vious";
     short_desc  = "Revert previous step";
     long_desc   = "";
     execute     = prev_execute;
-    sub         = []
-  }
+    sub         = []; }
 
 (* Reset -------------------------------------------------------------------- *)
 
 let reset_execute _args (state : Types.state) =
-  {
-    state with
+  { state with
     program_end = false;
-    history     = History.reset state.arch state.history;
-  }
+    history     = History.reset state.arch state.history; }
 
 let reset : Types.cmd =
-  {
-    long_form   = "reset";
+  { long_form   = "reset";
     short_form  = "res";
     name        = "(res)et";
     short_desc  = "Recovery of the simulator's initial state";
     long_desc   = "";
     execute     = reset_execute;
-    sub         = []
-  }
+    sub         = []; }

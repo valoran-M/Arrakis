@@ -114,7 +114,7 @@ let translate_pseudo pseudo line code addr labels =
   | CALL offset                         -> translate_call offset
   | TAIL offset                         -> translate_tail offset
   | LGlob (rd, symbol, load)            -> translate_lglob rd symbol load
-  | SGlob (rd,symbol,rt,store)          -> translate_sglob rd symbol rt store
+  | SGlob (rd, symbol, rt, store)       -> translate_sglob rd symbol rt store
   | Two_Regs (inst, rd, rs)             -> translate_two_reg inst rd rs
   | Regs_Offset (inst, rs, offset)      -> translate_reg_offset inst rs offset
   | Regs_Regs_Offset(inst,rs,rt,offset) -> translate_reg_reg_offset inst rs rt offset

@@ -29,13 +29,14 @@ let execute args (state : Types.state) =
     try               command (List.find (Utils.cmd_eq hd) state.cmds) state
     with Not_found -> general state
 
-let help : Types.cmd = {
-  long_form   = "help";
-  short_form  = "h";
-  name        = "(h)elp";
-  short_desc  = "Show this help";
-  long_desc   = "";
-  execute     = execute;
-  sub         = [];
-}
+let help : Types.cmd = 
+  {
+    long_form   = "help";
+    short_form  = "h";
+    name        = "(h)elp";
+    short_desc  = "Show this help";
+    long_desc   = "";
+    execute     = execute;
+    sub         = [];
+  }
 

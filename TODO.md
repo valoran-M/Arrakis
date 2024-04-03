@@ -11,9 +11,6 @@
 * Autocompletion of commands
 * Handle syscall failure at shell level
 * command clear shell (CTRL+L)
-* Improve how subcommand are managed and how printing their help is made.
-  Ideally, we would like all help to look like the general help, and if possible
-  manage everything easily
 
 ## ??? (Future work without attributed planned version)
 

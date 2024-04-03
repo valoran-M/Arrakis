@@ -25,92 +25,92 @@ let translate_pseudo pseudo line code addr labels =
 
   let translate_j offset =
     let imm = imm_to_int32 labels line addr offset in
-    [Prog_Instr (line, code, J(JAL, 0l, Imm imm))]
+    [Prog_Instr (line, code, J (JAL, 0l, Imm imm))]
   in
 
   let translate_jalp offset =
     let imm = imm_to_int32 labels line addr offset in
-    [Prog_Instr (line, code, J(JAL, 1l, Imm imm))]
+    [Prog_Instr (line, code, J (JAL, 1l, Imm imm))]
   in
 
   let translate_li rd imm =
-    let (hi, lo) = hi_lo imm addr line labels in
+    let hi, lo = hi_lo imm addr line labels in
     if hi = 0l
-    then [ Prog_Instr (line, code, I(ADDI, rd, 0l, Imm lo))]
-    else [ Prog_Instr (line, code, I(ADDI, rd, 0l, Imm lo));
-           Prog_Instr (line, code, U(LUI,  rd,     Imm hi))]
+    then [ Prog_Instr (line, code, I (ADDI, rd, 0l, Imm lo))]
+    else [ Prog_Instr (line, code, I (ADDI, rd, 0l, Imm lo));
+           Prog_Instr (line, code, U (LUI,  rd,     Imm hi))]
   in
 
   let translate_la rd label =
     let (hi, lo) = hi_lo label addr line labels in
-    [ Prog_Instr (line, code, I(ADDI,  rd, rd, Imm lo));
-      Prog_Instr (line, code, U(AUIPC, rd,     Imm hi))]
+    [ Prog_Instr (line, code, I (ADDI,  rd, rd, Imm lo));
+      Prog_Instr (line, code, U (AUIPC, rd,     Imm hi))]
   in
 
   let translate_call offset =
     let (hi, lo) = hi_lo offset addr line labels in
-    [ Prog_Instr (line, code, I(JALR,  1l, 1l, Imm lo));
-      Prog_Instr (line, code, U(AUIPC, 1l,     Imm hi))]
+    [ Prog_Instr (line, code, I (JALR,  1l, 1l, Imm lo));
+      Prog_Instr (line, code, U (AUIPC, 1l,     Imm hi))]
   in
 
   let translate_tail offset =
     let (hi, lo) = hi_lo offset addr line labels in
-    [ Prog_Instr (line, code, I(JALR,  0l, 6l, Imm lo));
-      Prog_Instr (line, code, U(AUIPC, 6l,     Imm hi))]
+    [ Prog_Instr (line, code, I (JALR,  0l, 6l, Imm lo));
+      Prog_Instr (line, code, U (AUIPC, 6l,     Imm hi))]
   in
 
   let translate_lglob rd symbol load =
     let (hi, lo) = hi_lo symbol addr line labels in
-    [ Prog_Instr (line, code, I(load,  rd, rd, Imm lo));
-      Prog_Instr (line, code, U(AUIPC, rd,     Imm hi))]
+    [ Prog_Instr (line, code, I (load,  rd, rd, Imm lo));
+      Prog_Instr (line, code, U (AUIPC, rd,     Imm hi))]
   in
 
   let translate_sglob rd symbol rt store =
     let (hi, lo) = hi_lo symbol addr line labels in
-    [ Prog_Instr (line, code, S(store, rd, rt, Imm lo));
-      Prog_Instr (line, code, U(AUIPC, rd,     Imm hi))]
+    [ Prog_Instr (line, code, S (store, rd, rt, Imm lo));
+      Prog_Instr (line, code, U (AUIPC, rd,     Imm hi))]
   in
 
   let translate_two_reg inst rd rs =
     match inst with
-    | MV   -> [Prog_Instr(line, code, I(ADDI, rd, rs, Imm 0l   ))]
-    | NOT  -> [Prog_Instr(line, code, I(XORI, rd, rs, Imm (-1l)))]
-    | NEG  -> [Prog_Instr(line, code, R(SUB,  rd, 0l, rs       ))]
-    | SEQZ -> [Prog_Instr(line, code, I(SLTIU,rd, rs, Imm 1l   ))]
-    | SNEZ -> [Prog_Instr(line, code, R(SLTU, rd, rs, 0l       ))]
-    | SLTZ -> [Prog_Instr(line, code, R(SLT,  rd, rs, 0l       ))]
-    | SGTZ -> [Prog_Instr(line, code, R(SLT,  rd, 0l, rs       ))]
+    | MV   -> [Prog_Instr(line, code, I (ADDI, rd, rs, Imm 0l   ))]
+    | NOT  -> [Prog_Instr(line, code, I (XORI, rd, rs, Imm (-1l)))]
+    | NEG  -> [Prog_Instr(line, code, R (SUB,  rd, 0l, rs       ))]
+    | SEQZ -> [Prog_Instr(line, code, I (SLTIU,rd, rs, Imm 1l   ))]
+    | SNEZ -> [Prog_Instr(line, code, R (SLTU, rd, rs, 0l       ))]
+    | SLTZ -> [Prog_Instr(line, code, R (SLT,  rd, rs, 0l       ))]
+    | SGTZ -> [Prog_Instr(line, code, R (SLT,  rd, 0l, rs       ))]
   in
 
   let translate_reg_offset inst rs offset =
     let imm = Imm (imm_to_int32 labels line addr offset) in
     match inst with
-    | BEQZ -> [Prog_Instr(line, code, B(BEQ, rs, 0l, imm))]
-    | BNEZ -> [Prog_Instr(line, code, B(BNE, rs, 0l, imm))]
-    | BLEZ -> [Prog_Instr(line, code, B(BGE, 0l, rs, imm))]
-    | BGEZ -> [Prog_Instr(line, code, B(BGE, rs, 0l, imm))]
-    | BLTZ -> [Prog_Instr(line, code, B(BLT, rs, 0l, imm))]
-    | BGTZ -> [Prog_Instr(line, code, B(BLT, 0l, rs, imm))]
+    | BEQZ -> [Prog_Instr(line, code, B (BEQ, rs, 0l, imm))]
+    | BNEZ -> [Prog_Instr(line, code, B (BNE, rs, 0l, imm))]
+    | BLEZ -> [Prog_Instr(line, code, B (BGE, 0l, rs, imm))]
+    | BGEZ -> [Prog_Instr(line, code, B (BGE, rs, 0l, imm))]
+    | BLTZ -> [Prog_Instr(line, code, B (BLT, rs, 0l, imm))]
+    | BGTZ -> [Prog_Instr(line, code, B (BLT, 0l, rs, imm))]
   in
 
   let translate_reg_reg_offset inst rs rt offset =
     let imm = Imm (imm_to_int32 labels line addr offset) in
     match inst with
-    | BGT  -> [Prog_Instr(line, code, B(BLT,  rt, rs, imm))]
-    | BLE  -> [Prog_Instr(line, code, B(BGE,  rt, rs, imm))]
-    | BGTU -> [Prog_Instr(line, code, B(BLTU, rt, rs, imm))]
-    | BLEU -> [Prog_Instr(line, code, B(BGEU, rt, rs, imm))]
+    | BGT  -> [Prog_Instr(line, code, B (BLT,  rt, rs, imm))]
+    | BLE  -> [Prog_Instr(line, code, B (BGE,  rt, rs, imm))]
+    | BGTU -> [Prog_Instr(line, code, B (BLTU, rt, rs, imm))]
+    | BLEU -> [Prog_Instr(line, code, B (BGEU, rt, rs, imm))]
   in
 
   match pseudo with
-  | NOP             -> [Prog_Instr (line, code, I(ADDI, 0l, 0l, Imm 0l))]
+  | NOP             -> [Prog_Instr (line, code, I (ADDI, 0l, 0l, Imm 0l))]
   | LI (rd, imm)    -> translate_li rd imm
   | LA (rd, label)  -> translate_la rd label
   | J offset        -> translate_j offset
   | JALP offset     -> translate_jalp offset
-  | JR rs           -> [Prog_Instr (line, code, I(JALR, 0l, rs, Imm 0l))]
-  | JALRP rs        -> [Prog_Instr (line, code, I(JALR, 1l, rs, Imm 0l))]
-  | RET             -> [Prog_Instr (line, code, I(JALR, 1l, 1l, Imm 0l))]
+  | JR rs           -> [Prog_Instr (line, code, I (JALR, 0l, rs, Imm 0l))]
+  | JALRP rs        -> [Prog_Instr (line, code, I (JALR, 1l, rs, Imm 0l))]
+  | RET             -> [Prog_Instr (line, code, I (JALR, 1l, 1l, Imm 0l))]
   | CALL offset                         -> translate_call offset
   | TAIL offset                         -> translate_tail offset
   | LGlob (rd, symbol, load)            -> translate_lglob rd symbol load

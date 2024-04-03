@@ -16,10 +16,11 @@
   retrieve this information
 *)
 
-type t = {
-  line_to_addr : (int,   int32)        Hashtbl.t;
-  addr_to_line : (int32, int * string) Hashtbl.t
-}
+type t =
+  {
+    line_to_addr : (int,   int32)        Hashtbl.t;
+    addr_to_line : (int32, int * string) Hashtbl.t;
+  }
 
 let generate_debug () =
   {

@@ -229,12 +229,13 @@ let print_regs : Types.cmd = {
 
 (* Decode ------------------------------------------------------------------- *)
 
-let rec print : Types.cmd = {
-  long_form   = "print";
-  short_form  = "p";
-  name        = "(p)rint";
-  short_desc  = "Print informations about CPU";
-  long_desc   = "";
-  execute     = (fun _ state -> Help.command print state);
-  sub         = [print_memory; print_regs; print_code];
-}
+let rec print : Types.cmd = 
+  {
+    long_form   = "print";
+    short_form  = "p";
+    name        = "(p)rint";
+    short_desc  = "Print informations about CPU";
+    long_desc   = "";
+    execute     = (fun _ state -> Help.command print state);
+    sub         = [print_memory; print_regs; print_code];
+  }

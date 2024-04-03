@@ -81,15 +81,16 @@ let step_execute args (state : Types.state) =
         Format.printf "%a Incorrect argument @{<fg_yellow>'%s'@}@." error () count;
         state
 
-let step : Types.cmd = {
-  long_form  = "step";
-  short_form = "s";
-  name       = "(s)tep";
-  short_desc = "Execute next instruction";
-  long_desc  = "";
-  execute    = step_execute;
-  sub        = [];
-}
+let step : Types.cmd = 
+  {
+    long_form  = "step";
+    short_form = "s";
+    name       = "(s)tep";
+    short_desc = "Execute next instruction";
+    long_desc  = "";
+    execute    = step_execute;
+    sub        = [];
+  }
 
 (* Next --------------------------------------------------------------------- *)
 
@@ -102,15 +103,16 @@ let next_execute _args (state : Types.state) =
   in
   sub true state
 
-let next : Types.cmd = {
-  long_form   = "next";
-  short_form  = "n";
-  name        = "(n)ext";
-  short_desc  = "Run code until the next breakpoint";
-  long_desc   = "";
-  execute     = next_execute;
-  sub         = []
-}
+let next : Types.cmd = 
+  {
+    long_form   = "next";
+    short_form  = "n";
+    name        = "(n)ext";
+    short_desc  = "Run code until the next breakpoint";
+    long_desc   = "";
+    execute     = next_execute;
+    sub         = []
+  }
 
 (* Run ---------------------------------------------------------------------- *)
 
@@ -142,15 +144,16 @@ let prev_execute args (state : Types.state) =
         Format.printf "%a Incorrect argument @{<fg_yellow>'%s'@}@." error () count;
         state
 
-let prev : Types.cmd = {
-  long_form   = "previous";
-  short_form  = "pre";
-  name        = "(pre)vious";
-  short_desc  = "Revert previous step";
-  long_desc   = "";
-  execute     = prev_execute;
-  sub         = []
-}
+let prev : Types.cmd = 
+  {
+    long_form   = "previous";
+    short_form  = "pre";
+    name        = "(pre)vious";
+    short_desc  = "Revert previous step";
+    long_desc   = "";
+    execute     = prev_execute;
+    sub         = []
+  }
 
 (* Reset -------------------------------------------------------------------- *)
 
@@ -161,12 +164,13 @@ let reset_execute _args (state : Types.state) =
     history     = History.reset state.arch state.history;
   }
 
-let reset : Types.cmd = {
-  long_form   = "reset";
-  short_form  = "res";
-  name        = "(res)et";
-  short_desc  = "Recovery of the simulator's initial state";
-  long_desc   = "";
-  execute     = reset_execute;
-  sub         = []
-}
+let reset : Types.cmd = 
+  {
+    long_form   = "reset";
+    short_form  = "res";
+    name        = "(res)et";
+    short_desc  = "Recovery of the simulator's initial state";
+    long_desc   = "";
+    execute     = reset_execute;
+    sub         = []
+  }

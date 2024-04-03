@@ -146,10 +146,12 @@ let pre : Types.cmd =
 
 (* Reset -------------------------------------------------------------------- *)
 
-let run_execute _args (state : Types.state) =
-  { state with
-    program_run = true;
-    history     = History.reset state.arch state.history; }
+let run_execute args (state : Types.state) =
+  let state =
+    { state with
+      program_run = true;
+      history     = History.reset state.arch state.history; }
+  in continue_execute args state
 
 let run : Types.cmd =
   { long_form   = "run";

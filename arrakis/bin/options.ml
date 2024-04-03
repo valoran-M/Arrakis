@@ -16,14 +16,16 @@ let no_color   = ref false
 let allow_root = ref false
 let run        = ref false
 
+let set_run _args =
+  run := true
+
 let env = ref "unix"
 
 let spec = [
   ("-e",            Arg.Set_string env,        "<venus|unix> Set env for ecalls"  );
   ("--no-color",    Arg.Set no_color,          " Don't use color in output"       );
   ("--allow-root",  Arg.Set allow_root,        " Allow usage in root mode"        );
-  ("-r",            Arg.Set run,               " Run the program and exit"        );
-  ("--run",         Arg.Set run,               " Run the program and exit"        );
+  ("--run",         Arg.Rest_all set_run,      " Run the program and exit"        );
   ("--version",     Arg.Set show_version,      " Show version number and exit"    );
 ]
 

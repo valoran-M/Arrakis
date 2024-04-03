@@ -10,7 +10,7 @@ open Utils
 open Program
 
 (*
-  The assembly code contains pseudo-instructions, so we're going to try and
+  The assembly code contains pseudo-instructions, so we're going to
   transform them into pure RISC-V instructions to make the final assembly
   easier.
 *)
@@ -22,18 +22,17 @@ open Program
       must be reversed.
 *)
 let translate_pseudo pseudo line code addr labels =
-
-  let translate_j offset =
+  let j offset =
     let imm = imm_to_int32 labels line addr offset in
     [Prog_Instr (line, code, J (JAL, 0l, Imm imm))]
   in
 
-  let translate_jalp offset =
+  let jalp offset =
     let imm = imm_to_int32 labels line addr offset in
     [Prog_Instr (line, code, J (JAL, 1l, Imm imm))]
   in
 
-  let translate_li rd imm =
+  let li rd imm =
     let hi, lo = hi_lo imm addr line labels in
     if hi = 0l
     then [ Prog_Instr (line, code, I (ADDI, rd, 0l, Imm lo))]
@@ -41,37 +40,37 @@ let translate_pseudo pseudo line code addr labels =
            Prog_Instr (line, code, U (LUI,  rd,     Imm hi))]
   in
 
-  let translate_la rd label =
+  let la rd label =
     let (hi, lo) = hi_lo label addr line labels in
     [ Prog_Instr (line, code, I (ADDI,  rd, rd, Imm lo));
       Prog_Instr (line, code, U (AUIPC, rd,     Imm hi))]
   in
 
-  let translate_call offset =
+  let call offset =
     let (hi, lo) = hi_lo offset addr line labels in
     [ Prog_Instr (line, code, I (JALR,  1l, 1l, Imm lo));
       Prog_Instr (line, code, U (AUIPC, 1l,     Imm hi))]
   in
 
-  let translate_tail offset =
+  let tail offset =
     let (hi, lo) = hi_lo offset addr line labels in
     [ Prog_Instr (line, code, I (JALR,  0l, 6l, Imm lo));
       Prog_Instr (line, code, U (AUIPC, 6l,     Imm hi))]
   in
 
-  let translate_lglob rd symbol load =
+  let lglob rd symbol load =
     let (hi, lo) = hi_lo symbol addr line labels in
     [ Prog_Instr (line, code, I (load,  rd, rd, Imm lo));
       Prog_Instr (line, code, U (AUIPC, rd,     Imm hi))]
   in
 
-  let translate_sglob rd symbol rt store =
+  let sglob rd symbol rt store =
     let (hi, lo) = hi_lo symbol addr line labels in
     [ Prog_Instr (line, code, S (store, rd, rt, Imm lo));
       Prog_Instr (line, code, U (AUIPC, rd,     Imm hi))]
   in
 
-  let translate_two_reg inst rd rs =
+  let two_reg inst rd rs =
     match inst with
     | MV   -> [Prog_Instr(line, code, I (ADDI,  rd, rs, Imm 0l   ))]
     | NOT  -> [Prog_Instr(line, code, I (XORI,  rd, rs, Imm (-1l)))]
@@ -82,7 +81,7 @@ let translate_pseudo pseudo line code addr labels =
     | SGTZ -> [Prog_Instr(line, code, R (SLT,   rd, 0l, rs       ))]
   in
 
-  let translate_reg_offset inst rs offset =
+  let reg_offset inst rs offset =
     let imm = Imm (imm_to_int32 labels line addr offset) in
     match inst with
     | BEQZ -> [Prog_Instr(line, code, B (BEQ, rs, 0l, imm))]
@@ -93,7 +92,7 @@ let translate_pseudo pseudo line code addr labels =
     | BGTZ -> [Prog_Instr(line, code, B (BLT, 0l, rs, imm))]
   in
 
-  let translate_reg_reg_offset inst rs rt offset =
+  let reg_reg_offset inst rs rt offset =
     let imm = Imm (imm_to_int32 labels line addr offset) in
     match inst with
     | BGT  -> [Prog_Instr(line, code, B (BLT,  rt, rs, imm))]
@@ -103,21 +102,21 @@ let translate_pseudo pseudo line code addr labels =
   in
 
   match pseudo with
+  | LI (rd, imm)    -> li rd imm
+  | LA (rd, label)  -> la rd label
+  | J offset        -> j offset
+  | JALP offset     -> jalp offset
+  | CALL offset     -> call offset
+  | TAIL offset     -> tail offset
   | NOP             -> [Prog_Instr (line, code, I (ADDI, 0l, 0l, Imm 0l))]
-  | LI (rd, imm)    -> translate_li rd imm
-  | LA (rd, label)  -> translate_la rd label
-  | J offset        -> translate_j offset
-  | JALP offset     -> translate_jalp offset
   | JR rs           -> [Prog_Instr (line, code, I (JALR, 0l, rs, Imm 0l))]
   | JALRP rs        -> [Prog_Instr (line, code, I (JALR, 1l, rs, Imm 0l))]
   | RET             -> [Prog_Instr (line, code, I (JALR, 1l, 1l, Imm 0l))]
-  | CALL offset                         -> translate_call offset
-  | TAIL offset                         -> translate_tail offset
-  | LGlob (rd, symbol, load)            -> translate_lglob rd symbol load
-  | SGlob (rd, symbol, rt, store)       -> translate_sglob rd symbol rt store
-  | Two_Regs (inst, rd, rs)             -> translate_two_reg inst rd rs
-  | Regs_Offset (inst, rs, offset)      -> translate_reg_offset inst rs offset
-  | Regs_Regs_Offset(inst,rs,rt,offset) -> translate_reg_reg_offset inst rs rt offset
+  | LGlob (rd, symbol, load)      -> lglob rd symbol load
+  | SGlob (rd, symbol, rt, store) -> sglob rd symbol rt store
+  | Two_Regs (inst, rd, rs)                 -> two_reg inst rd rs
+  | Regs_Offset (inst, rs, offset)          -> reg_offset inst rs offset
+  | Regs_Regs_Offset (inst, rs, rt, offset) -> reg_reg_offset inst rs rt offset
 
 let remove_pseudo prog labels =
   let rec iterator prog addr acc =
@@ -130,6 +129,5 @@ let remove_pseudo prog labels =
     | (Prog_Instr _ as inst) :: prog -> iterator prog (addr + 4l) (inst :: acc)
     | (_ as inst)            :: prog -> iterator prog addr        (inst :: acc)
   in
-  let open Arch.Segment in
-  iterator prog text_begin [] |> List.rev
+  iterator prog Arch.Segment.text_begin [] |> List.rev
 

@@ -97,7 +97,7 @@ let print_code _arch code =
   (* J *)
   | 0b1101111l   ->
     let inst = J.decode code in
-    Format.sprintf "%s %d" (Hashtbl.find j_to_string opcode)
+    Format.sprintf "%s 0x%x" (Hashtbl.find j_to_string opcode)
         (Int32.to_int inst.imm)
   | _ -> raise Invalid_instruction
 

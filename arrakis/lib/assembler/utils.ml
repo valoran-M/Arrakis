@@ -29,5 +29,5 @@ let imm_to_int32 labels line addr = function
 
 let hi_lo imm addr line label_address =
   let imm = imm_to_int32 label_address line addr imm in
-  ((imm + 0x800l) >> 12, imm & 0b111111111111l)
+  (imm + 0x800l) >> 12, imm & 0b111111111111l
 

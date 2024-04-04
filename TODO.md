@@ -2,7 +2,8 @@
 
 ## 1.1.0
 
-* Allow usage of program arguments. Use syntax `arrakis helloworld.s -- hello`
+* Program arguments. Use syntax `arrakis helloworld.s --run hello world`
+* [local labels](https://sourceware.org/binutils/docs/as/Symbol-Names.html)
 
 ### Improve shell
 

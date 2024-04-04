@@ -24,7 +24,8 @@ open Arch
 let translate (instruction : instruction) addr line labels =
   let imm_to_int32 = imm_to_int32 labels in
   match instruction with
-  | R (inst, rd, rs1, rs2) -> Instructions.R.code inst rd rs1 rs2
+  | R (inst, rd, rs1, rs2) ->
+      Instructions.R.code inst rd rs1 rs2
   | I (inst, rd, rs1, imm) ->
     let imm = imm_to_int32 line addr imm in
     Instructions.I.code inst rd rs1 imm

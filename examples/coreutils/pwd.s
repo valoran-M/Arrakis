@@ -28,11 +28,14 @@ strlen:
 
 .globl _start
 _start:
+  addi sp, sp, -128
+
+  # Get current working directory
   li   a7, 17
-  addi sp, sp, -30
-  add  a0, x0, sp
-  li   a1, 30
+  mv   a0, sp
+  li   a1, 128
   ecall
+  beqz a0, error_exit
 
   # Print working directory
   call strlen
@@ -42,14 +45,22 @@ _start:
   li  a0, 1
   mv  a1, sp
   ecall
+  bltz a0, error_exit
 
   # Print new line
   li  a7, 64
   li  a0, 1
   la  a1, new_line
   ecall
+  bltz a0, error_exit
 
   # Exit
   li a7, 93
   li a0, 0
+  ecall
+
+# Exit with error code 1
+error_exit:
+  li a7, 93
+  li a0, 1
   ecall

@@ -7,9 +7,9 @@
 
 open Format
 
-let print (name : string) (desc : string) (sub : Types.cmd list) (state : Types.state) =
+let print (name : string) (desc : string list) (sub : Types.cmd list) (state : Types.state) =
   fprintf state.out_channel "%2s@{<fg_green>%s@}\n" "" name;
-  (if desc != "" then fprintf state.out_channel "%2s%s\n" "" desc);
+  List.iter (fprintf state.out_channel "%2s%s\n" "") desc;
   List.iter (fun (cmd : Types.cmd) ->
     fprintf state.out_channel "%2s@{<fg_green>*@} %-15s%2s%s\n"
     "" cmd.name "" cmd.short_desc)
@@ -17,7 +17,7 @@ let print (name : string) (desc : string) (sub : Types.cmd list) (state : Types.
   state
 
 let general (state : Types.state) =
-  print "General" "" state.cmds state
+  print "General" [] state.cmds state
 
 let command_title (title : string) (cmd : Types.cmd) (state : Types.state) =
   print (String.capitalize_ascii title) cmd.long_desc cmd.sub state
@@ -47,7 +47,7 @@ let help : Types.cmd =
     short_form  = "h";
     name        = "(h)elp";
     short_desc  = "Show this help";
-    long_desc   = "Usage: help <command> <sub_command>";
+    long_desc   = ["Usage: help <command> <sub_command>"];
     execute     = execute;
     sub         = []; }
 

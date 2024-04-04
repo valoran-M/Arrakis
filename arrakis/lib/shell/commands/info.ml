@@ -100,7 +100,7 @@ let info_code : Types.cmd =
     short_form  = "c";
     name        = "(c)ode";
     short_desc  = "Print code";
-    long_desc   = "Usage: info code <offset> <negative offset>";
+    long_desc   = ["Usage: info code <offset> <negative offset>"];
     execute     = execute_info_code;
     sub         = []; }
 
@@ -162,7 +162,7 @@ let info_memory : Types.cmd =
     short_form  = "m";
     name        = "(m)emory";
     short_desc  = "Print memory segment";
-    long_desc   = "Usage: info memory <start> <size>";
+    long_desc   = ["Usage: info memory <start> <size>"];
     execute     = execute_info_memory;
     sub         = []; }
 
@@ -220,7 +220,7 @@ let info_registers : Types.cmd = {
   short_form  = "r";
   name        = "(r)egisters";
   short_desc  = "Display value in specified registers";
-  long_desc   = "Usage: info registers <r_1> ... <r_n>";
+  long_desc   = ["Usage: info registers <r_1> ... <r_n>"];
   execute     = execute_info_registers;
   sub         = [];
 }
@@ -232,6 +232,6 @@ let rec info : Types.cmd =
     short_form  = "i";
     name        = "(i)nfo";
     short_desc  = "Print informations about CPU";
-    long_desc   = "";
+    long_desc   = [];
     execute     = (fun _ state -> Help.command info state);
     sub         = [info_memory; info_registers; info_code]; }

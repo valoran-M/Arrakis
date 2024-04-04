@@ -40,7 +40,7 @@ let breakpoint_line : Types.cmd =
     short_form  = "l";
     name        = "(l)ine";
     short_desc  = "Add breakpoints on specified lines";
-    long_desc   = "";
+    long_desc   = [];
     execute     = iter execute_line;
     sub         = []; }
 
@@ -70,7 +70,7 @@ let breakpoint_addr : Types.cmd =
     short_form  = "a";
     name        = "(a)ddr";
     short_desc  = "Add breakpoints on specified address";
-    long_desc   = "";
+    long_desc   = [];
     execute     = iter execute_addr;
     sub         = []; }
 
@@ -87,7 +87,7 @@ let breakpoint_print : Types.cmd =
     short_form  = "p";
     name        = "(p)rint";
     short_desc  = "Print all breakpoints";
-    long_desc   = "";
+    long_desc   = [];
     execute     = iter execute_addr;
     sub         = []; }
 
@@ -114,7 +114,7 @@ let breakpoint_remove : Types.cmd =
     short_form  = "r";
     name        = "(r)emove";
     short_desc  = "Remove specified breakpoints";
-    long_desc   = "";
+    long_desc   = [];
     execute     = iter execute_remove;
     sub         = []; }
 
@@ -123,7 +123,7 @@ let rec breakpoint : Types.cmd =
     short_form  = "b";
     name        = "(b)reakpoint";
     short_desc  = "Create breakpoints";
-    long_desc   = "";
+    long_desc   = [];
     execute     = (fun _ state -> Help.command breakpoint state);
     sub         = [
       breakpoint_addr;

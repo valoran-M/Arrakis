@@ -82,7 +82,7 @@ let step : Types.cmd =
     short_form = "s";
     name       = "(s)tep";
     short_desc = "Execute next instruction";
-    long_desc  = "";
+    long_desc  = [];
     execute    = step_execute;
     sub        = []; }
 
@@ -102,7 +102,7 @@ let continue : Types.cmd =
     short_form  = "c";
     name        = "(c)ontinue";
     short_desc  = "Run code until the next breakpoint";
-    long_desc   = "";
+    long_desc   = [];
     execute     = continue_execute;
     sub         = []; }
 
@@ -119,7 +119,7 @@ let finish: Types.cmd =
     short_form  = "f";
     name        = "(f)inish";
     short_desc  = "Run code until the end";
-    long_desc   = "";
+    long_desc   = [];
     execute     = finish_execute;
     sub         = [] }
 
@@ -140,7 +140,7 @@ let pre : Types.cmd =
     short_form  = "p";
     name        = "(p)revious";
     short_desc  = "Revert previous step";
-    long_desc   = "";
+    long_desc   = [];
     execute     = pre_execute;
     sub         = []; }
 
@@ -158,6 +158,6 @@ let run : Types.cmd =
     short_form  = "r";
     name        = "(r)un";
     short_desc  = "Start the execution";
-    long_desc   = "";
+    long_desc   = [];
     execute     = run_execute;
     sub         = []; }

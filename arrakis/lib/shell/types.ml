@@ -16,7 +16,7 @@ type cmd = {
   (* Shown in the help menu *)
   name       : string;
   short_desc : string;
-  long_desc  : string;
+  long_desc  : string list;
 
   (* Do the actual action of the command *)
   (* Please note that as the state contain mutable values, the execute function

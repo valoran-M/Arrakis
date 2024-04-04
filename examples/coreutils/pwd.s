@@ -1,4 +1,28 @@
+# Pwd --------------------------------------------------------------------------
+# Print name of working directory
+#
+# This file is part of Arrakis <https://codeberg.org/arrakis/arrakis>
+# It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>
+# ------------------------------------------------------------------------------
 
+.data
+  new_line: .ascii "\n"
+
+.text
+
+# Utils ------------------------------------------------------------------------
+# Copied straight from 'common.s' for now. See documentation over there.
+
+strlen:
+  mv a1, a0
+  .while_strlen:
+    lb   t0 0(a1)
+    beqz t0, .while_exit_strlen
+    addi a1, a1, 1
+    j .while_strlen
+  .while_exit_strlen:
+  sub a1, a1, a0
+  ret
 
 # Main -------------------------------------------------------------------------
 
@@ -10,15 +34,22 @@ _start:
   li   a1, 30
   ecall
 
+  # Print working directory
+  call strlen
+  mv a2, a1
+
   li  a7, 64
   li  a0, 1
-  add a1, x0 sp
-  li  a2, 30 # TODO: Change to use a strlen function
+  mv  a1, sp
   ecall
 
-  # TODO: Print a trailing new line character
+  # Print new line
+  li  a7, 64
+  li  a0, 1
+  la  a1, new_line
+  ecall
 
-  # exit
+  # Exit
   li a7, 93
   li a0, 0
   ecall

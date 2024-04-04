@@ -1,15 +1,18 @@
+# Echo -------------------------------------------------------------------------
+# Display a line of text.
+#
+# This file is part of Arrakis <https://codeberg.org/arrakis/arrakis>
+# It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>
+# ------------------------------------------------------------------------------
+
 .data
   hello: .asciz "hello, world!\n"
 
 .text
 
 # Utils ------------------------------------------------------------------------
+# Copied straight from 'common.s' for now. See documentation over there.
 
-# Calculate the size of a string
-# a0 : char*
-# Returns:
-# a0 : unchanged
-# a1 : size of string
 strlen:
   mv a1, a0
   .while_strlen:
@@ -21,18 +24,16 @@ strlen:
   sub a1, a1, a0
   ret
 
-# Write a string to stdout
-# a0 : char*
 fputs:
   sw ra, 0(sp)
   addi sp, sp, -4
 
   mv s0, a0
   call strlen
-  mv a2, a0
+  mv a2, a1
 
-  li a7, 64   # write syscall
-  li a0, 1    # stdout file descriptor
+  li a7, 64
+  li a0, 1
   mv a1, s0
   ecall
 
@@ -57,7 +58,7 @@ _start:
   #   addi sp, 4
   # .while_exit_start:
 
-  # exit
+  # Exit
   li a7, 93
   li a0, 0
   ecall

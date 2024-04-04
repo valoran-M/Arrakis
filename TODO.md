@@ -2,6 +2,8 @@
 
 ## 1.1.0
 
+### New features
+
 * Program arguments. Use syntax `arrakis helloworld.s --run hello world`
 * [local labels](https://sourceware.org/binutils/docs/as/Symbol-Names.html)
 
@@ -13,6 +15,17 @@
 * Handle syscall failure at shell level
 * command clear shell (CTRL+L)
 * Add argument to 'continue' command
+* fixme: 'continue' does not seems to work
+* fixme: Running 'run' when the current adress is a breakpoint shouldn't do
+  anything
+* fixme: Printing 'jal' instruction seems to be broken
+* fixme: Long label can go out of 'original code' bounds
+* Printing the content of 'sp' should also go backward
+* When printing memory, show which case was the one which was asked so we can
+  clearly see what is before and what is after
+* Allow printing help for subcommand. 'help i m' should print out the help for
+  'information memory'.
+* Add feedback for command 's', 'c', 'r'...
 
 ## ??? (Future work without attributed planned version)
 
@@ -27,7 +40,6 @@
   ``Syntax Error on line .... bgt instruction usage: bgt rs, rt, offset.``
 * Would be fun to have a small GIF in README displaying the use of breakpoints
   and printing stuff.
-* Add a feedback for command 's': Print new pc
 * Specify exactly which version of RISC-V ISA is currently implemented.
 * Allow switching between multiple isa with a --isa option, taking a string as
   an argument that must be parsed. (Example: RV32IM, RV32I, ...).

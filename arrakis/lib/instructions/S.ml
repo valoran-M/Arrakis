@@ -46,8 +46,8 @@ let decode code =
   { fc3 = (code && fc3_mask) >> 12;
     rs1 = (code && rs1_mask) >> 15;
     rs2 = (code && rs2_mask) >> 20;
-    imm = sign_extended (((code || fc7_mask) >>> 20l) ||
-                         ((code || rdt_mask) >>> 07l)) 12; }
+    imm = sign_extended (((code & fc7_mask) >>> 20l) ||
+                         ((code & rdt_mask) >>> 07l)) 12; }
 
 (* Exectuion ---------------------------------------------------------------- *)
 

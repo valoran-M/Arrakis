@@ -42,13 +42,13 @@ let code instruction rd imm =
 
 let decode code =
   (* Imm interval *)
-  let imm_31_20 = (code & (fc7_mask || rs2_mask)) >> 20l in
+  let imm31_20 = (code & (fc7_mask || rs2_mask)) >> 20l in
   (* Imm's bits *)
   let imm19_12 = code & 0b11111111000000000000l in
-  let imm11_11 = (imm_31_20 & 0b1l) << 11l      in
-  let imm10_01 = (imm_31_20 & 0b011111111110l)  in
-  let imm20_20 = (imm_31_20 & 0b100000000000l)  in
-  let imm = sign_extended (imm20_20 || imm19_12 || imm11_11 || imm10_01) 21 in
+  let imm11_11 = (imm31_20 & 0b01l) << 11l      in
+  let imm10_01 = (imm31_20 & 0b0011111111110l)  in
+  let imm20_20 = (imm31_20 & 0b0100000000000l)  in
+  let imm = sign_extended (imm20_20 || imm19_12 || imm11_11 || imm10_01) 20 in
 
   let (>>) = Int.shift_right_logical in
   let (&&) x y = Int32.to_int (x & y) in

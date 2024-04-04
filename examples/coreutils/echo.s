@@ -1,5 +1,5 @@
 .data
-  hello: .asciz "hello, world!"
+  hello: .asciz "hello, world!\n"
 
 .text
 
@@ -24,6 +24,9 @@ strlen:
 # Write a string to stdout
 # a0 : char*
 fputs:
+  sw ra, 0(sp)
+  addi sp, sp, -4
+
   mv s0, a0
   call strlen
   mv a2, a0
@@ -33,6 +36,8 @@ fputs:
   mv a1, s0
   ecall
 
+  lw ra, 4(sp)
+  addi sp, sp, 4
   ret
 
 # Main -------------------------------------------------------------------------

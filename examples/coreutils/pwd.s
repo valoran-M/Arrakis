@@ -1,5 +1,5 @@
 # Pwd --------------------------------------------------------------------------
-# Print name of working directory
+# Print name of working directory.
 #
 # This file is part of Arrakis <https://codeberg.org/arrakis/arrakis>
 # It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>
@@ -16,7 +16,7 @@
 strlen:
   mv a1, a0
   .while_strlen:
-    lb   t0 0(a1)
+    lb   t0, 0(a1)
     beqz t0, .while_exit_strlen
     addi a1, a1, 1
     j .while_strlen

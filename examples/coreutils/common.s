@@ -14,7 +14,7 @@
 strlen:
   mv a1, a0
   .while_strlen:
-    lb   t0 0(a1)
+    lb   t0, 0(a1)
     beqz t0, .while_exit_strlen
     addi a1, a1, 1
     j .while_strlen
@@ -26,8 +26,9 @@ strlen:
 #   Parameters:
 #     a0 : null-terminated string
 fputs:
-  sw ra, 0(sp)
-  addi sp, sp, -4
+  addi sp, sp, -8
+  sw   ra, 4(sp)
+  sw   s0  8(sp)
 
   mv s0, a0
   call strlen
@@ -38,6 +39,7 @@ fputs:
   mv a1, s0
   ecall
 
-  lw ra, 4(sp)
+  lw   ra, 4(sp)
+  lw   s0  8(sp)
   addi sp, sp, 4
   ret

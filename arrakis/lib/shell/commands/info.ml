@@ -100,7 +100,7 @@ let info_code : Types.cmd =
     short_form  = "c";
     name        = "(c)ode";
     short_desc  = "Print code";
-    long_desc   = "";
+    long_desc   = "Usage: info code <offset> <negative offset>";
     execute     = execute_info_code;
     sub         = []; }
 
@@ -121,7 +121,7 @@ let i32_or_reg_of_str reg (arch : Riscv.t) =
 
 let print_line (state : Types.state) line_address =
   fprintf state.out_channel "0x%08x |" (int32_to_int line_address);
-  for i = line_size - 1 downto 0 do
+  for i = 0 to line_size - 1 do
     let addr  = line_address + (Int32.of_int i)  in
     let value = Memory.get_byte state.arch.memory addr in
     fprintf state.out_channel "  %02x" (Int32.to_int value)
@@ -129,7 +129,7 @@ let print_line (state : Types.state) line_address =
   fprintf state.out_channel " |\n"
 
 let print_memory (state : Types.state) start size =
-  fprintf state.out_channel " @{<bold>%-9s@} |  @{<bold>+3@}  @{<bold>+2@}  @{<bold>+1@}  @{<bold>+0@} |\n"
+  fprintf state.out_channel "@{<bold>%-10s@} |  @{<bold>+0@}  @{<bold>+1@}  @{<bold>+2@}  @{<bold>+3@} |\n"
     "Address";
   let line_address = ref (Int32.logand start (Int32.lognot line_size32)) in
   for _ = 1 to size do
@@ -162,7 +162,7 @@ let info_memory : Types.cmd =
     short_form  = "m";
     name        = "(m)emory";
     short_desc  = "Print memory segment";
-    long_desc   = "";
+    long_desc   = "Usage: info memory <start> <size>";
     execute     = execute_info_memory;
     sub         = []; }
 
@@ -220,7 +220,7 @@ let info_registers : Types.cmd = {
   short_form  = "r";
   name        = "(r)egisters";
   short_desc  = "Display value in specified registers";
-  long_desc   = "";
+  long_desc   = "Usage: info registers <r_1> ... <r_n>";
   execute     = execute_info_registers;
   sub         = [];
 }

@@ -19,22 +19,35 @@ let print (name : string) (desc : string) (sub : Types.cmd list) (state : Types.
 let general (state : Types.state) =
   print "General" "" state.cmds state
 
+let command_title (title : string) (cmd : Types.cmd) (state : Types.state) =
+  print (String.capitalize_ascii title) cmd.long_desc cmd.sub state
+
 let command (cmd : Types.cmd) (state : Types.state) =
-  print (String.capitalize_ascii cmd.long_form) cmd.long_desc cmd.sub state
+  command_title cmd.long_form cmd state
+
+let rec sub_command args title (cmd : Types.cmd) (state : Types.state) =
+  let title = title^cmd.long_form^" " in
+  match args with
+  | []       -> command_title title cmd state
+  | hd :: tl ->
+    try
+      sub_command tl title (List.find (Utils.cmd_eq hd) cmd.sub) state
+    with Not_found -> command_title title cmd state
 
 let execute args (state : Types.state) =
   match args with
   | []       -> general state
-  | hd :: _  ->
-    try               command (List.find (Utils.cmd_eq hd) state.cmds) state
+  | hd :: tl ->
+    try
+      sub_command tl "" (List.find (Utils.cmd_eq hd) state.cmds) state
     with Not_found -> general state
 
-let help : Types.cmd = 
+let help : Types.cmd =
   { long_form   = "help";
     short_form  = "h";
     name        = "(h)elp";
     short_desc  = "Show this help";
-    long_desc   = "";
+    long_desc   = "Usage: help <command> <sub_command>";
     execute     = execute;
     sub         = []; }
 

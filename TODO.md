@@ -26,6 +26,7 @@
 * Allow printing help for subcommand. 'help i m' should print out the help for
   'information memory'.
 * Add feedback for command 's', 'c', 'r'...
+* 'long_desc' could be a list to print line by line
 
 ## ??? (Future work without attributed planned version)
 

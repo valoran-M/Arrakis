@@ -16,7 +16,7 @@
 strlen:
   mv a1, a0
   .while_strlen:
-    lb   t0 0(a1)
+    lb   t0, 0(a1)
     beqz t0, .while_exit_strlen
     addi a1, a1, 1
     j .while_strlen
@@ -25,20 +25,22 @@ strlen:
   ret
 
 fputs:
-  sw ra, 0(sp)
-  addi sp, sp, -4
+  addi sp, sp, -8
+  sw   ra, 4(sp)
+  sw   s0  8(sp)
 
   mv s0, a0
   call strlen
-  mv a2, a1
+  mv a2, a0
 
   li a7, 64
   li a0, 1
   mv a1, s0
   ecall
 
-  lw ra, 4(sp)
-  addi sp, sp, 4
+  lw   ra, 4(sp)
+  lw   s0  8(sp)
+  addi sp, sp, 8
   ret
 
 # Main -------------------------------------------------------------------------
@@ -49,13 +51,13 @@ _start:
   la a0, hello
   call fputs
 
-  # # TODO
-  # # sp points to the number of arguments.
-  # addi sp, 4
-  # la sp t0
+  # mv s0, sp
   # .while_start:
+  #   lw   t0, 0(s0)
   #   beqz t0, .while_exit_start
-  #   addi sp, 4
+  #   mv a0, s0
+  #   call fputs
+  #   addi s0, s0, 4
   # .while_exit_start:
 
   # Exit

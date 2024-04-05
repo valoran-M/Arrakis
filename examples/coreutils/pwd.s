@@ -11,17 +11,23 @@
 .text
 
 # Utils ------------------------------------------------------------------------
-# Copied straight from 'common.s' for now. See documentation over there.
+# A more fitted version of common utilities from their counterpart in 'common.s'
 
+# Calculate the size of a string.
+#   Parameters:
+#     a1 : null-terminated string
+#   Returns:
+#     a1 : unchanged
+#     a2 : size of a0
 strlen:
-  mv a1, a0
+  mv a2, a1
   .while_strlen:
-    lb   t0, 0(a1)
+    lb   t0, 0(a2)
     beqz t0, .while_exit_strlen
-    addi a1, a1, 1
+    addi a2, a2, 1
     j .while_strlen
   .while_exit_strlen:
-  sub a1, a1, a0
+  sub a2, a2, a1
   ret
 
 # Main -------------------------------------------------------------------------
@@ -39,7 +45,6 @@ _start:
 
   # Print working directory
   call strlen
-  mv a2, a1
 
   li  a7, 64
   li  a0, 1
@@ -48,9 +53,9 @@ _start:
   bltz a0, error_exit
 
   # Print new line
-  li  a7, 64
-  li  a0, 1
-  la  a1, new_line
+  li a0, 1
+  la a1, new_line
+  li a2, 1
   ecall
   bltz a0, error_exit
 

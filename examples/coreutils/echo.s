@@ -11,13 +11,14 @@
 .text
 
 # Utils ------------------------------------------------------------------------
-# Copied straight from 'common.s' for now. See documentation over there.
+# A more fitted version of common utilities from their counterpart in 'common.s'
 
-# Return string length
-# Parameters :
-#   a1 : string
-# Return
-#   a2 : length
+# Calculate the size of a string.
+#   Parameters:
+#     a0 : null-terminated string
+#   Returns:
+#     a0 : unchanged
+#     a1 : size of a0
 strlen:
   mv a2, a1
   .while_strlen:
@@ -29,7 +30,9 @@ strlen:
   sub a2, a2, a1
   ret
 
-# Print a1
+# Write a null terminated string to stdout.
+#   Parameters:
+#     a1 : null-terminated string
 fputs:
   sw   ra, 0(sp)
   addi sp, sp, -4

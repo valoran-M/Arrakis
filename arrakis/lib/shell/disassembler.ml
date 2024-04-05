@@ -6,7 +6,6 @@
 (******************************************************************************)
 
 open Instructions
-open Global_utils.Integer
 
 exception Invalid_instruction
 
@@ -62,42 +61,41 @@ let print_code _arch code =
   (* I *)
   | 0b0010011l | 0b1100111l | 0b1110011l ->
     let inst = I.decode code in
-    Format.sprintf "%s %s, %s, %d"
+    Format.sprintf "%s %s, %s, %ld"
       (Hashtbl.find i_to_string (opcode, inst.fc3))
       (reg_to_str inst.rdt) (reg_to_str inst.rs1)
-      (Int32.to_int (sign_extended inst.imm 12))
+      inst.imm
   | 0b0000011l ->
     let inst = I.decode code in
-    Format.sprintf "%s %s, %d(%s)"
+    Format.sprintf "%s %s, 0x%lx(%s)"
       (Hashtbl.find i_to_string (opcode, inst.fc3))
       (reg_to_str inst.rdt)
-      (Int32.to_int (sign_extended inst.imm 12))
+      inst.imm
       (reg_to_str inst.rs1)
   (* S *)
   | 0b0100011l ->
     let inst = S.decode code in
-    Format.sprintf "%s %s, %d(%s)"
+    Format.sprintf "%s %s, 0x%lx(%s)"
       (Hashtbl.find s_to_string inst.fc3)
       (reg_to_str inst.rs2)
-      (int32_to_int (sign_extended inst.imm 12))
+      inst.imm
       (reg_to_str inst.rs1)
   (* B *)
   | 0b1100011l  ->
     let inst = B.decode code in
-    Format.sprintf "%s %s, %s, 0x%x"
+    Format.sprintf "%s %s, %s, 0x%lx"
       (Hashtbl.find b_to_string inst.fc3)
       (reg_to_str inst.rs1) (reg_to_str inst.rs2)
-      (int32_to_int inst.imm)
+      inst.imm
   (* U *)
   | 0b0110111l | 0b0010111l  ->
     let inst = U.decode code in
-    Format.sprintf "%s %s, %d" (Hashtbl.find u_to_string opcode)
-      (reg_to_str inst.rdt) (Int32.to_int (Int32.shift_right_logical
-        inst.imm 12))
+    Format.sprintf "%s %s, %ld" (Hashtbl.find u_to_string opcode)
+      (reg_to_str inst.rdt) (Int32.shift_right_logical inst.imm 12)
   (* J *)
   | 0b1101111l   ->
     let inst = J.decode code in
-    Format.sprintf "%s 0x%x" (Hashtbl.find j_to_string opcode)
-        (Int32.to_int inst.imm)
+    (* TODO: Handle negative values here *)
+    Format.sprintf "%s 0x%lx" (Hashtbl.find j_to_string opcode) inst.imm
   | _ -> raise Invalid_instruction
 

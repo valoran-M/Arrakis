@@ -29,8 +29,8 @@ let execute_line (state : Types.state) arg =
       let addr   = Assembler.Debug.get_addr state.debug line in
       Hashtbl.add state.breakpoints addr number;
       fprintf state.out_channel
-        "%a Created breakpoint %d at 0x%x@."
-        info () number (Int32.to_int addr)
+        "%a Created breakpoint %d at 0x%lx@."
+        info () number addr
     with Not_found ->
       fprintf state.out_channel
         "%a Line %d does not contain code.@." error () line
@@ -52,8 +52,7 @@ let execute_addr (state : Types.state) arg =
   | Some addr ->
     Hashtbl.add state.breakpoints addr number;
     fprintf state.out_channel
-      "%a Created breakpoint %d at 0x%x.@."
-      info () number (Int32.to_int addr)
+      "%a Created breakpoint %d at 0x%lx.@." info () number addr
   | None ->
     match Assembler.Label.get_address_opt state.labels arg with
     | None ->
@@ -62,8 +61,7 @@ let execute_addr (state : Types.state) arg =
     | Some addr ->
       Hashtbl.add state.breakpoints addr number;
       fprintf state.out_channel
-        "%a Created breakpoint %d at 0x%x.@."
-        info () number (Int32.to_int addr)
+        "%a Created breakpoint %d at 0x%lx.@." info () number addr
 
 let breakpoint_addr : Types.cmd =
   { long_form   = "addr";

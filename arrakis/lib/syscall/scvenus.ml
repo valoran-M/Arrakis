@@ -11,7 +11,7 @@ open Arch
 open Global_utils.Print
 
 let print_int channel (arch : Riscv.t) =
-  Format.fprintf channel "%d@." (Int32.to_int (Cpu.get_reg arch.cpu 11));
+  Format.fprintf channel "%ld@." (Cpu.get_reg arch.cpu 11);
   Continue
 
 let print_string channel (arch : Riscv.t) =

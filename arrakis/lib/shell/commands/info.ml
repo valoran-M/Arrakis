@@ -124,7 +124,7 @@ let print_line (state : Types.state) line_address =
   for i = 0 to line_size - 1 do
     let addr  = line_address + (Int32.of_int i)  in
     let value = Memory.get_byte state.arch.memory addr in
-    fprintf state.out_channel "  %02x" (Int32.to_int value)
+    fprintf state.out_channel "  %02lx" value
   done;
   fprintf state.out_channel " |\n"
 

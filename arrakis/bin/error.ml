@@ -55,7 +55,7 @@ let assembler line e =
     exit 5
   | Interval_imm (v, min, max) ->
     eprintf "%a on line @{<fg_yellow>%d@}: Immediate out of bound" error () line;
-    eprintf "Found @{<fg_yellow>'%s'@} but expected a value between %s and %s@."
-      (Int32.to_string v) (Int32.to_string min) (Int32.to_string max);
+    eprintf "Found @{<fg_yellow>'%ld'@} but expected a value between %ld and %ld@."
+      v min max;
     exit 6
 

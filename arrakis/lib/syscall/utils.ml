@@ -11,9 +11,9 @@ open Global_utils.Print
 
 let invalid_sc channel id =
   Format.fprintf channel
-    "%a Invalid syscall : @{<fg_yellow>'%d'@}@."
+    "%a Invalid syscall : @{<fg_yellow>'%ld'@}@."
     info ()
-    (Int32.to_int id);
+    id;
   Continue
 
 (* File descriptors --------------------------------------------------------- *)

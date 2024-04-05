@@ -138,7 +138,10 @@ let getcwd channel (arch : Riscv.t) =
   let size = Cpu.get_reg arch.cpu 11 in
   let str  = !cwd in
   (
-    try Memory.set_str arch.memory buf str (Int32.to_int size)
+    try
+      (* TODO: Give out propre error to user here *)
+      (if String.length str >= (Int32.to_int size) then raise (Failure ""));
+      Memory.set_str arch.memory buf str (Int32.to_int size)
     with _ ->
       Format.fprintf channel "%a Syscall @{<fg_yellow>'getcwd'@} failed@."
         info ();
@@ -157,7 +160,7 @@ let mkdirat (arch : Riscv.t) =
   let mode     = Cpu.get_reg arch.cpu 11 in
 
   let pathname = get_str_pointed_by arch pathname in
-  Unix.mkdir pathname (Int32.to_int mode);
+  Unix.mkdir pathname (Int32.to_int mode); (* TODO: Handle failure *)
   Continue
 
 (* Source: https://jborza.com/post/2021-05-11-riscv-linux-syscalls/ *)

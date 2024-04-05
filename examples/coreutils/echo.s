@@ -13,34 +13,35 @@
 # Utils ------------------------------------------------------------------------
 # Copied straight from 'common.s' for now. See documentation over there.
 
+# Return string length
+# Parameters :
+#   a1 : string
+# Return
+#   a2 : length
 strlen:
-  mv a1, a0
+  mv a2, a1
   .while_strlen:
-    lb   t0, 0(a1)
+    lb   t0, 0(a2)
     beqz t0, .while_exit_strlen
-    addi a1, a1, 1
+    addi a2, a2, 1
     j .while_strlen
   .while_exit_strlen:
-  sub a1, a1, a0
+  sub a2, a2, a1
   ret
 
+# Print a1
 fputs:
-  addi sp, sp, -8
-  sw   ra, 4(sp)
-  sw   s0  8(sp)
+  sw   ra, 0(sp)
+  addi sp, sp, -4
 
-  mv s0, a0
   call strlen
-  mv a2, a0
 
   li a7, 64
   li a0, 1
-  mv a1, s0
   ecall
 
-  lw   ra, 4(sp)
-  lw   s0  8(sp)
-  addi sp, sp, 8
+  addi sp, sp, 4
+  lw   ra, 0(sp)
   ret
 
 # Main -------------------------------------------------------------------------
@@ -48,7 +49,7 @@ fputs:
 .globl _start
 _start:
 
-  la a0, hello
+  la a1, hello
   call fputs
 
   # mv s0, sp

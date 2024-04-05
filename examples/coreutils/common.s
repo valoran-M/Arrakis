@@ -26,20 +26,18 @@ strlen:
 #   Parameters:
 #     a0 : null-terminated string
 fputs:
-  addi sp, sp, -8
-  sw   ra, 4(sp)
-  sw   s0  8(sp)
+  sw   ra, 0(sp)
+  addi sp, sp, -4
 
-  mv s0, a0
   call strlen
   mv a2, a0
 
   li a7, 64
   li a0, 1
-  mv a1, s0
+  mv a1, a0
   ecall
 
-  lw   ra, 4(sp)
-  lw   s0  8(sp)
   addi sp, sp, 4
+  lw   ra, 0(sp)
   ret
+

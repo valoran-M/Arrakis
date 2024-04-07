@@ -7,5 +7,8 @@
 
 type t = { cpu : Cpu.t; memory : Memory.t }
 
-let init pc_start memory = { cpu = Cpu.make pc_start; memory }
+let init pc_start memory =
+  match pc_start with
+  | Some pc -> { memory; cpu = Cpu.make pc }
+  | None    -> { memory; cpu = Cpu.make Segment.text_begin }
 

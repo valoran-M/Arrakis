@@ -19,18 +19,15 @@ let main =
     if show_version then (printf "%s@." version; exit 0);
 
     Init.colors ();
-    Init.check_root  ();
-    let input_file = Init.input_file () in
-    let syscall    = Init.syscall    () in
+    Init.check_root ();
+    let in_file = Init.input_file () in
+    let syscall = Init.syscall () in
 
-    let channel = open_in input_file in
+    let channel = open_in in_file in
     let lb = Lexing.from_channel channel in
     let mem, labels, debug = Assembler.Assembly.assembly lb in
-    let pc =
-      match Assembler.Label.get_global labels "_start" with
-      | Some pc -> pc
-      | None    -> Arch.Segment.text_begin
-    in
+    let pc = Assembler.Label.get_global labels "_start" in
+    
     let arch  = Arch.Riscv.init pc mem in
     let shell = Shell.create arch syscall debug labels in
 

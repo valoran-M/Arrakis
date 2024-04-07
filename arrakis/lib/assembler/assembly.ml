@@ -65,16 +65,11 @@ let loop_memory mem labels addr (prog : memory_line) =
       (fun addr v -> Memory.set_byte mem addr (char_to_int32 v); addr + 1l)
     addr lb
   | Mem_Ascii s ->
-    String.fold_left
-      (fun addr v -> Memory.set_byte mem addr (char_to_int32 v); addr + 1l)
-      addr s
+    let size = String.length s in
+    Memory.set_str mem addr s size
   | Mem_Asciz s ->
-    let addr =
-      String.fold_left
-      (fun addr v -> Memory.set_byte mem addr (char_to_int32 v); addr + 1l)
-      addr s
-    in
-    Memory.set_byte mem addr 0l; (addr + 1l)
+    let size = String.length s in
+    Memory.set_strz mem addr s size
   | Mem_Word words ->
     List.fold_left
       (fun addr v -> Memory.set_int32 mem addr v; addr + 4l)
@@ -86,17 +81,17 @@ let loop_memory mem labels addr (prog : memory_line) =
 let assembly code =
   let open Arch.Segment in
   try
-    let mem   = Memory.make () in
-    let debug = Debug.generate_debug () in
+    let mem = Memory.make () in
+    let dbg = Debug.generate_debug () in
 
     let prog = Parser.program Lexer.token code in
 
     let labels = Label.get_label_address prog in
     ignore (List.fold_left (loop_memory mem labels) static_being prog.memory);
     let prog = Transform_pseudo.remove_pseudo prog.program labels in
-    ignore (List.fold_left (loop_prog mem debug labels) text_begin prog);
+    ignore (List.fold_left (loop_prog mem dbg labels) text_begin prog);
 
-    (mem, labels, debug)
+    (mem, labels, dbg)
   with Parser.Error ->
     let pe = Parsing_error (Lexing.lexeme code) in
     raise (Assembler_error (!Lexer.line, pe))

@@ -45,6 +45,9 @@ val set_32b_zero : t -> int32 -> int32 -> unit
 val get_str : t -> int32 -> string
   (** [get_str memory addr] *)
 
-val set_str : t -> int32 -> string -> int -> unit
-  (** [set_str memory addr value size] *)
+val set_str : t -> int32 -> string -> int -> int32
+  (** [set_str memory addr value size] return next addr *)
+
+val set_strz : t -> int32 -> string -> int -> int32
+  (** [set_strz memory addr value size] return next addr *)
 

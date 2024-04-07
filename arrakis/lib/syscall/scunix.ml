@@ -141,7 +141,7 @@ let getcwd channel (arch : Riscv.t) =
     try
       (* TODO: Give out propre error to user here *)
       (if String.length str >= (Int32.to_int size) then raise (Failure ""));
-      Memory.set_str arch.memory buf str (Int32.to_int size)
+      ignore (Memory.set_str arch.memory buf str (Int32.to_int size))
     with _ ->
       Format.fprintf channel "%a Syscall @{<fg_yellow>'getcwd'@} failed@."
         info ();

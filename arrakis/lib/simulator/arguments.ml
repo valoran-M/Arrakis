@@ -18,8 +18,7 @@ open Arch
                                                                    |
                                                               0x7fff_fff0
 
-  String 
-  an[x] ... a1[z] = 0
+  String end with 0 : an[x] = a1[z] = 0
 *)
 
 let write_arguments (arch : Riscv.t) (_args : string list) =

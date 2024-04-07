@@ -5,6 +5,7 @@
 (* it is distributed under the cecill 2.1 license <http://www.cecill.info>    *)
 (******************************************************************************)
 
+open Global_utils.Integer
 open Arch
 
 (*
@@ -18,11 +19,27 @@ open Arch
                                                                    |
                                                               0x7fff_fff0
 
-  String end with 0 : an[x] = a1[z] = 0
+  String end with 0 => an[x] = a1[z] = 0
 *)
 
-let write_arguments (arch : Riscv.t) (_args : string list) =
-  let _sp = Cpu.get_reg arch.cpu 0x2 in
-  (* TODO *)
-  assert false
+let write_arguments (arch : Riscv.t) (args : string list) =
+  let (-) = Int32.sub in
+  let sp = Cpu.get_reg arch.cpu 0x2 in
+  let write_one_string (addrs, eaddr) s =
+    let size = String.length s in
+    let addr = eaddr - (Int32.of_int size) in
+    ignore (Memory.set_strz arch.memory addr s size);
+    (addr :: addrs, addr - 1l)
+  in
+
+  let (addrs, sp) = List.fold_left write_one_string ([], sp) args in
+  Memory.set_byte arch.memory sp 0x0l;
+
+  let sp = alignement sp - 0x4l in
+  let sp = List.fold_left (fun sp addr ->
+    Memory.set_int32 arch.memory sp addr; sp - 4l) sp addrs
+  in
+
+  Memory.set_int32 arch.memory sp (Int32.of_int (List.length addrs)) ;
+  Cpu.set_reg arch.cpu 0x2 sp
 

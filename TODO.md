@@ -4,8 +4,6 @@
 
 ### New features
 
-* Program arguments. Use syntax `arrakis helloworld.s --run hello world`
-  Link shell with `Simulator.Arguments.write_arguments`
 * [local labels](https://sourceware.org/binutils/docs/as/Symbol-Names.html)
 
 ### Improve shell

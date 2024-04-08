@@ -17,6 +17,7 @@
 - Improved `info` command: Now always at most 80 character wide, more readable
   and easier to parse
 - Greatly improved the codebase
+- Support for program arguments
 
 # 1.0.0 (2023-19-9)
 

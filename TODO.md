@@ -24,6 +24,7 @@
 * When printing memory, show which case was the one which was asked so we can
   clearly see what is before and what is after
 * Add feedback for command 's', 'c', 'r'...
+* Address alignment (4 bites)
 
 ## ??? (Future work without attributed planned version)
 

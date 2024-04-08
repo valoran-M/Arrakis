@@ -35,7 +35,7 @@ let write_arguments (arch : Riscv.t) (args : string list) =
   let (addrs, sp) = List.fold_left write_one_string ([], sp) args in
   Memory.set_byte arch.memory sp 0x0l;
 
-  let sp = alignement sp - 0x4l in
+  let sp = alignment sp - 0x4l in
   let sp = List.fold_left (fun sp addr ->
     Memory.set_int32 arch.memory sp addr; sp - 4l) sp addrs
   in

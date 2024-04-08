@@ -15,31 +15,31 @@
 
 # Calculate the size of a string.
 #   Parameters:
-#     a1 : null-terminated string
+#     a0 : null-terminated string
 #   Returns:
-#     a1 : unchanged
+#     a0 : unchanged
 #     a2 : size of a0
 strlen:
-  mv a2, a1
+  mv a2, a0
   .while_strlen:
     lb   t0, 0(a2)
     beqz t0, .while_exit_strlen
     addi a2, a2, 1
     j .while_strlen
   .while_exit_strlen:
-  sub a2, a2, a1
+  sub a2, a2, a0
   ret
 
 # Main -------------------------------------------------------------------------
 
 .globl _start
 _start:
-  addi sp, sp, -128
+  addi sp, sp, -256
 
   # Get current working directory
   li   a7, 17
   mv   a0, sp
-  li   a1, 128
+  li   a1, 256
   ecall
   beqz a0, error_exit
 

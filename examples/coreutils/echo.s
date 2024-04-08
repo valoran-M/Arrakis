@@ -6,7 +6,6 @@
 # ------------------------------------------------------------------------------
 
 .data
-  hello: .asciz "hello, world!\n"
 
 .text
 
@@ -15,10 +14,10 @@
 
 # Calculate the size of a string.
 #   Parameters:
-#     a0 : null-terminated string
+#     a1 : null-terminated string
 #   Returns:
-#     a0 : unchanged
-#     a1 : size of a0
+#     a1 : unchanged
+#     a2 : size of a0
 strlen:
   mv a2, a1
   .while_strlen:
@@ -34,8 +33,8 @@ strlen:
 #   Parameters:
 #     a1 : null-terminated string
 fputs:
-  sw   ra, 0(sp)
   addi sp, sp, -4
+  sw   ra, 0(sp)
 
   call strlen
 
@@ -43,8 +42,24 @@ fputs:
   li a0, 1
   ecall
 
-  addi sp, sp, 4
   lw   ra, 0(sp)
+  addi sp, sp, 4
+  ret
+
+# Write a character to stdout
+#   Parameters:
+#     a1 : character
+putchar:
+  addi sp, sp, -4
+  sw   a1, 0(sp)
+
+  li a7, 64
+  li a0, 1
+  mv a1, sp
+  li a2, 1
+  ecall
+
+  addi sp, sp, 4
   ret
 
 # Main -------------------------------------------------------------------------
@@ -52,19 +67,27 @@ fputs:
 .globl _start
 _start:
 
-  la a1, hello
-  call fputs
+  # We could use directly sp here instead of s0 as we don't care
+  # about destroying arguments once used
+  addi s0, sp, 4
+  .while_start:
+    lw   a1, 0(s0)
+    beqz a1, .while_exit_start
+    call fputs
 
-  # mv s0, sp
-  # .while_start:
-  #   lw   t0, 0(s0)
-  #   beqz t0, .while_exit_start
-  #   mv a0, s0
-  #   call fputs
-  #   addi s0, s0, 4
-  # .while_exit_start:
+    # Print a space in between each string
+    li   a1, ' '
+    call putchar
+
+    addi s0, s0, 4
+    j .while_start
+  .while_exit_start:
+
+  li   a1, '\n'
+  call putchar
 
   # Exit
   li a7, 93
   li a0, 0
   ecall
+

@@ -124,21 +124,21 @@ rule token = parse
   | inst_two_regs  as inst { TWO_REGS (!line, inst, Hashtbl.find tr_inst inst) }
   | reg_offset     as inst { REGS_OFFSET (!line, inst, Hashtbl.find ro_inst inst) }
   | reg_reg_offset as inst { REGS_REGS_OFFSET (!line, inst, Hashtbl.find rro_inst inst) }
-  | "nop"  { NOP   (!line) }
-  | "li"   { LI    (!line) }
-  | "la"   { LA    (!line) }
-  | "j"    { J     (!line) }
-  | "jal"  { JALP  (!line) }
-  | "jr"   { JR    (!line) }
-  | "jalr" { JALRP (!line) }
-  | "ret"  { RET   (!line) }
-  | "call" { CALL  (!line) }
-  | "tail" { TAIL  (!line) }
+  | "nop"  { NOP   !line }
+  | "li"   { LI    !line }
+  | "la"   { LA    !line }
+  | "j"    { J     !line }
+  | "jal"  { JALP  !line }
+  | "jr"   { JR    !line }
+  | "jalr" { JALRP !line }
+  | "ret"  { RET   !line }
+  | "call" { CALL  !line }
+  | "tail" { TAIL  !line }
   (* --- *)
   | label as lbl
     {
       try  REG (Hashtbl.find regs lbl, lbl)
-      with Not_found -> IDENT (lbl)
+      with Not_found -> IDENT lbl
     }
   | _ as c
     { raise (Assembler_error (!line, Lexing_error (String.make 1 c))) }
@@ -155,5 +155,5 @@ and str = parse
   | '\"'   { }
   | "\n"   { Error.raise_unclosed (!line) }
   | eof    { Error.raise_unclosed (!line) }
-  | _ as c { store_string_char c; str lexbuf}
+  | _ as c { store_string_char c; str lexbuf }
 

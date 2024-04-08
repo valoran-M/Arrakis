@@ -88,14 +88,14 @@ let step : Types.cmd =
 
 (* Continue --------------------------------------------------------------------- *)
 
-let continue_execute _args (state : Types.state) =
-  let rec sub first (state : Types.state) =
+let rec next_breakpoint (first : bool) (state : Types.state) =
     let addr = Arch.Cpu.get_pc state.arch.cpu in
     if state.program_run && (first || not (Hashtbl.mem state.breakpoints addr)) then
-      sub false (one_step state)
+      next_breakpoint false (one_step state)
     else state
-  in
-  sub true state
+
+let continue_execute _args (state : Types.state) =
+  next_breakpoint true state
 
 let continue : Types.cmd =
   { long_form   = "continue";
@@ -146,12 +146,12 @@ let pre : Types.cmd =
 
 (* Reset -------------------------------------------------------------------- *)
 
-let run_execute args (state : Types.state) =
+let run_execute _args (state : Types.state) =
   let state =
     { state with
       program_run = true;
       history     = History.reset state.arch state.history; }
-  in continue_execute args state
+  in next_breakpoint false state
 
 let run : Types.cmd =
   { long_form   = "run";

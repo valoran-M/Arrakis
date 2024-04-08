@@ -5,6 +5,8 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
+open Global_utils.Print
+
 (*
   File containing all the functions used to initialise Arrakis :
   - colors
@@ -44,7 +46,7 @@ let check_root () =
   match Unix.getuid (), Options.allow_root with
   | 0, true  ->
     Format.eprintf
-      "@{<fg_yellow>Warning: Running in root mode. Proceed with caution.@}@."
+      "%a Running in root mode. Proceed with caution.@}@." warning ()
   | 0, false -> raise (Init_error Running_Root_Without_Opt)
   | _, _     -> ()
 

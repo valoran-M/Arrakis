@@ -62,6 +62,6 @@ let rec start (state : Types.state) =
       start new_state
   with Quit.Shell_Exit | End_of_file -> Format.printf "\n@{<fg_purple>Goodbye :)@}@."
 
-let run (state : Types.state) =
-  ignore (Running.run_execute [] state)
+let run (state : Types.state) (args : string list) =
+  ignore (Running.run_execute args state)
 

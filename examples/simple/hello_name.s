@@ -6,12 +6,12 @@
 .globl _start
 _start:
 
-  addi sp, sp, -15  # Allocate place in the stack to store the name
+  addi sp, sp, -32  # Allocate place in the stack to store the name
 
   li a7, 63     # Load the read syscall ID (63)
   li a0, 0      # Read from stdin (File descriptor 0)
   mv a1, sp     # Store result in the stack
-  li a2, 15     # Max read size
+  li a2, 32     # Max read size
   ecall
 
   mv t0, a0     # We keep the number of byte read in t0

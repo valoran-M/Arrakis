@@ -146,12 +146,14 @@ let pre : Types.cmd =
 
 (* Reset -------------------------------------------------------------------- *)
 
-let run_execute _args (state : Types.state) =
+let run_execute args (state : Types.state) =
   let state =
     { state with
       program_run = true;
       history     = History.reset state.arch state.history; }
-  in next_breakpoint false state
+  in
+  Simulator.Arguments.write_arguments state.arch args;
+  next_breakpoint false state
 
 let run : Types.cmd =
   { long_form   = "run";

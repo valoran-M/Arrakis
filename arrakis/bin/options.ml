@@ -14,10 +14,10 @@ let set_input_file f = input_file := f :: !input_file
 
 let no_color   = ref false
 let allow_root = ref false
-let run        = ref false
+let run        = ref None
 
-let set_run _args =
-  run := true
+let set_run args =
+  run := Some args
 
 let env = ref "unix"
 

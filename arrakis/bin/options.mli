@@ -16,4 +16,4 @@ val no_color   : bool
 val allow_root : bool
 
 val env        : string
-val run        : bool
+val run        : string list option

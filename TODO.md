@@ -5,6 +5,7 @@
 ### New features
 
 * Program arguments. Use syntax `arrakis helloworld.s --run hello world`
+  Link shell with `Simulator.Arguments.write_arguments`
 * [local labels](https://sourceware.org/binutils/docs/as/Symbol-Names.html)
 
 ### Improve shell
@@ -16,7 +17,7 @@
 * command clear shell (CTRL+L)
 * Add argument to 'continue' command
 * 'continue' does not seems to work
-* Running 'run' when the current adress is a breakpoint shouldn't do
+* Running 'run' when the current address is a breakpoint shouldn't do
   anything
 * Long label can go out of 'original code' bounds
 * Printing the content of 'sp' should also go backward. Printing memory in
@@ -24,7 +25,7 @@
 * When printing memory, show which case was the one which was asked so we can
   clearly see what is before and what is after
 * Add feedback for command 's', 'c', 'r'...
-* Address alignment (4 bites)
+* Address alignment (4 bites) Use alignment in Global_utils.Integer
 
 ## ??? (Future work without attributed planned version)
 

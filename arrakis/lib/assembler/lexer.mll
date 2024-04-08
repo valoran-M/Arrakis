@@ -50,7 +50,7 @@ let space = [' ' '\t']*
 let digit = ['0'-'9']*
 let alpha = ['a'-'z' 'A'-'Z']
 let ident = alpha (alpha | digit)*
-let label = '.'? (ident | '_')*
+let label = '.'? (ident | '_')+
 
 (* Instructions ------------------------------------------------------------- *)
 

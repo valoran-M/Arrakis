@@ -41,3 +41,18 @@ fputs:
   addi sp, sp, 4
   ret
 
+# Write a character to stdout
+#   Parameters:
+#     a0 : character
+putchar:
+  addi sp, sp, -4
+  sw   a0, 0(sp)
+
+  li a7, 64
+  li a0, 1
+  mv a1, sp
+  li a2, 1
+  ecall
+
+  addi sp, sp, 4
+  ret

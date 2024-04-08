@@ -32,7 +32,7 @@ and state = {
   out_channel  : Format.formatter;
   cmds         : cmd list;
   cmds_history : string array;
-  breakpoints  : (int32,  int) Hashtbl.t;
+  breakpoints  : (int32, int) Hashtbl.t;
   program_run  : bool;
 
   (* Program state *)

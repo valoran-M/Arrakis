@@ -10,6 +10,7 @@ open Disassembler
 open Format
 open Global_utils.Integer
 open Global_utils.Print
+open Error
 
 exception Break
 
@@ -106,7 +107,7 @@ let info_code : Types.cmd =
 
 (* Memory ------------------------------------------------------------------- *)
 
-let start_default = Segment.static_being
+let start_default = Segment.static_begin
 let size_default  = 0x10
 
 let line_size   = 0x4
@@ -122,7 +123,7 @@ let i32_or_reg_of_str reg (arch : Riscv.t) =
 let print_line (state : Types.state) line_address =
   fprintf state.out_channel "0x%08x |" (int32_to_int line_address);
   for i = 0 to line_size - 1 do
-    let addr  = line_address + (Int32.of_int i)  in
+    let addr  = line_address + (Int32.of_int i) in
     let value = Memory.get_byte state.arch.memory addr in
     fprintf state.out_channel "  %02lx" value
   done;
@@ -133,7 +134,7 @@ let print_memory (state : Types.state) start size =
     "Address";
   let line_address = ref (Int32.logand start (Int32.lognot line_size32)) in
   for _ = 1 to size do
-    print_line state !line_address;
+    print_line state (alignment !line_address);
     line_address := !line_address + line_size32
   done
 
@@ -144,16 +145,21 @@ let execute_info_memory args (state : Types.state) =
     try
       let start = i32_or_reg_of_str start state.arch in
       print_memory state start size_default
-    with _ ->
-        printf "%a Incorrect argument to print memory@." error ())
+    with _ -> raise (Shell_error Bad_Usage))
   | [start; size] -> (
       try
         let start = i32_or_reg_of_str start state.arch in
         let size  = int_of_string size in
         print_memory state start size
-      with _ ->
-        printf "%a Incorrect argument to print memory@." error ())
-  | _ -> ()
+      with _ -> raise (Shell_error Bad_Usage))
+  | [start; size; nsize] -> (
+      try
+        let start = i32_or_reg_of_str start state.arch in
+        let nsize = Int32.of_string nsize in
+        let size  = int_of_string   size  in
+        print_memory state (Int32.sub start nsize) size
+      with _ -> raise (Shell_error Bad_Usage))
+  | _ -> raise (Shell_error Bad_Usage)
   end;
   state
 
@@ -162,7 +168,12 @@ let info_memory : Types.cmd =
     short_form  = "m";
     name        = "(m)emory";
     short_desc  = "Print memory segment";
-    long_desc   = ["Usage: info memory <start> <size>"];
+    long_desc   = [
+              "Usage: info memory <start> <size> <negative size>";
+              "<start>   Either an adress or a register containing an adress";
+      sprintf "<size=%d> Size of the chunck of memory to print (forward)" size_default;
+              "<nsize=0> Size of the chunck of memory to print (backward)";
+    ];
     execute     = execute_info_memory;
     sub         = []; }
 
@@ -204,8 +215,7 @@ let info_list_regs (state : Types.state) =
         fprintf state.out_channel "%s | 0x%08x |\n"
           regs.(i) (int32_to_int (Cpu.get_reg state.arch.cpu i))
     with _ ->
-      fprintf state.out_channel "%a @{<fg_yellow>'%s'@} isn't a register@."
-        error () reg
+      fprintf state.out_channel "%a @{<fg_yellow>'%s'@} isn't a register@." error () reg
   )
 
 let execute_info_registers args (state : Types.state) =

@@ -87,7 +87,7 @@ let get_label_address (prog : program) =
       global_label     = Hashtbl.create 16;
     }
   in
-  get_label_address_memory  prog.memory  labels static_being;
+  get_label_address_memory  prog.memory  labels static_begin;
   get_label_address_program prog.program labels text_begin;
   labels
 

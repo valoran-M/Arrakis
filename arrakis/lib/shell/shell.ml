@@ -6,6 +6,7 @@
 (******************************************************************************)
 
 open Format
+open Error
 open Global_utils.Print
 
 let all_commands = [
@@ -53,9 +54,15 @@ let rec start (state : Types.state) =
     | command :: args ->
       let new_state =
         try parse_command command args state.cmds state
-        with Not_found ->
+        with
+        | Not_found ->
           fprintf state.out_channel "%a Undefined command @{<fg_yellow>'%s'@}. "
             error () command;
+          fprintf state.out_channel "Try @{<fg_green>'help'@}.@.";
+          state
+        | Shell_error Bad_Usage ->
+          fprintf state.out_channel "%a Bad usage @{<fg_yellow>'%s'@}. "
+            error () line;
           fprintf state.out_channel "Try @{<fg_green>'help'@}.@.";
           state
       in

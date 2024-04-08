@@ -116,6 +116,21 @@ let breakpoint_remove : Types.cmd =
     execute     = iter execute_remove;
     sub         = []; }
 
+let execute_clear _args (state : Types.state) =
+  Hashtbl.clear state.breakpoints;
+  state
+
+let breakpoint_clear : Types.cmd =
+  { long_form   = "clear";
+    short_form  = "c";
+    name        = "(c)lear";
+    short_desc  = "Remove all breakpoints";
+    long_desc   = [];
+    execute     = execute_clear;
+    sub         = []; }
+
+(* -------------------------------------------------------------------------- *)
+
 let rec breakpoint : Types.cmd =
   { long_form   = "breakpoint";
     short_form  = "b";
@@ -128,4 +143,7 @@ let rec breakpoint : Types.cmd =
       breakpoint_line;
       breakpoint_print;
       breakpoint_remove;
+      breakpoint_clear;
     ]; }
+
+

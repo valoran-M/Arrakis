@@ -5,6 +5,7 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
+open Error
 open Global_utils.Print
 
 (*
@@ -94,15 +95,25 @@ let rec next_breakpoint (first : bool) (state : Types.state) =
       next_breakpoint false (one_step state)
     else state
 
-let continue_execute _args (state : Types.state) =
-  next_breakpoint true state
+let rec n_next_breakpoint n state =
+  if n > 0 then n_next_breakpoint (n-1) (next_breakpoint true state)
+           else state
+
+let continue_execute args (state : Types.state) =
+  match args with
+  | [count]  -> (
+    try
+      n_next_breakpoint (int_of_string count) state
+    with _ -> raise (Shell_error Bad_Usage))
+  | [] -> next_breakpoint true state
+  | _ -> raise (Shell_error Bad_Usage)
 
 let continue : Types.cmd =
   { long_form   = "continue";
     short_form  = "c";
     name        = "(c)ontinue";
     short_desc  = "Run code until the next breakpoint";
-    long_desc   = [];
+    long_desc   = ["Usage: continue <count>"];
     execute     = continue_execute;
     sub         = []; }
 
@@ -119,7 +130,9 @@ let finish: Types.cmd =
     short_form  = "f";
     name        = "(f)inish";
     short_desc  = "Run code until the end";
-    long_desc   = [];
+    long_desc   = [
+      "Run the program until an exit syscall is reach or pc is out of bound"
+    ];
     execute     = finish_execute;
     sub         = [] }
 
@@ -140,7 +153,7 @@ let pre : Types.cmd =
     short_form  = "p";
     name        = "(p)revious";
     short_desc  = "Revert previous step";
-    long_desc   = [];
+    long_desc   = ["Usage: previous <count>"];
     execute     = pre_execute;
     sub         = []; }
 

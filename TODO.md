@@ -12,22 +12,14 @@
 * Using side arrow to modify current command
 * Autocompletion of commands
 * Handle syscall failure at shell level
-* command clear shell (CTRL+L)
-* Add argument to 'continue' command
-* 'continue' does not seems to work
-* Running 'run' when the current address is a breakpoint shouldn't do
-  anything
+* Command clear shell (CTRL+L)
 * Long label can go out of 'original code' bounds
-* Printing the content of 'sp' should also go backward. Printing memory in
-  general should also take a negative offset
 * When printing memory, show which case was the one which was asked so we can
   clearly see what is before and what is after
 * Add feedback for command 's', 'c', 'r'...
-* Address alignment (4 bits) Use alignment in Global_utils.Integer
 
 ## ??? (Future work without attributed planned version)
 
-* Change `shell/types.ml > state` to be fully immutable and not use hashtbl
 * openat (More detail in the file [scunix.ml](./arrakis/lib/syscall/scunix.ml))
 * Would be nice to improve errors.
   Some that could be interesting would be 'Did you mean...' errors, for example

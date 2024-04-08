@@ -1,8 +1,8 @@
 (******************************************************************************)
-(* copyright 2023-2024 - arrakis contributors                                 *)
+(* Copyright 2023-2024 - Arrakis contributors                                 *)
 (*                                                                            *)
-(* this file is part of arrakis, a risc-v simulator.                          *)
-(* it is distributed under the cecill 2.1 license <http://www.cecill.info>    *)
+(* This file is part of Arrakis, a RISC-V simulator.                          *)
+(* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
 open Global_utils.Integer

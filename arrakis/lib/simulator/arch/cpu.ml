@@ -35,7 +35,7 @@ type t = { mutable pc : int32; regs: Regs.t }
 let make addr_start : t =
   let cpu = { pc = addr_start; regs = Regs.make () } in
   Regs.set cpu.regs 2 Segment.stack_begin;
-  Regs.set cpu.regs 3 Segment.static_being;
+  Regs.set cpu.regs 3 Segment.static_begin;
   cpu
 
 (* Get and set registers ---------------------------------------------------- *)

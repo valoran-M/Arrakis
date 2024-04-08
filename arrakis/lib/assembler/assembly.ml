@@ -1,5 +1,5 @@
 (******************************************************************************)
-(* Copyright 2023 - Arrakis contributors                                      *)
+(* Copyright 2023-2024 - Arrakis contributors                                 *)
 (*                                                                            *)
 (* This file is part of Arrakis, a RISC-V simulator.                          *)
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
@@ -87,7 +87,7 @@ let assembly code =
     let prog = Parser.program Lexer.token code in
 
     let labels = Label.get_label_address prog in
-    ignore (List.fold_left (loop_memory mem labels) static_being prog.memory);
+    ignore (List.fold_left (loop_memory mem labels) static_begin prog.memory);
     let prog = Transform_pseudo.remove_pseudo prog.program labels in
     ignore (List.fold_left (loop_prog mem dbg labels) text_begin prog);
 

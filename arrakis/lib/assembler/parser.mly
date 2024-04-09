@@ -67,14 +67,14 @@
 %%
 
 %inline int_list:
-  | li=separated_nonempty_list(COMMA, INT) { li }
+| li=separated_nonempty_list(COMMA, INT) { li }
 
 %inline string_list:
-  | ls=separated_nonempty_list(COMMA, STRING) { ls }
+| ls=separated_nonempty_list(COMMA, STRING) { ls }
 
 imm:
 | l=IDENT { Label l, l }
-| i=INT   { let i, s = i in Imm i, s }
+| i=INT   { Imm (fst i), snd i }
 | i=LLABEL_F { Label (label_f (fst i)), snd i }
 | i=LLABEL_B { Label (label_b (fst i)), snd i }
 ;

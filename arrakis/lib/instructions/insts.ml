@@ -88,14 +88,14 @@ type pseudo_inst =
 type basics_inst =
                       (* rd      rs1     rs2 *)
   | R of r_instruction * int32 * int32 * int32
-                      (* rd      rs1     imm *)
+                      (* rd      rs1   *)
   | I of i_instruction * int32 * int32 * imm
-                      (* rs2     rs1     imm *)
+                      (* rs2     rs1   *)
   | S of s_instruction * int32 * int32 * imm
-                      (* rs1     rs2     imm *)
+                      (* rs1     rs2   *)
   | B of b_instruction * int32 * int32 * imm
-                      (* rd      imm *)
+                      (* rd    *)
   | U of u_instruction * int32 * imm
-                      (* rd      imm *)
+                      (* rd    *)
   | J of j_instruction * int32 * imm
 

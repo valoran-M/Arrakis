@@ -10,8 +10,6 @@
   arguments
 * Some assembler directive are free to add and should therefore probably be
   added
-* Should memory be called data and Program be called text in the ast
-  (assembler/program.ml)? Should `program.ml` be called ast ?
 * Add expression [Section 6: expression](https://sourceware.org/binutils/docs-2.42/as.pdf)
 
 ### Improve shell

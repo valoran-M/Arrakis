@@ -234,13 +234,13 @@ data_line:
 
 (* Program ------------------------------------------------------------------ *)
 
-program_aux:
-| p=program_aux DATA END_LINE* dl=data_line* { { memory = p.memory @ dl; program = p.program } }
-| p=program_aux TEXT END_LINE* il=inst_line* { { memory = p.memory; program = p.program @ il } }
-| pl=inst_line*                              { { memory = []; program = pl } }
+p_aux:
+| p=p_aux DATA END_LINE* dl=data_line* { { memory = p.memory @ dl; program = p.program } }
+| p=p_aux TEXT END_LINE* il=inst_line* { { memory = p.memory; program = p.program @ il } }
+| pl=inst_line*                        { { memory = []; program = pl } }
 ;
 
 program:
-| END_LINE* p=program_aux EOF { p }
+| END_LINE* p=p_aux EOF { p }
 ;
 

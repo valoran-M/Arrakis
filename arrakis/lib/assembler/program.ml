@@ -7,7 +7,7 @@
 
 open Instructions.Insts
 
-type program_line =
+type text_line =
                 (* line nb, original code *)
   | Prog_Pseudo of int      * string      * pseudo_instruction
   | Prog_Instr  of int      * string      * instruction
@@ -16,7 +16,7 @@ type program_line =
 
 (* Memory ------------------------------------------------------------------- *)
 
-type memory_line =
+type data_line =
   | Mem_Zero   of int32
   | Mem_Bytes  of char list
   | Mem_Ascii  of string
@@ -28,7 +28,7 @@ type memory_line =
 (* Program ------------------------------------------------------------------ *)
 
 type program = {
-    memory  : memory_line  list;
-    program : program_line list;
+    memory  : data_line list;
+    program : text_line list;
   }
 

@@ -57,7 +57,7 @@ let rec get_label_address_program prog labels addr =
     add_address labels label addr;
     get_label_address_program l labels addr
 
-let rec get_label_address_memory (memory : memory_line list) labels addr =
+let rec get_label_address_memory (memory : data_line list) labels addr =
   match memory with
   | [] -> ()
   | Mem_Bytes bs :: l ->

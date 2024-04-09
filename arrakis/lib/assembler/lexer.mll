@@ -93,7 +93,8 @@ rule token = parse
   | ':' { COLON }
   | '(' { LPAR } 
   | ')' { RPAR }
-  | '#' { comment lexbuf }
+  | '#'  { one_line_comment lexbuf }
+  | "/*" { multi_line_comment lexbuf; token lexbuf }
   | "'\\" (['\\' '\'' '\"'] as c) "'" { INT (char_to_int32 c, char_string c) }
   | "'"   (_ as c)                "'" { INT (char_to_int32 c, char_string c) }
   | "'\n'"  { incr line; INT (char_to_int32 '\n', "\\n")}
@@ -146,9 +147,14 @@ rule token = parse
             STRING s }
   | _ as c { raise (Assembler_error (!line, Lexing_error (string_of_char c))) }
 
-and comment = parse
+and one_line_comment = parse
   | '\n' { incr line; END_LINE }
-  | _    { comment lexbuf }
+  | _    { one_line_comment lexbuf }
+
+and multi_line_comment = parse
+  | '\n'  { incr line; multi_line_comment lexbuf }
+  | "*/"  { }
+  | _     { multi_line_comment lexbuf }
 
 and str = parse
   | '\\' (['\\' '\'' '\"'] as c ) { store_string_char c; str lexbuf }

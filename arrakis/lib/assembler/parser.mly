@@ -66,6 +66,12 @@
 
 %%
 
+%inline int_list:
+  | li=separated_nonempty_list(COMMA, INT) { li }
+
+%inline string_list:
+  | ls=separated_nonempty_list(COMMA, STRING) { ls }
+
 imm:
 | l=IDENT { Label l, l }
 | i=INT   { let i, s = i in Imm i, s }
@@ -214,16 +220,13 @@ inst_line:
 
 (* Data --------------------------------------------------------------------- *)
 
-%inline int_list:
-  | li=separated_nonempty_list(COMMA, INT) { li }
-
 data:
-| ASCII    s=STRING     { Data_Ascii  s }
-| ASCIZ    s=STRING     { Data_Asciz  s }
-| ZERO     i=INT        { Data_Zero   (fst i) }
-| lg=GLOBL i=IDENT      { Data_GLabel (lg, i) }
-| BYTES    li=int_list  { Data_Bytes  (int_list_to_char_list li) }
-| WORD     li=int_list  { Data_Word   (List.map fst li) }
+| ASCII    s=string_list  { Data_Ascii  s }
+| ASCIZ    s=string_list  { Data_Asciz  s }
+| ZERO     i=INT          { Data_Zero   (fst i) }
+| lg=GLOBL i=IDENT        { Data_GLabel (lg, i) }
+| BYTES    li=int_list    { Data_Bytes  (int_list_to_char_list li) }
+| WORD     li=int_list    { Data_Word   (List.map fst li) }
 ;
 
 data_line:

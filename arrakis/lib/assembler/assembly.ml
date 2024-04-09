@@ -56,12 +56,15 @@ let loop_prog mem debug labels addr prog  =
   | Text_Pseudo _ -> assert false
 
 let loop_memory mem labels addr (prog : data_line) =
+  let open String in
   match prog with
   | Data_GLabel (line, label) -> Label.made_global labels label line; addr
   | Data_Label _ -> addr
-  | Data_Ascii s -> Memory.set_str  mem addr s (String.length s)
-  | Data_Asciz s -> Memory.set_strz mem addr s (String.length s)
   | Data_Zero nz -> Memory.set_32b_zero mem addr nz; addr + 4l * nz
+  | Data_Ascii ls ->
+      List.fold_left (fun a s -> Memory.set_str  mem a s (length s)) addr ls
+  | Data_Asciz ls ->
+      List.fold_left (fun a s -> Memory.set_strz mem a s (length s)) addr ls
   | Data_Bytes lb ->
     List.fold_left
       (fun addr v -> Memory.set_byte mem addr (char_to_int32 v); addr + 1l)

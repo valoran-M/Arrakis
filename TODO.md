@@ -4,8 +4,6 @@
 
 ### Follow GNU as syntax
 
-* `.ascii` and `.asciz` directives should allow multiple comma-separated
-  arguments
 * Some assembler directive are free to add and should therefore probably be
   added
 * Add expression [Section 6: expression](https://sourceware.org/binutils/docs-2.42/as.pdf)

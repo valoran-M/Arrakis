@@ -19,8 +19,8 @@ type text_line =
 type data_line =
   | Data_Zero   of int32
   | Data_Bytes  of char list
-  | Data_Ascii  of string
-  | Data_Asciz  of string
+  | Data_Ascii  of string list
+  | Data_Asciz  of string list
   | Data_Word   of int32 list
   | Data_GLabel of int * string
   | Data_Label  of string

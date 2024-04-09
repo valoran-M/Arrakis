@@ -58,17 +58,19 @@ let rec get_label_address_program prog labels addr =
     get_label_address_program l labels addr
 
 let rec get_label_address_memory (memory : data_line list) labels addr =
+  let open String in
+  let open Int32 in
   match memory with
   | [] -> ()
   | Data_Bytes bs :: l ->
     let new_addr = addr + Int32.of_int (List.length bs) in
     get_label_address_memory l labels new_addr
-  | Data_Ascii s :: l ->
-    let new_addr = addr + Int32.of_int (String.length s) in
-    get_label_address_memory l labels new_addr
-  | Data_Asciz s :: l ->
-    let new_addr = addr + Int32.of_int (String.length s) + 1l in
-    get_label_address_memory l labels new_addr
+  | Data_Ascii ls :: l ->
+    let length = List.fold_left (fun l s -> of_int (length s) + l)  0l ls in
+    get_label_address_memory l labels (addr + length)
+  | Data_Asciz ls :: l ->
+    let length = List.fold_left (fun l s -> of_int (length s) + l + 1l) 0l ls in
+    get_label_address_memory l labels (addr + length)
   | Data_Word lw     :: l ->
     let offset = 0x4l * Int32.of_int (List.length lw) in
     get_label_address_memory l labels (addr + offset)

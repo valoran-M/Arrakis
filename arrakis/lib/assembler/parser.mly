@@ -147,7 +147,7 @@ pinst_args:
     let str = id ^ " " ^ rdts ^ ", " ^ simm ^ ", " ^ rgss in
     (line, str, SGlob (rdt, imm, rgs, inst)) }
 
-inst_args:
+minst_args:
 | inst=INST_R rdt=REG COMMA rg1=REG COMMA rg2=REG
   { let line, id, inst = inst in
     let rdt, rdts = rdt in
@@ -201,7 +201,7 @@ inst_args:
 ;
 
 inst_aux:
-| inst=inst_args  { let line, str, inst = inst in Prog_Instr  (line, str, inst) }
+| inst=minst_args { let line, str, inst = inst in Prog_Instr  (line, str, inst) }
 | inst=pinst_args { let line, str, inst = inst in Prog_Pseudo (line, str, inst) }
 | l=GLOBL i=IDENT { Prog_GLabel (l, i) }
 ;

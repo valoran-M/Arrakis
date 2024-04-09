@@ -48,9 +48,9 @@
 %token <int * string * Instructions.Insts.two_reg>         TWO_REGS
 
 %token <string> STRING
-%token <int> NLABEL
-%token <int * string> NLABEL_F
-%token <int * string> NLABEL_B
+%token <int> LLABEL
+%token <int * string> LLABEL_F
+%token <int * string> LLABEL_B
 
 %token DATA
 %token ZERO
@@ -69,8 +69,8 @@
 imm:
 | l=IDENT { Label l, l }
 | i=INT   { let i, s = i in Imm i, s }
-| i=NLABEL_F { Label (label_f (fst i)), snd i }
-| i=NLABEL_B { Label (label_b (fst i)), snd i }
+| i=LLABEL_F { Label (label_f (fst i)), snd i }
+| i=LLABEL_B { Label (label_b (fst i)), snd i }
 ;
 
 pinst_args:
@@ -209,7 +209,7 @@ inst_aux:
 inst_line:
 | inst=inst_aux END_LINE+ { inst }
 | i=IDENT COLON END_LINE* { Prog_Label i  }
-| i=NLABEL      END_LINE* { Prog_Label (create_label i) }
+| i=LLABEL      END_LINE* { Prog_Label (create_label i) }
 ;
 
 (* Data --------------------------------------------------------------------- *)
@@ -226,7 +226,7 @@ data:
 data_line:
 | d=data         END_LINE+ { d  }
 | i=IDENT  COLON END_LINE* { Mem_Label i }
-| i=NLABEL COLON END_LINE* { Mem_Label (create_label i) }
+| i=LLABEL COLON END_LINE* { Mem_Label (create_label i) }
 ;
 
 (* Program ------------------------------------------------------------------ *)

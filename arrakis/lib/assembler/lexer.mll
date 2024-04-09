@@ -135,9 +135,9 @@ rule token = parse
   | "call" { CALL  (!line) }
   | "tail" { TAIL  (!line) }
   (* --- *)
-  | (numeral as n) "f"  { NLABEL_F (int_of_numeral n, String.make 1 n ^ "f" ) }
-  | (numeral as n) "b"  { NLABEL_B (int_of_numeral n, String.make 1 n ^ "b" ) }
-  | (numeral as n) ":"  { NLABEL   (int_of_numeral n ) }
+  | (numeral as n) "f"  { LLABEL_F (int_of_numeral n, String.make 1 n ^ "f" ) }
+  | (numeral as n) "b"  { LLABEL_B (int_of_numeral n, String.make 1 n ^ "b" ) }
+  | (numeral as n) ":"  { LLABEL   (int_of_numeral n ) }
   | label as lbl    { try REG (find regs lbl, lbl) with Not_found -> IDENT lbl }
   | '\"'  { str lexbuf;
             let s  = get_stored_string () in

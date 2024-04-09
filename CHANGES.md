@@ -19,7 +19,7 @@
 - Greatly improved the codebase
 - Support for program arguments
 - Remove simple memory values
-- Add Local/Numeral label
+- Add Local label
 
 # 1.0.0 (2023-19-9)
 

@@ -20,12 +20,12 @@
 #     a2 : size of a0
 strlen:
   mv a2, a1
-  .while_strlen:
+  0:
     lb   t0, 0(a2)
-    beqz t0, .while_exit_strlen
+    beqz t0, 0f
     addi a2, a2, 1
-    j .while_strlen
-  .while_exit_strlen:
+    j 0b
+  0:
   sub a2, a2, a1
   ret
 
@@ -70,9 +70,9 @@ _start:
   # We could use directly sp here instead of s0 as we don't care
   # about destroying arguments once used
   addi s0, sp, 4
-  .while_start:
+  0:
     lw   a1, 0(s0)
-    beqz a1, .while_exit_start
+    beqz a1, 0f
     call fputs
 
     # Print a space in between each string
@@ -80,8 +80,8 @@ _start:
     call putchar
 
     addi s0, s0, 4
-    j .while_start
-  .while_exit_start:
+    j 0b
+  0:
 
   li   a1, '\n'
   call putchar

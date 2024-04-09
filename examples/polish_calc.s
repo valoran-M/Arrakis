@@ -85,13 +85,13 @@ push_stack:
 # a0 : 1 if succeed else 0
 # a1 : pop number
 pop_stack:
-    blez s2, .stack_empty
+    blez s2, .stack_empty_pop
     lw a1, -4(s1)
     addi s1, s1, -4
     addi s2, s2, -4
     li a0, 1
     ret
-.stack_empty:
+.stack_empty_pop:
     li a0, 0
     ret
 
@@ -101,11 +101,11 @@ pop_stack:
 # a0 : 1 if succeed else 0
 # a1 : first argument
 first_stack:
-  blez s2, .stack_empty
-  lw a1 -4(s1)
+  blez s2, .stack_empty_first
+  lw a1, -4(s1)
   li a0, 1
   ret
-.stack_empty:
+.stack_empty_first:
   li a0, 0
   ret
 

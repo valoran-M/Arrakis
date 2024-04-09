@@ -17,7 +17,6 @@ type program_line =
 (* Memory ------------------------------------------------------------------- *)
 
 type memory_line =
-  | Mem_Value  of int32
   | Mem_Zero   of int32
   | Mem_Bytes  of char list
   | Mem_Ascii  of string

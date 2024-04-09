@@ -59,7 +59,6 @@ let loop_memory mem labels addr (prog : memory_line) =
   match prog with
   | Mem_GLabel (line, label) -> Label.made_global labels label line; addr
   | Mem_Label _  -> addr
-  | Mem_Value v  -> Memory.set_int32 mem addr v; addr + 4l
   | Mem_Bytes lb ->
     List.fold_left
       (fun addr v -> Memory.set_byte mem addr (char_to_int32 v); addr + 1l)

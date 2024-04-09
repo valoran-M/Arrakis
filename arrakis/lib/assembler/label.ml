@@ -60,7 +60,6 @@ let rec get_label_address_program prog labels addr =
 let rec get_label_address_memory (memory : memory_line list) labels addr =
   match memory with
   | [] -> ()
-  | Mem_Value _  :: l -> get_label_address_memory l labels (addr + 0x4l)
   | Mem_Bytes bs :: l ->
     let new_addr = addr + Int32.of_int (List.length bs) in
     get_label_address_memory l labels new_addr

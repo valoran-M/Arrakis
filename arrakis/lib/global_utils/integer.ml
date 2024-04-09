@@ -18,4 +18,4 @@ let sign_extended i size =
 let alignment i = Int32.sub i (Int32.rem i 4l)
 
 let char_to_int32 c = Int32.of_int (Char.code c)
-let char_of_int32 c = Char.chr     (Int32.to_int c)
+let char_of_int32 c = Char.chr (Int32.to_int c)

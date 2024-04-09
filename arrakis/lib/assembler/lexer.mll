@@ -6,9 +6,11 @@
 (******************************************************************************)
 
 {
+  open Global_utils.Integer
   open Error
   open Parser
   open Regs
+  open Hashtbl
 
   let line = ref 1
 
@@ -19,19 +21,24 @@
   let u_inst = Instructions.U.str_table
   let j_inst = Instructions.J.str_table
 
-  let tr_inst  = Instructions.Pseudo.two_regs_str
-  let ro_inst  = Instructions.Pseudo.regs_offset_str
+  let trs_inst = Instructions.Pseudo.two_regs_str
+  let rof_inst = Instructions.Pseudo.regs_offset_str
   let rro_inst = Instructions.Pseudo.regs_regs_offset_str
 
   let string_buffer = Buffer.create 256
-  let reset_stored_string () = Buffer.reset string_buffer
+  let res_stored_string () = Buffer.reset    string_buffer
   let get_stored_string () = Buffer.contents string_buffer
-  let store_string_char c = Buffer.add_char string_buffer c
+  let store_string_char ch = Buffer.add_char string_buffer ch
+
+  let char_string c = "'" ^ String.make 1 c ^ "'"
+
+  let int_of_numeral n = Char.code n - Char.code '0'
 
 }
 
 (* Numbers ------------------------------------------------------------------ *)
 
+let numeral = ['0'-'9']
 let decimal_literal =
   ['0'-'9'] ['0'-'9' '_']*
 let hex_literal =
@@ -75,33 +82,26 @@ let inst_u = "lui" | "auipc"
 
 (* Pseudo instructions ------------------------------------------------------ *)
 
-let inst_two_regs = "mv" | "not" | "neg" | "seqz" | "snez" | "sltz" | "sgtz"
-let reg_offset = "beqz" | "bnez" | "blez" | "bgez" | "bltz" | "bgtz"
+let inst_two_regs  = "mv" | "not" | "neg" | "seqz" | "snez" | "sltz" | "sgtz"
+let reg_offset     = "beqz" | "bnez" | "blez" | "bgez" | "bltz" | "bgtz"
 let reg_reg_offset = "bgt" | "ble" | "bgtu" | "bleu"
 
 rule token = parse
   | '\n'{ incr line; END_LINE }
-  | ',' { COMMA }
+  | ',' { COMMA } 
   | ':' { COLON }
-  | '(' { LPAR }
+  | '(' { LPAR } 
   | ')' { RPAR }
   | '#' { comment lexbuf }
-  | '\"'
-      {
-        str lexbuf;
-        let s  = get_stored_string () in
-        reset_stored_string ();
-        STRING s
-      }
-  | "'\n'" { incr line; INT(Int32.of_int (Char.code '\n'), "\\n")}
-  | "'\\" (['\\' '\'' '\"'] as c) "'" { INT(Int32.of_int (Char.code c), "'" ^ String.make 1 c ^ "'") }
-  | "'\\n'" { INT(Int32.of_int (Char.code '\n'), "\\n") }
-  | "'\\t'" { INT(Int32.of_int (Char.code '\t'), "\\t") }
-  | "'\\r'" { INT(Int32.of_int (Char.code '\r'), "\\r") }
-  | "'" (_ as c) "'"  { INT(Int32.of_int (Char.code c), "'" ^ String.make 1 c ^ "'") }
+  | "'\\" (['\\' '\'' '\"'] as c) "'" { INT (char_to_int32 c, char_string c) }
+  | "'"   (_ as c)                "'" { INT (char_to_int32 c, char_string c) }
+  | "'\n'"  { incr line; INT (char_to_int32 '\n', "\\n")}
+  | "'\\n'" { INT (char_to_int32 '\n', "\\n") }
+  | "'\\t'" { INT (char_to_int32 '\t', "\\t") }
+  | "'\\r'" { INT (char_to_int32 '\r', "\\r") }
   | eof   { EOF }
   | space { token lexbuf }
-  | integer as i { INT(Int32.of_string i, i) }
+  | integer as i { INT (Int32.of_string i, i) }
   (* Assembler directives *)
   | ".globl" | ".global" { GLOBL !line  }
   | ".data"              { DATA   }
@@ -112,36 +112,38 @@ rule token = parse
   | ".ascii"             { ASCII  }
   | ".asciz"             { ASCIZ  }
   (* Instructions *)
-  | inst_b as inst { INST_B (!line, inst, Hashtbl.find b_inst inst) }
-  | inst_i as inst { INST_I (!line, inst, Hashtbl.find i_inst inst) }
-  | inst_j as inst { INST_J (!line, inst, Hashtbl.find j_inst inst) }
-  | inst_r as inst { INST_R (!line, inst, Hashtbl.find r_inst inst) }
-  | inst_s as inst { INST_S (!line, inst, Hashtbl.find s_inst inst) }
-  | inst_u as inst { INST_U (!line, inst, Hashtbl.find u_inst inst) }
-  | inst_i_load as inst { INST_I_LOAD (!line, inst, Hashtbl.find i_inst inst) }
-  | inst_syst   as inst { INST_SYST (!line, inst, Hashtbl.find i_inst inst) }
+  | inst_b as inst { INST_B (!line, inst, find b_inst inst) }
+  | inst_i as inst { INST_I (!line, inst, find i_inst inst) }
+  | inst_j as inst { INST_J (!line, inst, find j_inst inst) }
+  | inst_r as inst { INST_R (!line, inst, find r_inst inst) }
+  | inst_s as inst { INST_S (!line, inst, find s_inst inst) }
+  | inst_u as inst { INST_U (!line, inst, find u_inst inst) }
+  | inst_i_load as inst { INST_I_LOAD (!line, inst, find i_inst inst) }
+  | inst_syst   as inst { INST_SYST   (!line, inst, find i_inst inst) }
   (* Pseudo instructions *)
-  | inst_two_regs  as inst { TWO_REGS (!line, inst, Hashtbl.find tr_inst inst) }
-  | reg_offset     as inst { REGS_OFFSET (!line, inst, Hashtbl.find ro_inst inst) }
-  | reg_reg_offset as inst { REGS_REGS_OFFSET (!line, inst, Hashtbl.find rro_inst inst) }
-  | "nop"  { NOP   !line }
-  | "li"   { LI    !line }
-  | "la"   { LA    !line }
-  | "j"    { J     !line }
-  | "jal"  { JALP  !line }
-  | "jr"   { JR    !line }
-  | "jalr" { JALRP !line }
-  | "ret"  { RET   !line }
-  | "call" { CALL  !line }
-  | "tail" { TAIL  !line }
+  | inst_two_regs  as inst { TWO_REGS         (!line, inst, find trs_inst inst) }
+  | reg_offset     as inst { REGS_OFFSET      (!line, inst, find rof_inst inst) }
+  | reg_reg_offset as inst { REGS_REGS_OFFSET (!line, inst, find rro_inst inst) }
+  | "nop"  { NOP   (!line) }
+  | "li"   { LI    (!line) }
+  | "la"   { LA    (!line) }
+  | "j"    { J     (!line) }
+  | "jal"  { JALP  (!line) }
+  | "jr"   { JR    (!line) }
+  | "jalr" { JALRP (!line) }
+  | "ret"  { RET   (!line) }
+  | "call" { CALL  (!line) }
+  | "tail" { TAIL  (!line) }
   (* --- *)
-  | label as lbl
-    {
-      try  REG (Hashtbl.find regs lbl, lbl)
-      with Not_found -> IDENT lbl
-    }
-  | _ as c
-    { raise (Assembler_error (!line, Lexing_error (String.make 1 c))) }
+  | (numeral as n) "f"  { NLABEL_F (int_of_numeral n, String.make 1 n ^ "f" ) }
+  | (numeral as n) "b"  { NLABEL_B (int_of_numeral n, String.make 1 n ^ "b" ) }
+  | (numeral as n) ":"  { NLABEL   (int_of_numeral n ) }
+  | label as lbl    { try REG (find regs lbl, lbl) with Not_found -> IDENT lbl }
+  | '\"'  { str lexbuf;
+            let s  = get_stored_string () in
+            res_stored_string ();
+            STRING s }
+  | _ as c { raise (Assembler_error (!line, Lexing_error (String.make 1 c))) }
 
 and comment = parse
   | '\n' { incr line; END_LINE }
@@ -152,8 +154,8 @@ and str = parse
   | "\\n"  { store_string_char '\n'; str lexbuf }
   | "\\t"  { store_string_char '\t'; str lexbuf }
   | "\\r"  { store_string_char '\r'; str lexbuf }
-  | '\"'   { }
+  | '"'    { }
   | "\n"   { Error.raise_unclosed (!line) }
   | eof    { Error.raise_unclosed (!line) }
-  | _ as c { store_string_char c; str lexbuf }
+  | _ as c { store_string_char c; str lexbuf}
 

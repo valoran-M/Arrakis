@@ -148,7 +148,7 @@ let pre_execute args (state : Types.state) =
         Format.printf "%a Incorrect argument @{<fg_yellow>'%s'@}@." error () count;
         state
 
-let pre : Types.cmd =
+let previous : Types.cmd =
   { long_form   = "previous";
     short_form  = "p";
     name        = "(p)revious";
@@ -157,7 +157,7 @@ let pre : Types.cmd =
     execute     = pre_execute;
     sub         = []; }
 
-(* Reset -------------------------------------------------------------------- *)
+(* Run ---------------------------------------------------------------------- *)
 
 let run_execute args (state : Types.state) =
   let state =
@@ -173,6 +173,9 @@ let run : Types.cmd =
     short_form  = "r";
     name        = "(r)un";
     short_desc  = "Start the execution";
-    long_desc   = [];
+    long_desc   = [
+      "Usage: run <arg1> ... <argn>";
+      "Start executing the program and give <arg1> ... <argn> as arguments.";
+    ];
     execute     = run_execute;
     sub         = []; }

@@ -11,7 +11,7 @@ open Global_utils.Print
 
 let all_commands = [
   Running.finish;
-  Running.pre;
+  Running.previous;
   Running.step;
   Running.run;
   Running.continue;

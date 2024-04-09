@@ -214,13 +214,16 @@ inst_line:
 
 (* Data --------------------------------------------------------------------- *)
 
+%inline int_list:
+  | li=separated_nonempty_list(COMMA, INT) { li }
+
 data:
-| ASCII    s=STRING { Mem_Ascii  s }
-| ASCIZ    s=STRING { Mem_Asciz  s }
-| BYTES    li=INT+  { Mem_Bytes  (int_list_to_char_list li) }
-| WORD     li=INT+  { Mem_Word   (List.map fst li) }
-| ZERO     i=INT    { Mem_Zero   (fst i) }
-| lg=GLOBL i=IDENT  { Mem_GLabel (lg, i) }
+| ASCII    s=STRING     { Mem_Ascii  s }
+| ASCIZ    s=STRING     { Mem_Asciz  s }
+| ZERO     i=INT        { Mem_Zero   (fst i) }
+| lg=GLOBL i=IDENT      { Mem_GLabel (lg, i) }
+| BYTES    li=int_list  { Mem_Bytes  (int_list_to_char_list li) }
+| WORD     li=int_list  { Mem_Word   (List.map fst li) }
 ;
 
 data_line:

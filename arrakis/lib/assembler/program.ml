@@ -28,7 +28,7 @@ type data_line =
 (* Program ------------------------------------------------------------------ *)
 
 type program = {
-    memory  : data_line list;
-    program : text_line list;
+    data: data_line list;
+    text: text_line list;
   }
 

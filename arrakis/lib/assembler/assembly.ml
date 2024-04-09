@@ -86,8 +86,8 @@ let assembly code =
     let prog = Parser.program Lexer.token code in
 
     let labels = Label.get_label_address prog in
-    ignore (List.fold_left (loop_memory mem labels) static_begin prog.memory);
-    let prog = Transform_pseudo.remove_pseudo prog.program labels in
+    ignore (List.fold_left (loop_memory mem labels) static_begin prog.data);
+    let prog = Transform_pseudo.remove_pseudo prog.text labels in
     ignore (List.fold_left (loop_prog mem dbg labels) text_begin prog);
 
     (mem, labels, dbg)

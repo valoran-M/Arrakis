@@ -235,9 +235,9 @@ data_line:
 (* Program ------------------------------------------------------------------ *)
 
 p_aux:
-| p=p_aux DATA END_LINE* dl=data_line* { { memory = p.memory @ dl; program = p.program } }
-| p=p_aux TEXT END_LINE* il=inst_line* { { memory = p.memory; program = p.program @ il } }
-| pl=inst_line*                        { { memory = []; program = pl } }
+| p=p_aux DATA END_LINE* dl=data_line* { { data = p.data @ dl; text = p.text } }
+| p=p_aux TEXT END_LINE* il=inst_line* { { data = p.data; text = p.text @ il } }
+| pl=inst_line*                        { { data = []; text = pl } }
 ;
 
 program:

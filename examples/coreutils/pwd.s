@@ -10,28 +10,6 @@
 
 .text
 
-# Utils ------------------------------------------------------------------------
-# A more fitted version of common utilities from their counterpart in 'common.s'
-
-# Calculate the size of a string.
-#   Parameters:
-#     a0 : null-terminated string
-#   Returns:
-#     a0 : unchanged
-#     a2 : size of a0
-strlen:
-  mv a2, a0
-  0:
-    lb   t0, 0(a2)
-    beqz t0, 0f
-    addi a2, a2, 1
-    j 0b
-  0:
-  sub a2, a2, a0
-  ret
-
-# Main -------------------------------------------------------------------------
-
 .globl _start
 _start:
   addi sp, sp, -256
@@ -44,11 +22,12 @@ _start:
   beqz a0, error_exit
 
   # Print working directory
-  call strlen
-
-  li  a7, 64
-  li  a0, 1
-  mv  a1, sp
+  # getcwd syscall returns the size written including trailing '\0',
+  # which we don't need to write
+  addi a2, a0, -1
+  li   a7, 64
+  li   a0, 1
+  mv   a1, sp
   ecall
   bltz a0, error_exit
 

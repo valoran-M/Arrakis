@@ -122,11 +122,11 @@ let remove_pseudo prog labels =
   let rec iterator prog addr acc =
     match prog with
     | [] -> acc
+    | Text_Instr _ as inst :: prog -> iterator prog (addr + 4l) (inst :: acc)
     | Text_Pseudo (line, code, inst) :: prog ->
       let instr = translate_pseudo inst line code addr labels in
       let size = List.length instr in
       iterator prog (addr + 4l * Int32.of_int size) (instr @ acc)
-    | (Text_Instr _ as inst) :: prog -> iterator prog (addr + 4l) (inst :: acc)
     | (_ as inst)            :: prog -> iterator prog addr        (inst :: acc)
   in
   iterator prog Arch.Segment.text_begin [] |> List.rev

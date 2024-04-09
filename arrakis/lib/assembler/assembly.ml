@@ -44,38 +44,32 @@ let translate (instruction : basics_inst) addr line labels =
 
 let loop_prog mem debug labels addr prog  =
   match prog with
+  | Text_Label _  -> addr
+  | Text_GLabel (line, label) -> Label.made_global labels label line; addr
   | Text_Instr (l, s, inst) ->
     Debug.add_addr_to_line debug addr l s;
     Debug.add_line_to_addr debug l addr;
     let code = translate inst addr l labels in
     Arch.Memory.set_int32 mem addr code;
     addr + 4l
-  | Text_Label _  -> addr
-  | Text_GLabel (line, label) -> Label.made_global labels label line; addr
 (* No more pseudo instructions after remove_pseudo *)
   | Text_Pseudo _ -> assert false
 
 let loop_memory mem labels addr (prog : data_line) =
   match prog with
   | Data_GLabel (line, label) -> Label.made_global labels label line; addr
-  | Data_Label _  -> addr
+  | Data_Label _ -> addr
+  | Data_Ascii s -> Memory.set_str  mem addr s (String.length s)
+  | Data_Asciz s -> Memory.set_strz mem addr s (String.length s)
+  | Data_Zero nz -> Memory.set_32b_zero mem addr nz; addr + 4l * nz
   | Data_Bytes lb ->
     List.fold_left
       (fun addr v -> Memory.set_byte mem addr (char_to_int32 v); addr + 1l)
-    addr lb
-  | Data_Ascii s ->
-    let size = String.length s in
-    Memory.set_str mem addr s size
-  | Data_Asciz s ->
-    let size = String.length s in
-    Memory.set_strz mem addr s size
+      addr lb
   | Data_Word words ->
     List.fold_left
       (fun addr v -> Memory.set_int32 mem addr v; addr + 4l)
       addr words
-  | Data_Zero nz ->
-    Memory.set_32b_zero mem addr nz;
-    addr + 4l * nz
 
 let assembly code =
   let open Arch.Segment in
@@ -87,7 +81,7 @@ let assembly code =
 
     let labels = Label.get_label_address prog in
     ignore (List.fold_left (loop_memory mem labels) static_begin prog.data);
-    let prog = Transform_pseudo.remove_pseudo prog.text labels in
+    let prog = Pseudo.remove_pseudo prog.text labels in
     ignore (List.fold_left (loop_prog mem dbg labels) text_begin prog);
 
     (mem, labels, dbg)

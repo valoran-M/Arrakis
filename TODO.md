@@ -4,8 +4,6 @@
 
 ### Follow GNU as syntax
 
-* Assembler directives arguments should be separated by commas. For example, we
-  should accept `.word 1, 2, 3` but not `.word 1 2 3`.
 * `.ascii` and `.asciz` directives should allow multiple comma-separated
   arguments
 * Some assembler directive are free to add and should therefore probably be

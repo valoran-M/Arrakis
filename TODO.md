@@ -37,4 +37,5 @@
 * Add a new command to allow saving the logs of the current execution to a file
 * Provide arrakis as system package for different linux distributions
 * F extensions
+* Allow using arrakis with multiple files
 

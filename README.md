@@ -12,11 +12,12 @@ in OCaml, primarly designed for education.
 
 ## ✨ Features
 
-* Fully supported RV32IM instruction set, with [most pseudo instructions](https://codeberg.org/Arrakis/arrakis/wiki/RV_Pseudo-Instructions).
+* Fully supported RV32IM instruction set, with [pseudo instructions](https://codeberg.org/Arrakis/arrakis/wiki/RV_Pseudo-Instructions).
 * Different type of environmental calls: either [UNIX syscalls](https://codeberg.org/Arrakis/arrakis/wiki/RV_Environment-call)
   (default) or
   [Venus environmental calls emulation](https://codeberg.org/Arrakis/arrakis/wiki/RV_Environment-call).
-* Partial GNU `as` [assembler directives](https://codeberg.org/Arrakis/arrakis/wiki/RV_Assembler-Directives).
+* GNU `as` [assembler directives](https://codeberg.org/Arrakis/arrakis/wiki/RV_Assembler-Directives)
+  and syntax.
 * A debugging system using breakpoints.
 * Complete [documentation](https://codeberg.org/Arrakis/arrakis/wiki),
   covering not only Arrakis usage but also serving as a general guide on how to
@@ -32,7 +33,7 @@ Since Arrakis is written in OCaml, it can be installed using
 ## 📚 Documentation
 
 Documentation about Arrakis usage is available
-[here](https://codeberg.org/Arrakis/arrakis/wiki)
+[here](https://codeberg.org/Arrakis/arrakis/wiki).
 
 ## 🧪 Development
 

@@ -4,8 +4,6 @@
 
 ### New features
 
-* [local labels](https://sourceware.org/binutils/docs/as/Symbol-Names.html)
-
 ### Improve shell
 
 * Using up/down arrow to get last commands

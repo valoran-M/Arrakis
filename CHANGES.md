@@ -17,10 +17,11 @@
 - Improved `info` command: Now always at most 80 characters wide, more readable
   and easier to parse
 - Error message when providing too much input files
-- Support for `.ascii` assembler directive
+- Support for `.ascii/z` assembler directive
 - Support for program arguments
 - Remove simple memory values
 - Support for local labels
+- Add multi line comments
 
 # 1.0.0 (2023-19-9)
 

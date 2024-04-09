@@ -66,7 +66,7 @@ type reg_reg_offset =
   | BGT  | BLE
   | BGTU | BLEU
 
-type pseudo_instruction =
+type pseudo_inst =
   | NOP
   | LI    of int32 * imm
   | LA    of int32 * imm
@@ -85,7 +85,7 @@ type pseudo_instruction =
 
 (* Code --------------------------------------------------------------------- *)
 
-type instruction =
+type basics_inst =
                       (* rd      rs1     rs2 *)
   | R of r_instruction * int32 * int32 * int32
                       (* rd      rs1     imm *)

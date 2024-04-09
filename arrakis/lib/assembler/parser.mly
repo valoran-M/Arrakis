@@ -73,7 +73,7 @@ imm:
 | i=LLABEL_B { Label (label_b (fst i)), snd i }
 ;
 
-p_inst:
+pseudo_inst:
 | line=NOP
   { (line, "nop", NOP) }
 | line=LI rdt=REG COMMA imm=imm
@@ -147,7 +147,7 @@ p_inst:
     let str = id ^ " " ^ rdts ^ ", " ^ simm ^ ", " ^ rgss in
     (line, str, SGlob (rdt, imm, rgs, inst)) }
 
-m_inst:
+basics_inst:
 | inst=INST_R rdt=REG COMMA rg1=REG COMMA rg2=REG
   { let line, id, inst = inst in
     let rdt, rdts = rdt in
@@ -201,8 +201,8 @@ m_inst:
 ;
 
 inst_aux:
-| inst=m_inst { let line, str, inst = inst in Text_Instr  (line, str, inst) }
-| inst=p_inst { let line, str, inst = inst in Text_Pseudo (line, str, inst) }
+| i=basics_inst { let line, str, inst = i in Text_Instr  (line, str, inst) }
+| i=pseudo_inst { let line, str, inst = i in Text_Pseudo (line, str, inst) }
 | l=GLOBL i=IDENT { Text_GLabel (l, i) }
 ;
 

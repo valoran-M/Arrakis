@@ -9,8 +9,8 @@ open Instructions.Insts
 
 type text_line =
                 (* line nb, original code *)
-  | Text_Pseudo of int      * string      * pseudo_instruction
-  | Text_Instr  of int      * string      * instruction
+  | Text_Pseudo of int      * string      * pseudo_inst
+  | Text_Instr  of int      * string      * basics_inst
   | Text_GLabel of int      * string
   | Text_Label  of string
 

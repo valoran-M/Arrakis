@@ -21,7 +21,7 @@ open Instructions.Insts
 open Program
 open Arch
 
-let translate (instruction : instruction) addr line labels =
+let translate (instruction : basics_inst) addr line labels =
   let imm_to_int32 = imm_to_int32 labels in
   match instruction with
   | R (inst, rd, rs1, rs2) ->

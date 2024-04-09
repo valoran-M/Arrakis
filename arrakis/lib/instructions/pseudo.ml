@@ -48,7 +48,7 @@ let () =
       BLEU, "bleu";
     ]
 
-let pseudo_length (pseudo : pseudo_instruction) =
+let pseudo_length (pseudo : pseudo_inst) =
   match pseudo with
   | NOP  | RET  | J _  | JALP _  | JR _ | JALRP _
   | Two_Regs _  | Regs_Offset _  | Regs_Regs_Offset _ -> 0x4l

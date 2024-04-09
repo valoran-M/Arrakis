@@ -44,36 +44,36 @@ let translate (instruction : instruction) addr line labels =
 
 let loop_prog mem debug labels addr prog  =
   match prog with
-  | Prog_Instr (l, s, inst) ->
+  | Text_Instr (l, s, inst) ->
     Debug.add_addr_to_line debug addr l s;
     Debug.add_line_to_addr debug l addr;
     let code = translate inst addr l labels in
     Arch.Memory.set_int32 mem addr code;
     addr + 4l
-  | Prog_Label _  -> addr
-  | Prog_GLabel (line, label) -> Label.made_global labels label line; addr
+  | Text_Label _  -> addr
+  | Text_GLabel (line, label) -> Label.made_global labels label line; addr
 (* No more pseudo instructions after remove_pseudo *)
-  | Prog_Pseudo _ -> assert false
+  | Text_Pseudo _ -> assert false
 
 let loop_memory mem labels addr (prog : data_line) =
   match prog with
-  | Mem_GLabel (line, label) -> Label.made_global labels label line; addr
-  | Mem_Label _  -> addr
-  | Mem_Bytes lb ->
+  | Data_GLabel (line, label) -> Label.made_global labels label line; addr
+  | Data_Label _  -> addr
+  | Data_Bytes lb ->
     List.fold_left
       (fun addr v -> Memory.set_byte mem addr (char_to_int32 v); addr + 1l)
     addr lb
-  | Mem_Ascii s ->
+  | Data_Ascii s ->
     let size = String.length s in
     Memory.set_str mem addr s size
-  | Mem_Asciz s ->
+  | Data_Asciz s ->
     let size = String.length s in
     Memory.set_strz mem addr s size
-  | Mem_Word words ->
+  | Data_Word words ->
     List.fold_left
       (fun addr v -> Memory.set_int32 mem addr v; addr + 4l)
       addr words
-  | Mem_Zero nz ->
+  | Data_Zero nz ->
     Memory.set_32b_zero mem addr nz;
     addr + 4l * nz
 

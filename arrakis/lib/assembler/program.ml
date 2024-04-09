@@ -9,21 +9,21 @@ open Instructions.Insts
 
 type text_line =
                 (* line nb, original code *)
-  | Prog_Pseudo of int      * string      * pseudo_instruction
-  | Prog_Instr  of int      * string      * instruction
-  | Prog_GLabel of int      * string
-  | Prog_Label  of string
+  | Text_Pseudo of int      * string      * pseudo_instruction
+  | Text_Instr  of int      * string      * instruction
+  | Text_GLabel of int      * string
+  | Text_Label  of string
 
 (* Memory ------------------------------------------------------------------- *)
 
 type data_line =
-  | Mem_Zero   of int32
-  | Mem_Bytes  of char list
-  | Mem_Ascii  of string
-  | Mem_Asciz  of string
-  | Mem_Word   of int32 list
-  | Mem_GLabel of int * string
-  | Mem_Label  of string
+  | Data_Zero   of int32
+  | Data_Bytes  of char list
+  | Data_Ascii  of string
+  | Data_Asciz  of string
+  | Data_Word   of int32 list
+  | Data_GLabel of int * string
+  | Data_Label  of string
 
 (* Program ------------------------------------------------------------------ *)
 

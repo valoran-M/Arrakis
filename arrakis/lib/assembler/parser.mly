@@ -201,15 +201,15 @@ minst_args:
 ;
 
 inst_aux:
-| inst=minst_args { let line, str, inst = inst in Prog_Instr  (line, str, inst) }
-| inst=pinst_args { let line, str, inst = inst in Prog_Pseudo (line, str, inst) }
-| l=GLOBL i=IDENT { Prog_GLabel (l, i) }
+| inst=minst_args { let line, str, inst = inst in Text_Instr  (line, str, inst) }
+| inst=pinst_args { let line, str, inst = inst in Text_Pseudo (line, str, inst) }
+| l=GLOBL i=IDENT { Text_GLabel (l, i) }
 ;
 
 inst_line:
 | inst=inst_aux END_LINE+ { inst }
-| i=IDENT COLON END_LINE* { Prog_Label i  }
-| i=LLABEL      END_LINE* { Prog_Label (create_label i) }
+| i=IDENT COLON END_LINE* { Text_Label i  }
+| i=LLABEL      END_LINE* { Text_Label (create_label i) }
 ;
 
 (* Data --------------------------------------------------------------------- *)
@@ -218,18 +218,18 @@ inst_line:
   | li=separated_nonempty_list(COMMA, INT) { li }
 
 data:
-| ASCII    s=STRING     { Mem_Ascii  s }
-| ASCIZ    s=STRING     { Mem_Asciz  s }
-| ZERO     i=INT        { Mem_Zero   (fst i) }
-| lg=GLOBL i=IDENT      { Mem_GLabel (lg, i) }
-| BYTES    li=int_list  { Mem_Bytes  (int_list_to_char_list li) }
-| WORD     li=int_list  { Mem_Word   (List.map fst li) }
+| ASCII    s=STRING     { Data_Ascii  s }
+| ASCIZ    s=STRING     { Data_Asciz  s }
+| ZERO     i=INT        { Data_Zero   (fst i) }
+| lg=GLOBL i=IDENT      { Data_GLabel (lg, i) }
+| BYTES    li=int_list  { Data_Bytes  (int_list_to_char_list li) }
+| WORD     li=int_list  { Data_Word   (List.map fst li) }
 ;
 
 data_line:
 | d=data         END_LINE+ { d  }
-| i=IDENT  COLON END_LINE* { Mem_Label i }
-| i=LLABEL COLON END_LINE* { Mem_Label (create_label i) }
+| i=IDENT  COLON END_LINE* { Data_Label i }
+| i=LLABEL COLON END_LINE* { Data_Label (create_label i) }
 ;
 
 (* Program ------------------------------------------------------------------ *)

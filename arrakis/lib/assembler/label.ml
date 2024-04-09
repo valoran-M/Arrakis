@@ -48,33 +48,33 @@ let get_global (labels : t) label =
 let rec get_label_address_program prog labels addr =
   match prog with
   | [] -> ()
-  | Prog_Pseudo (_, _, instruction) :: l ->
+  | Text_Pseudo (_, _, instruction) :: l ->
     let new_addr = addr + Instructions.Pseudo.pseudo_length instruction in
     get_label_address_program l labels new_addr
-  | Prog_Instr (_,_,_)::l -> get_label_address_program l labels (addr + 0x4l)
-  | Prog_GLabel _::l      -> get_label_address_program l labels addr
-  | Prog_Label label::l ->
+  | Text_Instr (_,_,_)::l -> get_label_address_program l labels (addr + 0x4l)
+  | Text_GLabel _::l      -> get_label_address_program l labels addr
+  | Text_Label label::l ->
     add_address labels label addr;
     get_label_address_program l labels addr
 
 let rec get_label_address_memory (memory : data_line list) labels addr =
   match memory with
   | [] -> ()
-  | Mem_Bytes bs :: l ->
+  | Data_Bytes bs :: l ->
     let new_addr = addr + Int32.of_int (List.length bs) in
     get_label_address_memory l labels new_addr
-  | Mem_Ascii s :: l ->
+  | Data_Ascii s :: l ->
     let new_addr = addr + Int32.of_int (String.length s) in
     get_label_address_memory l labels new_addr
-  | Mem_Asciz s :: l ->
+  | Data_Asciz s :: l ->
     let new_addr = addr + Int32.of_int (String.length s) + 1l in
     get_label_address_memory l labels new_addr
-  | Mem_Word lw     :: l ->
+  | Data_Word lw     :: l ->
     let offset = 0x4l * Int32.of_int (List.length lw) in
     get_label_address_memory l labels (addr + offset)
-  | Mem_Zero nz     :: l -> get_label_address_memory l labels (addr+4l*nz)
-  | Mem_GLabel _    :: l -> get_label_address_memory l labels addr
-  | Mem_Label label :: l ->
+  | Data_Zero nz     :: l -> get_label_address_memory l labels (addr+4l*nz)
+  | Data_GLabel _    :: l -> get_label_address_memory l labels addr
+  | Data_Label label :: l ->
     add_address labels label addr;
     get_label_address_memory l labels addr
 

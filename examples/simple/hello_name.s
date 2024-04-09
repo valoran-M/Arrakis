@@ -6,7 +6,8 @@
 .globl _start
 _start:
 
-  addi sp, sp, -32  # Allocate place in the stack to store the name
+  # Allocate space in the stack to store the name
+  addi sp, sp, -32
 
   li a7, 63     # Load the read syscall ID (63)
   li a0, 0      # Read from stdin (File descriptor 0)

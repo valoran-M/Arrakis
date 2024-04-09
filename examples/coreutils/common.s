@@ -13,12 +13,12 @@
 #     a1 : size of a0
 strlen:
   mv a1, a0
-  .while_strlen:
+  0:
     lb   t0, 0(a1)
-    beqz t0, .while_exit_strlen
+    beqz t0, 0f
     addi a1, a1, 1
-    j .while_strlen
-  .while_exit_strlen:
+    j 0b
+  0:
   sub a1, a1, a0
   ret
 

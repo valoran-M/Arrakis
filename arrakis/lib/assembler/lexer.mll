@@ -1,5 +1,5 @@
 (******************************************************************************)
-(* Copyright 2023 - Arrakis contributors                                      *)
+(* Copyright 2023-2024 - Arrakis contributors                                 *)
 (*                                                                            *)
 (* This file is part of Arrakis, a RISC-V simulator.                          *)
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
@@ -30,7 +30,8 @@
   let get_stored_string () = Buffer.contents string_buffer
   let store_string_char ch = Buffer.add_char string_buffer ch
 
-  let char_string c = "'" ^ String.make 1 c ^ "'"
+  let string_of_char c = String.make 1 c
+  let char_string    c = "'" ^ (string_of_char c) ^ "'"
 
   let int_of_numeral n = Char.code n - Char.code '0'
 
@@ -135,15 +136,15 @@ rule token = parse
   | "call" { CALL  (!line) }
   | "tail" { TAIL  (!line) }
   (* --- *)
-  | (numeral as n) "f"  { LLABEL_F (int_of_numeral n, String.make 1 n ^ "f" ) }
-  | (numeral as n) "b"  { LLABEL_B (int_of_numeral n, String.make 1 n ^ "b" ) }
+  | (numeral as n) "f"  { LLABEL_F (int_of_numeral n, (string_of_char n) ^ "f") }
+  | (numeral as n) "b"  { LLABEL_B (int_of_numeral n, (string_of_char n) ^ "b") }
   | (numeral as n) ":"  { LLABEL   (int_of_numeral n ) }
   | label as lbl    { try REG (find regs lbl, lbl) with Not_found -> IDENT lbl }
   | '\"'  { str lexbuf;
             let s  = get_stored_string () in
             res_stored_string ();
             STRING s }
-  | _ as c { raise (Assembler_error (!line, Lexing_error (String.make 1 c))) }
+  | _ as c { raise (Assembler_error (!line, Lexing_error (string_of_char c))) }
 
 and comment = parse
   | '\n' { incr line; END_LINE }

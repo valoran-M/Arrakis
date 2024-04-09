@@ -1,25 +1,26 @@
 # 1.1.0 (???)
 
 - Migration to codeberg
+- Greatly improved the codebase
 - Added a `--version` option to display current arrakis version
+- Renamed the `--no-shell` option to `--run` and `-ns` to `-r`
 - Fixed a misalignment issue in shell help
-- Fixed a misalignment issue in `--help`
-- Changed message from `Error` to `Info` in case of failed system call
-- Error message when providing too much input files
-- Changed the `--no-shell` option to `--run` and `-ns` to `-r`
-- Support for `.ascii` assembler directive
+- Fixed a misalignment issue in `--help` option
+- Changed message from `Error` to `Info` in case of a failed system call
 - Renamed commands to be closer to `gdb`:
   + `prv` is now `p`
   + `next` is now `continue`
   + `print` is now `info`
   + `run` is now `finish`
   + `reset` is now `run`
-- Improved `info` command: Now always at most 80 character wide, more readable
+- New command `breakpoint clear` to remove all breakpoints
+- Improved `info` command: Now always at most 80 characters wide, more readable
   and easier to parse
-- Greatly improved the codebase
+- Error message when providing too much input files
+- Support for `.ascii` assembler directive
 - Support for program arguments
 - Remove simple memory values
-- Add Local label
+- Support for local labels
 
 # 1.0.0 (2023-19-9)
 

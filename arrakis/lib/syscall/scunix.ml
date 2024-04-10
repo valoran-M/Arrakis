@@ -14,13 +14,13 @@ open Global_utils.Integer
 let (>) x y = Int32.unsigned_compare x y > 0
 
 let exit (arch : Riscv.t) =
-  let status = Arch.Cpu.get_reg arch.cpu 10 in
+  let status = Cpu.get_reg arch.cpu 10 in
   Exit (Int32.to_int status)
 
 let kill (arch : Riscv.t) =
-  let pid    = Cpu.get_reg arch.cpu 10 in
-  let signal = Cpu.get_reg arch.cpu 11 in
-  Unix.kill (Int32.to_int pid) (Int32.to_int signal);
+  let pid    = Cpu.get_reg arch.cpu 10 |> Int32.to_int in
+  let signal = Cpu.get_reg arch.cpu 11 |> Int32.to_int in
+  Unix.kill pid signal;
   Continue
 
 let openat channel (arch : Riscv.t) =
@@ -54,8 +54,8 @@ let openat channel (arch : Riscv.t) =
     Continue
 
 let close (arch : Riscv.t) =
-  let fd = Cpu.get_reg arch.cpu 10 in
-  close_fd fd;
+  Cpu.get_reg arch.cpu 10
+  |> close_fd;
   Continue
 
 let read channel (arch : Riscv.t) =
@@ -86,31 +86,31 @@ let read channel (arch : Riscv.t) =
     Continue
 
 let write channel (arch : Riscv.t) =
-    let fd    = Cpu.get_reg arch.cpu 10 in
-    let buf   = Cpu.get_reg arch.cpu 11 in
-    let count = Cpu.get_reg arch.cpu 12 in
+  let fd    = Cpu.get_reg arch.cpu 10 in
+  let buf   = Cpu.get_reg arch.cpu 11 in
+  let count = Cpu.get_reg arch.cpu 12 in
 
-    try
-      let fd  = Hashtbl.find opened_fd fd in
-      let mem = Memory.direct_access arch.memory in
-      let res = Unix.write fd mem (int32_to_int buf) (int32_to_int count) in
-      Cpu.set_reg arch.cpu 10 (Int32.of_int res);
-      Continue
-    with
-    | Not_found ->
-      let open Format in
-      Cpu.set_reg arch.cpu 10 (-1l);
-      fprintf channel
-        "%a Syscall @{<fg_yellow>'write'@} failed: Writing in unopened file descriptor@."
-        info ();
-      Continue
-    | Invalid_argument _ ->
-      let open Format in
-      Cpu.set_reg arch.cpu 10 (-1l);
-      fprintf channel
-        "%a Syscall @{<fg_yellow>'write'@} failed: Invalid argument@."
-        info ();
-      Continue
+  try
+    let fd  = Hashtbl.find opened_fd fd in
+    let mem = Memory.direct_access arch.memory in
+    let res = Unix.write fd mem (int32_to_int buf) (int32_to_int count) in
+    Cpu.set_reg arch.cpu 10 (Int32.of_int res);
+    Continue
+  with
+  | Not_found ->
+    let open Format in
+    Cpu.set_reg arch.cpu 10 (-1l);
+    fprintf channel
+      "%a Syscall @{<fg_yellow>'write'@} failed: Writing in unopened file descriptor@."
+      info ();
+    Continue
+  | Invalid_argument _ ->
+    let open Format in
+    Cpu.set_reg arch.cpu 10 (-1l);
+    fprintf channel
+      "%a Syscall @{<fg_yellow>'write'@} failed: Invalid argument@."
+      info ();
+    Continue
 
 let brk (arch : Riscv.t) =
   let new_addr   = Cpu.get_reg arch.cpu 10 in
@@ -124,13 +124,15 @@ let brk (arch : Riscv.t) =
   Continue
 
 let getuid (arch : Riscv.t) =
-  let uid = Unix.getuid () in
-  Cpu.set_reg arch.cpu 10 (Int32.of_int uid);
+  Unix.getuid ()
+  |> Int32.of_int
+  |> Cpu.set_reg arch.cpu 10;
   Continue
 
 let geteuid (arch : Riscv.t) =
-  let euid = Unix.geteuid () in
-  Cpu.set_reg arch.cpu 10 (Int32.of_int euid);
+  Unix.geteuid ()
+  |> Int32.of_int
+  |> Cpu.set_reg arch.cpu 10;
   Continue
 
 let getcwd channel (arch : Riscv.t) =

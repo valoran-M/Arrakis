@@ -62,7 +62,7 @@
 %token <int> GLOBL
 
 %start program
-%type <Program.program> program
+%type <Program.t> program
 
 %%
 

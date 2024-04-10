@@ -14,7 +14,7 @@ type text_line =
   | Text_GLabel of int      * string
   | Text_Label  of string
 
-(* Memory ------------------------------------------------------------------- *)
+type text = text_line list
 
 type data_line =
   | Data_Zero   of int32
@@ -25,10 +25,10 @@ type data_line =
   | Data_GLabel of int * string
   | Data_Label  of string
 
-(* Program ------------------------------------------------------------------ *)
+type data = data_line list
 
-type program = {
-    data: data_line list;
-    text: text_line list;
-  }
+type t = {
+    data : data;
+    text : text;
+}
 

@@ -13,5 +13,5 @@ val get_address_opt : t -> string -> int32 option
 val made_global     : t -> string -> int   -> unit
 val get_global      : t -> string -> int32 option
 
-val get_label_address : Program.program -> t
+val get_label_address : Program.t -> t
 

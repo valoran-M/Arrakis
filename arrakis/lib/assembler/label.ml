@@ -13,7 +13,6 @@
 *)
 
 open Error
-open Program
 
 let ( * ) = Int32.mul
 let ( + ) = Int32.add
@@ -22,7 +21,7 @@ let ( - ) = Int32.sub
 type t = {
     label_to_address : (string, int32) Hashtbl.t;
     global_label     : (string, int32) Hashtbl.t;
-  }
+}
 
 let add_address (labels : t) label addr =
   Hashtbl.replace labels.label_to_address label addr
@@ -45,49 +44,47 @@ let get_global (labels : t) label =
 
 (* Assembly ----------------------------------------------------------------- *)
 
-let rec get_label_address_program prog labels addr =
-  match prog with
+let rec get_label_address_text (text : Program.text) labels addr =
+  match text with
   | [] -> ()
   | Text_Pseudo (_, _, instruction) :: l ->
     let new_addr = addr + Instructions.Pseudo.pseudo_length instruction in
-    get_label_address_program l labels new_addr
-  | Text_Instr (_,_,_)::l -> get_label_address_program l labels (addr + 0x4l)
-  | Text_GLabel _::l      -> get_label_address_program l labels addr
+    get_label_address_text l labels new_addr
+  | Text_Instr (_,_,_)::l -> get_label_address_text l labels (addr + 0x4l)
+  | Text_GLabel _::l      -> get_label_address_text l labels addr
   | Text_Label label::l ->
     add_address labels label addr;
-    get_label_address_program l labels addr
+    get_label_address_text l labels addr
 
-let rec get_label_address_memory (memory : data_line list) labels addr =
+let rec get_label_address_data (data : Program.data) labels addr =
   let open String in
   let open Int32 in
-  match memory with
+  match data with
   | [] -> ()
   | Data_Bytes bs :: l ->
     let new_addr = addr + Int32.of_int (List.length bs) in
-    get_label_address_memory l labels new_addr
+    get_label_address_data l labels new_addr
   | Data_Ascii ls :: l ->
     let length = List.fold_left (fun l s -> of_int (length s) + l)  0l ls in
-    get_label_address_memory l labels (addr + length)
+    get_label_address_data l labels (addr + length)
   | Data_Asciz ls :: l ->
     let length = List.fold_left (fun l s -> of_int (length s) + l + 1l) 0l ls in
-    get_label_address_memory l labels (addr + length)
+    get_label_address_data l labels (addr + length)
   | Data_Word lw     :: l ->
     let offset = 0x4l * Int32.of_int (List.length lw) in
-    get_label_address_memory l labels (addr + offset)
-  | Data_Zero nz     :: l -> get_label_address_memory l labels (addr+4l*nz)
-  | Data_GLabel _    :: l -> get_label_address_memory l labels addr
+    get_label_address_data l labels (addr + offset)
+  | Data_Zero nz     :: l -> get_label_address_data l labels (addr+4l*nz)
+  | Data_GLabel _    :: l -> get_label_address_data l labels addr
   | Data_Label label :: l ->
     add_address labels label addr;
-    get_label_address_memory l labels addr
+    get_label_address_data l labels addr
 
-let get_label_address (prog : program) =
+let get_label_address (prog : Program.t) =
   let open Arch.Segment in
   let labels =
-    {
-      label_to_address = Hashtbl.create 16;
-      global_label     = Hashtbl.create 16;
-    }
+    { label_to_address = Hashtbl.create 16;
+      global_label     = Hashtbl.create 16; }
   in
-  get_label_address_memory  prog.data labels static_begin;
-  get_label_address_program prog.text labels text_begin;
+  get_label_address_data prog.data labels static_begin;
+  get_label_address_text prog.text labels text_begin;
   labels

@@ -2,10 +2,9 @@
 
 ## 1.1.0
 
-### Follow GNU as syntax
+### New features
 
-* Some assembler directive are free to add and should therefore probably be
-  added
+* Add more assembler directives
 * Add expression [Section 6: expression](https://sourceware.org/binutils/docs-2.42/as.pdf)
 
 ### Improve shell
@@ -23,7 +22,13 @@
 
 ## ??? (Future work without attributed planned version)
 
+### Syscalls
+
+* Maybe all linux syscall should be handled with the FFI directly
 * openat (More detail in the file [scunix.ml](./arrakis/lib/syscall/scunix.ml))
+
+### Other
+
 * Would be nice to improve errors.
   Some that could be interesting would be 'Did you mean...' errors, for example
   when an instruction is misspelled.

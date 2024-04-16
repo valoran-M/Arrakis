@@ -141,7 +141,7 @@ let getcwd channel (arch : Riscv.t) =
   let str  = !cwd in
   (
     try
-      (* TODO: Give out propre error to user here *)
+      (* TODO: Give out proper error to user here *)
       let str_size = (String.length str) + 1 in
       (if str_size >= (Int32.to_int size) then raise (Failure ""));
       ignore (Memory.set_strz arch.memory buf str (Int32.to_int size));

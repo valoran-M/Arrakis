@@ -19,6 +19,7 @@
   clearly see what is before and what is after
 * Add feedback for command 's', 'c', 'r'...
 * Add an error when program is not running and running 'c' or 's'
+* Allow using `info memory _start` or more generally printing with labels
 
 ## ??? (Future work without attributed planned version)
 
@@ -28,6 +29,8 @@
 
 ### Other
 
+* Add a testing suite to check that a suite of program have the expected
+  behaviour
 * Would be nice to improve errors.
   Some that could be interesting would be 'Did you mean...' errors, for example
   when an instruction is misspelled.
@@ -42,4 +45,5 @@
 * Provide arrakis as system package for different linux distributions
 * F extensions
 * Allow using arrakis with multiple files
+* What happens when we run a program and it does a segfault?
 

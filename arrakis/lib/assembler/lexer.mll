@@ -11,6 +11,7 @@
   open Parser
   open Regs
   open Hashtbl
+  open Format
 
   let line = ref 1
 
@@ -30,8 +31,8 @@
   let get_stored_string () = Buffer.contents string_buffer
   let store_string_char ch = Buffer.add_char string_buffer ch
 
-  let string_of_char c = String.make 1 c
-  let char_string    c = "'" ^ (string_of_char c) ^ "'"
+  let string_of_char = sprintf "%c"
+  let char_string    = sprintf "'%c'"
 
   let int_of_numeral n = Char.code n - Char.code '0'
 
@@ -50,7 +51,7 @@ let bin_literal =
   '0' ['b' 'B'] ['0'-'1'] ['0'-'1' '_']*
 
 let int_literal = decimal_literal | hex_literal | oct_literal | bin_literal
-let integer = ('-')? int_literal+
+let integer = ('-')? int_literal
 
 (* Alphanumerics ------------------------------------------------------------ *)
 
@@ -89,9 +90,9 @@ let reg_reg_offset = "bgt" | "ble" | "bgtu" | "bleu"
 
 rule token = parse
   | '\n'{ incr line; END_LINE }
-  | ',' { COMMA } 
+  | ',' { COMMA }
   | ':' { COLON }
-  | '(' { LPAR } 
+  | '(' { LPAR }
   | ')' { RPAR }
   | '#'  { one_line_comment lexbuf }
   | "/*" { multi_line_comment lexbuf; token lexbuf }
@@ -126,20 +127,20 @@ rule token = parse
   | inst_two_regs  as inst { TWO_REGS         (!line, inst, find trs_inst inst) }
   | reg_offset     as inst { REGS_OFFSET      (!line, inst, find rof_inst inst) }
   | reg_reg_offset as inst { REGS_REGS_OFFSET (!line, inst, find rro_inst inst) }
-  | "nop"  { NOP   (!line) }
-  | "li"   { LI    (!line) }
-  | "la"   { LA    (!line) }
-  | "j"    { J     (!line) }
-  | "jal"  { JALP  (!line) }
-  | "jr"   { JR    (!line) }
-  | "jalr" { JALRP (!line) }
-  | "ret"  { RET   (!line) }
-  | "call" { CALL  (!line) }
-  | "tail" { TAIL  (!line) }
+  | "nop"  { NOP   !line }
+  | "li"   { LI    !line }
+  | "la"   { LA    !line }
+  | "j"    { J     !line }
+  | "jal"  { JALP  !line }
+  | "jr"   { JR    !line }
+  | "jalr" { JALRP !line }
+  | "ret"  { RET   !line }
+  | "call" { CALL  !line }
+  | "tail" { TAIL  !line }
   (* --- *)
-  | (numeral as n) "f"  { LLABEL_F (int_of_numeral n, (string_of_char n) ^ "f") }
-  | (numeral as n) "b"  { LLABEL_B (int_of_numeral n, (string_of_char n) ^ "b") }
-  | (numeral as n) ":"  { LLABEL   (int_of_numeral n ) }
+  | (numeral as n) "f"  { LLABEL_F (int_of_numeral n, sprintf "%cf" n) }
+  | (numeral as n) "b"  { LLABEL_B (int_of_numeral n, sprintf "%cb" n) }
+  | (numeral as n) ":"  { LLABEL   (int_of_numeral n) }
   | label as lbl    { try REG (find regs lbl, lbl) with Not_found -> IDENT lbl }
   | '\"'  { str lexbuf;
             let s  = get_stored_string () in
@@ -162,7 +163,7 @@ and str = parse
   | "\\t"  { store_string_char '\t'; str lexbuf }
   | "\\r"  { store_string_char '\r'; str lexbuf }
   | '"'    { }
-  | "\n"   { Error.raise_unclosed (!line) }
-  | eof    { Error.raise_unclosed (!line) }
+  | "\n"   { Error.raise_unclosed !line }
+  | eof    { Error.raise_unclosed !line }
   | _ as c { store_string_char c; str lexbuf}
 

@@ -1,4 +1,5 @@
 %{
+  open Global_utils.Rope
   open Instructions.Insts
   open Program
   open Format
@@ -67,11 +68,18 @@
 
 %%
 
+rope(X):
+|                 { empty }
+| x=X; xs=rope(X) { concat (to_rope x) xs }
+;
+
 %inline int_list:
 | li=separated_nonempty_list(COMMA, INT) { li }
+;
 
 %inline string_list:
 | ls=separated_nonempty_list(COMMA, STRING) { ls }
+;
 
 imm:
 | l=IDENT    { Label l, l }
@@ -207,14 +215,14 @@ basics_inst:
     line, str, J (inst, rdt, imm) }
 ;
 
-inst_aux:
+text_aux:
 | i=basics_inst { let line, str, inst = i in Text_Instr  (line, str, inst) }
 | i=pseudo_inst { let line, str, inst = i in Text_Pseudo (line, str, inst) }
 | l=GLOBL i=IDENT { Text_GLabel (l, i) }
 ;
 
-inst_line:
-| inst=inst_aux END_LINE+ { inst }
+text_line:
+| inst=text_aux END_LINE+ { inst }
 | i=IDENT COLON END_LINE* { Text_Label i  }
 | i=LLABEL      END_LINE* { Text_Label (create_label i) }
 ;
@@ -231,20 +239,21 @@ data:
 ;
 
 data_line:
-| d=data         END_LINE+ { d  }
+| d=data         END_LINE+ { d }
 | i=IDENT  COLON END_LINE* { Data_Label i }
 | i=LLABEL COLON END_LINE* { Data_Label (create_label i) }
 ;
 
 (* Program ------------------------------------------------------------------ *)
 
+(* data, text *)
 p_aux:
-| p=p_aux DATA END_LINE* dl=data_line* { { data = p.data @ dl; text = p.text } }
-| p=p_aux TEXT END_LINE* il=inst_line* { { data = p.data; text = p.text @ il } }
-| pl=inst_line*                        { { data = []; text = pl } }
+| p=p_aux DATA END_LINE* dl=rope(data_line) { concat (fst p) dl, snd p }
+| p=p_aux TEXT END_LINE* tl=rope(text_line) { fst p, concat (snd p) tl }
+| tl=rope(text_line)                        { empty, tl }
 ;
 
 program:
-| END_LINE* p=p_aux EOF { p }
+| END_LINE* p=p_aux EOF { { data = to_list (fst p); text = to_list (snd p) } }
 ;
 

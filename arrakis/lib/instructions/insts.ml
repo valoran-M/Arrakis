@@ -28,7 +28,7 @@ type r_instruction =
   | REM    | REMU
 
 type i_instruction =
-  (* arit immediate *)
+  (* arith immediate *)
   | ADDI
   | XORI | ORI  | ANDI
   | SLLI | SRLI | SARI

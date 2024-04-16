@@ -5,12 +5,10 @@
 # It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>
 # ------------------------------------------------------------------------------
 
-.data
-
 .text
 
 # Utils ------------------------------------------------------------------------
-# A more fitted version of common utilities from their counterpart in 'common.s'
+# A more fitted version of utilities from their counterpart in the libc
 
 # Calculate the size of a string.
 #   Parameters:

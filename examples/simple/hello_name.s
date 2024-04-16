@@ -1,5 +1,5 @@
 .data
-  hello:   .ascii "Hello, "
+  hello: .ascii "Hello, "
 
 .text
 

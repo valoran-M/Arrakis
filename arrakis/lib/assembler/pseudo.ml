@@ -22,12 +22,12 @@ open Program
       must be reversed.
 *)
 let translate_pseudo pseudo line code =
-  let hi_lo_imm imm = Hi imm, Sub (Lo imm, Imm (-4l)) in
+  let hi_lo_imm imm = Hig imm, Sub (Low imm, Imm (-4l)) in
 
   let li rd imm =
     match imm with
-    | Lo _ -> [ Text_Instr (line, code, I (ADDI, rd, 0l, imm)) ]
-    | Hi _ -> [ Text_Instr (line, code, U (LUI,  rd,     imm)) ]
+    | Low _ -> [ Text_Instr (line, code, I (ADDI, rd, 0l, imm)) ]
+    | Hig _ -> [ Text_Instr (line, code, U (LUI,  rd,     imm)) ]
     | Imm z ->
       let hi, lo = hi_lo z in
       if hi = 0l

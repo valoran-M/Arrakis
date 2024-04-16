@@ -81,34 +81,34 @@ rope(X):
 | ls=separated_nonempty_list(COMMA, STRING) { ls }
 ;
 
-imm:
-| l=IDENT    { Label l, l }
+expr:
+| l=IDENT    { Lbl l, l }
 | i=INT      { Imm (fst i), snd i }
-| i=LLABEL_F { Label (label_f (fst i)), snd i }
-| i=LLABEL_B { Label (label_b (fst i)), snd i }
+| i=LLABEL_F { Lbl (label_f (fst i)), snd i }
+| i=LLABEL_B { Lbl (label_b (fst i)), snd i }
 ;
 
 pseudo_inst:
 | line=NOP
   { line, "nop", NOP }
-| line=LI rdt=REG COMMA imm=imm
-  { let imm, simm = imm in
+| line=LI rdt=REG COMMA exp=expr
+  { let exp, sexp = exp in
     let rdt, rdts = rdt in
-    let str = sprintf "li %s, %s" rdts simm in
-    line, str, LI (rdt, imm) }
-| line=LA rdt=REG COMMA imm=imm
-  { let imm, simm = imm in
+    let str = sprintf "li %s, %s" rdts sexp in
+    line, str, LI (rdt, exp) }
+| line=LA rdt=REG COMMA exp=expr
+  { let exp, sexp = exp in
     let rdt, rdts = rdt in
-    let str = sprintf "la %s, %s" rdts simm in
-    line, str, LA (rdt, imm) }
-| line=J offset=imm
-  { let imm, simm = offset in
-    let str = sprintf "j %s" simm in
-    line, str, J imm }
-| line=JALP imm=imm
-  { let imm, simm = imm in
-    let str = sprintf "jal %s" simm in
-    line, str, JALP imm }
+    let str = sprintf "la %s, %s" rdts sexp in
+    line, str, LA (rdt, exp) }
+| line=J offset=expr
+  { let exp, sexp = offset in
+    let str = sprintf "j %s" sexp in
+    line, str, J exp }
+| line=JALP exp=expr
+  { let exp, sexp = exp in
+    let str = sprintf "jal %s" sexp in
+    line, str, JALP exp }
 | line=JR rgs=REG
   { let rg, rgs = rgs in
     let str = sprintf "jr %s" rgs in
@@ -119,46 +119,46 @@ pseudo_inst:
     line, str, JALRP rg }
 | line=RET
   { (line, "ret", RET) }
-| line=CALL offset=imm
-  { let imm, simm = offset in
-    let str = sprintf "call %s" simm in
-    line, str, CALL imm }
-| line=TAIL imm=imm
-  { let imm, simm = imm in
-    let str = sprintf "tail %s" simm in
-    line, str, TAIL imm }
+| line=CALL offset=expr
+  { let exp, sexp = offset in
+    let str = sprintf "call %s" sexp in
+    line, str, CALL exp }
+| line=TAIL exp=expr
+  { let exp, sexp = exp in
+    let str = sprintf "tail %s" sexp in
+    line, str, TAIL exp }
 | inst=TWO_REGS rdt=REG COMMA rgs=REG
   { let line, id, inst = inst in
     let rdt, rdts = rdt in
     let rgs, rgss = rgs in
     let str = sprintf "%s %s, %s" id rdts rgss in
     line, str, Two_Regs (inst, rdt, rgs) }
-| inst=REGS_OFFSET rgs=REG COMMA imm=imm
+| inst=REGS_OFFSET rgs=REG COMMA exp=expr
   { let line, id, inst = inst in
     let rgs, rgss = rgs in
-    let imm, simm = imm in
-    let str = sprintf "%s %s, %s" id rgss simm in
-    line, str, Regs_Offset (inst, rgs, imm) }
-| inst=REGS_REGS_OFFSET rgs=REG COMMA rdt=REG COMMA imm=imm
+    let exp, sexp = exp in
+    let str = sprintf "%s %s, %s" id rgss sexp in
+    line, str, Regs_Offset (inst, rgs, exp) }
+| inst=REGS_REGS_OFFSET rgs=REG COMMA rdt=REG COMMA exp=expr
   { let line, id, inst = inst in
     let rgs, rgss = rgs in
     let rdt, rdts = rdt in
-    let imm, simm = imm in
-    let str = sprintf "%s %s, %s, %s" id rgss rdts simm in
-    line, str, Regs_Regs_Offset (inst, rgs, rdt, imm) }
-| inst=INST_I_LOAD rdt=REG COMMA imm=imm
+    let exp, sexp = exp in
+    let str = sprintf "%s %s, %s, %s" id rgss rdts sexp in
+    line, str, Regs_Regs_Offset (inst, rgs, rdt, exp) }
+| inst=INST_I_LOAD rdt=REG COMMA exp=expr
   { let line, id, inst = inst in
     let rdt, rdts = rdt in
-    let imm, simm = imm in
-    let str = sprintf "%s %s, %s" id rdts simm in
-    line, str, LGlob(rdt, imm, inst) }
-| inst=INST_S rdt=REG COMMA imm=imm COMMA rgs=REG
+    let exp, sexp = exp in
+    let str = sprintf "%s %s, %s" id rdts sexp in
+    line, str, LGlob(rdt, exp, inst) }
+| inst=INST_S rdt=REG COMMA exp=expr COMMA rgs=REG
   { let line, id, inst = inst in
     let rdt, rdts = rdt in
-    let imm, simm = imm in
+    let exp, sexp = exp in
     let rgs, rgss = rgs in
-    let str = sprintf "%s %s, %s, %s" id rdts simm rgss in
-    line, str, SGlob (rdt, imm, rgs, inst) }
+    let str = sprintf "%s %s, %s, %s" id rdts sexp rgss in
+    line, str, SGlob (rdt, exp, rgs, inst) }
 
 basics_inst:
 | inst=INST_R rdt=REG COMMA rg1=REG COMMA rg2=REG
@@ -168,49 +168,49 @@ basics_inst:
     let rg2, rg2s = rg2 in
     let str = sprintf "%s %s, %s, %s" id rdts rg1s rg2s in
     line, str, R (inst, rdt, rg1, rg2) }
-| inst=INST_I_LOAD rdt=REG COMMA imm=imm COMMA? LPAR rg1=REG RPAR
+| inst=INST_I_LOAD rdt=REG COMMA exp=expr COMMA? LPAR rg1=REG RPAR
   { let line, id, inst = inst in
     let rdt, rdts = rdt in
     let rg1, rg1s = rg1 in
-    let imm, imms = imm in
-    let str = sprintf "%s %s, %s(%s)" id rdts imms rg1s in
-    line, str, I (inst, rdt, rg1, imm) }
+    let exp, exps = exp in
+    let str = sprintf "%s %s, %s(%s)" id rdts exps rg1s in
+    line, str, I (inst, rdt, rg1, exp) }
 | inst=INST_SYST
   { let line, str, inst = inst in
     line, str, I (inst, 0l, 0l, Imm 0x0l) }
-| inst=INST_I rdt=REG COMMA rg1=REG COMMA imm=imm
+| inst=INST_I rdt=REG COMMA rg1=REG COMMA exp=expr
   { let line, id, inst = inst in
     let rdt, rdts = rdt in
     let rg1, rg1s = rg1 in
-    let imm, imms = imm in
-    let str = sprintf "%s %s, %s, %s" id rdts rg1s imms in
-    line, str, I (inst, rdt, rg1, imm) }
-| inst=INST_S rg2=REG COMMA imm=imm LPAR rg1=REG RPAR
+    let exp, exps = exp in
+    let str = sprintf "%s %s, %s, %s" id rdts rg1s exps in
+    line, str, I (inst, rdt, rg1, exp) }
+| inst=INST_S rg2=REG COMMA exp=expr LPAR rg1=REG RPAR
   { let line, id, inst = inst in
     let rg2, rg2s = rg2 in
     let rg1, rg1s = rg1 in
-    let imm, simm = imm in
-    let str = sprintf "%s %s, %s(%s)" id rg2s simm rg1s in
-    line, str, S (inst, rg2, rg1, imm) }
-| inst=INST_B rg1=REG COMMA rg2=REG COMMA imm=imm
+    let exp, exps = exp in
+    let str = sprintf "%s %s, %s(%s)" id rg2s exps rg1s in
+    line, str, S (inst, rg2, rg1, exp) }
+| inst=INST_B rg1=REG COMMA rg2=REG COMMA exp=expr
   { let line, id, inst = inst in
     let rg1, rg1s = rg1 in
     let rg2, rg2s = rg2 in
-    let imm, simm = imm in
-    let str = sprintf "%s %s, %s, %s" id rg1s rg2s simm in
-    line, str, B (inst, rg1, rg2, imm) }
-| inst=INST_U rdt=REG COMMA imm=imm
+    let exp, exps = exp in
+    let str = sprintf "%s %s, %s, %s" id rg1s rg2s exps in
+    line, str, B (inst, rg1, rg2, exp) }
+| inst=INST_U rdt=REG COMMA exp=expr
   { let line, id, inst = inst in
     let rdt, rdts = rdt in
-    let imm, simm = imm in
-    let str = sprintf "%s %s, %s" id rdts simm in
-    line, str, U (inst, rdt, imm) }
-| inst=INST_J rdt=REG COMMA imm=imm
+    let exp, exps = exp in
+    let str = sprintf "%s %s, %s" id rdts exps in
+    line, str, U (inst, rdt, exp) }
+| inst=INST_J rdt=REG COMMA exp=expr
   { let line, id, inst = inst in
     let rdt, rdts = rdt in
-    let imm, simm = imm in
-    let str = sprintf "%s %s, %s" id rdts simm in
-    line, str, J (inst, rdt, imm) }
+    let exp, exps = exp in
+    let str = sprintf "%s %s, %s" id rdts exps in
+    line, str, J (inst, rdt, exp) }
 ;
 
 text_aux:

@@ -54,6 +54,12 @@
 %token <int * string> LLABEL_F
 %token <int * string> LLABEL_B
 
+
+
+%token ADD SUB
+
+%token HI  LO
+
 %token DATA
 %token ZERO
 %token TEXT
@@ -62,6 +68,8 @@
 %token ASCIZ
 %token WORD
 %token <int> GLOBL
+
+%left ADD SUB
 
 %start program
 %type <Program.t> program
@@ -86,6 +94,10 @@ expr:
 | i=INT      { Imm (fst i), snd i }
 | i=LLABEL_F { Lbl (label_f (fst i)), snd i }
 | i=LLABEL_B { Lbl (label_b (fst i)), snd i }
+| e1=expr ADD e2=expr { Add (fst e1, fst e2), sprintf "%s + %s" (snd e1) (snd e2) }
+| e1=expr SUB e2=expr { Add (fst e1, fst e2), sprintf "%s - %s" (snd e1) (snd e2) }
+| HI LPAR e=expr RPAR { Hig (fst e), sprintf "%%hi(%s)" (snd e) }
+| LO LPAR e=expr RPAR { Low (fst e), sprintf "%%lo(%s)" (snd e) }
 ;
 
 pseudo_inst:

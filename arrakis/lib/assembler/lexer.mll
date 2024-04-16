@@ -89,13 +89,17 @@ let reg_offset     = "beqz" | "bnez" | "blez" | "bgez" | "bltz" | "bgtz"
 let reg_reg_offset = "bgt" | "ble" | "bgtu" | "bleu"
 
 rule token = parse
-  | '\n'{ incr line; END_LINE }
-  | ',' { COMMA }
-  | ':' { COLON }
-  | '(' { LPAR }
-  | ')' { RPAR }
-  | '#'  { one_line_comment lexbuf }
-  | "/*" { multi_line_comment lexbuf; token lexbuf }
+  | '\n'  { incr line; END_LINE }
+  | ','   { COMMA }
+  | ':'   { COLON }
+  | '('   { LPAR  }
+  | ')'   { RPAR  }
+  | '+'   { ADD   }
+  | '-'   { SUB   }
+  | "%hi" { HI    }
+  | "%lo" { LO    }
+  | '#'   { one_line_comment lexbuf }
+  | "/*"  { multi_line_comment lexbuf; token lexbuf }
   | "'\\" (['\\' '\'' '\"'] as c) "'" { INT (char_to_int32 c, char_string c) }
   | "'"   (_ as c)                "'" { INT (char_to_int32 c, char_string c) }
   | "'\n'"  { incr line; INT (char_to_int32 '\n', "\\n")}

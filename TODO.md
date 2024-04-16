@@ -24,7 +24,6 @@
 
 ### Syscalls
 
-* Maybe all linux syscall should be handled with the FFI directly
 * openat (More detail in the file [scunix.ml](./arrakis/lib/syscall/scunix.ml))
 
 ### Other

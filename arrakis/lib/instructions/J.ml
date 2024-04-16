@@ -54,7 +54,7 @@ let decode code =
   let (&&) x y = Int32.to_int (x & y) in
   { rdt = (code && rdt_mask) >> 7; imm }
 
-(* Exectuion ---------------------------------------------------------------- *)
+(* Execution ---------------------------------------------------------------- *)
 
 let execute _opcode instruction (arch : Arch.Riscv.t) =
   let open Arch.Cpu in

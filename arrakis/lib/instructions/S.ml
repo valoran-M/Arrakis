@@ -49,7 +49,7 @@ let decode code =
     imm = sign_extended (((code & fc7_mask) >>> 20l) ||
                          ((code & rdt_mask) >>> 07l)) 12; }
 
-(* Exectuion ---------------------------------------------------------------- *)
+(* Execution ---------------------------------------------------------------- *)
 
 let execute_st instruction rs1 rs2 memory =
   let addr = rs1 + instruction.imm in

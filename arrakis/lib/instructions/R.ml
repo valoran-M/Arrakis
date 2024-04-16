@@ -61,7 +61,7 @@ let code instruction rd r1 r2 =
   let (opcode, f3, f7, _) = Hashtbl.find instructions instruction in
   (f7 << 25) || (r2 << 20) || (r1 << 15) || (f3 << 12) || (rd << 7) || opcode
 
-(* Exectuion ---------------------------------------------------------------- *)
+(* Execution ---------------------------------------------------------------- *)
 
 let execute_instr rs1 rs2 instruction =
   match instruction.fc3, instruction.fc7 with

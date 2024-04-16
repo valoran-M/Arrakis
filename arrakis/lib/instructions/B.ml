@@ -64,7 +64,7 @@ let code instruction rs1 rs2 imm =
   (imm12_12 << 31) || (imm10_05 << 25) || (rs2 << 20) || (funct3  << 12) ||
   (imm04_01 <<  8) || (imm11_11 <<  7) || (rs1 << 15) || opcode
 
-(* Exectuion ---------------------------------------------------------------- *)
+(* Execution ---------------------------------------------------------------- *)
 
 let execute_tests instruction rs1 rs2 =
   let test f x y = if f x y then instruction.imm else 4l in

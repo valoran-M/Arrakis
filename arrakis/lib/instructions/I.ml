@@ -66,7 +66,7 @@ let decode code =
     imm = sign_extended imm11_0 12;
     rdt = (rdt_mask && code) >> 07; }
 
-(* Exectuion ---------------------------------------------------------------- *)
+(* Execution ---------------------------------------------------------------- *)
 
 let execute_arith instruction rs1 =
   let imm = instruction.imm in

@@ -6,7 +6,7 @@
 (******************************************************************************)
 
 open Error
-open Global_utils.Print
+open Gutils.Print
 
 (*
    This file define the following commands:

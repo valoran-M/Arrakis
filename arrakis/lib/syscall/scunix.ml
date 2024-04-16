@@ -8,8 +8,8 @@
 open Types
 open Arch
 open Utils
-open Global_utils.Print
-open Global_utils.Integer
+open Gutils.Print
+open Gutils.Integer
 
 let (>) x y = Int32.unsigned_compare x y > 0
 

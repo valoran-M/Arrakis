@@ -9,7 +9,7 @@ open History
 open Arch
 open Insts
 open Utils
-open Global_utils.Integer
+open Gutils.Integer
 
 (* Instruction format :
    31                     20 19      15 14  12 11         7 6            0

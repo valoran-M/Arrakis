@@ -8,7 +8,7 @@
 open Types
 open Utils
 open Arch
-open Global_utils.Print
+open Gutils.Print
 
 let print_int channel (arch : Riscv.t) =
   Format.fprintf channel "%ld@." (Cpu.get_reg arch.cpu 11);

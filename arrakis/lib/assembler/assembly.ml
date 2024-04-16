@@ -14,10 +14,10 @@
   write instruction in memory
 *)
 
-open Utils
-open Global_utils.Integer
-open Error
+open Gutils.Integer
 open Instructions.Insts
+open Utils
+open Error
 open Program
 open Arch
 

@@ -8,7 +8,7 @@
 open Insts
 open Utils
 open Arch
-open Global_utils.Integer
+open Gutils.Integer
 
 (* Instruction format :
    31          25 24      20 19      15 14  12 11         7 6            0

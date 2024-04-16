@@ -7,7 +7,7 @@
 
 open Arch
 open Types
-open Global_utils.Print
+open Gutils.Print
 
 let invalid_sc channel id =
   Format.fprintf channel

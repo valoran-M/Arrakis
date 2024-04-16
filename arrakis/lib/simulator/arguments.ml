@@ -5,7 +5,7 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-open Global_utils.Integer
+open Gutils.Integer
 open Arch
 
 (*

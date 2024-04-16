@@ -5,7 +5,7 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-open Global_utils.Print
+open Gutils.Print
 
 (*
   File containing all the functions used to initialise Arrakis :

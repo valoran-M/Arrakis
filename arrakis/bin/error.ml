@@ -6,7 +6,7 @@
 (******************************************************************************)
 
 open Format
-open Global_utils.Print
+open Gutils.Print
 
 (*
   File managing errors at the entry point of Arrakis.

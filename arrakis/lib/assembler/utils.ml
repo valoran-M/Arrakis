@@ -23,11 +23,16 @@ let ( - ) = Int32.sub
 let (<=) x y = Int32.compare x y <=  0
 let (>=) x y = Int32.compare x y >=  0
 
-let imm_to_int32 labels line addr = function
-  | Imm   imm   -> imm
-  | Label label -> Label.get_address labels label line - addr
+let hi_lo imm = (imm + 0x800l) >> 12, imm & 0b111111111111l
 
-let hi_lo imm addr line label_address =
-  let imm = imm_to_int32 label_address line addr imm in
-  (imm + 0x800l) >> 12, imm & 0b111111111111l
+let rec imm_to_int32 imm labels line addr =
+  match imm with
+  | Imm imm       -> imm
+  | Hi  imm       -> fst (hi_lo (imm_to_int32 imm labels line addr))
+  | Lo  imm       -> snd (hi_lo (imm_to_int32 imm labels line addr))
+  | Label label   -> Label.get_address labels label line - addr
+  | Add (i1, i2)  -> imm_to_int32 i1 labels line addr +
+                     imm_to_int32 i2 labels line addr
+  | Sub (i1, i2)  -> imm_to_int32 i1 labels line addr -
+                     imm_to_int32 i2 labels line addr
 

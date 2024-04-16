@@ -95,9 +95,7 @@ pseudo_inst:
   { let imm, simm = imm in
     let rdt, rdts = rdt in
     let str = sprintf "li %s, %s" rdts simm in
-    match imm with
-    | Label _ -> (line, str, LA (rdt, imm))
-    | Imm   _ -> (line, str, LI (rdt, imm)) }
+    line, str, LI (rdt, imm) }
 | line=LA rdt=REG COMMA imm=imm
   { let imm, simm = imm in
     let rdt, rdts = rdt in

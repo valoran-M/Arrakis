@@ -6,7 +6,6 @@
 (******************************************************************************)
 
 open Insts
-open Utils
 
 let two_regs_str = Hashtbl.create 7
 
@@ -47,15 +46,4 @@ let () =
       BGTU, "bgtu";
       BLEU, "bleu";
     ]
-
-let pseudo_length (pseudo : pseudo_inst) =
-  match pseudo with
-  | NOP  | RET  | J _  | JALP _  | JR _ | JALRP _
-  | Two_Regs _  | Regs_Offset _  | Regs_Regs_Offset _ -> 0x4l
-  | CALL _  | TAIL _ | LA _ | LGlob _ | SGlob _       -> 0x8l
-  | LI (_, imm) ->
-    match imm with
-    | Label _ -> assert false
-    | Imm imm -> if -2048l <= imm && imm <= 2048l
-                 then 0x4l else 0x8l
 

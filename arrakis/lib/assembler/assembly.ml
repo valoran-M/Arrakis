@@ -22,27 +22,26 @@ open Program
 open Arch
 
 let translate (instruction : basics_inst) addr line labels =
-  let imm_to_int32 = imm_to_int32 labels in
   match instruction with
   | R (inst, rd, rs1, rs2) ->
       Instructions.R.code inst rd rs1 rs2
   | I (inst, rd, rs1, imm) ->
-    let imm = imm_to_int32 line addr imm in
+    let imm = imm_to_int32 imm labels line addr in
     Instructions.I.code inst rd rs1 imm
   | S (inst, rs2, rs1, imm) ->
-    let imm = imm_to_int32 line addr imm in
+    let imm = imm_to_int32 imm labels line addr in
     Instructions.S.code inst rs2 rs1 imm
   | B (inst, rs1, rs2, imm) ->
-    let imm = imm_to_int32 line addr imm in
+    let imm = imm_to_int32 imm labels line addr in
     Instructions.B.code inst rs1 rs2 imm
   | U (inst, rd, imm) ->
-    let imm = imm_to_int32 line addr imm in
+    let imm = imm_to_int32 imm labels line addr in
     Instructions.U.code inst rd imm
   | J (inst, rd, imm) ->
-    let imm = imm_to_int32 line addr imm in
+    let imm = imm_to_int32 imm labels line addr in
     Instructions.J.code inst rd imm
 
-let loop_prog mem debug labels addr prog  =
+let loop_text mem debug labels addr prog  =
   match prog with
   | Text_Label _  -> addr
   | Text_GLabel (line, label) -> Label.made_global labels label line; addr
@@ -55,7 +54,7 @@ let loop_prog mem debug labels addr prog  =
 (* No more pseudo instructions after remove_pseudo *)
   | Text_Pseudo _ -> assert false
 
-let loop_memory mem labels addr (prog : data_line) =
+let loop_data mem _ labels addr (prog : data_line) =
   let open String in
   match prog with
   | Data_GLabel (line, label) -> Label.made_global labels label line; addr
@@ -82,12 +81,12 @@ let assembly code =
 
     let prog = Parser.program Lexer.token code in
 
-    let labels = Label.get_label_address prog in
-    ignore (List.fold_left (loop_memory mem labels) static_begin prog.data);
-    let prog = Pseudo.remove_pseudo prog.text labels in
-    ignore (List.fold_left (loop_prog mem dbg labels) text_begin prog);
+    let prog = { prog with text = Pseudo.remove_pseudo prog.text } in
+    let lbls = Label.get_label_address prog in
+    ignore (List.fold_left (loop_text mem dbg lbls) text_begin prog.text);
+    ignore (List.fold_left (loop_data mem dbg lbls) data_begin prog.data);
 
-    (mem, labels, dbg)
+    mem, lbls, dbg
   with Parser.Error ->
     let pe = Parsing_error (Lexing.lexeme code) in
     raise (Assembler_error (!Lexer.line, pe))

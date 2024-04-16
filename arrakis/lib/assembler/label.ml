@@ -19,8 +19,8 @@ let ( + ) = Int32.add
 let ( - ) = Int32.sub
 
 type t = {
-    label_to_address : (string, int32) Hashtbl.t;
-    global_label     : (string, int32) Hashtbl.t;
+  label_to_address : (string, int32) Hashtbl.t;
+  global_label     : (string, int32) Hashtbl.t;
 }
 
 let add_address (labels : t) label addr =
@@ -47,13 +47,12 @@ let get_global (labels : t) label =
 let rec get_label_address_text (text : Program.text) labels addr =
   match text with
   | [] -> ()
-  | Text_Pseudo (_, _, instruction) :: l ->
-    let new_addr = addr + Instructions.Pseudo.pseudo_length instruction in
-    get_label_address_text l labels new_addr
-  | Text_Instr (_,_,_)::l -> get_label_address_text l labels (addr + 0x4l)
-  | Text_GLabel _::l      -> get_label_address_text l labels addr
-  | Text_Label label::l ->
-    add_address labels label addr;
+(* No more pseudo instructions after remove_pseudo *)
+  | Text_Pseudo _ :: _ -> assert false
+  | Text_Instr  _ :: l -> get_label_address_text l labels (addr + 0x4l)
+  | Text_GLabel _ :: l -> get_label_address_text l labels addr
+  | Text_Label  s :: l ->
+    add_address labels s addr;
     get_label_address_text l labels addr
 
 let rec get_label_address_data (data : Program.data) labels addr =
@@ -85,6 +84,6 @@ let get_label_address (prog : Program.t) =
     { label_to_address = Hashtbl.create 16;
       global_label     = Hashtbl.create 16; }
   in
-  get_label_address_data prog.data labels static_begin;
+  get_label_address_data prog.data labels data_begin;
   get_label_address_text prog.text labels text_begin;
   labels

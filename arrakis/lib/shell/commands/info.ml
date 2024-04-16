@@ -107,7 +107,7 @@ let info_code : Types.cmd =
 
 (* Memory ------------------------------------------------------------------- *)
 
-let start_default = Segment.static_begin
+let start_default = Segment.data_begin
 let size_default  = 0x10
 
 let line_size   = 0x4

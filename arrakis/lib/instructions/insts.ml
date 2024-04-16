@@ -8,6 +8,10 @@
 type imm =
   | Label of string
   | Imm   of int32
+  | Hi    of imm
+  | Lo    of imm
+  | Add   of imm * imm
+  | Sub   of imm * imm
 
 (* Real instructions -------------------------------------------------------- *)
 

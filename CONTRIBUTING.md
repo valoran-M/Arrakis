@@ -8,6 +8,10 @@ Be sure to include Arrakis version in your issue (available using `arrakis --ver
 
 You can also contribute to [Arrakis Wiki](https://codeberg.org/Arrakis/arrakis/wiki).
 
+Issues and pull requests are also welcome on the [github mirror](https://github.com/valoran-M/Arrakis),
+but please consider doing them on the [main repository](https://codeberg.org/arrakis/arrakis)
+if possible.
+
 ## Contributing code
 
 Please keep in mind that Arrakis is distributed under the [`CeCILL 2.1 license`](./LICENSE),

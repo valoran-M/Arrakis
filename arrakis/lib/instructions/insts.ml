@@ -5,13 +5,14 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
+type binop = Add | Sub
+
 type expr =
   | Lbl of string
   | Imm of int32
   | Hig of expr
   | Low of expr
-  | Add of expr * expr
-  | Sub of expr * expr
+  | Bop of binop * expr * expr
 
 (* Real instructions -------------------------------------------------------- *)
 

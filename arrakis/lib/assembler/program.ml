@@ -28,7 +28,7 @@ type data_line =
 type data = data_line list
 
 type t = {
-    data : data;
-    text : text;
+  data : data;
+  text : text;
 }
 

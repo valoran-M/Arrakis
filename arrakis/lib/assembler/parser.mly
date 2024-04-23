@@ -89,15 +89,20 @@ rope(X):
 | ls=separated_nonempty_list(COMMA, STRING) { ls }
 ;
 
+%inline bop:
+| ADD { Add, "+" }
+| SUB { Sub, "-" }
+
 expr:
 | l=IDENT    { Lbl l, l }
 | i=INT      { Imm (fst i), snd i }
 | i=LLABEL_F { Lbl (label_f (fst i)), snd i }
 | i=LLABEL_B { Lbl (label_b (fst i)), snd i }
-| e1=expr ADD e2=expr { Add (fst e1, fst e2), sprintf "%s + %s" (snd e1) (snd e2) }
-| e1=expr SUB e2=expr { Add (fst e1, fst e2), sprintf "%s - %s" (snd e1) (snd e2) }
 | HI LPAR e=expr RPAR { Hig (fst e), sprintf "%%hi(%s)" (snd e) }
 | LO LPAR e=expr RPAR { Low (fst e), sprintf "%%lo(%s)" (snd e) }
+| e1=expr bop=bop e2=expr
+  { Bop (fst bop, fst e1, fst e2),
+    sprintf "%s %s %s" (snd e1) (snd bop) (snd e2) }
 ;
 
 pseudo_inst:

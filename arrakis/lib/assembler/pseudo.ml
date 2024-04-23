@@ -22,7 +22,7 @@ open Program
       must be reversed.
 *)
 let translate_pseudo pseudo line code =
-  let hi_lo_imm imm = Hig imm, Sub (Low imm, Imm (-4l)) in
+  let hi_lo_imm imm = Hig imm, Bop (Sub, Low imm, Imm (-4l)) in
 
   let li rd imm =
     match imm with

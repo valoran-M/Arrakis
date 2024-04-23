@@ -6,6 +6,7 @@
 
 * Add more assembler directives
 * Add expression [Section 6: expression](https://sourceware.org/binutils/docs-2.42/as.pdf)
+* Add multi file compilation
 
 ### Improve shell
 
@@ -46,4 +47,5 @@
 * F extensions
 * Allow using arrakis with multiple files
 * What happens when we run a program and it does a segfault?
+* Optional raylib extensions (mega fun :-])
 

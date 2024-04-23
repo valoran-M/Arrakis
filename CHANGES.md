@@ -22,6 +22,7 @@
 - Remove simple memory values
 - Support for local labels
 - Add multi line comments
+- Support for GNU expressions
 
 # 1.0.0 (2023-19-9)
 

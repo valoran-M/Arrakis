@@ -1,12 +1,11 @@
-(******************************************************************************)
+(** colorsh - *****************************************************************)
 (*  Copyright 2023-2024 Gurvan Debaussart (https://debauss.art)               *)
-(*  This file is distributed under the MIT license.                           *)
-(*  https://codeberg.org/gurvan/colorsh                                       *)
+(*  This file is distributed under the MIT license                            *)
 (******************************************************************************)
 
 open Format
 
-let tag_table = Hashtbl.create 18
+let tag_table = Hashtbl.create 22
 let inited    = ref false
 
 let init () =

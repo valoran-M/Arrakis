@@ -1,7 +1,6 @@
-(******************************************************************************)
-(*  Copyright 2023-2024 Gurvan Debaussart                                     *)
-(*  This file is distributed under the MIT license.                           *)
-(*  https://codeberg.org/gurvan/colorsh                                       *)
+(** colorsh - *****************************************************************)
+(*  Copyright 2023-2024 Gurvan Debaussart (https://debauss.art)               *)
+(*  This file is distributed under the MIT license                            *)
 (******************************************************************************)
 
 val setup_fmt : Format.formatter -> unit

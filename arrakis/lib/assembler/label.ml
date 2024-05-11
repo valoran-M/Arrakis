@@ -69,7 +69,7 @@ let rec get_label_address_data (data : Program.data) labels addr =
   | Data_Asciz ls :: l ->
     let length = List.fold_left (fun l s -> of_int (length s) + l + 1l) 0l ls in
     get_label_address_data l labels (addr + length)
-  | Data_Word lw     :: l ->
+  | Data_Word lw :: l ->
     let offset = 0x4l * Int32.of_int (List.length lw) in
     get_label_address_data l labels (addr + offset)
   | Data_Zero nz     :: l -> get_label_address_data l labels (addr+4l*nz)

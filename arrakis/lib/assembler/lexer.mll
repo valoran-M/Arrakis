@@ -50,8 +50,7 @@ let oct_literal =
 let bin_literal =
   '0' ['b' 'B'] ['0'-'1'] ['0'-'1' '_']*
 
-let int_literal = decimal_literal | hex_literal | oct_literal | bin_literal
-let integer = ('-')? int_literal
+let integer = decimal_literal | hex_literal | oct_literal | bin_literal
 
 (* Alphanumerics ------------------------------------------------------------ *)
 
@@ -94,8 +93,14 @@ rule token = parse
   | ':'   { COLON }
   | '('   { LPAR  }
   | ')'   { RPAR  }
-  | '+'   { ADD   }
-  | '-'   { SUB   }
+  | "||"  { LOR   } | "&&" { LAND }
+  | "|"   { BOR   } | "&"  { BAND } | "^"  { BXOR }
+  | "+"   { ADD   } | "-"  { SUB  } | "<=" { LTE  } | ">=" { GTE }
+  | "=="  { EQ    } | "<"  { LT   } | ">"  { GT   }
+  | "*"   { MUL   } | "/"  { DIV  } | "%"  { REM  }
+  | ">>"  { SHL   } | "<<" { SHR  }
+  | "<>"
+  | "!="  { NEQ }
   | "%hi" { HI    }
   | "%lo" { LO    }
   | '#'   { one_line_comment lexbuf }

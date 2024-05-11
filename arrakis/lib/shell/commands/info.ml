@@ -29,10 +29,8 @@ let print_addr (state : Types.state) addr pc code =
       with Not_found -> ""
     in
     let addr_pc               = if addr = pc then ">" else ""              in
-    let addr_str              = int32_to_int addr                          in
-    let addr_str              = sprintf "0x%08x" addr_str                  in
-    let machinec_str          = int32_to_int code                          in
-    let machinec_str          = sprintf "0x%08x" machinec_str              in
+    let addr_str              = sprintf "0x%08lx" addr                     in
+    let machinec_str          = sprintf "0x%08lx" code                     in
     let basicc_str            = print_code state.arch code                 in
     let linenb, orignal_code  = Assembler.Debug.get_line state.debug addr  in
 

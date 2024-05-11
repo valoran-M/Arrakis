@@ -8,24 +8,23 @@
 open Instructions.Insts
 
 type text_line =
-                (* line nb, original code *)
-  | Text_Pseudo of int      * string      * pseudo_inst
-  | Text_Instr  of int      * string      * basics_inst
-  | Text_GLabel of int      * string
+  | Text_Pseudo of int * string * pseudo_inst          (* line, original code *)
+  | Text_Instr  of int * string * basics_inst          (* line, original code *)
+  | Text_GLabel of int * string                        (* line, label         *)
   | Text_Label  of string
 
 type text = text_line list
 
 type data_line =
-  | Data_Zero   of int32
-  | Data_Bytes  of char list
   | Data_Ascii  of string list
   | Data_Asciz  of string list
-  | Data_Word   of int32 list
+  | Data_Bytes  of expr list
   | Data_GLabel of int * string
   | Data_Label  of string
+  | Data_Word   of expr list
+  | Data_Zero   of int32
 
-type data = data_line list
+type data = (data_line) list                              (* line, data *)
 
 type t = {
   data : data;

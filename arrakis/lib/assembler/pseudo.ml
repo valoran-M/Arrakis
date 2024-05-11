@@ -27,7 +27,7 @@ let translate_pseudo pseudo line code =
   let li rd imm =
     match imm with
     | Low _ -> [ Text_Instr (line, code, I (ADDI, rd, 0l, imm)) ]
-    | Hig _ -> [ Text_Instr (line, code, U (LUI,  rd,     imm)) ]
+    | Hig _ -> [ Text_Instr (line, code, U (LUI,  rd, Hig imm)) ]
     | Imm z ->
       let hi, lo = hi_lo z in
       if hi = 0l

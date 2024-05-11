@@ -5,13 +5,21 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
-type binop = Add | Sub
+type binop =
+  | Mul | Div  | Rem | Shl | Shr
+  | Bor | Bxor | Band
+  | Add | Sub  | Neq | Eq  | Lte | Gte | Lt | Gt
+  | Lor | Land
+
+type unop = Neg | Not
 
 type expr =
+  | Adr
   | Lbl of string
   | Imm of int32
   | Hig of expr
   | Low of expr
+  | Uop of unop  * expr
   | Bop of binop * expr * expr
 
 (* Real instructions -------------------------------------------------------- *)

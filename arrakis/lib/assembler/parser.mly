@@ -43,7 +43,7 @@
 %token <Int32.t * string> INT
 %token <Int32.t * string> REG
 %token <string> IDENT
-/* Pseudo instructions */
+(* Pseudo instructions *)
 %token <int> NOP LI LA J JALP JR JALRP RET CALL TAIL
 %token <int * string * Instructions.Insts.reg_offset>      REGS_OFFSET
 %token <int * string * Instructions.Insts.reg_reg_offset>  REGS_REGS_OFFSET
@@ -56,10 +56,17 @@
 
 
 
-%token ADD SUB
+(* Static Operation *)
+%token LOR LAND
+%token BOR BAND BXOR
+%token ADD SUB LTE GTE NEQ EQ LT GT
+%token MUL DIV REM SHL SHR
+
+%token NOT
 
 %token HI  LO
 
+(* Directive *)
 %token DATA
 %token ZERO
 %token TEXT
@@ -69,7 +76,11 @@
 %token WORD
 %token <int> GLOBL
 
-%left ADD SUB
+%left LOR LAND
+%nonassoc NOT
+%left ADD SUB  LTE GTE NEQ EQ LT GT
+%left BOR BAND BXOR
+%left MUL DIV  REM SHL SHR
 
 %start program
 %type <Program.t> program
@@ -81,33 +92,42 @@ rope(X):
 | x=X; xs=rope(X) { concat (to_rope x) xs }
 ;
 
-%inline int_list:
-| li=separated_nonempty_list(COMMA, INT) { li }
+%inline exp_list:
+| li=separated_nonempty_list(COMMA, expr) { li }
 ;
 
 %inline string_list:
 | ls=separated_nonempty_list(COMMA, STRING) { ls }
 ;
 
+%inline uop:
+| SUB { Neg, "-" }
+| NOT { Not, "~" }
+
 %inline bop:
-| ADD { Add, "+" }
-| SUB { Sub, "-" }
+| LOR { Lor, "||" } | LAND { Land, "&&" }
+| BOR { Bor, "|"  } | BAND { Band, "&"  } | BXOR { Bxor, "^"  }
+| ADD { Add, "+"  } | SUB  { Sub,  "-"  } | LTE  { Lte,  "<=" } | GTE { Gte, ">=" }
+| NEQ { Neq, "<>" } | EQ   { Eq,   "==" } | LT   { Lt,   "<"  } | GT  { Gt,  ">"  }
+| MUL { Mul, "*"  } | DIV  { Div,  "/"  } | REM  { Rem,  "%"  }
+| SHL { Shl, ">>" } | SHR  { Shr,  "<<" }
 
 expr:
-| l=IDENT    { Lbl l, l }
-| i=INT      { Imm (fst i), snd i }
-| i=LLABEL_F { Lbl (label_f (fst i)), snd i }
-| i=LLABEL_B { Lbl (label_b (fst i)), snd i }
-| HI LPAR e=expr RPAR { Hig (fst e), sprintf "%%hi(%s)" (snd e) }
-| LO LPAR e=expr RPAR { Low (fst e), sprintf "%%lo(%s)" (snd e) }
+| l=IDENT              { Lbl l, l }
+| i=INT                { Imm (fst i), snd i }
+| i=LLABEL_F           { Lbl (label_f (fst i)), snd i }
+| i=LLABEL_B           { Lbl (label_b (fst i)), snd i }
+| HI LPAR e=expr RPAR  { Hig (fst e), sprintf "%%hi(%s)" (snd e) }
+| LO LPAR e=expr RPAR  { Low (fst e), sprintf "%%lo(%s)" (snd e) }
+|    LPAR e=expr RPAR  { e }
+| uop=uop e=expr       { Uop (fst uop, fst e), sprintf "%s %s" (snd uop) (snd e) }
 | e1=expr bop=bop e2=expr
   { Bop (fst bop, fst e1, fst e2),
     sprintf "%s %s %s" (snd e1) (snd bop) (snd e2) }
 ;
 
 pseudo_inst:
-| line=NOP
-  { line, "nop", NOP }
+| line=NOP { line, "nop", NOP }
 | line=LI rdt=REG COMMA exp=expr
   { let exp, sexp = exp in
     let rdt, rdts = rdt in
@@ -231,8 +251,8 @@ basics_inst:
 ;
 
 text_aux:
-| i=basics_inst { let line, str, inst = i in Text_Instr  (line, str, inst) }
-| i=pseudo_inst { let line, str, inst = i in Text_Pseudo (line, str, inst) }
+| i=basics_inst   { let line, str, inst = i in Text_Instr  (line, str, inst) }
+| i=pseudo_inst   { let line, str, inst = i in Text_Pseudo (line, str, inst) }
 | l=GLOBL i=IDENT { Text_GLabel (l, i) }
 ;
 
@@ -248,9 +268,9 @@ data:
 | ASCII    s=string_list  { Data_Ascii  s }
 | ASCIZ    s=string_list  { Data_Asciz  s }
 | ZERO     i=INT          { Data_Zero   (fst i) }
-| lg=GLOBL i=IDENT        { Data_GLabel (lg, i) }
-| BYTES    li=int_list    { Data_Bytes  (int_list_to_char_list li) }
-| WORD     li=int_list    { Data_Word   (List.map fst li) }
+| l=GLOBL  i=IDENT        { Data_GLabel (l, i) }
+| BYTES    le=exp_list    { Data_Bytes  (List.map fst le) }
+| WORD     le=exp_list    { Data_Word   (List.map fst le) }
 ;
 
 data_line:

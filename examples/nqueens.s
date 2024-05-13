@@ -1,5 +1,22 @@
 # nqueens ----------------------------------------------------------------------
-# Returns the number of solution for the nqueens problem
+# Returns the number of solution for the nqueens problem.
+#
+# Compiled with gcc from the following C code:
+# int t(int a, int b, int c) {
+#   int f = 1;
+#   if (a) {
+#     int d, e = a&~b&~c;
+#     for (f = 0; d = e&-e; e -= d)
+#       f += t(a-d, (b+d)*2, (c+d)/2);
+#   }
+#   return f;
+# }
+#
+# int main(int q) {
+#   return (t(~(~0<<q), 0, 0));
+# }
+#
+# Thanks Jean-Christophe Filliatre!
 #
 # This file is part of Arrakis <https://codeberg.org/arrakis/arrakis>
 # It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>
@@ -66,10 +83,8 @@ t:
 .L13:
   li      a0, 1
   ret
-.globl _start
-_start:
+main:
   li      a5, -1
-  li      a0, 2
   sll     a0, a5, a0
   not     a0, a0
   beq     a0, zero, .L15
@@ -77,5 +92,12 @@ _start:
   li      a1, 0
   tail    t.part.0
 .L15:
-  li      a0,1
+  li      a0, 1
   ret
+
+.globl _start
+_start:
+  li      a0, 3
+  call    main
+  li      a7, 93
+  ecall

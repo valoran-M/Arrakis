@@ -72,11 +72,8 @@ let step_execute args (state : Types.state) =
   match args with
   | []         -> one_step state
   | count :: _ ->
-      try
-        n_step (int_of_string count) state
-      with _ ->
-        Format.printf "%a Incorrect argument @{<fg_yellow>'%s'@}@." error () count;
-        state
+      try       n_step (int_of_string count) state
+      with _ -> raise (Shell_error (Bad_Usage))
 
 let step : Types.cmd =
   { long_form  = "step";
@@ -91,8 +88,8 @@ let step : Types.cmd =
 
 let rec next_breakpoint (first : bool) (state : Types.state) =
     let addr = Arch.Cpu.get_pc state.arch.cpu in
-    if state.program_run && (first || not (Hashtbl.mem state.breakpoints addr)) then
-      next_breakpoint false (one_step state)
+    if state.program_run && (first || not (Hashtbl.mem state.breakpoints addr))
+    then next_breakpoint false (one_step state)
     else state
 
 let rec n_next_breakpoint n state =
@@ -102,8 +99,7 @@ let rec n_next_breakpoint n state =
 let continue_execute args (state : Types.state) =
   match args with
   | [count]  -> (
-    try
-      n_next_breakpoint (int_of_string count) state
+    try       n_next_breakpoint (int_of_string count) state
     with _ -> raise (Shell_error Bad_Usage))
   | [] -> next_breakpoint true state
   | _ -> raise (Shell_error Bad_Usage)
@@ -142,11 +138,8 @@ let pre_execute args (state : Types.state) =
   match args with
   | []         -> one_bstep state
   | count :: _ ->
-      try
-        n_bstep (int_of_string count) state
-      with _ ->
-        Format.printf "%a Incorrect argument @{<fg_yellow>'%s'@}@." error () count;
-        state
+      try       n_bstep (int_of_string count) state
+      with _ -> raise (Shell_error (Bad_Usage))
 
 let previous : Types.cmd =
   { long_form   = "previous";

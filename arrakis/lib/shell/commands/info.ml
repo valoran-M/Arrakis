@@ -20,77 +20,50 @@ let ( * ) = Int32.mul
 (* Progam ------------------------------------------------------------------  *)
 
 let print_program_header channel =
-  fprintf channel "%3s | %2s%2s @{<bold>%-10s@} | @{<bold>%-12s@} | @{<bold>%-18s@} | @{<bold>%-18s@} |\n"
-    "" "" "" "Address" "Machine Code" "Basic Code" "Original Code"
-
+  fprintf channel "%3s | %2s%2s @{<bold>%-10s@} | @{<bold>%-20s@} |\n"
+    "" "" "" "Address" "Code"
 let print_addr (state : Types.state) addr pc code =
     let breakpoint_str  =
       try  sprintf "%02d" (Hashtbl.find state.breakpoints addr)
       with Not_found -> ""
     in
-    let addr_pc               = if addr = pc then ">" else ""              in
-    let addr_str              = sprintf "0x%08lx" addr                     in
-    let machinec_str          = sprintf "0x%08lx" code                     in
-    let basicc_str            = print_code state.arch code                 in
-    let linenb, orignal_code  = Assembler.Debug.get_line state.debug addr  in
+    let addr_pc   = if addr = pc then ">" else ""              in
+    let addr_str  = sprintf "0x%08lx" addr                     in
+    let code_str   = print_code state.arch code                in
+    let linenb, _ = Assembler.Debug.get_line state.debug addr  in
 
-    fprintf state.out_channel "%03d | %2s%2s %10s | %12s | %-18s | %-18s |\n"
+    fprintf state.out_channel "%03d | %2s%2s %10s | %20s |\n"
       linenb
       breakpoint_str
       addr_pc
       addr_str
-      machinec_str
-      basicc_str
-      orignal_code
+      code_str
 
-let info_code_part (state : Types.state) offset noffset =
+let info_code (state : Types.state) offset noffset =
   let pc = Cpu.get_pc state.arch.cpu in
   try
     print_program_header state.out_channel;
-    for i=noffset to offset-1 do
+    for i=(-noffset) to offset-1 do
       let addr = (pc + Int32.of_int i * 0x4l) in
-      if addr >= 0l then (
-        let code = Memory.get_int32 state.arch.memory  addr in
-
+      if addr >= 0l then
+        let code = Memory.get_int32 state.arch.memory addr in
         if code = 0l
         then (fprintf state.out_channel "     End without syscall@."; raise Break)
         else print_addr state addr pc code
-      )
     done
-  with _ -> ()
-
-let info_code_full (state : Types.state) =
-  let pc   = Cpu.get_pc state.arch.cpu in
-  let addr = ref 0l in
-  let code = ref (Memory.get_int32 state.arch.memory !addr) in
-  try
-    print_program_header state.out_channel;
-    while !code != 0l do
-      print_addr state !addr pc !code;
-      addr := !addr + 0x4l;
-      code := Memory.get_int32 state.arch.memory !addr
-    done;
-    fprintf state.out_channel "     End without syscall@."
-  with _ -> ()
+  with Break -> ()
 
 let execute_info_code args (state : Types.state) =
-  begin match args with
-  | offset :: [] -> (
-    try
-      let offset  = int_of_string offset in
-      info_code_part state offset 0
-    with _ ->
-      fprintf state.out_channel "%a Incorrect argument to print code@."
-        error ())
-  | offset :: noffset :: _ -> (
-    try
-      let offset  = int_of_string offset  in
-      let noffset = int_of_string noffset in
-      info_code_part state offset noffset
-    with _ ->
-      fprintf state.out_channel "%a Incorrect argument to print code@."
-      error ())
-  | _ -> info_code_full state
+  begin try match args with
+    | offset :: [] ->
+        let offset  = int_of_string offset in
+        info_code state offset 0
+    | offset :: noffset :: _ ->
+        let offset  = int_of_string offset  in
+        let noffset = int_of_string noffset in
+        info_code state offset noffset
+    | _ -> info_code state 10 10
+  with _ -> raise (Shell_error Bad_Usage)
   end;
   state
 
@@ -128,7 +101,7 @@ let print_line (state : Types.state) line_address =
   fprintf state.out_channel " |\n"
 
 let print_memory (state : Types.state) start size =
-  fprintf state.out_channel "@{<bold>%-10s@} |  @{<bold>+0@}  @{<bold>+1@}  @{<bold>+2@}  @{<bold>+3@} |\n"
+  fprintf state.out_channel "@{<bold>%-10s@} |  @{<bold>+0  +1  +2  +3@} |\n"
     "Address";
   let line_address = ref (Int32.logand start (Int32.lognot line_size32)) in
   for _ = 1 to size do
@@ -137,27 +110,22 @@ let print_memory (state : Types.state) start size =
   done
 
 let execute_info_memory args (state : Types.state) =
-  begin match args with
+  begin try match args with
   | []      -> print_memory state start_default size_default
-  | [start] -> (
-    try
+  | [start] ->
       let start = i32_or_reg_of_str start state.arch in
       print_memory state start size_default
-    with _ -> raise (Shell_error Bad_Usage))
-  | [start; size] -> (
-      try
-        let start = i32_or_reg_of_str start state.arch in
-        let size  = int_of_string size in
-        print_memory state start size
-      with _ -> raise (Shell_error Bad_Usage))
-  | [start; size; nsize] -> (
-      try
-        let start = i32_or_reg_of_str start state.arch in
-        let nsize = Int32.of_string nsize in
-        let size  = int_of_string   size  in
-        print_memory state (Int32.sub start nsize) size
-      with _ -> raise (Shell_error Bad_Usage))
+  | [start; size] ->
+      let start = i32_or_reg_of_str start state.arch in
+      let size  = int_of_string size in
+      print_memory state start size
+  | [start; size; nsize] ->
+      let start = i32_or_reg_of_str start state.arch in
+      let nsize = Int32.of_string nsize in
+      let size  = int_of_string   size  in
+      print_memory state (Int32.sub start nsize) size
   | _ -> raise (Shell_error Bad_Usage)
+  with _ -> raise (Shell_error Bad_Usage)
   end;
   state
 
@@ -223,15 +191,14 @@ let execute_info_registers args (state : Types.state) =
   end;
   state
 
-let info_registers : Types.cmd = {
-  long_form   = "registers";
-  short_form  = "r";
-  name        = "(r)egisters";
-  short_desc  = "Display value in specified registers";
-  long_desc   = ["Usage: info registers <r_1> ... <r_n>"];
-  execute     = execute_info_registers;
-  sub         = [];
-}
+let info_registers : Types.cmd =
+  { long_form   = "registers";
+    short_form  = "r";
+    name        = "(r)egisters";
+    short_desc  = "Display value in specified registers";
+    long_desc   = ["Usage: info registers <r_1> ... <r_n>"];
+    execute     = execute_info_registers;
+    sub         = []; }
 
 (* Decode ------------------------------------------------------------------- *)
 

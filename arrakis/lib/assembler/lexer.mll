@@ -35,14 +35,12 @@
   let char_string    = sprintf "'%c'"
 
   let int_of_numeral n = Char.code n - Char.code '0'
-
 }
 
 (* Numbers ------------------------------------------------------------------ *)
 
-let numeral = ['0'-'9']
-let decimal_literal =
-  ['0'-'9'] ['0'-'9' '_']*
+let num = ['0'-'9']
+let decimal_literal = num (num | '_')*
 let hex_literal =
   '0' ['x' 'X'] ['0'-'9' 'A'-'F' 'a'-'f']['0'-'9' 'A'-'F' 'a'-'f' '_']*
 let oct_literal =
@@ -50,14 +48,17 @@ let oct_literal =
 let bin_literal =
   '0' ['b' 'B'] ['0'-'1'] ['0'-'1' '_']*
 
-let integer = decimal_literal | hex_literal | oct_literal | bin_literal
+let int = decimal_literal | hex_literal | oct_literal | bin_literal
+
+(* Strings ------------------------------------------------------------------ *)
+
+let str_esc = ('\\' | '\'' | '\"')
 
 (* Alphanumerics ------------------------------------------------------------ *)
 
 let space = [' ' '\t']*
-let digit = ['0'-'9']*
 let alpha = ['a'-'z' 'A'-'Z']
-let label = (alpha | digit | '_' | '.' | '$')+
+let label = (alpha | num | '_' | '.' | '$')+
 
 (* Instructions ------------------------------------------------------------- *)
 
@@ -82,16 +83,24 @@ let inst_u = "lui" | "auipc"
 
 (* Pseudo instructions ------------------------------------------------------ *)
 
-let inst_two_regs  = "mv" | "not" | "neg" | "seqz" | "snez" | "sltz" | "sgtz"
+let inst_two_regs  = "mv"   | "not"  | "neg"  | "seqz" | "snez" | "sltz" | "sgtz"
+
 let reg_offset     = "beqz" | "bnez" | "blez" | "bgez" | "bltz" | "bgtz"
-let reg_reg_offset = "bgt" | "ble" | "bgtu" | "bleu"
+
+let reg_reg_offset = "bgt"  | "ble"  | "bgtu" | "bleu"
+
+(* Lexing ------------------------------------------------------------------- *)
 
 rule token = parse
+  (* Special characters *)
+  | ','   { COMMA               }
+  | ':'   { COLON               }
+  | '('   { LPAR                }
+  | ')'   { RPAR                }
+  | eof   { EOF                 }
+  | space { token lexbuf        }
   | '\n'  { incr line; END_LINE }
-  | ','   { COMMA }
-  | ':'   { COLON }
-  | '('   { LPAR  }
-  | ')'   { RPAR  }
+  (* Operations *)
   | "||"  { LOR   } | "&&" { LAND }
   | "|"   { BOR   } | "&"  { BAND } | "^"  { BXOR }
   | "+"   { ADD   } | "-"  { SUB  } | "<=" { LTE  } | ">=" { GTE }
@@ -99,36 +108,42 @@ rule token = parse
   | "*"   { MUL   } | "/"  { DIV  } | "%"  { REM  }
   | ">>"  { SHL   } | "<<" { SHR  }
   | "<>"
-  | "!="  { NEQ }
+  | "!="  { NEQ   }
   | "%hi" { HI    }
   | "%lo" { LO    }
-  | '#'   { one_line_comment lexbuf }
-  | "/*"  { multi_line_comment lexbuf; token lexbuf }
-  | "'\\" (['\\' '\'' '\"'] as c) "'" { INT (char_to_int32 c, char_string c) }
-  | "'"   (_ as c)                "'" { INT (char_to_int32 c, char_string c) }
-  | "'\n'"  { incr line; INT (char_to_int32 '\n', "\\n")}
-  | "'\\n'" { INT (char_to_int32 '\n', "\\n") }
-  | "'\\t'" { INT (char_to_int32 '\t', "\\t") }
-  | "'\\r'" { INT (char_to_int32 '\r', "\\r") }
-  | eof   { EOF }
-  | space { token lexbuf }
-  | integer as i { INT (Int32.of_string i, i) }
+  (* Comments *)
+  | '#'   { one_comment lexbuf }
+  | "/*"  { mul_comment lexbuf }
+  (* Literals *)
+  | "'\\" (str_esc as c) "'" { INT (char_to_int32 c, char_string c) }
+  | "'"   (      _ as c) "'" { INT (char_to_int32 c, char_string c) }
+  | "'\n'"   { incr line; INT (char_to_int32 '\n', "\\n") }
+  | "'\\n'"  { INT (char_to_int32 '\n', "\\n") }
+  | "'\\t'"  { INT (char_to_int32 '\t', "\\t") }
+  | "'\\r'"  { INT (char_to_int32 '\r', "\\r") }
+  | int as i { INT (Int32.of_string i, i)      }
+  | '\"'
+    { str lexbuf;
+      let s  = get_stored_string () in
+      res_stored_string ();
+      STRING s }
   (* Assembler directives *)
-  | ".globl" | ".global" { GLOBL !line  }
-  | ".data"              { DATA   }
-  | ".zero"              { ZERO   }
-  | ".text"              { TEXT   }
-  | ".byte"              { BYTES  }
-  | ".word"              { WORD   }
-  | ".ascii"             { ASCII  }
-  | ".asciz"             { ASCIZ  }
+  | ".globl"
+  | ".global" { GLOBL !line  }
+  | ".data"   { DATA         }
+  | ".zero"   { ZERO         }
+  | ".text"   { TEXT         }
+  | ".byte"   { BYTES        }
+  | ".word"   { WORD         }
+  | ".ascii"  { ASCII        }
+  | ".asciz"  { ASCIZ        }
   (* Instructions *)
-  | inst_b as inst { INST_B (!line, inst, find b_inst inst) }
-  | inst_i as inst { INST_I (!line, inst, find i_inst inst) }
-  | inst_j as inst { INST_J (!line, inst, find j_inst inst) }
-  | inst_r as inst { INST_R (!line, inst, find r_inst inst) }
-  | inst_s as inst { INST_S (!line, inst, find s_inst inst) }
-  | inst_u as inst { INST_U (!line, inst, find u_inst inst) }
+  | inst_b      as inst { INST_B      (!line, inst, find b_inst inst) }
+  | inst_i      as inst { INST_I      (!line, inst, find i_inst inst) }
+  | inst_j      as inst { INST_J      (!line, inst, find j_inst inst) }
+  | inst_r      as inst { INST_R      (!line, inst, find r_inst inst) }
+  | inst_s      as inst { INST_S      (!line, inst, find s_inst inst) }
+  | inst_u      as inst { INST_U      (!line, inst, find u_inst inst) }
   | inst_i_load as inst { INST_I_LOAD (!line, inst, find i_inst inst) }
   | inst_syst   as inst { INST_SYST   (!line, inst, find i_inst inst) }
   (* Pseudo instructions *)
@@ -145,33 +160,31 @@ rule token = parse
   | "ret"  { RET   !line }
   | "call" { CALL  !line }
   | "tail" { TAIL  !line }
-  (* --- *)
-  | (numeral as n) "f"  { LLABEL_F (int_of_numeral n, sprintf "%cf" n) }
-  | (numeral as n) "b"  { LLABEL_B (int_of_numeral n, sprintf "%cb" n) }
-  | (numeral as n) ":"  { LLABEL   (int_of_numeral n) }
+  (* Labels *)
+  | (num as n) "f"  { LLABEL_F (int_of_numeral n, sprintf "%cf" n) }
+  | (num as n) "b"  { LLABEL_B (int_of_numeral n, sprintf "%cb" n) }
+  | (num as n) ":"  { LLABEL   (int_of_numeral n) }
   | label as lbl { try REG (find regs lbl, lbl) with Not_found -> IDENT lbl }
-  | '\"'  { str lexbuf;
-            let s  = get_stored_string () in
-            res_stored_string ();
-            STRING s }
+  (* Errors *)
   | _ as c { raise (Assembler_error (!line, Lexing_error (string_of_char c))) }
 
-and one_line_comment = parse
-  | '\n' { incr line; END_LINE }
-  | _    { one_line_comment lexbuf }
+and one_comment = parse
+  | '\n' { incr line; END_LINE  }
+  | _    { one_comment lexbuf   }
 
-and multi_line_comment = parse
-  | '\n'  { incr line; multi_line_comment lexbuf }
-  | "*/"  { }
-  | _     { multi_line_comment lexbuf }
+and mul_comment = parse
+  | '\n'  { incr line; mul_comment lexbuf }
+  | "*/"  { token lexbuf                  }
+  | _     { mul_comment lexbuf            }
 
 and str = parse
-  | '\\' (['\\' '\'' '\"'] as c ) { store_string_char c; str lexbuf }
-  | "\\n"  { store_string_char '\n'; str lexbuf }
-  | "\\t"  { store_string_char '\t'; str lexbuf }
-  | "\\r"  { store_string_char '\r'; str lexbuf }
-  | '"'    { }
-  | "\n"   { Error.raise_unclosed !line }
-  | eof    { Error.raise_unclosed !line }
-  | _ as c { store_string_char c; str lexbuf}
+  | '\\' (str_esc as c ) { store_string_char c; str lexbuf    }
+  | "\\n"                { store_string_char '\n'; str lexbuf }
+  | "\\t"                { store_string_char '\t'; str lexbuf }
+  | "\\r"                { store_string_char '\r'; str lexbuf }
+  | '"'                  {                                    }
+  (* Errors *)
+  | "\n"   { Error.raise_unclosed !line         }
+  | eof    { Error.raise_unclosed !line         }
+  | _ as c { store_string_char c; str lexbuf    }
 

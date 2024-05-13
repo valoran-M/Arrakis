@@ -39,7 +39,7 @@ let create arch syscall debug labels : Types.state =
 let rec parse_command command args cmds state =
   let cmd = List.find (Utils.cmd_eq command) cmds in
   match args with
-  | []            -> cmd.execute args state
+  | []                -> cmd.execute args state
   | command' :: args' ->
       try parse_command command' args' cmd.sub state
       with Not_found -> cmd.execute args state
@@ -67,8 +67,7 @@ let rec start (state : Types.state) =
           state
       in
       start new_state
-  with Quit.Shell_Exit | End_of_file -> Format.printf "\n@{<fg_purple>Goodbye :)@}@."
+  with Quit.Shell_Exit | End_of_file -> ()
 
 let run (state : Types.state) (args : string list) =
   ignore (Running.run_execute args state)
-

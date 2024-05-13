@@ -12,7 +12,7 @@ let print (name : string) (desc : string list) (sub : Types.cmd list) (state : T
   List.iter (fprintf state.out_channel "%2s%s\n" "") desc;
   List.iter (fun (cmd : Types.cmd) ->
     fprintf state.out_channel "%2s@{<fg_green>*@} %-15s%2s%s\n"
-    "" cmd.name "" cmd.short_desc)
+      "" cmd.name "" cmd.short_desc)
   sub;
   state
 
@@ -50,4 +50,3 @@ let help : Types.cmd =
     long_desc   = ["Usage: help <command> <sub_command>"];
     execute     = execute;
     sub         = []; }
-

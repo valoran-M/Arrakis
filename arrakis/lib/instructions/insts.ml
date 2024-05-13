@@ -40,7 +40,7 @@ type i_instruction =
   (* arith immediate *)
   | ADDI
   | XORI | ORI  | ANDI
-  | SLLI | SRLI | SARI
+  | SLLI | SRLI | SRAI
   | SLTI | SLTIU
   (* load *)
   | LB  | LH  | LW

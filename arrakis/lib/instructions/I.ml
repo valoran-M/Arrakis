@@ -32,7 +32,7 @@ let instructions =
     ANDI,   (0b0010011l,  0x7l,   "andi"   );
     SLLI,   (0b0010011l,  0x1l,   "slli"   );
     SRLI,   (0b0010011l,  0x5l,   "srli"   );
-    SARI,   (0b0010011l,  0x5l,   "sari"   );
+    SRAI,   (0b0010011l,  0x5l,   "srai"   );
     SLTI,   (0b0010011l,  0x2l,   "slti"   );
     SLTIU,  (0b0010011l,  0x3l,   "sltiu"  );
     LB,     (0b0000011l,  0x0l,   "lb"     );

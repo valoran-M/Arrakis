@@ -57,15 +57,14 @@ let integer = decimal_literal | hex_literal | oct_literal | bin_literal
 let space = [' ' '\t']*
 let digit = ['0'-'9']*
 let alpha = ['a'-'z' 'A'-'Z']
-let ident = alpha (alpha | digit)*
-let label = '.'? (ident | '_')+
+let label = (alpha | digit | '_' | '.' | '$')+
 
 (* Instructions ------------------------------------------------------------- *)
 
 let inst_b = "beq"  | "bne" | "blt" | "bge" | "bltu" | "bgeu"
 
 let inst_i = "addi" | "xori" | "ori"  | "andi" | "slli" | "srli"
-           | "sari" | "slti" | "jalr"
+           | "srai" | "slti" | "jalr"
 
 let inst_syst = "ecall"
 
@@ -150,7 +149,7 @@ rule token = parse
   | (numeral as n) "f"  { LLABEL_F (int_of_numeral n, sprintf "%cf" n) }
   | (numeral as n) "b"  { LLABEL_B (int_of_numeral n, sprintf "%cb" n) }
   | (numeral as n) ":"  { LLABEL   (int_of_numeral n) }
-  | label as lbl    { try REG (find regs lbl, lbl) with Not_found -> IDENT lbl }
+  | label as lbl { try REG (find regs lbl, lbl) with Not_found -> IDENT lbl }
   | '\"'  { str lexbuf;
             let s  = get_stored_string () in
             res_stored_string ();

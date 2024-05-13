@@ -64,7 +64,7 @@
 
 %token NOT
 
-%token HI  LO
+%token HI LO
 
 (* Directive *)
 %token DATA
@@ -90,15 +90,12 @@
 rope(X):
 |                 { empty }
 | x=X; xs=rope(X) { concat (to_rope x) xs }
-;
 
 %inline exp_list:
 | li=separated_nonempty_list(COMMA, expr) { li }
-;
 
 %inline string_list:
 | ls=separated_nonempty_list(COMMA, STRING) { ls }
-;
 
 %inline uop:
 | SUB { Neg, "-" }
@@ -124,7 +121,6 @@ expr:
 | e1=expr bop=bop e2=expr
   { Bop (fst bop, fst e1, fst e2),
     sprintf "%s %s %s" (snd e1) (snd bop) (snd e2) }
-;
 
 pseudo_inst:
 | line=NOP { line, "nop", NOP }
@@ -248,19 +244,16 @@ basics_inst:
     let exp, exps = exp in
     let str = sprintf "%s %s, %s" id rdts exps in
     line, str, J (inst, rdt, exp) }
-;
 
 text_aux:
 | i=basics_inst   { let line, str, inst = i in Text_Instr  (line, str, inst) }
 | i=pseudo_inst   { let line, str, inst = i in Text_Pseudo (line, str, inst) }
 | l=GLOBL i=IDENT { Text_GLabel (l, i) }
-;
 
 text_line:
 | inst=text_aux END_LINE+ { inst }
 | i=IDENT COLON END_LINE* { Text_Label i  }
 | i=LLABEL      END_LINE* { Text_Label (create_label i) }
-;
 
 (* Data --------------------------------------------------------------------- *)
 
@@ -271,13 +264,11 @@ data:
 | l=GLOBL  i=IDENT        { Data_GLabel (l, i) }
 | BYTES    le=exp_list    { Data_Bytes  (List.map fst le) }
 | WORD     le=exp_list    { Data_Word   (List.map fst le) }
-;
 
 data_line:
 | d=data         END_LINE+ { d }
 | i=IDENT  COLON END_LINE* { Data_Label i }
 | i=LLABEL COLON END_LINE* { Data_Label (create_label i) }
-;
 
 (* Program ------------------------------------------------------------------ *)
 
@@ -286,9 +277,6 @@ p_aux:
 | p=p_aux DATA END_LINE* dl=rope(data_line) { concat (fst p) dl, snd p }
 | p=p_aux TEXT END_LINE* tl=rope(text_line) { fst p, concat (snd p) tl }
 | tl=rope(text_line)                        { empty, tl }
-;
 
 program:
 | END_LINE* p=p_aux EOF { { data = to_list (fst p); text = to_list (snd p) } }
-;
-

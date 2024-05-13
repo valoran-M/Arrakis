@@ -14,7 +14,6 @@
   write instruction in memory
 *)
 
-open Gutils.Integer
 open Instructions.Insts
 open Utils
 open Error
@@ -58,15 +57,8 @@ let loop_data mem _ labels addr (prog : data_line) =
   let open Memory in
   let set_str  a s = set_str  mem a s (length s) in
   let set_strz a s = set_strz mem a s (length s) in
-  let set_byte a e =
-    let v = Utils.expr_to_char e labels (-1) a in
-    set_byte  mem a (char_to_int32 v);
-    a + 1l
-  in
-  let set_word a e =
-    let v = Utils.expr_to_int32 e labels (-1) a in
-    set_int32 mem a v; a + 4l
-  in
+  let set_byte a e = set_byte  mem a (expr_to_char  e labels (-1) a); a + 1l in
+  let set_word a e = set_int32 mem a (expr_to_int32 e labels (-1) a); a + 4l in
   match prog with
   | Data_GLabel (line, label) -> Label.made_global labels label line; addr
   | Data_Label _  -> addr

@@ -80,7 +80,7 @@ let rec expr_to_int32 expr labels line addr =
 
 let expr_to_char expr labels line addr =
   let i = expr_to_int32 expr labels line addr in
-  try Char.chr (Gutils.Integer.int32_to_int i)
+  try ignore (Char.chr (Gutils.Integer.int32_to_int i)); i
   with Invalid_argument _ ->
     let open Error in
     raise (Assembler_error

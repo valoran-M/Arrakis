@@ -5,7 +5,6 @@
 ### New features
 
 * Add more assembler directives
-* Add expression [Section 6: expression](https://sourceware.org/binutils/docs-2.42/as.pdf)
 * Add multi file compilation
 
 ### Improve shell

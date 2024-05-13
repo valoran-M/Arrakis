@@ -22,24 +22,20 @@ open Program
       must be reversed.
 *)
 let translate_pseudo pseudo line code =
-  let hi_lo_imm imm = Hig imm, Bop (Sub, Low imm, Imm (-4l)) in
+  let hi_lo_imm imm = Hig imm, Bop (Add, Low imm, Imm 4l) in
 
-  let li rd imm =
-    match imm with
-    | Low _ -> [ Text_Instr (line, code, I (ADDI, rd, 0l, imm)) ]
-    | Hig _ -> [ Text_Instr (line, code, U (LUI,  rd, Hig imm)) ]
-    | Imm z ->
-      let hi, lo = hi_lo z in
-      if hi = 0l
-      then [ Text_Instr (line, code, I (ADDI, rd, 0l, Imm lo)) ]
-      else
-        let hi, lo = hi_lo_imm imm in
-        [ Text_Instr (line, code, I (ADDI, rd, 0l, lo)) ;
-          Text_Instr (line, code, U (LUI,  rd,     hi)) ]
-    | _ -> 
-      let hi, lo = hi_lo_imm imm in
+  let li rd exp =
+    match expr_const_prop exp with
+    | None ->
+      let hi, lo = hi_lo_imm exp in
       [ Text_Instr (line, code, I (ADDI, rd, 0l, lo)) ;
         Text_Instr (line, code, U (LUI,  rd,     hi)) ]
+    | Some v ->
+      let hi, lo = hi_lo v in
+      if hi = 0l
+      then [ Text_Instr (line, code, I (ADDI, rd, 0l, Imm lo)) ]
+      else [ Text_Instr (line, code, I (ADDI, rd, 0l, Imm lo)) ;
+             Text_Instr (line, code, U (LUI,  rd,     Imm hi)) ]
   in
 
   let la rd imm =
@@ -111,7 +107,7 @@ let translate_pseudo pseudo line code =
   | NOP             -> [ Text_Instr (line, code, I (ADDI, 0l, 0l, Imm 0l)) ]
   | JR rs           -> [ Text_Instr (line, code, I (JALR, 0l, rs, Imm 0l)) ]
   | JALRP rs        -> [ Text_Instr (line, code, I (JALR, 1l, rs, Imm 0l)) ]
-  | RET             -> [ Text_Instr (line, code, I (JALR, 1l, 1l, Imm 0l)) ]
+  | RET             -> [ Text_Instr (line, code, I (JALR, 0l, 1l, Imm 0l)) ]
   | LGlob (rd, symbol, load)      -> lglob rd symbol load
   | SGlob (rd, symbol, rt, store) -> sglob rd symbol rt store
   | Two_Regs (inst, rd, rs)                 -> two_reg inst rd rs

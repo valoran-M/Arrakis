@@ -284,7 +284,7 @@ exec_op:
   j .while_exec
 .end:
   # pop ra
-lw ra, 0(sp)
+  lw ra, 0(sp)
   addi sp, sp, 4
   ret
 

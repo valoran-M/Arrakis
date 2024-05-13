@@ -97,7 +97,7 @@ main:
 
 .globl _start
 _start:
-  li      a0, 3
+  li      a0, 10
   call    main
   li      a7, 93
   ecall

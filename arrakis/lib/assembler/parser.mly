@@ -117,10 +117,10 @@ expr:
 | HI LPAR e=expr RPAR  { Hig (fst e), sprintf "%%hi(%s)" (snd e) }
 | LO LPAR e=expr RPAR  { Low (fst e), sprintf "%%lo(%s)" (snd e) }
 |    LPAR e=expr RPAR  { e }
-| uop=uop e=expr       { Uop (fst uop, fst e), sprintf "%s %s" (snd uop) (snd e) }
+| uop=uop e=expr       { Uop (fst uop, fst e), sprintf "%s%s" (snd uop) (snd e) }
 | e1=expr bop=bop e2=expr
   { Bop (fst bop, fst e1, fst e2),
-    sprintf "%s %s %s" (snd e1) (snd bop) (snd e2) }
+    sprintf "%s%s%s" (snd e1) (snd bop) (snd e2) }
 
 pseudo_inst:
 | line=NOP { line, "nop", NOP }

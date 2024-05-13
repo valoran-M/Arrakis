@@ -77,7 +77,6 @@ let rec expr_to_int32 expr labels line addr =
     eval_binop op (expr_to_int32 e1 labels line addr)
                   (expr_to_int32 e2 labels line addr)
 
-
 let expr_to_char expr labels line addr =
   let i = expr_to_int32 expr labels line addr in
   try ignore (Char.chr (Gutils.Integer.int32_to_int i)); i
@@ -85,4 +84,21 @@ let expr_to_char expr labels line addr =
     let open Error in
     raise (Assembler_error
       (line, (Parsing_error (Format.sprintf "%ld is not in [0,255]" i))))
+
+let (>>=) r f =
+  match r with
+  | None -> None
+  | Some r -> f r
+
+let rec expr_const_prop expr =
+  match expr with
+  | Adr | Lbl _ -> None
+  | Imm n -> Some n
+  | Hig e -> expr_const_prop e >>= fun r -> Some (fst (hi_lo r))
+  | Low e -> expr_const_prop e >>= fun r -> Some (snd (hi_lo r))
+  | Uop (op, e) -> expr_const_prop e >>= fun r -> Some (eval_unop op r)
+  | Bop (op, e1, e2) ->
+    expr_const_prop e1 >>= fun r1 ->
+    expr_const_prop e2 >>= fun r2 ->
+    Some (eval_binop op r1 r2)
 

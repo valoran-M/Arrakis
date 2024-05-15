@@ -75,7 +75,7 @@ t.part.0:
   lw      s1, 20(sp)
   mv      a0, s2
   lw      s2, 16(sp)
-  addi    sp, sp,32
+  addi    sp, sp, 32
   jr      ra
 t:
   beq     a0, zero, .L13

@@ -20,7 +20,7 @@ let ( * ) = Int32.mul
 (* Progam ------------------------------------------------------------------  *)
 
 let print_program_header channel =
-  fprintf channel "%3s | %2s%2s @{<bold>%-10s@} | @{<bold>%-20s@} |\n"
+  fprintf channel "%3s | %2s%2s @{<bold>%-10s@} | @{<bold>%-35s@}\n"
     "" "" "" "Address" "Code"
 let print_addr (state : Types.state) addr pc code =
     let breakpoint_str  =
@@ -29,10 +29,10 @@ let print_addr (state : Types.state) addr pc code =
     in
     let addr_pc   = if addr = pc then ">" else ""              in
     let addr_str  = sprintf "0x%08lx" addr                     in
-    let code_str   = print_code state.arch code                in
+    let code_str  = print_code state.arch code                 in
     let linenb, _ = Assembler.Debug.get_line state.debug addr  in
 
-    fprintf state.out_channel "%03d | %2s%2s %10s | %20s |\n"
+    fprintf state.out_channel "%03d | %2s%2s %10s | %-35s\n"
       linenb
       breakpoint_str
       addr_pc
@@ -98,10 +98,10 @@ let print_line (state : Types.state) line_address =
     let value = Memory.get_byte state.arch.memory addr in
     fprintf state.out_channel "  %02lx" value
   done;
-  fprintf state.out_channel " |\n"
+  fprintf state.out_channel " \n"
 
 let print_memory (state : Types.state) start size =
-  fprintf state.out_channel "@{<bold>%-10s@} |  @{<bold>+0  +1  +2  +3@} |\n"
+  fprintf state.out_channel "@{<bold>%-10s@} |  @{<bold>+0  +1  +2  +3@}\n"
     "Address";
   let line_address = ref (Int32.logand start (Int32.lognot line_size32)) in
   for _ = 1 to size do
@@ -157,12 +157,12 @@ let regs = [|
 |]
 
 let print_reg_header (state : Types.state) =
-  fprintf state.out_channel "@{<bold>%-9s@} | @{<bold>%-10s@} |\n" "Name" "Value"
+  fprintf state.out_channel "@{<bold>%-9s@} | @{<bold>%-10s@}\n" "Name" "Value"
 
 let info_all_regs (state : Types.state) =
   print_reg_header state;
   for i = 0 to 31 do
-    fprintf state.out_channel "%s | 0x%08x |\n" regs.(i)
+    fprintf state.out_channel "%s | 0x%08x\n" regs.(i)
       (int32_to_int (Cpu.get_reg state.arch.cpu i))
   done
 
@@ -171,14 +171,14 @@ let info_list_regs (state : Types.state) =
   List.iter (fun reg ->
     try
       if reg = "pc" then
-        fprintf state.out_channel "pc | 0x%08x |\n"
+        fprintf state.out_channel "pc | 0x%08x\n"
           (int32_to_int (Cpu.get_pc state.arch.cpu))
       else
         let i =
           try Int32.to_int (Assembler.Regs.of_string reg)
           with _ -> int_of_string reg
         in
-        fprintf state.out_channel "%s | 0x%08x |\n"
+        fprintf state.out_channel "%s | 0x%08x\n"
           regs.(i) (int32_to_int (Cpu.get_reg state.arch.cpu i))
     with _ ->
       fprintf state.out_channel "%a @{<fg_yellow>'%s'@} isn't a register@." error () reg

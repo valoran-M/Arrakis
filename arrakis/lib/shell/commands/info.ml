@@ -20,8 +20,8 @@ let ( * ) = Int32.mul
 (* Progam ------------------------------------------------------------------  *)
 
 let print_program_header channel =
-  fprintf channel "%3s | %2s%2s @{<bold>%-10s@} | @{<bold>%-35s@}\n"
-    "" "" "" "Address" "Code"
+  fprintf channel "%3s | %2s%2s @{<bold>%-10s@} | @{<bold>Code@}\n"
+    "" "" "" "Address"
 let print_addr (state : Types.state) addr pc code =
     let breakpoint_str  =
       try  sprintf "%02d" (Hashtbl.find state.breakpoints addr)
@@ -32,7 +32,7 @@ let print_addr (state : Types.state) addr pc code =
     let code_str  = print_code state.arch code                 in
     let linenb, _ = Assembler.Debug.get_line state.debug addr  in
 
-    fprintf state.out_channel "%03d | %2s%2s %10s | %-35s\n"
+    fprintf state.out_channel "%03d | %2s%2s %10s | %s\n"
       linenb
       breakpoint_str
       addr_pc

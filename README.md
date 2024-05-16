@@ -44,4 +44,3 @@ For contributions, please take a look at [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 ## ⚖️  License
 
 Arrakis is distributed under the [CeCILL 2.1 license](./LICENSE).
-

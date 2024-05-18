@@ -55,19 +55,19 @@ let print_code _arch code =
   (* R *)
   | 0b0110011l ->
     let inst = R.decode code in
-    Format.sprintf "%s %s, %s, %s"
+    Format.sprintf "%-6s %s, %s, %s"
       (Hashtbl.find r_to_string (inst.fc3, inst.fc7))
       (reg_to_str inst.rdt) (reg_to_str inst.rs1) (reg_to_str inst.rs2)
   (* I *)
   | 0b0010011l | 0b1100111l | 0b1110011l ->
     let inst = I.decode code in
-    Format.sprintf "%s %s, %s, %ld"
+    Format.sprintf "%-6s %s, %s, %ld"
       (Hashtbl.find i_to_string (opcode, inst.fc3))
       (reg_to_str inst.rdt) (reg_to_str inst.rs1)
       inst.imm
   | 0b0000011l ->
     let inst = I.decode code in
-    Format.sprintf "%s %s, 0x%lx(%s)"
+    Format.sprintf "%-6s %s, 0x%lx(%s)"
       (Hashtbl.find i_to_string (opcode, inst.fc3))
       (reg_to_str inst.rdt)
       inst.imm
@@ -75,7 +75,7 @@ let print_code _arch code =
   (* S *)
   | 0b0100011l ->
     let inst = S.decode code in
-    Format.sprintf "%s %s, 0x%lx(%s)"
+    Format.sprintf "%-6s %s, 0x%lx(%s)"
       (Hashtbl.find s_to_string inst.fc3)
       (reg_to_str inst.rs2)
       inst.imm
@@ -83,14 +83,14 @@ let print_code _arch code =
   (* B *)
   | 0b1100011l  ->
     let inst = B.decode code in
-    Format.sprintf "%s %s, %s, 0x%lx"
+    Format.sprintf "%-6s %s, %s, 0x%lx"
       (Hashtbl.find b_to_string inst.fc3)
       (reg_to_str inst.rs1) (reg_to_str inst.rs2)
       inst.imm
   (* U *)
   | 0b0110111l | 0b0010111l  ->
     let inst = U.decode code in
-    Format.sprintf "%s %s, %ld" (Hashtbl.find u_to_string opcode)
+    Format.sprintf "%-6s %s, %ld" (Hashtbl.find u_to_string opcode)
       (reg_to_str inst.rdt) (Int32.shift_right_logical inst.imm 12)
   (* J *)
   | 0b1101111l   ->
@@ -99,6 +99,6 @@ let print_code _arch code =
       if inst.imm < 0l then Format.sprintf "-0x%lx" (Int32.neg inst.imm)
                        else Format.sprintf " 0x%lx" inst.imm
     in
-    Format.sprintf "%s %s" (Hashtbl.find j_to_string opcode) imm
+    Format.sprintf "%-6s %s" (Hashtbl.find j_to_string opcode) imm
   | _ -> raise Invalid_instruction
 

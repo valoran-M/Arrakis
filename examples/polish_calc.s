@@ -23,15 +23,15 @@
 # a0 : register to print
 print_reg:
   la a1, print
-  addi a1, a1, 19
-  li a2, 2
+  addi a1, a1, 20
+  li a2, 1
   li t1, 10
   .while_print_reg:
+    addi a1, a1, -1
     rem t2, a0, t1
-    addi t2, t2, 48
+    addi t2, t2, '0'
     sb t2, 0(a1)
     div a0, a0, t1
-    addi a1, a1, -1
     addi a2, a2, 1
     bnez a0, .while_print_reg
   li a7, 64
@@ -247,7 +247,7 @@ exec_op:
   xori t0, t1, 'q'      # if t1 = 'q'
   beqz t0, .end
 
-  xori t0, t1, 'p'      # if t1 = 'q'
+  xori t0, t1, 'p'      # if t1 = 'p'
   beqz t0, .print_op
 
   j .continue_exec

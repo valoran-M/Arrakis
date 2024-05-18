@@ -1,0 +1,2 @@
+dune exec arrakis -- ./examples/nqueens.s --no-color --run
+

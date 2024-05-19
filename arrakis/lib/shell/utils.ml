@@ -18,5 +18,8 @@ let arg_to_int32 (state : Types.state) arg =
       | Some s -> s
       | None   -> Int32.of_string arg
 
-
+let get_size labels label default =
+  match Assembler.Label.get_size_opt labels label with
+  | Some s -> s
+  | None   -> default
 

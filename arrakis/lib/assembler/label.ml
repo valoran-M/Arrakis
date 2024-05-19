@@ -19,6 +19,7 @@ let ( + ) = Int32.add
 let ( - ) = Int32.sub
 
 type t = {
+  label_size       : (string, int)   Hashtbl.t;
   label_to_address : (string, int32) Hashtbl.t;
   global_label     : (string, int32) Hashtbl.t;
 }
@@ -42,48 +43,60 @@ let made_global (labels : t) label line =
 let get_global (labels : t) label =
   Hashtbl.find_opt labels.global_label label
 
+let set_size (labels : t) label size =
+  Hashtbl.replace labels.label_size label size
+
+let get_size     (labels : t) label = Hashtbl.find     labels.label_size label
+let get_size_opt (labels : t) label = Hashtbl.find_opt labels.label_size label
+
 (* Assembly ----------------------------------------------------------------- *)
 
-let rec get_label_address_text (text : Program.text) labels addr =
+let get_addr_directive (directive : Program.global_directive) addr =
+  match directive with
+  | _ -> addr
+
+let rec get_label_text (text : Program.text) labels addr =
   match text with
   | [] -> ()
-(* No more pseudo instructions after remove_pseudo *)
-  | Text_Pseudo _ :: _ -> assert false
-  | Text_Instr  _ :: l -> get_label_address_text l labels (addr + 0x4l)
-  | Text_GLabel _ :: l -> get_label_address_text l labels addr
+  | Text_Instr  _ :: l -> get_label_text l labels (addr + 0x4l)
+  | Text_Direc  d :: l -> get_label_text l labels (get_addr_directive d addr)
   | Text_Label  s :: l ->
     add_address labels s addr;
-    get_label_address_text l labels addr
+    get_label_text l labels addr
+(* No more pseudo instructions after remove_pseudo *)
+  | Text_Pseudo _ :: _ -> assert false
 
-let rec get_label_address_data (data : Program.data) labels addr =
+let rec get_label_data (data : Program.data) labels addr =
   let open String in
   let open Int32 in
   match data with
   | [] -> ()
   | Data_Bytes bs :: l ->
     let new_addr = addr + Int32.of_int (List.length bs) in
-    get_label_address_data l labels new_addr
+    get_label_data l labels new_addr
   | Data_Ascii ls :: l ->
     let length = List.fold_left (fun l s -> of_int (length s) + l)  0l ls in
-    get_label_address_data l labels (addr + length)
+    get_label_data l labels (addr + length)
   | Data_Asciz ls :: l ->
     let length = List.fold_left (fun l s -> of_int (length s) + l + 1l) 0l ls in
-    get_label_address_data l labels (addr + length)
+    get_label_data l labels (addr + length)
   | Data_Word lw :: l ->
     let offset = 0x4l * Int32.of_int (List.length lw) in
-    get_label_address_data l labels (addr + offset)
-  | Data_Zero nz     :: l -> get_label_address_data l labels (addr+4l*nz)
-  | Data_GLabel _    :: l -> get_label_address_data l labels addr
-  | Data_Label label :: l ->
-    add_address labels label addr;
-    get_label_address_data l labels addr
+    get_label_data l labels (addr + offset)
+  | Data_Zero nz  :: l -> get_label_data l labels (addr+4l*nz)
+  | Data_Direc d  :: l -> get_label_data l labels (get_addr_directive d addr)
+  | Data_Label lb :: l ->
+    add_address labels lb addr;
+    get_label_data l labels addr
 
 let get_label_address (prog : Program.t) =
   let open Arch.Segment in
   let labels =
-    { label_to_address = Hashtbl.create 16;
+    { label_size       = Hashtbl.create 8;
+      label_to_address = Hashtbl.create 16;
       global_label     = Hashtbl.create 16; }
   in
-  get_label_address_data prog.data labels data_begin;
-  get_label_address_text prog.text labels text_begin;
+  get_label_data prog.data labels data_begin;
+  get_label_text prog.text labels text_begin;
   labels
+

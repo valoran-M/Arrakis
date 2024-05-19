@@ -39,10 +39,18 @@ let translate (instruction : basics_inst) addr line labels =
     let imm = expr_to_int32_rel imm labels line addr in
     Instructions.J.code inst rd imm
 
+let exec_directive directive labels addr =
+  match directive with
+  | Glob_GLabel (line, label) -> Label.made_global labels label line; addr
+  | Glob_Size (line, label, expr) ->
+    let size = Int32.to_int (Utils.expr_to_int32 expr labels line addr) in
+    Label.set_size labels label size;
+    addr
+
 let loop_text mem debug labels addr prog  =
   match prog with
-  | Text_Label  _             -> addr
-  | Text_GLabel (line, label) -> Label.made_global labels label line; addr
+  | Text_Label _ -> addr
+  | Text_Direc d -> exec_directive d labels addr
   | Text_Instr  (l, s, inst)  ->
     Debug.add_addr_to_line debug addr l s;
     Debug.add_line_to_addr debug l addr;
@@ -60,7 +68,7 @@ let loop_data mem _ labels addr (prog : data_line) =
   let set_byte a e = set_byte  mem a (expr_to_char  e labels (-1) a); a + 1l in
   let set_word a e = set_int32 mem a (expr_to_int32 e labels (-1) a); a + 4l in
   match prog with
-  | Data_GLabel (line, label) -> Label.made_global labels label line; addr
+  | Data_Direc d  -> exec_directive d labels addr
   | Data_Label _  -> addr
   | Data_Zero nz  -> Memory.set_32b_zero mem addr nz; addr + 4l * nz
   | Data_Ascii ls -> List.fold_left set_str  addr ls

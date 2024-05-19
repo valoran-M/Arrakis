@@ -131,6 +131,7 @@ rule token = parse
   (* Assembler directives *)
   | ".globl"
   | ".global" { GLOBL !line  }
+  | ".size"   { SIZE  !line  }
   | ".data"   { DATA         }
   | ".zero"   { ZERO         }
   | ".text"   { TEXT         }

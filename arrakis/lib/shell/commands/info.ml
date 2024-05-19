@@ -58,15 +58,15 @@ let execute_info_code args (state : Types.state) =
   (try
     match args with
     | [] -> info_code state pc 10 4
-    | adr :: l ->
-        let adr = Utils.arg_to_int32 state adr in
+    | ladr :: l ->
+        let adr = Utils.arg_to_int32 state ladr in
         match l with
-        | []          -> info_code state adr 10 0
-        | offset :: l ->
-            let offset = int_of_string offset in
+        | [] -> info_code state adr (Utils.get_size state.labels ladr 10 / 4) 0
+        | off :: l ->
+            let offset = int_of_string off in
             match l with
-            | []           -> info_code state adr offset 0
-            | noffset :: _ -> info_code state adr offset (int_of_string noffset)
+            | []        -> info_code state adr offset 0
+            | noff :: _ -> info_code state adr offset (int_of_string noff)
   with _ -> raise (Shell_error Bad_Usage));
   state
 

@@ -38,6 +38,7 @@ print_reg:
   li a0, 1
   ecall
   ret
+.size print_reg, .-print_reg
 
 # test if a character is a digit
 # a0 : character
@@ -54,6 +55,7 @@ is_digit:
 .false_digit:
   li a0, -1
   ret
+.size is_digit, .-is_digit
 
 # Stack ########################################################################
 
@@ -62,6 +64,7 @@ init_stack:
   la s1, stack
   li s2, 0
   ret
+.size init_stack, .-init_stack
 
 # Push first argument in stack
 # a0 : argument to push
@@ -78,6 +81,7 @@ push_stack:
 .stack_full:
   li a0, 0
   ret
+.size push_stack, .-push_stack
 
 # Pop first argument of the stack
 #
@@ -94,6 +98,7 @@ pop_stack:
 .stack_empty_pop:
     li a0, 0
     ret
+.size pop_stack, .-pop_stack
 
 # Get first element of the stack
 #
@@ -108,6 +113,7 @@ first_stack:
 .stack_empty_first:
   li a0, 0
   ret
+.size first_stack, .-first_stack
 
 # Operator #####################################################################
 
@@ -126,6 +132,7 @@ exec_add:
   lw ra, 0(sp)
   addi sp, sp, 4
   ret
+.size exec_add, .-exec_add
 
 exec_sub:
   # push ra
@@ -142,6 +149,7 @@ exec_sub:
   lw ra, 0(sp)
   addi sp, sp, 4
   ret
+.size exec_sub, .-exec_sub
 
 exec_mult:
   # push ra
@@ -158,6 +166,7 @@ exec_mult:
   lw ra, 0(sp)
   addi sp, sp, 4
   ret
+.size exec_mult, .-exec_mult
 
 # input ########################################################################
 
@@ -178,6 +187,7 @@ skip_space:
   j .while_skip_space
 .end_skip_space:
   ret
+.size skip_space, .-skip_space
 
 # Read line and store then to line address (.data)
 #
@@ -190,6 +200,7 @@ get_line:
   lw a2, line_size
   ecall
   ret
+.size get_line, .-get_line
 
 # Read line for get an integer read on (s3) string
 # a0 : first digit
@@ -216,6 +227,7 @@ get_digit:
   addi sp, sp, 4
   mv a0, a1
   ret
+.size get_digit, .-get_digit
 
 exec_op:
   # push ra
@@ -287,6 +299,7 @@ exec_op:
   lw ra, 0(sp)
   addi sp, sp, 4
   ret
+.size exec_op, .-exec_op
 
 # Main #########################################################################
 
@@ -300,4 +313,5 @@ _start:
   li a7, 93
   li a0, 0
   ecall
+.size _start, .-_start
 

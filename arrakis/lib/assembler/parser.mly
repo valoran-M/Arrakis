@@ -76,7 +76,9 @@
 %token ASCII
 %token ASCIZ
 %token WORD
+
 %token <int> GLOBL
+%token <int> SIZE
 
 %left LOR LAND
 %nonassoc NOT
@@ -124,6 +126,10 @@ expr:
 | e1=expr bop=bop e2=expr
   { Bop (fst bop, fst e1, fst e2),
     sprintf "%s%s%s" (snd e1) (snd bop) (snd e2) }
+
+directive:
+| l=GLOBL i=IDENT        { Glob_GLabel (l, i)    }
+| l=SIZE  i=IDENT COMMA e=expr { Glob_Size   (l, i, fst e) }
 
 pseudo_inst:
 | line=NOP { line, "nop", NOP }
@@ -251,7 +257,7 @@ basics_inst:
 text_aux:
 | i=basics_inst   { let line, str, inst = i in Text_Instr  (line, str, inst) }
 | i=pseudo_inst   { let line, str, inst = i in Text_Pseudo (line, str, inst) }
-| l=GLOBL i=IDENT { Text_GLabel (l, i) }
+| d=directive     { Text_Direc d }
 
 text_line:
 | inst=text_aux END_LINE+ { inst }
@@ -264,9 +270,9 @@ data:
 | ASCII    s=string_list  { Data_Ascii  s }
 | ASCIZ    s=string_list  { Data_Asciz  s }
 | ZERO     i=INT          { Data_Zero   (fst i) }
-| l=GLOBL  i=IDENT        { Data_GLabel (l, i) }
 | BYTES    le=exp_list    { Data_Bytes  (List.map fst le) }
 | WORD     le=exp_list    { Data_Word   (List.map fst le) }
+| d=directive             { Data_Direc  d }
 
 data_line:
 | d=data         END_LINE+ { d }

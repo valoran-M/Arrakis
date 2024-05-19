@@ -13,5 +13,9 @@ val get_address_opt : t -> string -> int32 option
 val made_global     : t -> string -> int   -> unit
 val get_global      : t -> string -> int32 option
 
+val set_size      : t -> string -> int -> unit
+val get_size      : t -> string -> int
+val get_size_opt  : t -> string -> int option
+
 val get_label_address : Program.t -> t
 

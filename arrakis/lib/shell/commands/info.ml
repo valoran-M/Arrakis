@@ -132,9 +132,9 @@ let info_memory : Types.cmd =
     short_desc  = "Print memory segment";
     long_desc   = [
               "Usage: info memory <start> <size> <negative size>";
-              "<start>   Either an adress or a register containing an adress";
-      sprintf "<size=%d> Size of the chunck of memory to print (forward)" size_default;
-              "<nsize=0> Size of the chunck of memory to print (backward)";
+              "<start>   Either an address or a register containing an address";
+      sprintf "<size=%d> Size of the chunk of memory to print (forward)" size_default;
+              "<nsize=0> Size of the chunk of memory to print (backward)";
     ];
     execute     = execute_info_memory;
     sub         = []; }

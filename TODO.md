@@ -18,7 +18,6 @@
   clearly see what is before and what is after
 * Add feedback for command 's', 'c', 'r'...
 * Add an error when program is not running and running 'c' or 's'
-* Allow using `info memory _start` or more generally printing with labels
 
 ## ??? (Future work without attributed planned version)
 

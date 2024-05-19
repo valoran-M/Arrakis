@@ -47,8 +47,9 @@ let one_step (state : Types.state) =
 
 (* Take n step forward *)
 let rec n_step n state =
-  if n > 0 then n_step (n-1) (one_step state)
-           else state
+  if n > 0
+  then n_step (n-1) (one_step state)
+  else state
 
 (* Take one step backward *)
 
@@ -63,8 +64,42 @@ let one_bstep (state : Types.state) =
 
 (* Take n step backward *)
 let rec n_bstep n state =
-  if n > 0 then n_bstep (n-1) (one_bstep state)
-           else state
+  if n > 0
+  then n_bstep (n-1) (one_bstep state)
+  else state
+
+let is_call code =
+  if Int32.logand code 0b1111111l <> 0b1100111l
+  then false
+  else
+    let decode = Instructions.I.decode code in
+    (* JALR *)
+    decode.fc3 = 0x0 &&
+    ((decode.rs1 = 1 && decode.rdt = 1) ||
+     (decode.rs1 = 6 && decode.rdt = 0))
+
+let is_ret code =
+  if Int32.logand code 0b1111111l <> 0b1100111l
+  then false
+  else
+    let decode = Instructions.I.decode code in
+    (* RET *)
+    decode.fc3 = 0x0 && decode.rs1 = 1 && decode.rdt = 0
+
+let rec pass_function depth (state : Types.state) =
+  if not state.program_run then state else
+  let arch = state.arch in
+  let code = Arch.Memory.get_int32 arch.memory (Arch.Cpu.get_pc arch.cpu) in
+  if is_call code
+  then pass_function (depth + 1) (one_step state)
+  else if is_ret code then
+    if depth = 1
+    then one_step state
+    else pass_function (depth - 1) (one_step state)
+  else
+    if depth = 0
+    then one_step state
+    else pass_function depth (one_step state)
 
 (* Step ---------------------------------------------------------------------- *)
 
@@ -72,8 +107,8 @@ let step_execute args (state : Types.state) =
   match args with
   | []         -> one_step state
   | count :: _ ->
-      try       n_step (int_of_string count) state
-      with _ -> raise (Shell_error (Bad_Usage))
+    try n_step (int_of_string count) state
+    with _ -> raise (Shell_error (Bad_Usage))
 
 let step : Types.cmd =
   { long_form  = "step";
@@ -84,22 +119,23 @@ let step : Types.cmd =
     execute    = step_execute;
     sub        = []; }
 
-(* Continue --------------------------------------------------------------------- *)
+(* Continue ----------------------------------------------------------------- *)
 
 let rec next_breakpoint (first : bool) (state : Types.state) =
-    let addr = Arch.Cpu.get_pc state.arch.cpu in
-    if state.program_run && (first || not (Hashtbl.mem state.breakpoints addr))
-    then next_breakpoint false (one_step state)
-    else state
+  let addr = Arch.Cpu.get_pc state.arch.cpu in
+  if state.program_run && (first || not (Hashtbl.mem state.breakpoints addr))
+  then next_breakpoint false (one_step state)
+  else state
 
 let rec n_next_breakpoint n state =
-  if n > 0 then n_next_breakpoint (n-1) (next_breakpoint true state)
-           else state
+  if n > 0
+  then n_next_breakpoint (n-1) (next_breakpoint true state)
+  else state
 
 let continue_execute args (state : Types.state) =
   match args with
   | [count]  -> (
-    try       n_next_breakpoint (int_of_string count) state
+    try n_next_breakpoint (int_of_string count) state
     with _ -> raise (Shell_error Bad_Usage))
   | [] -> next_breakpoint true state
   | _ -> raise (Shell_error Bad_Usage)
@@ -113,21 +149,34 @@ let continue : Types.cmd =
     execute     = continue_execute;
     sub         = []; }
 
+(* Next --------------------------------------------------------------------- *)
+
+let run_next _ (state : Types.state) =
+  pass_function 0 state
+
+let next: Types.cmd =
+  { long_form   = "next";
+    short_form  = "n";
+    name        = "(n)ext";
+    short_desc  = "Like s, but it does not step into functions";
+    long_desc   = [
+      "Like s, but it does not step into functions"
+    ];
+    execute     = run_next;
+    sub         = [] }
+
 (* Finish ------------------------------------------------------------------- *)
 
-let rec finish_execute args (state : Types.state) =
-  if state.program_run then
-    let new_state = step_execute args state in
-    finish_execute args new_state
-  else state
+let finish_execute _ (state : Types.state) =
+  pass_function 1 state
 
 let finish: Types.cmd =
   { long_form   = "finish";
     short_form  = "f";
     name        = "(f)inish";
-    short_desc  = "Run code until the end";
+    short_desc  = "Continue until the current function is finished";
     long_desc   = [
-      "Run the program until an exit syscall is reach or pc is out of bound"
+      "Run the program until an ret instruction is reach or pc is out of bound"
     ];
     execute     = finish_execute;
     sub         = [] }
@@ -138,8 +187,8 @@ let pre_execute args (state : Types.state) =
   match args with
   | []         -> one_bstep state
   | count :: _ ->
-      try       n_bstep (int_of_string count) state
-      with _ -> raise (Shell_error (Bad_Usage))
+    try n_bstep (int_of_string count) state
+    with _ -> raise (Shell_error (Bad_Usage))
 
 let previous : Types.cmd =
   { long_form   = "previous";
@@ -172,3 +221,4 @@ let run : Types.cmd =
     ];
     execute     = run_execute;
     sub         = []; }
+

@@ -74,7 +74,6 @@ let (<<)  x y = Int32.shift_left          x (Int32.to_int y)
 let (>>)  x y = Int32.shift_right         x (Int32.to_int y)
 let (>>>) x y = Int32.shift_right_logical x (Int32.to_int y)
 
-let (=) = Int32.equal
 let (<>)  x y = not (Int32.equal x y)
 
 let (<.)  x y = Int32.unsigned_compare x y <  0

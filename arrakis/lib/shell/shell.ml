@@ -12,6 +12,7 @@ open Gutils.Print
 let all_commands = [
   Running.finish;
   Running.previous;
+  Running.next;
   Running.step;
   Running.run;
   Running.continue;

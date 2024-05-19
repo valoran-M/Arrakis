@@ -24,6 +24,7 @@
 - Add multi line comments
 - Support for GNU expressions
 - Add `.size` directive for `info` command
+- Add `next` command (Like `step` but don't step into functions)
 
 # 1.0.0 (2023-19-9)
 

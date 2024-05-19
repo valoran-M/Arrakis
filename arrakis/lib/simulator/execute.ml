@@ -38,13 +38,13 @@ let exec (instruction : Int32.t) (arch : Riscv.t)  =
 
 let exec_instruction (arch : Riscv.t) (history : History.t) =
   let open History in
-  let code    = Memory.get_int32 arch.memory (Cpu.get_pc arch.cpu) in
-  let last_pc = Cpu.get_pc arch.cpu in
+  let code = Memory.get_int32 arch.memory (Cpu.get_pc arch.cpu) in
+  let l_pc = Cpu.get_pc arch.cpu in
 
   try
     if code = 0l then Zero
     else
       let last = exec code arch in
-      Continue (Cpu.get_pc arch.cpu, add_history last_pc last history)
-  with I.Syscall -> Sys_call (add_history last_pc Change_Nothing history)
+      Continue (Cpu.get_pc arch.cpu, add_history l_pc last history)
+  with I.Syscall -> Sys_call (add_history l_pc Change_Nothing history)
 

@@ -6,7 +6,7 @@
 (******************************************************************************)
 
 val create : Arch.Riscv.t -> Syscall.Types.syscall -> Assembler.Debug.t ->
-  Assembler.Label.t -> Types.state
+  Assembler.Label.t -> bool -> Types.state
 
 val run    : Types.state -> string list -> unit
 val start  : Types.state -> unit

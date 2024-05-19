@@ -5,6 +5,7 @@
 (* It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>    *)
 (******************************************************************************)
 
+exception History_Not_Activate
 exception History_Empty
 
 type change =
@@ -16,8 +17,8 @@ type change =
 
 type t
 
-val create_history : unit -> t
-  (** [create_history ()] create new empty history *)
+val create_history : bool -> t
+  (** [create_history run] create new empty history *)
 
 val add_history : int32 -> change -> t -> t
   (** [add_history pc change history] Add a new item to the history *)

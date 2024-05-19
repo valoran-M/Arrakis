@@ -21,7 +21,7 @@ let all_commands = [
   Quit.quit;
 ]
 
-let create arch syscall debug labels : Types.state =
+let create arch syscall debug labels run : Types.state =
   { (* Shell state *)
     out_channel  = Format.std_formatter;
     cmds         = all_commands;
@@ -30,7 +30,7 @@ let create arch syscall debug labels : Types.state =
     program_run  = false;
 
     (* Program state *)
-    history = History.create_history ();
+    history = History.create_history run;
     arch;
     debug;
     labels;

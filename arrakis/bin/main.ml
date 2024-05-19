@@ -29,7 +29,7 @@ let main =
     let pc = Assembler.Label.get_global labels "_start" in
 
     let arch  = Arch.Riscv.init pc mem in
-    let shell = Shell.create arch syscall debug labels in
+    let shell = Shell.create arch syscall debug labels (Option.is_some run) in
 
     match run with
     | Some args -> Shell.run   shell args

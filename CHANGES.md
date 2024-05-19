@@ -23,6 +23,7 @@
 - Support for local labels
 - Add multi line comments
 - Support for GNU expressions
+- Add `.size` directive for `info` command
 
 # 1.0.0 (2023-19-9)
 

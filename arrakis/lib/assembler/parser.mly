@@ -66,6 +66,8 @@
 
 %token HI LO
 
+%token POINT
+
 (* Directive *)
 %token DATA
 %token ZERO
@@ -110,6 +112,7 @@ rope(X):
 | SHL { Shl, ">>" } | SHR  { Shr,  "<<" }
 
 expr:
+| POINT                { Adr, "." }
 | l=IDENT              { Lbl l, l }
 | i=INT                { Imm (fst i), snd i }
 | i=LLABEL_F           { Lbl (label_f (fst i)), snd i }

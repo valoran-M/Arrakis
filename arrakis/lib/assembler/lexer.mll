@@ -111,6 +111,7 @@ rule token = parse
   | "!="  { NEQ   }
   | "%hi" { HI    }
   | "%lo" { LO    }
+  | "."   { POINT }
   (* Comments *)
   | '#'   { one_comment lexbuf }
   | "/*"  { mul_comment lexbuf }
@@ -164,7 +165,7 @@ rule token = parse
   | (num as n) "f"  { LLABEL_F (int_of_numeral n, sprintf "%cf" n) }
   | (num as n) "b"  { LLABEL_B (int_of_numeral n, sprintf "%cb" n) }
   | (num as n) ":"  { LLABEL   (int_of_numeral n) }
-  | label as lbl { try REG (find regs lbl, lbl) with Not_found -> IDENT lbl }
+  | label as lbl    { try REG (find regs lbl, lbl) with Not_found -> IDENT lbl }
   (* Errors *)
   | _ as c { raise (Assembler_error (!line, Lexing_error (string_of_char c))) }
 

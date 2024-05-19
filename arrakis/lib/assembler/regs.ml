@@ -23,5 +23,6 @@ let () =
     Hashtbl.add regs ("x" ^ (Int.to_string i)) (Int32.of_int i)
   done
 
-let of_string =
-  Hashtbl.find regs
+let of_string     = Hashtbl.find     regs
+let of_string_opt = Hashtbl.find_opt regs
+

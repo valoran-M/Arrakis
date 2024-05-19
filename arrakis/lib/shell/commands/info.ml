@@ -39,12 +39,12 @@ let print_addr (state : Types.state) addr pc code =
       addr_str
       code_str
 
-let info_code (state : Types.state) offset noffset =
-  let pc = Cpu.get_pc state.arch.cpu in
+let info_code (state : Types.state) iaddr offset noffset =
+  let pc = Arch.Cpu.get_pc state.arch.cpu in
   try
     print_program_header state.out_channel;
     for i=(-noffset) to offset-1 do
-      let addr = (pc + Int32.of_int i * 0x4l) in
+      let addr = (iaddr + Int32.of_int i * 0x4l) in
       if addr >= 0l then
         let code = Memory.get_int32 state.arch.memory addr in
         if code = 0l
@@ -54,17 +54,20 @@ let info_code (state : Types.state) offset noffset =
   with Break -> ()
 
 let execute_info_code args (state : Types.state) =
-  begin try match args with
-    | offset :: [] ->
-        let offset  = int_of_string offset in
-        info_code state offset 0
-    | offset :: noffset :: _ ->
-        let offset  = int_of_string offset  in
-        let noffset = int_of_string noffset in
-        info_code state offset noffset
-    | _ -> info_code state 10 10
-  with _ -> raise (Shell_error Bad_Usage)
-  end;
+  let pc = Arch.Cpu.get_pc state.arch.cpu in
+  (try
+    match args with
+    | [] -> info_code state pc 10 4
+    | adr :: l ->
+        let adr = Utils.arg_to_int32 state adr in
+        match l with
+        | []          -> info_code state adr 10 0
+        | offset :: l ->
+            let offset = int_of_string offset in
+            match l with
+            | []           -> info_code state adr offset 0
+            | noffset :: _ -> info_code state adr offset (int_of_string noffset)
+  with _ -> raise (Shell_error Bad_Usage));
   state
 
 let info_code : Types.cmd =
@@ -72,7 +75,7 @@ let info_code : Types.cmd =
     short_form  = "c";
     name        = "(c)ode";
     short_desc  = "Print code";
-    long_desc   = ["Usage: info code <offset> <negative offset>"];
+    long_desc   = ["Usage: info code <address> <offset> <negative offset>"];
     execute     = execute_info_code;
     sub         = []; }
 
@@ -83,13 +86,6 @@ let size_default  = 0x10
 
 let line_size   = 0x4
 let line_size32 = 0x4l
-
-(* Return either reg as a Int32 or if it's a register the register content *)
-let i32_or_reg_of_str reg (arch : Riscv.t) =
-  try
-    let r = Assembler.Regs.of_string reg in
-    Cpu.get_reg arch.cpu (Int32.to_int r)
-  with _ -> Int32.of_string reg
 
 let print_line (state : Types.state) line_address =
   fprintf state.out_channel "0x%08x |" (int32_to_int line_address);
@@ -113,14 +109,14 @@ let execute_info_memory args (state : Types.state) =
   begin try match args with
   | []      -> print_memory state start_default size_default
   | [start] ->
-      let start = i32_or_reg_of_str start state.arch in
+      let start = Utils.arg_to_int32 state start in
       print_memory state start size_default
   | [start; size] ->
-      let start = i32_or_reg_of_str start state.arch in
+      let start = Utils.arg_to_int32 state start in
       let size  = int_of_string size in
       print_memory state start size
   | [start; size; nsize] ->
-      let start = i32_or_reg_of_str start state.arch in
+      let start = Utils.arg_to_int32 state start in
       let nsize = Int32.of_string nsize in
       let size  = int_of_string   size  in
       print_memory state (Int32.sub start nsize) size
@@ -210,3 +206,4 @@ let rec info : Types.cmd =
     long_desc   = [];
     execute     = (fun _ state -> Help.command info state);
     sub         = [info_memory; info_registers; info_code]; }
+

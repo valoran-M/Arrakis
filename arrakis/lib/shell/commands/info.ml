@@ -17,7 +17,7 @@ exception Break
 let ( + ) = Int32.add
 let ( * ) = Int32.mul
 
-(* Progam ------------------------------------------------------------------  *)
+(* Program -----------------------------------------------------------------  *)
 
 let print_program_header channel =
   fprintf channel "%3s | %2s%2s @{<bold>%-10s@} | @{<bold>Code@}\n"

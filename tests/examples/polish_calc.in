@@ -1,4 +1,8 @@
 dune exec arrakis -- ./examples/polish_calc.s --no-color --run
 
-1 2 + p q
+1
+2 + p
+2 * p
+1 - p
+q
 

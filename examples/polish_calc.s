@@ -135,7 +135,7 @@ exec_sub:
   call pop_stack
   mv t0, a1
   call pop_stack
-  sub a0, t0, a1
+  sub a0, a1, t0
   call push_stack
 
   # pop ra

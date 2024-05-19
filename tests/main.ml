@@ -74,7 +74,7 @@ let test f_in f_out =
     printf "%s\n" (red "==>");
     printf "- Running program produces :\n";
     printf "* Out:\n%s* Err:\n%s\n" (ensure_newline o) (ensure_newline e);
-    printf "- Running the interpreter on the program produces :\n";
+    printf "- The program must produces :\n";
     printf "%s\n" (ensure_newline ro)
 
 let test_dir tests_dir =

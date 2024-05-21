@@ -1,5 +1,3 @@
 (executable
- (public_name run_tests)
- (name main)
- (libraries unix))
-
+ (name      run_tests)
+ (libraries unix colorsh))

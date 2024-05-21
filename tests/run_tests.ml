@@ -1,3 +1,5 @@
+open Format
+
 type input =
   | Dir  of string
   | File of string
@@ -6,14 +8,14 @@ let test_input =
   match Sys.argv |> Array.to_list |> List.tl with
   | [path] ->
     if not (Sys.file_exists path) then (
-      Printf.eprintf "%s: not found\n" path;
+      eprintf "%s: not found\n" path;
       exit 1
     );
     if Sys.is_directory path
     then Dir path
     else File path
   | _ ->
-    Format.eprintf "usage: dune exec run_tests -- <tests_directory>\n";
+    eprintf "usage: dune exec run_tests -- <tests_directory>\n";
     exit 1
 
 let ensure_newline = function
@@ -43,7 +45,7 @@ let run_command command input =
   flush stdin;
   let out = read_all_channel stdout in
   let err = read_all_channel stderr in
-  let ret = Unix.close_process_full (stdout, stdin, stderr) = WEXITED(0) in
+  let ret = Unix.close_process_full (stdout, stdin, stderr) = WEXITED 0 in
   out, err, ret
 
 let run_file f_in f_out =
@@ -53,25 +55,20 @@ let run_file f_in f_out =
   let pinput  = read_all_channel in_file in
   let o, e, s = run_command command pinput in
   let ref_out = open_in f_out |> read_all_channel in
-  
+
   if ref_out = o
   then Ok s
   else Error (o, e, s, ref_out)
-
-let green s = "\027[1;32m" ^ s ^ "\027[0m"
-let red s = "\027[1;31m" ^ s ^ "\027[0m"
-
-open Format
 
 let test f_in f_out =
   let file = Filename.basename f_in |> Filename.remove_extension in
   Printf.printf "Testing %s... %!" file;
   match run_file f_in f_out with
   | Ok s ->
-    Printf.printf "%s %s\n%!" (green "[OK]") (if s then "" else "(failure)")
+    printf "@{<fg_green>[OK]@} %s\n%!" (if s then "" else "(failure)")
   | Error (o, e, _, ro) ->
-    printf "%s\n" (red "[ERROR]");
-    printf "%s\n" (red "==>");
+    printf "@{<fg_red>[ERROR]@}\n";
+    printf "@{<fg_red>==>@}\n";
     printf "- Running program produces :\n";
     printf "* Out:\n%s* Err:\n%s\n" (ensure_newline o) (ensure_newline e);
     printf "- The program must produces :\n";
@@ -89,18 +86,20 @@ let test_dir tests_dir =
     Sys.readdir tests_dir
     |> Array.to_list
     |> List.filter (fun file -> Filename.extension file = ".out")
+    |> List.sort (String.compare)
     |> List.map (fun file -> Filename.concat tests_dir file)
   in
   List.iter2 (fun f_in f_out -> test f_in f_out) testfiles_in testfiles_out
 
 let test_file f =
-  let file = Filename.remove_extension f in
-  let f_in  = file ^ ".in" in
+  let file  = Filename.remove_extension f in
+  let f_in  = file ^ ".in"  in
   let f_out = file ^ ".out" in
   test f_in f_out
 
 let () =
+  Colorsh.setup_std ();
   match test_input with
-  | Dir d  -> test_dir d
+  | Dir  d -> test_dir d
   | File f -> test_file f
 

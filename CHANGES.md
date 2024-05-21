@@ -7,7 +7,7 @@
 - Fixed a misalignment issue in shell help
 - Fixed a misalignment issue in `--help` option
 - Changed message from `Error` to `Info` in case of a failed system call
-- Renamed commands to be closer to `gdb`:
+- Updated commands to be closer to `gdb`:
   + `prv` is now `p`
   + `next` is now `continue`
   + `print` is now `info`

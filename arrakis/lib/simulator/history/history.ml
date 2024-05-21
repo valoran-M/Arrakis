@@ -54,6 +54,6 @@ let step_back arch (history : t) : t =
 
 let reset arch (history : t) : t =
   match history with
-  | None   -> raise History_Not_Activate
+  | None   -> Some []
   | Some h -> List.iter (fun c -> recover_change c arch) h; Some []
 

@@ -1,5 +1,5 @@
 type input =
-  | Dir of string
+  | Dir  of string
   | File of string
 
 let test_input =

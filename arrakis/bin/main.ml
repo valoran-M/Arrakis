@@ -12,7 +12,7 @@ open Format
    Entry point to Arrakis
 *)
 
-let version = "1.1.0-dev"
+let version = "1.1.0"
 
 let main =
   try

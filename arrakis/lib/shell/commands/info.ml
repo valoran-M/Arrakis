@@ -192,7 +192,11 @@ let info_registers : Types.cmd =
     short_form  = "r";
     name        = "(r)egisters";
     short_desc  = "Display value in specified registers";
-    long_desc   = ["Usage: info registers <r_1> ... <r_n>"];
+    long_desc   = [
+      "Usage: info registers <r_1> ... <r_n>";
+      "<r_i> can either be a register number such as 'x0', or a register name
+      such as 'zero', 's0'";
+    ];
     execute     = execute_info_registers;
     sub         = []; }
 

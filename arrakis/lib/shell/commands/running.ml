@@ -115,7 +115,7 @@ let step : Types.cmd =
     short_form = "s";
     name       = "(s)tep";
     short_desc = "Execute next instruction";
-    long_desc  = [];
+    long_desc  = ["Usage: step <count>"];
     execute    = step_execute;
     sub        = []; }
 
@@ -154,14 +154,12 @@ let continue : Types.cmd =
 let run_next _ (state : Types.state) =
   pass_function 0 state
 
-let next: Types.cmd =
+let next : Types.cmd =
   { long_form   = "next";
     short_form  = "n";
     name        = "(n)ext";
-    short_desc  = "Like s, but it does not step into functions";
-    long_desc   = [
-      "Like s, but it does not step into functions"
-    ];
+    short_desc  = "Like step, but does not step into functions";
+    long_desc   = ["Usage: next <count>"];
     execute     = run_next;
     sub         = [] }
 
@@ -170,13 +168,13 @@ let next: Types.cmd =
 let finish_execute _ (state : Types.state) =
   pass_function 1 state
 
-let finish: Types.cmd =
+let finish : Types.cmd =
   { long_form   = "finish";
     short_form  = "f";
     name        = "(f)inish";
     short_desc  = "Continue until the current function is finished";
     long_desc   = [
-      "Run the program until an ret instruction is reach or pc is out of bound"
+      "Run the program until a ret instruction is reached or pc is out of bound"
     ];
     execute     = finish_execute;
     sub         = [] }

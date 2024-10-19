@@ -85,7 +85,7 @@ let breakpoint_print : Types.cmd =
     short_form  = "p";
     name        = "(p)rint";
     short_desc  = "Print all breakpoints";
-    long_desc   = [];
+    long_desc   = ["Print all breakpoints"];
     execute     = iter execute_addr;
     sub         = []; }
 
@@ -112,7 +112,7 @@ let breakpoint_remove : Types.cmd =
     short_form  = "r";
     name        = "(r)emove";
     short_desc  = "Remove specified breakpoints";
-    long_desc   = [];
+    long_desc   = ["Remove specified breakpoints"];
     execute     = iter execute_remove;
     sub         = []; }
 
@@ -125,7 +125,7 @@ let breakpoint_clear : Types.cmd =
     short_form  = "c";
     name        = "(c)lear";
     short_desc  = "Remove all breakpoints";
-    long_desc   = [];
+    long_desc   = ["Remove all breakpoints"];
     execute     = execute_clear;
     sub         = []; }
 

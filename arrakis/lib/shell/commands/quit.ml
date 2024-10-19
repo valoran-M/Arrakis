@@ -5,6 +5,6 @@ let quit : Types.cmd =
     short_form  = "q";
     name        = "(q)uit";
     short_desc  = "Exit shell";
-    long_desc   = [];
+    long_desc   = ["Exit shell"];
     execute     = (fun _ _ -> raise Shell_Exit);
     sub         = []; }

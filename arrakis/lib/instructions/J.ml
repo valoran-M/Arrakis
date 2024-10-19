@@ -8,7 +8,7 @@
 open History
 open Insts
 open Utils
-open Gutils.Integer
+open Common.Integer
 
 (* Instruction format :
    31                                       12 11         7 6            0

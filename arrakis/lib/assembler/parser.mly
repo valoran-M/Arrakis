@@ -1,12 +1,12 @@
 %{
-  open Gutils.Rope
+  open Common.Rope
   open Instructions.Insts
   open Program
   open Format
 
   let int_list_to_char_list =
     List.map (fun (i, s) ->
-      try Char.chr (Gutils.Integer.int32_to_int i)
+      try Char.chr (Common.Integer.int32_to_int i)
       with Invalid_argument _ ->
         let open Error in
         raise (Assembler_error (0, (Parsing_error (s ^ " is not in [0,255]")))))

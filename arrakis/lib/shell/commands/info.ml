@@ -8,8 +8,8 @@
 open Arch
 open Disassembler
 open Format
-open Gutils.Integer
-open Gutils.Print
+open Common.Integer
+open Common.Print
 open Error
 
 exception Break

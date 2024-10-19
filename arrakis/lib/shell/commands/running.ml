@@ -6,7 +6,7 @@
 (******************************************************************************)
 
 open Error
-open Gutils.Print
+open Common.Print
 
 (*
    This file define the following commands:

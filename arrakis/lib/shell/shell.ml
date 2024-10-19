@@ -7,7 +7,7 @@
 
 open Format
 open Error
-open Gutils.Print
+open Common.Print
 
 let all_commands = [
   Running.finish;

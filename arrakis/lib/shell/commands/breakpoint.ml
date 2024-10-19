@@ -7,7 +7,7 @@
 
 open Error
 open Format
-open Gutils.Print
+open Common.Print
 
 exception End_loop
 
@@ -76,7 +76,7 @@ let breakpoint_addr : Types.cmd =
 
 let execute_print _args (state : Types.state) =
   Hashtbl.iter (fun addr number ->
-    let open Gutils.Integer in
+    let open Common.Integer in
     fprintf state.out_channel "%3d -> 0x%08x@." number (int32_to_int addr))
   state.breakpoints
 

@@ -9,7 +9,7 @@ open History
 open Arch
 open Insts
 open Utils
-open Gutils.Integer
+open Common.Integer
 
 (* Instruction format :
    31                     20 19      15 14  12 11         7 6            0

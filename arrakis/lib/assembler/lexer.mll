@@ -6,7 +6,7 @@
 (******************************************************************************)
 
 {
-  open Gutils.Integer
+  open Common.Integer
   open Error
   open Parser
   open Regs

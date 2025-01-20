@@ -1,0 +1,3 @@
+(library
+  (name out)
+  (foreign_stubs (language c) (names bind)))

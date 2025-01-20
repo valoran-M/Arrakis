@@ -8,9 +8,7 @@
 open Options
 open Format
 
-(*
-   Entry point to Arrakis
-*)
+(* Entry point of Arrakis *)
 
 let version = "1.2.0-dev"
 

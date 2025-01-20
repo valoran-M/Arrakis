@@ -4,14 +4,7 @@
   open Program
   open Format
 
-  let int_list_to_char_list =
-    List.map (fun (i, s) ->
-      try Char.chr (Common.Integer.int32_to_int i)
-      with Invalid_argument _ ->
-        let open Error in
-        raise (Assembler_error (0, (Parsing_error (s ^ " is not in [0,255]")))))
-
-  (* [0-9]: *)
+  (* local symbols [0-9] *)
   let label_int = Array.make 10 0
 
   let create_label i =
@@ -54,21 +47,16 @@
 %token <int * string> LLABEL_F
 %token <int * string> LLABEL_B
 
-
-
-(* Static Operation *)
+(* Expressions *)
 %token LOR LAND
 %token BOR BAND BXOR
 %token ADD SUB LTE GTE NEQ EQ LT GT
 %token MUL DIV REM SHL SHR
-
 %token NOT
-
 %token HI LO
+%token DOT
 
-%token POINT
-
-(* Directive *)
+(* Directives *)
 %token DATA
 %token ZERO
 %token TEXT
@@ -76,15 +64,14 @@
 %token ASCII
 %token ASCIZ
 %token WORD
-
 %token <int> GLOBL
 %token <int> SIZE
 
 %left LOR LAND
 %nonassoc NOT
-%left ADD SUB  LTE GTE NEQ EQ LT GT
+%left ADD SUB LTE GTE NEQ EQ LT GT
 %left BOR BAND BXOR
-%left MUL DIV  REM SHL SHR
+%left MUL DIV REM SHL SHR
 
 %start program
 %type <Program.t> program
@@ -114,7 +101,7 @@ rope(X):
 | SHL { Shl, ">>" } | SHR  { Shr,  "<<" }
 
 expr:
-| POINT                { Adr, "." }
+| DOT                  { Adr, "." }
 | l=IDENT              { Lbl l, l }
 | i=INT                { Imm (fst i), snd i }
 | i=LLABEL_F           { Lbl (label_f (fst i)), snd i }

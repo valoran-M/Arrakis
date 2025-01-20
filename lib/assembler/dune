@@ -1,7 +1,4 @@
-(menhir (flags -v --explain) (modules parser))
+(library (name assembler) (libraries simulator instructions common))
 
 (ocamllex lexer)
-
-(library
- (libraries simulator instructions common)
- (name assembler))
+(menhir (flags -v --explain) (modules parser))

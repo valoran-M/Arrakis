@@ -1,3 +1,1 @@
-(library
-  (libraries simulator unix arch)
-  (name syscall))
+(library (name syscall) (libraries simulator unix arch))

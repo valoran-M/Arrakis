@@ -32,8 +32,8 @@ let colors () =
 let input_file () =
   let file =
     match Options.input_file with
-    | []        -> raise (Init_error No_Input_File)
     | hd :: []  -> hd
+    | []        -> raise (Init_error No_Input_File)
     | _         -> raise (Init_error Too_Much_Input_File)
   in
   if not (Sys.file_exists file)
@@ -46,7 +46,7 @@ let check_root () =
     Format.eprintf
       "%a Running in root mode. Proceed with caution.@}@." warning ()
   | 0, false -> raise (Init_error Running_Root_Without_Opt)
-  | _, _     -> ()
+  | _        -> ()
 
 let syscall () =
   let syscall =

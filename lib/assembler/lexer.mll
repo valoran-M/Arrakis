@@ -109,7 +109,7 @@ rule token = parse
   | "!="  { NEQ   }
   | "%hi" { HI    }
   | "%lo" { LO    }
-  | "."   { POINT }
+  | "."   { DOT   }
   (* Comments *)
   | '#'   { one_comment lexbuf }
   | "/*"  { mul_comment lexbuf }

@@ -14,7 +14,6 @@ open Error
 
 let ( * ) = Int32.mul
 let ( + ) = Int32.add
-let ( - ) = Int32.sub
 
 type t = {
   label_size       : (string, int)   Hashtbl.t;

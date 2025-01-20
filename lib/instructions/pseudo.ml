@@ -39,6 +39,7 @@ let regs_regs_offset_str = Hashtbl.create 4
 let () =
   List.iter (fun (v, k) -> Hashtbl.add regs_regs_offset_str k v)
     [
+  (*  inst  str   *)
       BGT,  "bgt";
       BLE,  "ble";
       BGTU, "bgtu";

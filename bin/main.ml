@@ -10,7 +10,8 @@ open Format
 
 let version = "1.2.0-dev"
 
-let main =
+(* main *)
+let () =
   try
     if show_version then (printf "%s@." version; exit 0);
 

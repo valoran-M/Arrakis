@@ -19,7 +19,7 @@ type t = { fc3: int; rs1: int; rs2: int; imm: int32; }
 
 let instructions =
   [
-    (*  inst Opcode       funct3 str  *)
+    (*  inst Opcode    funct3  str  *)
     SB,  (0b0100011l,  0x0l,   "sb" );
     SH,  (0b0100011l,  0x1l,   "sh" );
     SW,  (0b0100011l,  0x2l,   "sw" );

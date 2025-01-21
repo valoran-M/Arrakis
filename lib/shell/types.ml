@@ -27,6 +27,7 @@ type cmd = {
 and state = {
 
   (* Shell state *)
+  input        : unit -> string;
   out_channel  : Format.formatter;
   cmds         : cmd list;
   cmds_history : string array;

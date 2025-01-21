@@ -1,4 +1,4 @@
-module Tty = struct
+module In = struct
     external init  : unit -> bool = "caml_init_shell"
     external exit  : unit -> bool = "caml_exit_shell"
     external readc : unit -> int  = "caml_readc"
@@ -50,21 +50,20 @@ module Ansi = struct
             match e with
             | Leaf i -> i
             | Node l ->
-                let* i = Tty.readc () in
+                let* i = In.readc () in
                 let* (_, e) = List.find_opt (fun (j, _) -> i = j) l in
                 aux e b
         in
         aux escape b
 
     let input () : a option =
-        match Tty.readc () with
+        match In.readc () with
         | None      -> None
         | Some 0x1B -> Some (read_escape ())
         | Some c    -> Some (Char (Char.chr c))
 end
 
-
-let init  = Tty.init
-let exit  = Tty.exit
+let init  = In.init
+let exit  = In.exit
 let input = Ansi.input
 

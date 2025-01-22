@@ -1,5 +1,5 @@
 (include_subdirs unqualified)
 
 (library
- (name shell)
- (libraries simulator ecall assembler instructions history))
+  (libraries simulator io ecall assembler instructions history)
+  (name shell))

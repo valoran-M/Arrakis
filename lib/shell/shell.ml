@@ -22,7 +22,7 @@ let all_commands = [
 
 let create arch ecall debug labels run : Types.state =
   { (* Shell state *)
-    input        = read_line;
+    input        = Io.Std.read_line;
     out_channel  = Format.std_formatter;
     cmds         = all_commands;
     cmds_history = [||];
@@ -63,13 +63,16 @@ let exec_command (s : Types.state) line =
               s
 
 let rec start (state : Types.state) =
-  try
-    fprintf state.out_channel "> %!";
-    let line = state.input () in
-    if line = ""
-    then start state
-    else start (exec_command state line)
-  with Quit.Shell_Exit | End_of_file -> ()
+    try
+        fprintf state.out_channel "> %!";
+        match state.input () with
+        | Exit   -> ()
+        | Tab _  -> assert false
+        | Line s ->
+            if s = ""
+            then start state
+            else start (exec_command state s)
+    with Quit.Shell_Exit | End_of_file -> ()
 
 let run (state : Types.state) (args : string list) =
   ignore (Running.run_execute args state)

@@ -34,7 +34,6 @@ value caml_init_shell(value unit)
 
         set = restore;
         set.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
-        set.c_oflag &= ~(OPOST);
         set.c_cflag |= (CS8);
         set.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
         set.c_cc[VMIN] = 1; set.c_cc[VTIME] = 0;

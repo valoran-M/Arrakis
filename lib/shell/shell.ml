@@ -22,6 +22,8 @@ let all_commands = [
 
 let create arch ecall debug labels run : Types.state =
   { (* Shell state *)
+    init         = Io.Std.init;
+    exit         = Io.Std.exit;
     input        = Io.Std.read_line;
     out_channel  = Format.std_formatter;
     cmds         = all_commands;
@@ -62,17 +64,22 @@ let exec_command (s : Types.state) line =
       fprintf s.out_channel "Try @{<fg_green>'help'@}.@.";
       s
 
-let rec start (state : Types.state) =
-  try
-    fprintf state.out_channel "> %!";
-    match state.input () with
-    | Exit   -> ()
-    | Tab _  -> assert false
-    | Line s ->
-      if s = ""
-      then start state
-      else start (exec_command state s)
-  with Quit.Shell_Exit | End_of_file -> ()
+let start (state : Types.state) =
+  let rec loop (s : Types.state) =
+    try
+      fprintf s.out_channel "> %!";
+      match s.input () with
+      | Exit   -> ()
+      | Tab _  -> assert false
+      | Line l ->
+        if l = ""
+        then loop s
+        else loop (exec_command state l)
+    with Quit.Shell_Exit | End_of_file -> ()
+  in
+  ignore (state.init ());
+  loop state;
+  ignore (state.exit ())
 
 let run (state : Types.state) (args : string list) =
   ignore (Running.run_execute args state)

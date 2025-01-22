@@ -45,34 +45,34 @@ let rec parse_command command args cmds state =
       with Not_found -> cmd.execute args state
 
 let exec_command (s : Types.state) line =
-    let words = String.split_on_char ' ' line in
-    match words with
-    | []          -> s
-    | cmd :: args ->
-        try parse_command cmd args s.cmds s
-        with
-        | Not_found ->
-              fprintf s.out_channel "%a Undefined command @{<fg_yellow>'%s'@}."
-                error () cmd;
-              fprintf s.out_channel "Try @{<fg_green>'help'@}.@.";
-              s
-        | Shell_error Bad_Usage ->
-              fprintf s.out_channel "%a Bad usage @{<fg_yellow>'%s'@}."
-                error () line;
-              fprintf s.out_channel "Try @{<fg_green>'help'@}.@.";
-              s
+  let words = String.split_on_char ' ' line in
+  match words with
+  | []          -> s
+  | cmd :: args ->
+    try parse_command cmd args s.cmds s
+    with
+    | Not_found ->
+      fprintf s.out_channel "%a Undefined command @{<fg_yellow>'%s'@}."
+        error () cmd;
+      fprintf s.out_channel "Try @{<fg_green>'help'@}.@.";
+      s
+    | Shell_error Bad_Usage ->
+      fprintf s.out_channel "%a Bad usage @{<fg_yellow>'%s'@}."
+        error () line;
+      fprintf s.out_channel "Try @{<fg_green>'help'@}.@.";
+      s
 
 let rec start (state : Types.state) =
-    try
-        fprintf state.out_channel "> %!";
-        match state.input () with
-        | Exit   -> ()
-        | Tab _  -> assert false
-        | Line s ->
-            if s = ""
-            then start state
-            else start (exec_command state s)
-    with Quit.Shell_Exit | End_of_file -> ()
+  try
+    fprintf state.out_channel "> %!";
+    match state.input () with
+    | Exit   -> ()
+    | Tab _  -> assert false
+    | Line s ->
+      if s = ""
+      then start state
+      else start (exec_command state s)
+  with Quit.Shell_Exit | End_of_file -> ()
 
 let run (state : Types.state) (args : string list) =
   ignore (Running.run_execute args state)

@@ -20,19 +20,19 @@ let init e =
     eprintf "%a Please specify an input file@." error ();
     exit 1
   | Input_File_Dont_Exist f ->
-    eprintf "%a Specified input file @{<fg_yellow>'%s'@} doesn't exist@."
+    eprintf "%a Input file @{<fg_yellow>'%s'@} doesn't exist@."
       error () f;
     exit 2
   | Invalid_env s ->
     eprintf "%a Invalid environment @{<fg_yellow>'%s'@}@." error () s;
     exit 7
   | Running_Root_Without_Opt ->
-    eprintf "%a Running in root mode is not allowed!@." error ();
-    eprintf "@{<fg_yellow>Tip:@} Use --allow-root if you know what you are doing@.";
+    eprintf "%a Running in root mode is not allowed!\n" error ();
+    eprintf "%a Use --allow-root if you know what you are doing@." info ();
     exit 9
   | Too_Much_Input_File fs ->
     let inps = List.map (fun s -> "'"^s^"'") fs in
-    eprintf "%a Too much input file specified!@." error ();
+    eprintf "%a Too much input files!\n" error ();
     eprintf "I got @{<fg_yellow>%s@} but expected only one@." (String.concat " " inps);
     exit 10
 

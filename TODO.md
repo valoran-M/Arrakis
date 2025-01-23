@@ -45,4 +45,7 @@
 * Allow using arrakis with multiple files
 * What happens when we run a program and it does a segfault?
 * Optional raylib extensions (mega fun :-])
+* ELF support: Read directly an elf file instead of gnu assembly
+* If we have ELF support, we would have everything to use arrakis as an
+  assembler directly
 

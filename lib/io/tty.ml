@@ -95,3 +95,10 @@ let exit  = exit
 let input = Ansi.input
 let output s = print_string s; flush stdout
 
+let cursor_right c = if c <> 0 then output (Printf.sprintf "\x1b[%dC" c)
+let cursor_left  c = if c <> 0 then output (Printf.sprintf "\x1b[%dD" c)
+
+let set_hcursor c = output (Printf.sprintf "\x1b[%dG" c)
+
+let erase_rcursor () = output "\x1b[0K"
+

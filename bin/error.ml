@@ -30,8 +30,8 @@ let init e =
     eprintf "%a Running in root mode is not allowed!@." error ();
     eprintf "@{<fg_yellow>Tip:@} Use --allow-root if you know what you are doing@.";
     exit 9
-  | Too_Much_Input_File ->
-    let inps = List.map (fun s -> "'"^s^"'") Options.input_file in
+  | Too_Much_Input_File fs ->
+    let inps = List.map (fun s -> "'"^s^"'") fs in
     eprintf "%a Too much input file specified!@." error ();
     eprintf "I got @{<fg_yellow>%s@} but expected only one@." (String.concat " " inps);
     exit 10

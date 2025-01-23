@@ -6,19 +6,18 @@
 open Options
 open Format
 
-(* Entry point of Arrakis *)
-
 let version = "1.2.0-dev"
 
 (* main *)
 let () =
   try
-    if show_version then (printf "%s@." version; exit 0);
+    let opt = Options.get () in
+    if opt.show_version then (printf "%s@." version; exit 0);
 
-    Init.colors ();
-    Init.check_root ();
-    let in_file = Init.input_file () in
-    let syscall = Init.syscall () in
+    Init.colors opt;
+    Init.check_root opt;
+    let in_file = Init.get_input_file opt in
+    let syscall = Init.get_syscall opt in
 
     let channel = open_in in_file in
     let lb = Lexing.from_channel channel in
@@ -26,9 +25,9 @@ let () =
     let pc = Assembler.Label.get_global labels "_start" in
 
     let arch  = Arch.Riscv.init pc mem in
-    let shell = Shell.create arch syscall debug labels (Option.is_none run) in
+    let shell = Shell.create arch syscall debug labels (Option.is_none opt.run) in
 
-    match run with
+    match opt.run with
     | Some args -> Shell.run   shell args
     | None      -> Shell.start shell
   with

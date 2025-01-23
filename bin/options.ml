@@ -5,37 +5,40 @@
 
 let usage = "usage: arrakis <file>"
 
-let show_version = ref false
+type t = {
+  show_version  : bool;
+  input_file    : string list;
+  no_color      : bool;
+  allow_root    : bool;
+  env           : string;
+  run           : string list option;
+}
 
-let input_file       = ref []
-let set_input_file f = input_file := f :: !input_file
+let get (): t =
+  let show_version  = ref false   in
+  let input_file    = ref []      in
+  let no_color      = ref false   in
+  let allow_root    = ref false   in
+  let env           = ref "unix"  in
+  let run           = ref None    in
 
-let no_color   = ref false
-let allow_root = ref false
-let run        = ref None
+  let set_input_file f = input_file := f :: !input_file in
+  let set_run args = run := Some args in
 
-let set_run args =
-  run := Some args
-
-let env = ref "unix"
-
-let spec = [
-  ("-e",            Arg.Set_string env,        "<venus|unix> Set env for ecalls"  );
-  ("--no-color",    Arg.Set no_color,          " Don't use color in output"       );
-  ("--allow-root",  Arg.Set allow_root,        " Allow usage in root mode"        );
-  ("--run",         Arg.Rest_all set_run,      " Run the program and exit"        );
-  ("--version",     Arg.Set show_version,      " Show version number and exit"    );
-]
-
-let () =
-  Arg.parse (Arg.align spec) set_input_file usage
-
-let show_version = !show_version
-
-let input_file  = !input_file
-
-let no_color    = !no_color
-let allow_root  = !allow_root
-let run         = !run
-
-let env = !env
+  let spec = [
+    ("-e",            Arg.Set_string env,   "<venus|unix> Set env for ecalls" );
+    ("--no-color",    Arg.Set no_color,     " Don't use color in output"      );
+    ("--allow-root",  Arg.Set allow_root,   " Allow usage in root mode"       );
+    ("--run",         Arg.Rest_all set_run, " Run the program and exit"       );
+    ("--version",     Arg.Set show_version, " Show version number and exit"   );
+  ]
+  in
+  Arg.parse (Arg.align spec) set_input_file usage;
+  {
+    show_version  = !show_version;
+    input_file    = !input_file;
+    no_color      = !no_color;
+    allow_root    = !allow_root;
+    env           = !env;
+    run           = !run;
+  }

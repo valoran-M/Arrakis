@@ -17,9 +17,10 @@ type cmd = Cstring.t -> cmd_ret
 
 let exit _  = Ret Exit
 let tab   s = Ret (Tab s)
-let enter s = Ret (Line (Cstring.string s))
+let enter s = output "\n"; Ret (Line (Cstring.string s))
 let clear s = Tty.clear_screen (); Cont s
 let back  s = Cont (Cstring.backspace s 1)
+let del   s = Cont (Cstring.delete s 1)
 
 let cleft  n s = Cont (Cstring.move_left s n)
 let cright n s = Cont (Cstring.move_right s n)
@@ -31,6 +32,7 @@ let cmds_list : (Ansi.a * cmd) list = [
     Tab,        tab;
     Enter,      enter;
     Backspace,  back;
+    Delete,     del;
     Arrow Left,  cleft  1;
     Arrow Right, cright 1;
   ]

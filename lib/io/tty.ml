@@ -16,7 +16,8 @@ module Ansi = struct
   type d = Left | Up | Right | Down
 
   type a =
-    | Tab | Enter | Backspace
+    | Tab | Enter
+    | Backspace | Delete
     | Unknown of string
     | Arrow   of d
     | Char    of char
@@ -32,6 +33,8 @@ module Ansi = struct
         0x42, Leaf (Arrow Down);        (* [B *)
         0x43, Leaf (Arrow Right);       (* [C *)
         0x44, Leaf (Arrow Left);        (* [D *)
+        0x33,
+        Node [ 0x7E , Leaf (Delete); ]; (* [3~ *)
       ];
     ]
 
@@ -48,7 +51,8 @@ module Ansi = struct
     match a with
     | Tab       -> pp ppf "tab"
     | Enter     -> pp ppf "enter"
-    | Backspace -> pp ppf "Backspace"
+    | Backspace -> pp ppf "backspace"
+    | Delete    -> pp ppf "delete"
     | Unknown s -> pp ppf "unknown(%s)" s
     | Arrow a   -> pp ppf "arrow(%a)" print_arrow a
     | Char c    -> pp ppf "%c" c

@@ -67,7 +67,6 @@ let exec_command (s : Types.state) line =
 let start (state : Types.state) =
   let rec loop (s : Types.state) =
     try
-      fprintf s.out_channel "> %!";
       match s.input () with
       | Exit   -> ()
       | Tab _  -> assert false
@@ -77,7 +76,7 @@ let start (state : Types.state) =
         else loop (exec_command state l)
     with Quit.Shell_Exit | End_of_file -> ()
   in
-  ignore (state.init ());
+  ignore (state.init "> ");
   loop state;
   ignore (state.exit ())
 

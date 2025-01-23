@@ -27,7 +27,7 @@ type cmd = {
 and state = {
 
   (* Shell state *)
-  init         : unit -> bool;
+  init         : string -> bool;
   exit         : unit -> bool;
   input        : unit -> Io.Std.ret;
   out_channel  : Format.formatter;

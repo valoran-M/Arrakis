@@ -7,10 +7,12 @@
 
   let empty = { s = ""; cursor = 0 }
 
-  let _begin (t: t) = String.sub t.s 0 t.cursor
-  let _end (t: t) =
+  let befor (t: t) = String.sub t.s 0 t.cursor
+  let after (t: t) =
     let tl = String.length t.s in
     String.sub t.s t.cursor (tl - t.cursor)
+
+  let string s = s.s
 
   let add_string (t : t) (s : string) =
     let tl = String.length t.s in
@@ -18,18 +20,18 @@
     if t.cursor = tl
     then { s = t.s ^ s; cursor = t.cursor + sl }
     else
-      let b = _begin t in
-      let e = _end   t in
-      { s = b ^ s ^ e; cursor = t.cursor + sl }
+      let b = befor t in
+      let a = after   t in
+      { s = b ^ s ^ a; cursor = t.cursor + sl }
 
-  let delete (t: t) (len : int) =
+  let backspace (t: t) (len : int) =
     let tl = String.length t.s in
     if t.cursor < len
     then { s = String.sub t.s t.cursor (tl - t.cursor); cursor = 0 }
     else
       let b = String.sub t.s 0 (t.cursor - len) in
-      let e = _end t in
-      { s = b ^ e; cursor = t.cursor - len }
+      let a = after t in
+      { s = b ^ a; cursor = t.cursor - len }
 
   let move_left (t: t) n =
     if t.cursor - n < 0

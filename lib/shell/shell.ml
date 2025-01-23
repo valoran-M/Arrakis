@@ -69,7 +69,9 @@ let start (state : Types.state) =
     try
       match s.input () with
       | Exit   -> ()
-      | Tab _  -> assert false
+      | Tab _  -> 
+        fprintf s.out_channel "%a TODO: autocompletion@." info ();
+        loop s
       | Line l ->
         if l = ""
         then loop s

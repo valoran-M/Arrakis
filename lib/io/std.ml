@@ -5,11 +5,6 @@
 
 open Tty
 
-type ret =
-  | Tab  of string (* entry for autocompletion *)
-  | Line of string
-  | Exit
-
 module CString = struct
   type t = { s : string; cursor : int }
 
@@ -59,6 +54,11 @@ module CString = struct
     cursor_left (tl - t.cursor)
 end
 
+type ret =
+  | Tab  of CString.t
+  | Line of string
+  | Exit
+
 let init = Tty.init
 let exit = Tty.exit
 
@@ -71,7 +71,8 @@ let read_line () : ret =
       match c with
       | Ctrl (Char 'c')
       | Ctrl (Char 'd') -> Exit
-      | Ansi.Tab        -> Tab (CString._begin s)
+      | Ctrl (Char 'l') -> Tty.clear_screen (); loop s
+      | Ansi.Tab        -> Tab s
       | Enter           -> output "\n\r"; Line (s.s)
       | Char c          -> loop (CString.add_string s (String.make 1 c))
       | Backspace       -> loop (CString.delete s 1)

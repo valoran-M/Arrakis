@@ -46,13 +46,13 @@ module Ansi = struct
 
   let rec pp_ansi ppf (a : a) =
     match a with
-    | Tab       -> pp ppf "tab\n"
-    | Enter     -> pp ppf "enter\n"
-    | Backspace -> pp ppf "Backspace\n"
-    | Unknown s -> pp ppf "unknown(%s)\n" s
-    | Arrow a   -> pp ppf "arrow(%a)\n" print_arrow a
-    | Char c    -> pp ppf "%c\n" c
-    | Ctrl a    -> pp ppf "ctrl(%a)\n" pp_ansi a
+    | Tab       -> pp ppf "tab"
+    | Enter     -> pp ppf "enter"
+    | Backspace -> pp ppf "Backspace"
+    | Unknown s -> pp ppf "unknown(%s)" s
+    | Arrow a   -> pp ppf "arrow(%a)" print_arrow a
+    | Char c    -> pp ppf "%c" c
+    | Ctrl a    -> pp ppf "ctrl(%a)" pp_ansi a
 
   let read_escape () : a =
     let b = Buffer.create 2 in
@@ -101,4 +101,5 @@ let cursor_left  c = if c <> 0 then output (Printf.sprintf "\x1b[%dD" c)
 let set_hcursor c = output (Printf.sprintf "\x1b[%dG" c)
 
 let erase_rcursor () = output "\x1b[0K"
+let clear_screen  () = output "\x1b[2J\x1b[H"
 

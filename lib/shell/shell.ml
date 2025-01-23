@@ -65,22 +65,23 @@ let exec_command (s : Types.state) line =
       s
 
 let start (state : Types.state) =
-  let rec loop (s : Types.state) =
+  let rec loop (s : Types.state) (i: Io.Std.t) =
     try
-      match s.input () with
+      match s.input i with
       | Exit   -> ()
-      | Tab _  -> 
-        fprintf s.out_channel "%a TODO: autocompletion@." info ();
-        loop s
       | Line l ->
         if l = ""
-        then loop s
-        else loop (exec_command state l)
+        then loop s { i with s = Io.Cstring.empty }
+        else loop (exec_command state l) { i with s = Io.Cstring.empty }
+      | Tab t  ->
+        fprintf s.out_channel "%a TODO: autocompletion@." info ();
+        loop s { i with s = t }
     with Quit.Shell_Exit | End_of_file -> ()
   in
   ignore (state.init "> ");
-  loop state;
+  loop state { s = Io.Cstring.empty; h = Io.History.empty };
   ignore (state.exit ())
 
 let run (state : Types.state) (args : string list) =
   ignore (Running.run_execute args state)
+

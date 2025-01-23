@@ -13,33 +13,39 @@ type ret =
 type cmd_ret =
   | Cont of Cstring.t
   | Ret  of ret
+
 type cmd = Cstring.t -> cmd_ret
 
-let exit _   = output "\n"; Ret Exit
-let tab   s  = Ret (Tab s)
-let enter s  = output "\n"; Ret (Line (Cstring.string s))
-let clear s  = Tty.clear_screen (); Cont s
-let back  s  = Cont (Cstring.backspace s 1)
-let del   s  = Cont (Cstring.delete s 1)
-let ctrl_d s = if Cstring.string s = "" then exit s else del s
+type t = {
+  s : Cstring.t;
+  h : History.t;
+}
+
+let cmds = Hashtbl.create 16
+let render_start = ref ""
+
+let break  _ = output "\n"; Ret Exit
+let tab    s = Cstring.render Cstring.empty !render_start; Ret (Tab s)
+let enter  s = output "\n"; Ret (Line (Cstring.string s))
+let clear  s = Tty.clear_screen (); Cont s
+let back   s = Cont (Cstring.backspace s 1)
+let del    s = Cont (Cstring.delete s 1)
+let ctrl_d s = if Cstring.string s = "" then break s else del s
 
 let cleft  n s = Cont (Cstring.move_left s n)
 let cright n s = Cont (Cstring.move_right s n)
 
 let cmds_list : (Ansi.a * cmd) list = [
-    Ctrl (Char 'c'), exit;
-    Ctrl (Char 'd'), ctrl_d;
-    Ctrl (Char 'l'), clear;
-    Tab,        tab;
-    Enter,      enter;
-    Backspace,  back;
-    Delete,     del;
-    Arrow Left,  cleft  1;
-    Arrow Right, cright 1;
+    Ctrl (Char 'c'),  break;
+    Ctrl (Char 'd'),  ctrl_d;
+    Ctrl (Char 'l'),  clear;
+    Tab,              tab;
+    Enter,            enter;
+    Backspace,        back;
+    Delete,           del;
+    Arrow Left,       cleft  1;
+    Arrow Right,      cright 1;
   ]
-
-let cmds = Hashtbl.create 16
-let render_start = ref ""
 
 let init b =
   output "\x1b[5 q";
@@ -51,21 +57,21 @@ let exit () =
   output "\x1b[0 q";
   Tty.exit ()
 
-let read_line () : ret =
-  let rec loop (s: Cstring.t) =
-    Cstring.render s !render_start;
+let read_line (t: t) : ret =
+  let rec loop (t: t) =
+    Cstring.render t.s !render_start;
     match input () with
-    | None   -> loop s
+    | None   -> loop t
     | Some c ->
       match c with
-      | Char c -> loop (Cstring.add_string s (String.make 1 c))
+      | Char c -> loop { t with s = (Cstring.add_string t.s (String.make 1 c))}
       | _ ->
         match Hashtbl.find_opt cmds c with
-        | None   -> Ansi.pp_ansi Format.std_formatter c; flush stdout; loop s
+        | None   -> Ansi.pp_ansi Format.std_formatter c; flush stdout; loop t
         | Some f ->
-          match f s with
-          | Cont s -> loop s
+          match f t.s with
+          | Cont s -> loop { t with s }
           | Ret s  -> s
   in
-  loop Cstring.empty
+  loop t
 

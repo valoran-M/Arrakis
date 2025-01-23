@@ -43,7 +43,7 @@ let exit (arch : Riscv.t) =
   Exit (Int32.to_int status)
 
 (* Source: https://github.com/ThaumicMekanism/venus/wiki/Environmental-Calls *)
-let syscall channel (arch : Riscv.t) =
+let ecall channel (arch : Riscv.t) =
   let reg = Cpu.get_reg arch.cpu 10 in
   match reg with
   | 1l  -> print_int       channel arch

@@ -11,7 +11,7 @@ open Options
   - colors
   - input file
   - super user security check
-  - syscall initialisation
+  - ecall initialisation
 *)
 
 (* Errors ------------------------------------------------------------------- *)
@@ -52,13 +52,13 @@ let check_root opt =
   | 0, false -> eraise Running_Root_Without_Opt
   | _        -> ()
 
-let get_syscall opt =
-  let syscall =
+let get_ecall opt =
+  let ecall =
     match opt.env with
-    | "unix"  -> Syscall.Scunix.syscall
-    | "venus" -> Syscall.Scvenus.syscall
+    | "unix"  -> Ecall.Eunix.ecall
+    | "venus" -> Ecall.Evenus.ecall
     | s       -> eraise (Invalid_env s)
   in
-  Syscall.Utils.set_stdout Unix.stdin Unix.stdout Unix.stderr;
-  syscall
+  Ecall.Utils.set_stdout Unix.stdin Unix.stdout Unix.stderr;
+  ecall
 

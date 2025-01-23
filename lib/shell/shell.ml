@@ -20,7 +20,7 @@ let all_commands = [
   Quit.quit;
 ]
 
-let create arch syscall debug labels run : Types.state =
+let create arch ecall debug labels run : Types.state =
   { (* Shell state *)
     out_channel  = Format.std_formatter;
     cmds         = all_commands;
@@ -33,7 +33,7 @@ let create arch syscall debug labels run : Types.state =
     arch;
     debug;
     labels;
-    syscall; }
+    ecall; }
 
 let rec parse_command command args cmds state =
   let cmd = List.find (Utils.cmd_eq command) cmds in

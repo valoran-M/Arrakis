@@ -19,7 +19,7 @@ open Common.Print
 
 (* Take one step forward *)
 let one_step (state : Types.state) =
-  let open Syscall.Types     in
+  let open Ecall.Types     in
   let open Simulator.Execute in
   let program_run, history =
     if not state.program_run then (
@@ -32,7 +32,7 @@ let one_step (state : Types.state) =
         "%a Exiting without an exit syscall@." warning ();
       false, state.history
     | Sys_call history  ->
-      match state.syscall state.out_channel state.arch with
+      match state.ecall state.out_channel state.arch with
       | Continue  -> state.program_run, history
       | Exit code ->
         Format.fprintf state.out_channel

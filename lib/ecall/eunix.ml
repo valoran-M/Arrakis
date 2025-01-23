@@ -166,7 +166,7 @@ let mkdirat (arch : Riscv.t) =
   Continue
 
 (* Source: https://jborza.com/post/2021-05-11-riscv-linux-syscalls/ *)
-let syscall channel (arch : Riscv.t) =
+let ecall channel (arch : Riscv.t) =
   let reg = Cpu.get_reg arch.cpu 17 in
   match reg with
   | 17l  -> getcwd     channel arch

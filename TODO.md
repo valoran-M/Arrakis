@@ -12,7 +12,7 @@
 * Using up/down arrow to get last commands
 * Using side arrow to modify current command
 * Autocompletion of commands
-* Handle syscall failure at shell level
+* Handle ecall failure at shell level
 * Command clear shell (CTRL+L)
 * When printing memory, show which case was the one which was asked so we can
   clearly see what is before and what is after
@@ -21,7 +21,7 @@
 
 ## ??? (Future work without attributed planned version)
 
-### Syscalls
+### Ecalls
 
 * openat (More detail in the file [scunix.ml](./arrakis/lib/syscall/scunix.ml))
 

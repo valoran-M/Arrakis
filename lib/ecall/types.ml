@@ -3,6 +3,6 @@
 (* Distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>          *)
 (******************************************************************************)
 
-type syscall_ret = Exit of int | Continue
+type ecall_ret = Exit of int | Continue
 
-type syscall = Format.formatter -> Arch.Riscv.t -> syscall_ret
+type ecall = Format.formatter -> Arch.Riscv.t -> ecall_ret

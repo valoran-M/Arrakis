@@ -17,7 +17,7 @@ let () =
     Init.colors opt;
     Init.check_root opt;
     let in_file = Init.get_input_file opt in
-    let syscall = Init.get_syscall opt in
+    let syscall = Init.get_ecall opt in
 
     let channel = open_in in_file in
     let lb = Lexing.from_channel channel in

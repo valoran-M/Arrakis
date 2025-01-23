@@ -38,7 +38,7 @@ and state = {
   arch         : Arch.Riscv.t;
   debug        : Assembler.Debug.t;
   labels       : Assembler.Label.t;
-  syscall      : Syscall.Types.syscall;
+  ecall        : Ecall.Types.ecall;
 
 }
 

@@ -7,6 +7,8 @@ type t = { s : string; cursor : int }
 
 let empty = { s = ""; cursor = 0 }
 
+let create s = { s; cursor = String.length s }
+
 let befor (t : t) = String.sub t.s 0 t.cursor
 let after (t : t) =
   let tl = String.length t.s in

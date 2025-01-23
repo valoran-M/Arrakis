@@ -68,14 +68,14 @@ let start (state : Types.state) =
   let rec loop (s : Types.state) (i: Io.Std.t) =
     try
       match s.input i with
-      | Exit   -> ()
-      | Line l ->
+      | Exit -> ()
+      | Line (l, i) ->
         if l = ""
         then loop s { i with s = Io.Cstring.empty }
         else loop (exec_command state l) { i with s = Io.Cstring.empty }
       | Tab t  ->
         fprintf s.out_channel "%a TODO: autocompletion@." info ();
-        loop s { i with s = t }
+        loop s t
     with Quit.Shell_Exit | End_of_file -> ()
   in
   ignore (state.init "> ");

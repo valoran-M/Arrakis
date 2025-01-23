@@ -5,35 +5,53 @@
 
 open Tty
 
-type ret =
-  | Tab  of Cstring.t
-  | Line of string
-  | Exit
-
-type cmd_ret =
-  | Cont of Cstring.t
-  | Ret  of ret
-
-type cmd = Cstring.t -> cmd_ret
-
 type t = {
   s : Cstring.t;
   h : History.t;
 }
 
+type ret =
+  | Tab  of t
+  | Line of string * t
+  | Exit
+
+type cmd_ret =
+  | Cont of t
+  | Ret  of ret
+
+type cmd = t -> cmd_ret
+
 let cmds = Hashtbl.create 16
 let render_start = ref ""
 
-let break  _ = output "\n"; Ret Exit
-let tab    s = Cstring.render Cstring.empty !render_start; Ret (Tab s)
-let enter  s = output "\n"; Ret (Line (Cstring.string s))
-let clear  s = Tty.clear_screen (); Cont s
-let back   s = Cont (Cstring.backspace s 1)
-let del    s = Cont (Cstring.delete s 1)
-let ctrl_d s = if Cstring.string s = "" then break s else del s
+let add_history (t : t) s = { t with h = History.add t.h s }
 
-let cleft  n s = Cont (Cstring.move_left s n)
-let cright n s = Cont (Cstring.move_right s n)
+let tab    (t : t) = Cstring.render Cstring.empty !render_start; Ret (Tab t)
+let clear  (t : t) = Tty.clear_screen (); Cont t
+let back   (t : t) = Cont { t with s = Cstring.backspace t.s 1 }
+let del    (t : t) = Cont { t with s = Cstring.delete    t.s 1 }
+let ctrl_d (t : t) = if Cstring.string t.s = "" then Ret Exit else del t
+let break  (t : t) =
+  if Cstring.string t.s = ""
+  then Ret Exit
+  else Ret Exit
+let enter  (t : t) =
+  let s = Cstring.string t.s in
+  let t = add_history t s    in
+  output "\n"; Ret (Line (Cstring.string t.s, t))
+
+let cleft  n (t : t) = Cont { t with s = Cstring.move_left  t.s n}
+let cright n (t : t) = Cont { t with s = Cstring.move_right t.s n}
+
+let hyst_up (t : t) =
+  match History.next t.h with
+  | None   -> Cont t
+  | Some h -> Cont { s = Cstring.create h.current; h }
+
+let hyst_down (t : t) =
+  match History.prev t.h with
+  | None   -> Cont t
+  | Some h -> Cont { s = Cstring.create h.current; h }
 
 let cmds_list : (Ansi.a * cmd) list = [
     Ctrl (Char 'c'),  break;
@@ -43,6 +61,8 @@ let cmds_list : (Ansi.a * cmd) list = [
     Enter,            enter;
     Backspace,        back;
     Delete,           del;
+    Arrow Up,         hyst_up;
+    Arrow Down,       hyst_down;
     Arrow Left,       cleft  1;
     Arrow Right,      cright 1;
   ]
@@ -69,8 +89,8 @@ let read_line (t: t) : ret =
         match Hashtbl.find_opt cmds c with
         | None   -> Ansi.pp_ansi Format.std_formatter c; flush stdout; loop t
         | Some f ->
-          match f t.s with
-          | Cont s -> loop { t with s }
+          match f t with
+          | Cont t -> loop t
           | Ret s  -> s
   in
   loop t

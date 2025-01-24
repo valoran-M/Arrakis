@@ -55,11 +55,3 @@ let move_right (t : t) n =
   then { t with cursor = tl }
   else { t with cursor = t.cursor + n }
 
-let render (t : t) start =
-  let tl = String.length t.s in
-  Tty.set_hcursor 0;
-  Tty.erase_rcursor ();
-  Tty.output start;
-  Tty.output t.s;
-  Tty.cursor_left (tl - t.cursor)
-

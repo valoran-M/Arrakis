@@ -3,6 +3,7 @@
 (* Distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>          *)
 (******************************************************************************)
 
+open Common
 open Tty
 
 type t = {
@@ -24,9 +25,18 @@ type cmd = t -> cmd_ret
 let cmds = Hashtbl.create 16
 let render_start = ref ""
 
+
+let render (t : Cstring.t) start =
+  let tl = String.length t.s in
+  Tty.set_hcursor 0;
+  Tty.erase_rcursor ();
+  Tty.output start;
+  Tty.output t.s;
+  Tty.cursor_left (tl - t.cursor)
+
 let add_history (t : t) s = { t with h = History.add t.h s }
 
-let tab    (t : t) = Cstring.render Cstring.empty !render_start; Ret (Tab t)
+let tab    (t : t) = render Cstring.empty !render_start; Ret (Tab t)
 let clear  (t : t) = Tty.clear_screen (); Cont t
 let back   (t : t) = Cont { t with s = Cstring.backspace t.s 1 }
 let del    (t : t) = Cont { t with s = Cstring.delete    t.s 1 }
@@ -79,7 +89,7 @@ let exit () =
 
 let read_line (t: t) : ret =
   let rec loop (t: t) =
-    Cstring.render t.s !render_start;
+    render t.s !render_start;
     match input () with
     | None   -> loop t
     | Some c ->

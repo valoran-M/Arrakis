@@ -71,15 +71,15 @@ let start (state : Types.state) =
       | Exit -> ()
       | Line (l, i) ->
         if l = ""
-        then loop s { i with s = Io.Cstring.empty }
-        else loop (exec_command state l) { i with s = Io.Cstring.empty }
+        then loop s { i with s = Common.Cstring.empty }
+        else loop (exec_command state l) { i with s = Common.Cstring.empty }
       | Tab t  ->
         fprintf s.out_channel "%a TODO: autocompletion@." info ();
         loop s t
     with Quit.Shell_Exit | End_of_file -> ()
   in
   ignore (state.init "> ");
-  loop state { s = Io.Cstring.empty; h = Io.History.empty };
+  loop state { s = Common.Cstring.empty; h = Io.History.empty };
   ignore (state.exit ())
 
 let run (state : Types.state) (args : string list) =

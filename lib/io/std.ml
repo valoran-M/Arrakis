@@ -23,7 +23,7 @@ type cmd_ret =
 type cmd = t -> cmd_ret
 
 let cmds = Hashtbl.create 16
-let render_start = ref ""
+let prompt = ref ""
 
 
 let render (t : Cstring.t) start =
@@ -36,7 +36,7 @@ let render (t : Cstring.t) start =
 
 let add_history (t : t) s = { t with h = History.add t.h s }
 
-let tab    (t : t) = render Cstring.empty !render_start; Ret (Tab t)
+let tab    (t : t) = render t.s !prompt; Tty.output "\n"; Ret (Tab t)
 let clear  (t : t) = Tty.clear_screen (); Cont t
 let back   (t : t) = Cont { t with s = Cstring.backspace t.s 1 }
 let del    (t : t) = Cont { t with s = Cstring.delete    t.s 1 }
@@ -80,7 +80,7 @@ let cmds_list : (Ansi.a * cmd) list = [
 let init b =
   output "\x1b[5 q";
   List.iter (fun (c, f) -> Hashtbl.add cmds c f) cmds_list;
-  render_start := b;
+  prompt := b;
   Tty.init ()
 
 let exit () =
@@ -89,7 +89,7 @@ let exit () =
 
 let read_line (t: t) : ret =
   let rec loop (t: t) =
-    render t.s !render_start;
+    render t.s !prompt;
     match input () with
     | None   -> loop t
     | Some c ->

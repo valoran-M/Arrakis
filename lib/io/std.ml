@@ -43,12 +43,12 @@ let enter  (t : t) =
 let cleft  n (t : t) = Cont { t with s = Cstring.move_left  t.s n}
 let cright n (t : t) = Cont { t with s = Cstring.move_right t.s n}
 
-let hyst_up (t : t) =
+let hist_up (t : t) =
   match History.next t.h with
   | None   -> Cont t
   | Some h -> Cont { s = Cstring.create h.current; h }
 
-let hyst_down (t : t) =
+let hist_down (t : t) =
   match History.prev t.h with
   | None   -> Cont t
   | Some h -> Cont { s = Cstring.create h.current; h }
@@ -61,8 +61,8 @@ let cmds_list : (Ansi.a * cmd) list = [
     Enter,            enter;
     Backspace,        back;
     Delete,           del;
-    Arrow Up,         hyst_up;
-    Arrow Down,       hyst_down;
+    Arrow Up,         hist_up;
+    Arrow Down,       hist_down;
     Arrow Left,       cleft  1;
     Arrow Right,      cright 1;
   ]

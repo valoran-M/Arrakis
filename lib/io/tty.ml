@@ -22,6 +22,7 @@ module Ansi = struct
     | Arrow   of d
     | Char    of char
     | Ctrl    of a
+    | Shift   of a
 
   type e = Node of (int * e) list | Leaf of a
 
@@ -35,6 +36,26 @@ module Ansi = struct
         0x44, Leaf (Arrow Left);        (* [D *)
         0x33,
         Node [ 0x7E , Leaf (Delete); ]; (* [3~ *)
+        0x31,                           (* [1  *)
+        Node [
+          0x3B,                         (* [1; *)
+          Node [
+            0x35,                       (* [1;5 *)
+            Node [
+              0x41, Leaf (Ctrl (Arrow Up));
+              0x42, Leaf (Ctrl (Arrow Down));
+              0x43, Leaf (Ctrl (Arrow Right));
+              0x44, Leaf (Ctrl (Arrow Left));
+            ];
+            0x32,                       (* [1;2 *)
+            Node [
+              0x41, Leaf (Shift (Arrow Up));
+              0x42, Leaf (Shift (Arrow Down));
+              0x43, Leaf (Shift (Arrow Right));
+              0x44, Leaf (Shift (Arrow Left));
+            ];
+          ];
+        ];
       ];
     ]
 
@@ -57,6 +78,7 @@ module Ansi = struct
     | Arrow a   -> pp ppf "arrow(%a)" print_arrow a
     | Char c    -> pp ppf "%c" c
     | Ctrl a    -> pp ppf "ctrl(%a)" pp_ansi a
+    | Shift a   -> pp ppf "shift(%a)" pp_ansi a
 
   let read_escape () : a =
     let b = Buffer.create 2 in

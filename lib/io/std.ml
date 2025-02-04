@@ -36,22 +36,27 @@ let render (t : Cstring.t) start =
 
 let add_history (t : t) s = { t with h = History.add t.h s }
 
+let update op (t : t) =
+  let s = op t.s in
+  if s = t.s then Cont t else Cont { t with s }
+
+let back     = update (Cstring.backspace 1)
+let del      = update (Cstring.delete 1)
+let move_end = update Cstring.move_end
+let cleft  n = update (Cstring.move_left  n)
+let cright n = update (Cstring.move_right n)
+let move   n = update (Cstring.set_cursor n)
 let tab    (t : t) = render t.s !prompt; Tty.output "\n"; Ret (Tab t)
 let clear  (t : t) = Tty.clear_screen (); Cont t
-let back   (t : t) = Cont { t with s = Cstring.backspace t.s 1 }
-let del    (t : t) = Cont { t with s = Cstring.delete    t.s 1 }
 let ctrl_d (t : t) = if Cstring.string t.s = "" then Ret Exit else del t
 let break  (t : t) =
   if Cstring.string t.s = ""
   then Ret Exit
-  else Ret Exit
+  else Cont { t with s = Cstring.empty }
 let enter  (t : t) =
   let s = Cstring.string t.s in
   let t = add_history t s    in
   output "\n"; Ret (Line (Cstring.string t.s, t))
-
-let cleft  n (t : t) = Cont { t with s = Cstring.move_left  t.s n}
-let cright n (t : t) = Cont { t with s = Cstring.move_right t.s n}
 
 let hist_up (t : t) =
   match History.next t.h with
@@ -64,17 +69,21 @@ let hist_down (t : t) =
   | Some h -> Cont { s = Cstring.create h.current; h }
 
 let cmds_list : (Ansi.a * cmd) list = [
-    Ctrl (Char 'c'),  break;
-    Ctrl (Char 'd'),  ctrl_d;
-    Ctrl (Char 'l'),  clear;
-    Tab,              tab;
-    Enter,            enter;
-    Backspace,        back;
-    Delete,           del;
-    Arrow Up,         hist_up;
-    Arrow Down,       hist_down;
-    Arrow Left,       cleft  1;
-    Arrow Right,      cright 1;
+    Ctrl (Char 'a'),    move 0;
+    Ctrl (Char 'e'),    move_end;
+    Ctrl (Char 'c'),    break;
+    Ctrl (Char 'd'),    ctrl_d;
+    Ctrl (Char 'l'),    clear;
+    Tab,                tab;
+    Enter,              enter;
+    Backspace,          back;
+    Delete,             del;
+    Arrow Up,           hist_up;
+    Arrow Down,         hist_down;
+    Arrow Left,         cleft  1;
+    Arrow Right,        cright 1;
+    Ctrl (Arrow Left),  update Cstring.prev_word;
+    Ctrl (Arrow Right), update Cstring.next_word;
   ]
 
 let init b =
@@ -87,21 +96,19 @@ let exit () =
   output "\x1b[0 q";
   Tty.exit ()
 
-let read_line (t: t) : ret =
-  let rec loop (t: t) =
-    render t.s !prompt;
-    match input () with
-    | None   -> loop t
-    | Some c ->
-      match c with
-      | Char c -> loop { t with s = (Cstring.add_string t.s (String.make 1 c))}
-      | _ ->
-        match Hashtbl.find_opt cmds c with
-        | None   -> Ansi.pp_ansi Format.std_formatter c; flush stdout; loop t
-        | Some f ->
-          match f t with
-          | Cont t -> loop t
-          | Ret s  -> s
-  in
-  loop t
+let rec read_line (t: t) : ret =
+  let open Cstring in
+  render t.s !prompt;
+  match input () with
+  | None          -> read_line t
+  | Some (Char c) -> read_line { t with s = (add_char c t.s) }
+  | Some c        -> exec_command c t
+
+and exec_command c (t: t) : ret =
+  match Hashtbl.find_opt cmds c with
+  | None   -> read_line t
+  | Some f ->
+    match f t with
+    | Cont t -> read_line t
+    | Ret  s -> s
 

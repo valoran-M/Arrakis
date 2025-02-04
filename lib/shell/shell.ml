@@ -46,6 +46,11 @@ let rec parse_command command args cmds state =
       try parse_command command args cmd.sub state
       with Not_found -> cmd.execute args state
 
+let auto_complet (state : Types.state) (i: Io.Std.t) =
+  fprintf state.out_channel "%a TODO: autocompletion@." info ();
+  let _ = Common.Cstring.befor i.s in
+  i
+
 let exec_command (s : Types.state) line =
   let words = String.split_on_char ' ' line in
   match words with
@@ -68,14 +73,12 @@ let start (state : Types.state) =
   let rec loop (s : Types.state) (i: Io.Std.t) =
     try
       match s.input i with
-      | Exit -> ()
+      | Exit   -> ()
+      | Tab t  -> auto_complet s t |> loop s 
       | Line (l, i) ->
         if l = ""
         then loop s { i with s = Common.Cstring.empty }
         else loop (exec_command state l) { i with s = Common.Cstring.empty }
-      | Tab t  ->
-        fprintf s.out_channel "%a TODO: autocompletion@." info ();
-        loop s t
     with Quit.Shell_Exit | End_of_file -> ()
   in
   ignore (state.init "> ");

@@ -46,8 +46,8 @@ let rec parse_command command args cmds state =
       try parse_command command args cmd.sub state
       with Not_found -> cmd.execute args state
 
-let auto_complet (state : Types.state) (i: Io.Std.t) =
-  fprintf state.out_channel "%a TODO: autocompletion@." info ();
+let auto_complet (_state : Types.state) (i: Io.Std.t) =
+  (* fprintf state.out_channel "%a TODO: autocompletion@." info (); *)
   let _ = Common.Cstring.befor i.s in
   i
 

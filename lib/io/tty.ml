@@ -22,6 +22,7 @@ module Ansi = struct
     | Arrow   of d
     | Char    of char
     | Ctrl    of a
+    | Alt     of a
     | Shift   of a
 
   type e = Node of (int * e) list | Leaf of a
@@ -78,6 +79,7 @@ module Ansi = struct
     | Arrow a   -> pp ppf "arrow(%a)" print_arrow a
     | Char c    -> pp ppf "%c" c
     | Ctrl a    -> pp ppf "ctrl(%a)" pp_ansi a
+    | Alt  a    -> pp ppf "alt(%a)" pp_ansi a
     | Shift a   -> pp ppf "shift(%a)" pp_ansi a
 
   let read_escape () : a =

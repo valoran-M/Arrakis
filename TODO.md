@@ -9,11 +9,7 @@
 
 ### Improve shell
 
-* Using up/down arrow to get last commands
-* Using side arrow to modify current command
-* Autocompletion of commands
 * Handle ecall failure at shell level
-* Command clear shell (CTRL+L)
 * When printing memory, show which case was the one which was asked so we can
   clearly see what is before and what is after
 * Add feedback for command 's', 'c', 'r'...

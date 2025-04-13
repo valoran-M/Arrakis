@@ -3,6 +3,8 @@
 (* Distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>          *)
 (******************************************************************************)
 
+open Types
+
 exception Shell_invalid_arg of string list
 
 let cmd_eq (command : string) (cmd : Types.cmd) =
@@ -20,4 +22,8 @@ let get_size labels label default =
   match Assembler.Label.get_size_opt labels label with
   | Some s -> s
   | None   -> default
+
+let all_commands_string (all_commands : cmd list) =
+  List.fold_left (fun a c -> c.long_form :: a) [] all_commands
+
 

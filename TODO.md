@@ -9,11 +9,13 @@
 
 ### Improve shell
 
-* Handle ecall failure at shell level
+* Handle `ecall` failure at shell level
 * When printing memory, show which case was the one which was asked so we can
   clearly see what is before and what is after
 * Add feedback for command 's', 'c', 'r'...
 * Add an error when program is not running and running 'c' or 's'
+* `autocomplete`: Use pretty printing boxes, auto-complete sub-commands
+* Sometimes `stdout` is not flushed properly
 
 ## ??? (Future work without attributed planned version)
 
@@ -36,12 +38,10 @@
 * Allow switching between multiple isa with a --isa option, taking a string as
   an argument that must be parsed. (Example: RV32IM, RV32I, ...).
 * Add a new command to allow saving the logs of the current execution to a file
-* Provide arrakis as system package for different linux distributions
+* Provide `arrakis` as system package for different linux distributions
 * F extensions
-* Allow using arrakis with multiple files
+* Allow using `arrakis` with multiple files
 * What happens when we run a program and it does a segfault?
-* Optional raylib extensions (mega fun :-])
 * ELF support: Read directly an elf file instead of gnu assembly
-* If we have ELF support, we would have everything to use arrakis as an
+* If we have ELF support, we would have everything to use `arrakis` as an
   assembler directly
-

@@ -20,6 +20,7 @@ let ( * ) = Int32.mul
 let print_program_header channel =
   fprintf channel "%3s | %2s%2s @{<bold>%-10s@} | @{<bold>Code@}\n"
     "" "" "" "Address"
+
 let print_addr (state : Types.state) addr pc code =
     let breakpoint_str  =
       try  sprintf "%02d" (Hashtbl.find state.breakpoints addr)

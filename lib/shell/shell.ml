@@ -46,7 +46,7 @@ let rec parse_command command args cmds state =
       try parse_command command' args' cmd.sub state
       with Not_found -> cmd.execute args state
 
-let auto_complete (s : Types.state) (i: Io.Std.t) =
+let auto_complete (s : Types.state) (i : Io.Std.t) =
   let open Common in
   let input = Cstring.before i.s in
   let cmds  = Utils.all_commands_string all_commands in
@@ -56,7 +56,7 @@ let auto_complete (s : Types.state) (i: Io.Std.t) =
   | [c] -> { i with s = Cstring.add_string c (Cstring.backspace i.s.cursor i.s) }
   | _   ->
     fprintf s.out_channel "\n%!";
-    List.iter (fun c -> printf "%-20s" c) cmds;
+    List.iter (fun c -> fprintf s.out_channel "%-20s" c) cmds;
     fprintf s.out_channel "\n%!";
     i
 

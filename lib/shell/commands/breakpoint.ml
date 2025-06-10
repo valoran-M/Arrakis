@@ -5,7 +5,7 @@
 
 open Error
 open Format
-open Common.Print
+open Common.Pp
 
 exception End_loop
 

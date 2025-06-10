@@ -5,7 +5,7 @@
 
 open Format
 open Error
-open Common.Print
+open Common.Pp
 
 let all_commands = [
   Running.finish;
@@ -46,36 +46,37 @@ let rec parse_command command args cmds state =
       try parse_command command args cmd.sub state
       with Not_found -> cmd.execute args state
 
-let auto_complet (s : Types.state) (i: Io.Std.t) =
-  let input = Common.Cstring.befor i.s in
+let auto_complete (s : Types.state) (i: Io.Std.t) =
+  let open Common in
+  let input = Cstring.before i.s in
   let cmds  = Utils.all_commands_string all_commands in
   let cmds  = List.filter (String.starts_with ~prefix:input) cmds in
-  let open Common.Cstring in
   match cmds with
   | []  -> i
-  | [c] -> { i with s = add_string c (backspace i.s.cursor i.s) }
+  | [c] -> { i with s = Cstring.add_string c (Cstring.backspace i.s.cursor i.s) }
   | _   ->
     fprintf s.out_channel "\n%!";
-    List.iter (fun c -> Printf.printf "%-20s" c) cmds;
+    List.iter (fun c -> printf "%-20s" c) cmds;
     fprintf s.out_channel "\n%!";
     i
 
 let exec_command (s : Types.state) line =
-  let words = String.split_on_char ' ' line in
-  match words with
+  match String.split_on_char ' ' line with
   | []          -> s
   | cmd :: args ->
     try parse_command cmd args s.cmds s
     with
     | Not_found ->
-      fprintf s.out_channel "%a Undefined command @{<fg_yellow>'%s'@}."
+      fprintf s.out_channel "%a Undefined command @{<fg_red>'%s'@}.@\n"
         error () cmd;
-      fprintf s.out_channel "Try @{<fg_green>'help'@}.@.";
+      fprintf s.out_channel "%a Try @{<fg_green>'help'@}.@."
+        hint ();
       s
     | Shell_error Bad_Usage ->
-      fprintf s.out_channel "%a Bad usage @{<fg_yellow>'%s'@}."
+      fprintf s.out_channel "%a Bad usage @{<fg_red>'%s'@}.@\n"
         error () line;
-      fprintf s.out_channel "Try @{<fg_green>'help'@}.@.";
+      fprintf s.out_channel "%a Try @{<fg_green>'help'@}.@."
+        hint ();
       s
 
 let start (state : Types.state) =
@@ -83,7 +84,7 @@ let start (state : Types.state) =
     try
       match s.input i with
       | Exit   -> ()
-      | Tab t  -> auto_complet s t |> loop s
+      | Tab t  -> auto_complete s t |> loop s
       | Line (l, i) ->
         if l = ""
         then loop s { i with s = Common.Cstring.empty }
@@ -96,4 +97,3 @@ let start (state : Types.state) =
 
 let run (state : Types.state) (args : string list) =
   ignore (Running.run_execute args state)
-

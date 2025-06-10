@@ -9,7 +9,8 @@ let empty = { s = ""; cursor = 0 }
 
 let create s = { s; cursor = String.length s }
 
-let befor (t : t) = String.sub t.s 0 t.cursor
+let before (t : t) = String.sub t.s 0 t.cursor
+
 let after (t : t) =
   let tl = String.length t.s in
   String.sub t.s t.cursor (tl - t.cursor)
@@ -24,8 +25,8 @@ let add_string (s : string) (t : t) =
   if t.cursor = tl
   then { s = t.s ^ s; cursor = t.cursor + sl }
   else
-    let b = befor t in
-    let a = after   t in
+    let b = before t in
+    let a = after t in
     { s = b ^ s ^ a; cursor = t.cursor + sl }
 
 let add_char c (t : t) = add_string (String.make 1 c) t
@@ -42,9 +43,9 @@ let backspace (len : int) (t : t) =
 let delete (len : int) (t : t) =
   let tl = String.length t.s in
   if t.cursor + len > tl
-  then { t with s = befor t }
+  then { t with s = before t }
   else
-    let b = befor t in
+    let b = before t in
     let a = String.sub t.s (t.cursor + len) (tl - t.cursor - len) in
     { t with s = b ^ a }
 
@@ -60,9 +61,7 @@ let move_left n (t : t) =
 
 let move_right n (t : t) =
   let tl = String.length t.s in
-  if t.cursor + n > tl
-  then { t with cursor = tl }
-  else { t with cursor = t.cursor + n }
+  { t with cursor = if t.cursor + n > tl then tl else t.cursor + n }
 
 let move_end (t : t) = set_cursor (length t) t
 
@@ -92,6 +91,6 @@ let next_word (t : t) =
     else t.cursor
   in
   let c = loop c l in
-  let cursor =  if c = l then c else c + 1 in
+  let cursor = if c = l then c else c + 1 in
   { t with cursor }
-  
+

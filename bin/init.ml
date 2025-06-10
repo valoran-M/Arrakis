@@ -3,7 +3,7 @@
 (* Distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>          *)
 (******************************************************************************)
 
-open Common.Print
+open Common.Pp
 open Options
 
 (*

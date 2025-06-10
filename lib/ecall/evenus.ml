@@ -6,7 +6,7 @@
 open Types
 open Utils
 open Arch
-open Common.Print
+open Common.Pp
 
 let print_int channel (arch : Riscv.t) =
   Format.fprintf channel "%ld@." (Cpu.get_reg arch.cpu 11);

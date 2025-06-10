@@ -5,7 +5,7 @@
 
 open Arch
 open Types
-open Common.Print
+open Common.Pp
 
 let invalid_sc channel id =
   Format.fprintf channel

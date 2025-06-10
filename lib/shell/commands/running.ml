@@ -4,7 +4,7 @@
 (******************************************************************************)
 
 open Error
-open Common.Print
+open Common.Pp
 
 (*
    This file define the following commands:

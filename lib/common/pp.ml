@@ -11,5 +11,8 @@ let error fmt () =
 let info fmt () =
   fprintf fmt "@{<fg_blue>Info:@}"
 
+let hint fmt () =
+  fprintf fmt "@{<fg_green>Hint:@}"
+
 let warning fmt () =
   fprintf fmt "@{<fg_yellow>Warning:@}"

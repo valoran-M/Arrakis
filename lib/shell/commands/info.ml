@@ -7,7 +7,7 @@ open Arch
 open Disassembler
 open Format
 open Common.Integer
-open Common.Print
+open Common.Pp
 open Error
 
 exception Break

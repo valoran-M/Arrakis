@@ -20,18 +20,18 @@ let iter f args (state : Types.state) =
 let execute_line (state : Types.state) arg =
   match int_of_string_opt arg with
   | None      ->
-      fprintf state.out_channel "%a '%s' is not a number.@." error () arg
+      fprintf state.out_channel "%a @{<fg_red>'%s'@} is not a number.@." error () arg
   | Some line ->
     try
       let number = Hashtbl.length state.breakpoints in
       let addr   = Assembler.Debug.get_addr state.debug line in
       Hashtbl.add state.breakpoints addr number;
       fprintf state.out_channel
-        "%a Created breakpoint %d at 0x%lx@."
+        "%a Created breakpoint @{<fg_blue>'%d'@} at 0x%lx@."
         info () number addr
     with Not_found ->
       fprintf state.out_channel
-        "%a Line %d does not contain code.@." error () line
+        "%a Line @{<fg_red>'%d'@} does not contain code.@." error () line
 
 let breakpoint_line : Types.cmd =
   { long_form   = "line";
@@ -50,16 +50,16 @@ let execute_addr (state : Types.state) arg =
   | Some addr ->
     Hashtbl.add state.breakpoints addr number;
     fprintf state.out_channel
-      "%a Created breakpoint %d at 0x%lx.@." info () number addr
+      "%a Created breakpoint @{<fg_blue>'%d'@} at 0x%lx.@." info () number addr
   | None ->
     match Assembler.Label.get_address_opt state.labels arg with
     | None ->
       fprintf state.out_channel
-        "%a Function '%s' not defined.@." error () arg
+        "%a Function @{<fg_red>'%s'@} not defined.@." error () arg
     | Some addr ->
       Hashtbl.add state.breakpoints addr number;
       fprintf state.out_channel
-        "%a Created breakpoint %d at 0x%lx.@." info () number addr
+        "%a Created breakpoint @{<fg_blue>'%d'@} at 0x%lx.@." info () number addr
 
 let breakpoint_addr : Types.cmd =
   { long_form   = "addr";
@@ -96,14 +96,14 @@ let execute_remove (state : Types.state) arg =
       if line = breakpoint then (
         Hashtbl.remove state.breakpoints addr;
         fprintf state.out_channel
-          "%a Breakpoint '%d' was removed.@." info () breakpoint;
+          "%a Breakpoint @{<fg_blue>'%d'@} was removed.@." info () breakpoint;
         raise End_loop
     )) state.breakpoints
   with
     | End_loop -> ()
     | _        ->
-      fprintf state.out_channel "%a Breakpoint '%s' does not exist.@."
-        error () arg
+        fprintf state.out_channel "%a Breakpoint @{<fg_red>'%s'@} does not exist.@."
+          error () arg
 
 let breakpoint_remove : Types.cmd =
   { long_form   = "remove";

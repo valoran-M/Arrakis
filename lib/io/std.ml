@@ -96,7 +96,7 @@ let exit () =
   output "\x1b[0 q";
   Tty.exit ()
 
-let rec read_line (t: t) : ret =
+let rec read_line (t : t) : ret =
   let open Cstring in
   render t.s !prompt;
   match input () with
@@ -104,7 +104,7 @@ let rec read_line (t: t) : ret =
   | Some (Char c) -> read_line { t with s = (add_char c t.s) }
   | Some c        -> exec_command c t
 
-and exec_command c (t: t) : ret =
+and exec_command c (t : t) : ret =
   match Hashtbl.find_opt cmds c with
   | None   -> read_line t
   | Some f ->

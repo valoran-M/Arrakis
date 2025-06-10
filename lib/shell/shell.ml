@@ -41,9 +41,9 @@ let create arch ecall debug labels run : Types.state =
 let rec parse_command command args cmds state =
   let cmd = List.find (Utils.cmd_eq command) cmds in
   match args with
-  | []              -> cmd.execute args state
-  | command :: args ->
-      try parse_command command args cmd.sub state
+  | []                -> cmd.execute args state
+  | command' :: args' ->
+      try parse_command command' args' cmd.sub state
       with Not_found -> cmd.execute args state
 
 let auto_complete (s : Types.state) (i: Io.Std.t) =
@@ -75,8 +75,8 @@ let exec_command (s : Types.state) line =
     | Shell_error Bad_Usage ->
       fprintf s.out_channel "%a Bad usage @{<fg_red>'%s'@}.@\n"
         error () line;
-      fprintf s.out_channel "%a Try @{<fg_green>'help'@}.@."
-        hint ();
+      fprintf s.out_channel "%a Try @{<fg_green>'help %s'@}.@."
+        hint () cmd;
       s
 
 let start (state : Types.state) =

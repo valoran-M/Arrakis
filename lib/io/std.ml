@@ -86,10 +86,10 @@ let cmds_list : (Ansi.a * cmd) list = [
     Ctrl (Arrow Right), update Cstring.next_word;
   ]
 
-let init b =
+let init () =
   output "\x1b[5 q";
   List.iter (fun (c, f) -> Hashtbl.add cmds c f) cmds_list;
-  prompt := b;
+  prompt := "> ";
   Tty.init ()
 
 let exit () =

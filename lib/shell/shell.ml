@@ -92,7 +92,7 @@ let start (state : Types.state) =
           loop (exec_command state l) { i with s = Common.Cstring.empty })
     with Quit.Shell_Exit | End_of_file -> ()
   in
-  ignore (state.init "> ");
+  ignore (state.init ());
   loop state { s = Common.Cstring.empty; h = Io.History.empty };
   ignore (state.exit ())
 

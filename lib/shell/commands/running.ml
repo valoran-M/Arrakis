@@ -17,27 +17,32 @@ open Common.Pp
 
 (* Utils -------------------------------------------------------------------- *)
 
+let exec_ecall (state : Types.state) history =
+  let open Ecall.Types in
+  ignore (state.exit ());
+  let r = state.ecall state.out_channel state.arch in
+  ignore (state.init ());
+  match r with
+  | Continue  -> state.program_run, history
+  | Exit code ->
+    Format.fprintf state.out_channel
+      "%a Exiting with code @{<fg_yellow>'%d'@}@." info () code;
+    false, history
+
 (* Take one step forward *)
 let one_step (state : Types.state) =
-  let open Ecall.Types     in
   let open Simulator.Execute in
   let program_run, history =
     if not state.program_run then (
       Format.fprintf state.out_channel "%a Program is not running.@." error ();
       false, state.history
     ) else match exec_instruction state.arch state.history with
-    | Continue (_, history)  -> state.program_run, history
-    | Zero ->
-      Format.fprintf state.out_channel
-        "%a Exiting without an exit syscall@." warning ();
-      false, state.history
-    | Sys_call history  ->
-      match state.ecall state.out_channel state.arch with
-      | Continue  -> state.program_run, history
-      | Exit code ->
+      | Continue (_, history) -> state.program_run, history
+      | Sys_call history      -> exec_ecall state history
+      | Zero ->
         Format.fprintf state.out_channel
-          "%a Exiting with code @{<fg_yellow>'%d'@}@." info () code;
-        false, history
+          "%a Exiting without an exit syscall@." warning ();
+        false, state.history
   in
   { state with
     program_run;

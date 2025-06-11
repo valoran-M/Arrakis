@@ -19,6 +19,7 @@ open Common.Pp
 
 let exec_ecall (state : Types.state) history =
   let open Ecall.Types in
+  (* reset shell *)
   ignore (state.exit ());
   let r = state.ecall state.out_channel state.arch in
   ignore (state.init ());

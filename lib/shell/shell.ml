@@ -38,7 +38,7 @@ let create arch ecall debug labels run : Types.state =
     labels;
     ecall; }
 
-let rec parse_command command args cmds state =
+let rec parse_command command args cmds (state : Types.state) =
   let cmd = List.find (Utils.cmd_eq command) cmds in
   match args with
   | []                -> cmd.execute args state
@@ -80,15 +80,16 @@ let exec_command (s : Types.state) line =
       s
 
 let start (state : Types.state) =
-  let rec loop (s : Types.state) (i: Io.Std.t) =
+  let rec loop (state : Types.state) (i: Io.Std.t) =
     try
-      match s.input i with
+      match state.input i with
       | Exit   -> ()
-      | Tab t  -> auto_complete s t |> loop s
+      | Tab t  -> auto_complete state t |> loop state
       | Line (l, i) ->
         if l = ""
-        then loop s { i with s = Common.Cstring.empty }
-        else loop (exec_command state l) { i with s = Common.Cstring.empty }
+        then loop state { i with s = Common.Cstring.empty }
+        else (
+          loop (exec_command state l) { i with s = Common.Cstring.empty })
     with Quit.Shell_Exit | End_of_file -> ()
   in
   ignore (state.init "> ");

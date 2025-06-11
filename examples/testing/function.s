@@ -2,7 +2,7 @@ f1:
     nop
     ret
 
-.globl main
-main:
+.globl _start
+_start:
     call f1
     nop

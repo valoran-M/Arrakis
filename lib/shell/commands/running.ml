@@ -121,7 +121,7 @@ let step : Types.cmd =
 
 let rec next_breakpoint (first : bool) (state : Types.state) =
   let addr = Arch.Cpu.get_pc state.arch.cpu in
-  if first || not (Hashtbl.mem state.breakpoints addr)
+  if state.program_run && (first || not (Hashtbl.mem state.breakpoints addr))
   then next_breakpoint false (one_step state)
   else state
 

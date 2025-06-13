@@ -17,13 +17,19 @@ open Common.Pp
 
 (* Utils -------------------------------------------------------------------- *)
 
-let exec_ecall (state : Types.state) history =
-  let open Ecall.Types in
+let program_not_run (state : Types.state) =
+    Format.fprintf state.out_channel "%a Program is not running.@." info ();
+    state
+
+let execute_syscal (state : Types.state) =
   (* reset shell *)
   ignore (state.exit ());
   let r = state.ecall state.out_channel state.arch in
   ignore (state.init ());
-  match r with
+  r
+
+let exec_ecall (state : Types.state) history =
+  match execute_syscal state with
   | Continue  -> state.program_run, history
   | Exit code ->
     Format.fprintf state.out_channel
@@ -32,22 +38,17 @@ let exec_ecall (state : Types.state) history =
 
 (* Take one step forward *)
 let one_step (state : Types.state) =
-  let open Simulator.Execute in
+  if not state.program_run then program_not_run state else
   let program_run, history =
-    if not state.program_run then (
-      Format.fprintf state.out_channel "%a Program is not running.@." error ();
+    match Simulator.Execute.exec_instruction state.arch state.history with
+    | Continue (_, history) -> state.program_run, history
+    | Sys_call history      -> exec_ecall state history
+    | Zero ->
+      Format.fprintf state.out_channel
+        "%a Exiting without an exit syscall@." warning ();
       false, state.history
-    ) else match exec_instruction state.arch state.history with
-      | Continue (_, history) -> state.program_run, history
-      | Sys_call history      -> exec_ecall state history
-      | Zero ->
-        Format.fprintf state.out_channel
-          "%a Exiting without an exit syscall@." warning ();
-        false, state.history
   in
-  { state with
-    program_run;
-    history; }
+  { state with program_run; history; }
 
 (* Take n step forward *)
 let rec n_step n state =
@@ -58,11 +59,12 @@ let rec n_step n state =
 (* Take one step backward *)
 
 let one_bstep (state : Types.state) =
+  if not state.program_run then program_not_run state else
   let history =
-  try History.step_back state.arch state.history
-  with History.History_Empty ->
-    Format.fprintf state.out_channel "%a History is empty.@." error ();
-    state.history
+    try History.step_back state.arch state.history
+    with History.History_Empty ->
+      Format.fprintf state.out_channel "%a History is empty.@." error ();
+      state.history
   in
   { state with history }
 
@@ -91,7 +93,7 @@ let is_ret code =
     decode.fc3 = 0x0 && decode.rs1 = 1 && decode.rdt = 0
 
 let rec pass_function depth (state : Types.state) =
-  if not state.program_run then state else
+  if not state.program_run then program_not_run state else
   let arch = state.arch in
   let code = Arch.Memory.get_int32 arch.memory (Arch.Cpu.get_pc arch.cpu) in
   if is_call code

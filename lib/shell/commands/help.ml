@@ -10,8 +10,8 @@ let print (name : string) (desc : string list) (sub : Types.cmd list) (state : T
   List.iter (fprintf state.out_channel "%2s%s\n" "") desc;
   List.iter (fun (cmd : Types.cmd) ->
     fprintf state.out_channel "%2s@{<fg_green>*@} %-15s%2s%s\n"
-      "" cmd.name "" cmd.short_desc)
-  sub;
+      "" cmd.name "" cmd.short_desc) sub;
+  pp_print_flush state.out_channel ();
   state
 
 let general (state : Types.state) =
@@ -23,22 +23,13 @@ let command_title (title : string) (cmd : Types.cmd) (state : Types.state) =
 let command (cmd : Types.cmd) (state : Types.state) =
   command_title cmd.long_form cmd state
 
-let rec sub_command args title (cmd : Types.cmd) (state : Types.state) =
-  let title = title^cmd.long_form^" " in
-  match args with
-  | []       -> command_title title cmd state
-  | hd :: tl ->
-    try
-      sub_command tl title (List.find (Utils.cmd_eq hd) cmd.sub) state
-    with Not_found -> command_title title cmd state
-
 let execute args (state : Types.state) =
   match args with
-  | []       -> general state
-  | hd :: tl ->
-    try
-      sub_command tl "" (List.find (Utils.cmd_eq hd) state.cmds) state
-    with Not_found -> general state
+  | [] -> general state
+  | _  ->
+    let c, _, _ = Utils.get_cmd_l args state in
+    command c state
+
 
 let help : Types.cmd =
   { long_form   = "help";

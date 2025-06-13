@@ -49,23 +49,20 @@ let info_code (state : Types.state) iaddr offset noffset =
         if code = 0l
         then (fprintf state.out_channel "     End without syscall@."; raise Break)
         else print_addr state addr pc code
-    done
+    done;
+    pp_print_flush state.out_channel ()
   with Break -> ()
 
 let execute_info_code args (state : Types.state) =
   let pc = Arch.Cpu.get_pc state.arch.cpu in
   (try
-    match args with
-    | [] -> info_code state pc 10 4
-    | ladr :: l ->
-        let adr = Utils.arg_to_int32 state ladr in
-        match l with
-        | [] -> info_code state adr (Utils.get_size state.labels ladr 10 / 4) 0
-        | off :: l ->
-            let offset = int_of_string off in
-            match l with
-            | []        -> info_code state adr offset 0
-            | noff :: _ -> info_code state adr offset (int_of_string noff)
+    match Utils.args_default args [Int32.to_string pc; "10"; "4"] with
+    | [pc; off; noff] ->
+      let pc   = Utils.arg_to_int32 state pc in
+      let off  = int_of_string  off in
+      let noff = int_of_string noff in
+      info_code state pc off noff
+    | _ -> assert false
   with _ -> raise (Shell_error Bad_Usage));
   state
 
@@ -122,6 +119,7 @@ let execute_info_memory args (state : Types.state) =
   | _ -> raise (Shell_error Bad_Usage)
   with _ -> raise (Shell_error Bad_Usage)
   end;
+  pp_print_flush state.out_channel ();
   state
 
 let info_memory : Types.cmd =
@@ -166,7 +164,7 @@ let info_list_regs (state : Types.state) =
   List.iter (fun reg ->
     try
       if reg = "pc" then
-        fprintf state.out_channel "pc | 0x%08x\n"
+        fprintf state.out_channel "pc        | 0x%08x\n"
           (int32_to_int (Cpu.get_pc state.arch.cpu))
       else
         let i =
@@ -175,7 +173,7 @@ let info_list_regs (state : Types.state) =
         in
         fprintf state.out_channel "%s | 0x%08x\n"
           regs.(i) (int32_to_int (Cpu.get_reg state.arch.cpu i))
-    with _ ->
+    with Not_found ->
       fprintf state.out_channel "%a @{<fg_yellow>'%s'@} isn't a register@." error () reg
   )
 
@@ -184,6 +182,7 @@ let execute_info_registers args (state : Types.state) =
   | [] -> info_all_regs  state
   | _  -> info_list_regs state args
   end;
+  pp_print_flush state.out_channel ();
   state
 
 let info_registers : Types.cmd =

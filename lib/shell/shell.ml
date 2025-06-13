@@ -5,7 +5,6 @@
 
 open Format
 open Error
-open Common.Pp
 
 let all_commands = [
   Running.finish;
@@ -38,18 +37,10 @@ let create arch ecall debug labels run : Types.state =
     labels;
     ecall; }
 
-let rec parse_command command args cmds (state : Types.state) =
-  let cmd = List.find (Utils.cmd_eq command) cmds in
-  match args with
-  | []                -> cmd.execute args state
-  | command' :: args' ->
-      try parse_command command' args' cmd.sub state
-      with Not_found -> cmd.execute args state
-
 let auto_complete (s : Types.state) (i : Io.Std.t) =
   let open Common in
   let input = Cstring.before i.s in
-  let cmds  = Utils.all_commands_string all_commands in
+  let cmds  = Utils.all_commands_sl all_commands in
   let cmds  = List.filter (String.starts_with ~prefix:input) cmds in
   match cmds with
   | []  -> i
@@ -61,35 +52,22 @@ let auto_complete (s : Types.state) (i : Io.Std.t) =
     i
 
 let exec_command (s : Types.state) line =
-  match String.split_on_char ' ' line with
-  | []          -> s
-  | cmd :: args ->
-    try parse_command cmd args s.cmds s
-    with
-    | Not_found ->
-      fprintf s.out_channel "%a Undefined command @{<fg_red>'%s'@}.@\n"
-        error () cmd;
-      fprintf s.out_channel "%a Try @{<fg_green>'help'@}.@."
-        hint ();
-      s
-    | Shell_error Bad_Usage ->
-      fprintf s.out_channel "%a Bad usage @{<fg_red>'%s'@}.@\n"
-        error () line;
-      fprintf s.out_channel "%a Try @{<fg_green>'help %s'@}.@."
-        hint () cmd;
-      s
+  try
+    let cmd, all_cmd, args = Utils.get_cmd line s in
+    try cmd.execute args s
+    with Shell_error Bad_Usage   ->
+      let all_cmd = (Utils.all_commands_string all_cmd) in
+      cmd_bad_usage s all_cmd line
+  with Shell_error Cmd_Not_Found -> cmd_not_found s line
 
 let start (state : Types.state) =
   let rec loop (state : Types.state) (i: Io.Std.t) =
     try
       match state.input i with
-      | Exit   -> ()
-      | Tab t  -> auto_complete state t |> loop state
+      | Exit  -> ()
+      | Tab t -> auto_complete state t |> loop state
       | Line (l, i) ->
-        if l = ""
-        then loop state { i with s = Common.Cstring.empty }
-        else (
-          loop (exec_command state l) { i with s = Common.Cstring.empty })
+        loop (exec_command state l) { i with s = Common.Cstring.empty }
     with Quit.Shell_Exit | End_of_file -> ()
   in
   ignore (state.init ());
@@ -98,3 +76,4 @@ let start (state : Types.state) =
 
 let run (state : Types.state) (args : string list) =
   ignore (Running.run_execute args state)
+

@@ -19,7 +19,7 @@ type cmd = {
   (* Do the actual action of the command *)
   (* Please note that as the state contain mutable values, the execute function
     may alter the state given as argument *)
-  execute     : string list -> state -> state;
+  execute     : string list -> state -> unit;
 
   sub         : cmd list;
 }
@@ -32,12 +32,13 @@ and state = {
   input        : Io.Std.t -> Io.Std.ret;
   out_channel  : Format.formatter;
   cmds         : cmd list;
-  cmds_history : string array;
   breakpoints  : (int32, int) Hashtbl.t;
-  program_run  : bool;
+
 
   (* Program state *)
-  history      : History.t;
+  mutable program_run : bool;
+  mutable history     : History.t;
+
   arch         : Arch.Riscv.t;
   debug        : Assembler.Debug.t;
   labels       : Assembler.Label.t;

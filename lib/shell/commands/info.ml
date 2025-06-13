@@ -55,7 +55,7 @@ let info_code (state : Types.state) iaddr offset noffset =
 
 let execute_info_code args (state : Types.state) =
   let pc = Arch.Cpu.get_pc state.arch.cpu in
-  (try
+  try
     match Utils.args_default args [Int32.to_string pc; "10"; "4"] with
     | [pc; off; noff] ->
       let pc   = Utils.arg_to_int32 state pc in
@@ -63,8 +63,7 @@ let execute_info_code args (state : Types.state) =
       let noff = int_of_string noff in
       info_code state pc off noff
     | _ -> assert false
-  with _ -> raise (Shell_error Bad_Usage));
-  state
+  with _ -> raise (Shell_error Bad_Usage)
 
 let info_code : Types.cmd =
   { long_form   = "code";
@@ -119,8 +118,7 @@ let execute_info_memory args (state : Types.state) =
   | _ -> raise (Shell_error Bad_Usage)
   with _ -> raise (Shell_error Bad_Usage)
   end;
-  pp_print_flush state.out_channel ();
-  state
+  pp_print_flush state.out_channel ()
 
 let info_memory : Types.cmd =
   { long_form   = "memory";
@@ -182,8 +180,7 @@ let execute_info_registers args (state : Types.state) =
   | [] -> info_all_regs  state
   | _  -> info_list_regs state args
   end;
-  pp_print_flush state.out_channel ();
-  state
+  pp_print_flush state.out_channel ()
 
 let info_registers : Types.cmd =
   { long_form   = "registers";

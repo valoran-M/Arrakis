@@ -6,3 +6,6 @@ f1:
 _start:
     call f1
     nop
+    nop
+    nop
+    nop

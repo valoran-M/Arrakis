@@ -11,8 +11,7 @@ let print (name : string) (desc : string list) (sub : Types.cmd list) (state : T
   List.iter (fun (cmd : Types.cmd) ->
     fprintf state.out_channel "%2s@{<fg_green>*@} %-15s%2s%s\n"
       "" cmd.name "" cmd.short_desc) sub;
-  pp_print_flush state.out_channel ();
-  state
+  pp_print_flush state.out_channel ()
 
 let general (state : Types.state) =
   print "General" [] state.cmds state

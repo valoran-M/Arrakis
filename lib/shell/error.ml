@@ -17,13 +17,11 @@ let cmd_not_found (s : Types.state) line =
   fprintf s.out_channel "%a Undefined command @{<fg_red>'%s'@}.@\n"
     error () line;
   fprintf s.out_channel "%a Try @{<fg_green>'help'@}.@."
-    hint ();
-  s
+    hint ()
 
 let cmd_bad_usage (s : Types.state) all_cmd line =
   fprintf s.out_channel "%a Bad usage @{<fg_red>'%s'@}.@\n"
   error () line;
   fprintf s.out_channel "%a Try @{<fg_green>'help %s'@}.@."
-  hint () all_cmd;
-  s
+  hint () all_cmd
 

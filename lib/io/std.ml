@@ -34,6 +34,8 @@ let render (t : Cstring.t) start =
   Tty.output t.s;
   Tty.cursor_left (tl - t.cursor)
 
+let empty = { s = Common.Cstring.empty; h = History.empty }
+
 let add_history (t : t) s = { t with h = History.add t.h s }
 
 let update op (t : t) =

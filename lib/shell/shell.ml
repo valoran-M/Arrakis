@@ -26,7 +26,6 @@ let create arch ecall debug labels run : Types.state =
     input        = Io.Std.read_line;
     out_channel  = Format.std_formatter;
     cmds         = all_commands;
-    cmds_history = [||];
     breakpoints  = Hashtbl.create 64;
     program_run  = false;
 
@@ -61,17 +60,18 @@ let exec_command (s : Types.state) line =
   with Shell_error Cmd_Not_Found -> cmd_not_found s line
 
 let start (state : Types.state) =
-  let rec loop (state : Types.state) (i: Io.Std.t) =
+  let rec loop (i: Io.Std.t) =
     try
       match state.input i with
       | Exit  -> ()
-      | Tab t -> auto_complete state t |> loop state
+      | Tab t -> auto_complete state t |> loop
       | Line (l, i) ->
-        loop (exec_command state l) { i with s = Common.Cstring.empty }
+        exec_command state l;
+        loop { i with s = Common.Cstring.empty }
     with Quit.Shell_Exit | End_of_file -> ()
   in
   ignore (state.init ());
-  loop state { s = Common.Cstring.empty; h = Io.History.empty };
+  loop Io.Std.empty;
   ignore (state.exit ())
 
 let run (state : Types.state) (args : string list) =

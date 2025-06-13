@@ -12,8 +12,7 @@ exception End_loop
 let iter f args (state : Types.state) =
   if List.compare_lengths args [] = 0
   then raise (Shell_error (Bad_Usage))
-  else List.iter (f state) args;
-  state
+  else List.iter (f state) args
 
 (* Line --------------------------------------------------------------------- *)
 
@@ -114,9 +113,7 @@ let breakpoint_remove : Types.cmd =
     execute     = iter execute_remove;
     sub         = []; }
 
-let execute_clear _args (state : Types.state) =
-  Hashtbl.clear state.breakpoints;
-  state
+let execute_clear _args (state : Types.state) = Hashtbl.clear state.breakpoints
 
 let breakpoint_clear : Types.cmd =
   { long_form   = "clear";

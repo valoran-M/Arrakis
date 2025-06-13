@@ -18,8 +18,7 @@ open Common.Pp
 (* Utils -------------------------------------------------------------------- *)
 
 let program_not_run (state : Types.state) =
-    Format.fprintf state.out_channel "%a Program is not running.@." info ();
-    state
+    Format.fprintf state.out_channel "%a Program is not running.@." info ()
 
 let execute_syscal (state : Types.state) =
   (* reset shell *)
@@ -38,7 +37,7 @@ let exec_ecall (state : Types.state) history =
 
 (* Take one step forward *)
 let one_step (state : Types.state) =
-  if not state.program_run then program_not_run state else
+  if not state.program_run then () else
   let program_run, history =
     match Simulator.Execute.exec_instruction state.arch state.history with
     | Continue (_, history) -> state.program_run, history
@@ -48,13 +47,14 @@ let one_step (state : Types.state) =
         "%a Exiting without an exit syscall@." warning ();
       false, state.history
   in
-  { state with program_run; history; }
+  state.program_run <- program_run;
+  state.history     <- history
 
 (* Take n step forward *)
 let rec n_step n state =
-  if n > 0
-  then n_step (n-1) (one_step state)
-  else state
+  one_step state;
+  if n > 1
+  then n_step (n-1) state
 
 (* Take one step backward *)
 
@@ -66,13 +66,13 @@ let one_bstep (state : Types.state) =
       Format.fprintf state.out_channel "%a History is empty.@." error ();
       state.history
   in
-  { state with history }
+  state.history <- history
 
 (* Take n step backward *)
 let rec n_bstep n state =
-  if n > 0
-  then n_bstep (n-1) (one_bstep state)
-  else state
+  one_bstep state;
+  if n > 1
+  then n_bstep (n-1) state
 
 let is_call code =
   if Int32.logand code 0b1111111l <> 0b1100111l
@@ -92,20 +92,19 @@ let is_ret code =
     (* RET *)
     decode.fc3 = 0x0 && decode.rs1 = 1 && decode.rdt = 0
 
-let rec pass_function depth (state : Types.state) =
+let pass_function depth (state : Types.state) =
   if not state.program_run then program_not_run state else
   let arch = state.arch in
-  let code = Arch.Memory.get_int32 arch.memory (Arch.Cpu.get_pc arch.cpu) in
-  if is_call code
-  then pass_function (depth + 1) (one_step state)
-  else if is_ret code then
-    if depth = 1
-    then one_step state
-    else pass_function (depth - 1) (one_step state)
-  else
-    if depth = 0
-    then one_step state
-    else pass_function depth (one_step state)
+  let rec loop depth =
+    let code = Arch.Memory.get_int32 arch.memory (Arch.Cpu.get_pc arch.cpu) in
+    one_step state;
+    match is_call code, is_ret code with
+    | true,  false -> loop (depth + 1)
+    | false, true  -> if depth > 1 then loop (depth - 1)
+    | false, false -> if depth > 0 then loop depth
+    | _ -> assert false
+  in
+  loop depth
 
 (* Step ---------------------------------------------------------------------- *)
 
@@ -130,13 +129,12 @@ let step : Types.cmd =
 let rec next_breakpoint (first : bool) (state : Types.state) =
   let addr = Arch.Cpu.get_pc state.arch.cpu in
   if state.program_run && (first || not (Hashtbl.mem state.breakpoints addr))
-  then next_breakpoint false (one_step state)
-  else state
+  then (one_step state; next_breakpoint false state)
 
 let rec n_next_breakpoint n state =
-  if n > 0
-  then n_next_breakpoint (n-1) (next_breakpoint true state)
-  else state
+  next_breakpoint true state;
+  if n > 1
+  then n_next_breakpoint (n-1) state
 
 let continue_execute args (state : Types.state) =
   match args with
@@ -144,7 +142,7 @@ let continue_execute args (state : Types.state) =
     try n_next_breakpoint (int_of_string count) state
     with _ -> raise (Shell_error Bad_Usage))
   | [] -> next_breakpoint true state
-  | _ -> raise (Shell_error Bad_Usage)
+  | _  -> raise (Shell_error Bad_Usage)
 
 let continue : Types.cmd =
   { long_form   = "continue";
@@ -157,8 +155,7 @@ let continue : Types.cmd =
 
 (* Next --------------------------------------------------------------------- *)
 
-let run_next _ (state : Types.state) =
-  pass_function 0 state
+let run_next _ (state : Types.state) = pass_function 0 state
 
 let next : Types.cmd =
   { long_form   = "next";
@@ -206,12 +203,10 @@ let previous : Types.cmd =
 (* Run ---------------------------------------------------------------------- *)
 
 let run_execute args (state : Types.state) =
-  let state =
-    { state with
-      program_run = true;
-      history     = History.reset state.arch state.history; }
-  in
-  Simulator.Arguments.write_arguments state.arch args;
+  if not state.program_run then (
+    Simulator.Arguments.write_arguments state.arch args;
+    state.program_run <- true;
+    state.history     <- History.reset state.arch state.history);
   next_breakpoint false state
 
 let run : Types.cmd =

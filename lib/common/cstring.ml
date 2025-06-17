@@ -49,6 +49,8 @@ let delete (len : int) (t : t) =
     let a = String.sub t.s (t.cursor + len) (tl - t.cursor - len) in
     { t with s = b ^ a }
 
+let complete c l s = add_string s (backspace l c)
+
 let set_cursor cursor t =
   if length t < cursor
   then t

@@ -25,6 +25,8 @@ type cmd = t -> cmd_ret
 let cmds = Hashtbl.create 16
 let prompt = ref ""
 
+let rm_string t = { t with s = Common.Cstring.empty }
+
 
 let render (t : Cstring.t) start =
   let tl = String.length t.s in
@@ -104,9 +106,9 @@ let rec read_line (t : t) : ret =
   match input () with
   | None          -> read_line t
   | Some (Char c) -> read_line { t with s = (add_char c t.s) }
-  | Some c        -> exec_command c t
+  | Some c        -> exec_shortcut c t
 
-and exec_command c (t : t) : ret =
+and exec_shortcut c (t : t) : ret =
   match Hashtbl.find_opt cmds c with
   | None   -> read_line t
   | Some f ->

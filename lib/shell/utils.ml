@@ -43,6 +43,12 @@ let find_cmd cmd lc =
 
 let find_cmd_opt cmd lc = List.find_opt (cmd_eq cmd) lc
 
+let rec list_rm_last l =
+  match l with
+  | []     -> raise Not_found
+  | [c]    -> [], c
+  | c :: l -> let nl, last = list_rm_last l in c :: nl, last
+
 let rec get_sub_cmd (cmd : cmd) all_cmd args =
   match args with
   | []     -> cmd, all_cmd, []
@@ -52,18 +58,22 @@ let rec get_sub_cmd (cmd : cmd) all_cmd args =
     | Some c -> get_sub_cmd c (c :: all_cmd) a
 
 let get_cmd_l line (state : Types.state) : cmd * cmd list * string list =
-  let cmd, args =
-    match line with
-    | []     -> raise (Shell_error Cmd_Not_Found)
-    | c :: a -> find_cmd c state.cmds, a
-  in
-  get_sub_cmd cmd [cmd] args
+  match line with
+  | []     -> raise (Shell_error Cmd_Not_Found)
+  | c :: a ->
+    let cmd = find_cmd c state.cmds in
+    get_sub_cmd cmd [cmd] a
 
 let get_cmd (line : string) (state : state) : cmd * cmd list * string list =
-  let cmd, args =
-    match String.split_on_char ' ' line with
-    | []     -> raise (Shell_error Cmd_Not_Found)
-    | c :: a -> find_cmd c state.cmds, a
-  in
-  get_sub_cmd cmd [cmd] args
+  match String.split_on_char ' ' line with
+  | []     -> raise (Shell_error Cmd_Not_Found)
+  | c :: a ->
+    let cmd = find_cmd c state.cmds in
+    get_sub_cmd cmd [cmd] a
+
+
+let print_cmds cmds s =
+  Format.fprintf s.out_channel "\n%!";
+  List.iter (fun c -> Format.fprintf s.out_channel "%-20s" c) cmds;
+  Format.fprintf s.out_channel "\n%!"
 

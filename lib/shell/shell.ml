@@ -3,7 +3,6 @@
 (* Distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>          *)
 (******************************************************************************)
 
-open Format
 open Error
 
 let all_commands = [
@@ -37,41 +36,47 @@ let create arch ecall debug labels run : Types.state =
     ecall; }
 
 let auto_complete (s : Types.state) (i : Io.Std.t) =
-  let open Common in
-  let input = Cstring.before i.s in
-  let cmds  = Utils.all_commands_sl all_commands in
-  let cmds  = List.filter (String.starts_with ~prefix:input) cmds in
-  match cmds with
-  | []  -> i
-  | [c] -> { i with s = Cstring.add_string c (Cstring.backspace i.s.cursor i.s) }
-  | _   ->
-    fprintf s.out_channel "\n%!";
-    List.iter (fun c -> fprintf s.out_channel "%-20s" c) cmds;
-    fprintf s.out_channel "\n%!";
-    i
+
+  let complete last l_cmds =
+    let open Common in
+    let cmds = Utils.all_commands_sl l_cmds in
+    let cmds = List.filter (String.starts_with ~prefix:last) cmds in
+    match cmds with
+    | []  -> i
+    | [c] -> { i with s = Cstring.complete i.s (String.length last) c }
+    | _   -> Utils.print_cmds cmds s; i
+  in
+
+  let input = Common.Cstring.before i.s in
+  if String.trim input = ""
+  then complete "" s.cmds
+  else
+    let c, ls = Utils.list_rm_last (String.split_on_char ' ' input) in
+    try
+      let cmd, _, args = Utils.get_cmd_l c s in
+      if args = [] then complete ls cmd.sub else i
+    with Shell_error Cmd_Not_Found -> complete ls s.cmds
 
 let exec_command (s : Types.state) line =
   try
-    let cmd, all_cmd, args = Utils.get_cmd line s in
+    let cmd, all_cmd, args = Utils.get_cmd (String.trim line) s in
     try cmd.execute args s
     with Shell_error Bad_Usage   ->
-      let all_cmd = (Utils.all_commands_string all_cmd) in
-      cmd_bad_usage s all_cmd line
+      let cmd = Utils.all_commands_string all_cmd in
+      cmd_bad_usage s cmd line
   with Shell_error Cmd_Not_Found -> cmd_not_found s line
 
 let start (state : Types.state) =
+  let open Io.Std in
   let rec loop (i: Io.Std.t) =
-    try
-      match state.input i with
-      | Exit  -> ()
-      | Tab t -> auto_complete state t |> loop
-      | Line (l, i) ->
-        exec_command state l;
-        loop { i with s = Common.Cstring.empty }
-    with Quit.Shell_Exit | End_of_file -> ()
+    try match state.input i with
+    | Exit        -> ()
+    | Tab t       -> auto_complete state t |> loop
+    | Line (l, i) -> exec_command state l; loop (rm_string i)
+    with Quit.Shell_Exit -> ()
   in
   ignore (state.init ());
-  loop Io.Std.empty;
+  loop empty;
   ignore (state.exit ())
 
 let run (state : Types.state) (args : string list) =

@@ -8,8 +8,9 @@ type t
 val add_address     : t -> string -> int32 -> unit
 val get_address     : t -> string -> int   -> int32
 val get_address_opt : t -> string -> int32 option
-val made_global     : t -> string -> int   -> unit
-val get_global      : t -> string -> int32 option
+
+val add_global : t -> string -> int   -> unit
+val get_global : t -> string -> int32 option
 
 val set_size      : t -> string -> int -> unit
 val get_size      : t -> string -> int

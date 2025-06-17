@@ -18,7 +18,9 @@ let ( + ) = Int32.add
 type t = {
   label_size       : (string, int)   Hashtbl.t;
   label_to_address : (string, int32) Hashtbl.t;
-  global_label     : (string, int32) Hashtbl.t;
+  global_set       : (string, unit)  Hashtbl.t;
+  text_set         : (string, unit)  Hashtbl.t;
+  data_set         : (string, unit)  Hashtbl.t;
 }
 
 let add_address (labels : t) label addr =
@@ -32,13 +34,23 @@ let get_address (labels : t) label line =
 let get_address_opt (labels : t) label =
   Hashtbl.find_opt labels.label_to_address label
 
-let made_global (labels : t) label line =
-  match Hashtbl.find_opt labels.label_to_address label with
-  | None      -> raise (Assembler_error (line, (Error.Unknown_Label label)))
-  | Some addr -> Hashtbl.replace labels.global_label label addr
+let add_global (labels : t) label line =
+  if Hashtbl.mem labels.label_to_address label
+  then Hashtbl.add labels.global_set label ()
+  else raise (Assembler_error (line, (Error.Unknown_Label label)))
+
+let add_text (labels : t) label addr =
+  add_address labels label addr;
+  Hashtbl.add labels.text_set label ()
+
+let add_data (labels : t) label addr =
+  add_address labels label addr;
+  Hashtbl.add labels.data_set label ()
 
 let get_global (labels : t) label =
-  Hashtbl.find_opt labels.global_label label
+  if Hashtbl.mem labels.global_set label
+  then Some (Hashtbl.find labels.label_to_address label)
+  else None
 
 let set_size (labels : t) label size =
   Hashtbl.replace labels.label_size label size
@@ -58,7 +70,7 @@ let rec get_label_text (text : Program.text) labels addr =
   | Text_Instr  _ :: l -> get_label_text l labels (addr + 0x4l)
   | Text_Direc  d :: l -> get_label_text l labels (get_addr_directive d addr)
   | Text_Label  s :: l ->
-    add_address labels s addr;
+    add_text labels s addr;
     get_label_text l labels addr
 (* No more pseudo instructions after remove_pseudo *)
   | Text_Pseudo _ :: _ -> assert false
@@ -83,7 +95,7 @@ let rec get_label_data (data : Program.data) labels addr =
   | Data_Zero nz  :: l -> get_label_data l labels (addr+4l*nz)
   | Data_Direc d  :: l -> get_label_data l labels (get_addr_directive d addr)
   | Data_Label lb :: l ->
-    add_address labels lb addr;
+    add_data labels lb addr;
     get_label_data l labels addr
 
 let get_label_address (prog : Program.t) =
@@ -91,7 +103,9 @@ let get_label_address (prog : Program.t) =
   let labels =
     { label_size       = Hashtbl.create 8;
       label_to_address = Hashtbl.create 16;
-      global_label     = Hashtbl.create 16; }
+      global_set       = Hashtbl.create 16;
+      text_set         = Hashtbl.create 16;
+      data_set         = Hashtbl.create 16; }
   in
   get_label_data prog.data labels data_begin;
   get_label_text prog.text labels text_begin;

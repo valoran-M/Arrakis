@@ -39,7 +39,7 @@ let translate (instruction : basics_inst) addr line labels =
 
 let exec_directive directive labels addr =
   match directive with
-  | Glob_GLabel (line, label) -> Label.made_global labels label line; addr
+  | Glob_GLabel (line, label) -> Label.add_global labels label line; addr
   | Glob_Size (line, label, expr) ->
     let size = Int32.to_int (Utils.expr_to_int32 expr labels line addr) in
     Label.set_size labels label size;

@@ -10,11 +10,8 @@
 ### Improve shell
 
 * Handle `ecall` failure at shell level
-* When printing memory, show which case was the one which was asked so we can
-  clearly see what is before and what is after
 * Add feedback for command 's', 'c', 'r'...
-* Add an error when program is not running and running 'c' or 's'
-* `autocomplete`: Use pretty printing boxes, auto-complete sub-commands
+* `autocomplete`: Use pretty printing boxes, auto-complete args (regs, labels)
 * Sometimes `stdout` is not flushed properly
 
 ## ??? (Future work without attributed planned version)

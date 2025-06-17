@@ -82,39 +82,41 @@ let size_default  = 0x10
 let line_size   = 0x4
 let line_size32 = 0x4l
 
-let print_line (state : Types.state) line_address =
+let print_line (state : Types.state) line_address pointer =
   fprintf state.out_channel "0x%08x |" (int32_to_int line_address);
   for i = 0 to line_size - 1 do
     let addr  = line_address + (Int32.of_int i) in
     let value = Memory.get_byte state.arch.memory addr in
-    fprintf state.out_channel "  %02lx" value
+    if addr = pointer
+    then fprintf state.out_channel "  @{<reversed>%02lx@}" value
+    else fprintf state.out_channel "  %02lx" value
   done;
   fprintf state.out_channel " \n"
 
-let print_memory (state : Types.state) start size =
+let print_memory (state : Types.state) start size pointer =
   fprintf state.out_channel "@{<bold>%-10s@} |  @{<bold>+0  +1  +2  +3@}\n"
     "Address";
   let line_address = ref (Int32.logand start (Int32.lognot line_size32)) in
   for _ = 1 to size do
-    print_line state (alignment !line_address);
+    print_line state (alignment !line_address) pointer;
     line_address := !line_address + line_size32
   done
 
 let execute_info_memory args (state : Types.state) =
   begin try match args with
-  | []      -> print_memory state start_default size_default
+  | []      -> print_memory state start_default size_default start_default
   | [start] ->
       let start = Utils.arg_to_int32 state start in
-      print_memory state start size_default
+      print_memory state start size_default start
   | [start; size] ->
       let start = Utils.arg_to_int32 state start in
       let size  = int_of_string size in
-      print_memory state start size
+      print_memory state start size start
   | [start; size; nsize] ->
       let start = Utils.arg_to_int32 state start in
       let nsize = Int32.of_string nsize in
       let size  = int_of_string   size  in
-      print_memory state (Int32.sub start nsize) size
+      print_memory state (Int32.sub start nsize) size start
   | _ -> raise (Shell_error Bad_Usage)
   with _ -> raise (Shell_error Bad_Usage)
   end;

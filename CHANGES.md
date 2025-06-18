@@ -1,4 +1,4 @@
-# 1.2.0
+# 1.1.1
 
 - Greatly improved shell
   + Add arrow

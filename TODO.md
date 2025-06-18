@@ -11,7 +11,7 @@
 
 * Handle `ecall` failure at shell level
 * Add feedback for command 's', 'c', 'r'...
-* `autocomplete`: Use pretty printing boxes, auto-complete args (regs, labels)
+* auto-complete args labels
 
 ## ??? (Future work without attributed planned version)
 

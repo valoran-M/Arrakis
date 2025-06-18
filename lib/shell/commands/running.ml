@@ -119,7 +119,8 @@ let step : Types.cmd =
     short_desc = "Execute next instruction";
     long_desc  = ["Usage: step <count>"];
     execute    = step_execute;
-    sub        = []; }
+    sub        = [];
+    args       = Nil; }
 
 (* Continue ----------------------------------------------------------------- *)
 
@@ -151,7 +152,8 @@ let continue : Types.cmd =
     short_desc  = "Run code until the next breakpoint";
     long_desc   = ["Usage: continue <count>"];
     execute     = continue_execute;
-    sub         = []; }
+    sub         = [];
+    args        = Nil; }
 
 (* Next --------------------------------------------------------------------- *)
 
@@ -167,7 +169,8 @@ let next : Types.cmd =
     short_desc  = "Like step, but does not step into functions";
     long_desc   = ["Usage: next <count>"];
     execute     = run_next;
-    sub         = [] }
+    sub         = [];
+    args        = Nil; }
 
 (* Finish ------------------------------------------------------------------- *)
 
@@ -185,7 +188,8 @@ let finish : Types.cmd =
       "Run the program until a ret instruction is reached or pc is out of bound"
     ];
     execute     = finish_execute;
-    sub         = [] }
+    sub         = [];
+    args        = Nil; }
 
 (* Previous ----------------------------------------------------------------- *)
 
@@ -203,7 +207,8 @@ let previous : Types.cmd =
     short_desc  = "Revert previous step";
     long_desc   = ["Usage: previous <count>"];
     execute     = pre_execute;
-    sub         = []; }
+    sub         = [];
+    args        = Nil; }
 
 (* Run ---------------------------------------------------------------------- *)
 
@@ -224,5 +229,6 @@ let run : Types.cmd =
       "Start executing the program and give <arg1> ... <argn> as arguments.";
     ];
     execute     = run_execute;
-    sub         = []; }
+    sub         = [];
+    args        = Nil; }
 

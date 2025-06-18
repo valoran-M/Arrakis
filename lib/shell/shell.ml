@@ -35,27 +35,36 @@ let create arch ecall debug labels run : Types.state =
     labels;
     ecall; }
 
-let auto_complete (s : Types.state) (i : Io.Std.t) =
+let auto_completion (s : Types.state) (i : Io.Std.t) =
 
-  let complete last l_cmds =
-    let open Common in
-    let cmds = Utils.all_commands_sl l_cmds in
-    let cmds = List.filter (String.starts_with ~prefix:last) cmds in
-    match cmds with
-    | []  -> i
-    | [c] -> { i with s = Cstring.complete i.s (String.length last) c }
-    | _   -> Utils.print_cmds cmds s; i
+  let complete_cmd last cmds =
+    Utils.complete last (Utils.all_commands_sl cmds) i s
+  in
+
+  let complete_arg last args (cmd : Types.cmd) =
+    match Utils.get_type_next_arg args cmd.args with
+    | None -> i
+    | Some a ->
+      match a with
+      | Nil -> i
+      | Regs -> Utils.complete last (Assembler.Regs.all_regs) i s
+      | Text_addr _ -> i
+      | Text_size _ -> i
+      | Data_addr _ -> i
+      | Data_size _ -> i
   in
 
   let input = Common.Cstring.before i.s in
   if String.trim input = ""
-  then complete "" s.cmds
+  then complete_cmd "" s.cmds
   else
     let c, ls = Utils.list_rm_last (String.split_on_char ' ' input) in
     try
       let cmd, _, args = Utils.get_cmd_l c s in
-      if args = [] then complete ls cmd.sub else i
-    with Shell_error Cmd_Not_Found -> complete ls s.cmds
+      if cmd.args = Nil
+      then complete_cmd ls cmd.sub
+      else complete_arg ls args cmd
+    with Shell_error Cmd_Not_Found -> complete_cmd ls s.cmds
 
 let exec_command (s : Types.state) line =
   try
@@ -71,7 +80,7 @@ let start (state : Types.state) =
   let rec loop (i: Io.Std.t) =
     try match state.input i with
     | Exit        -> ()
-    | Tab t       -> auto_complete state t |> loop
+    | Tab t       -> auto_completion state t |> loop
     | Line (l, i) -> exec_command state l; loop (rm_string i)
     with Quit.Shell_Exit -> ()
   in

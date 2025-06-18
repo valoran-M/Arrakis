@@ -39,7 +39,8 @@ let breakpoint_line : Types.cmd =
     short_desc  = "Add breakpoints on specified lines";
     long_desc   = [];
     execute     = iter execute_line;
-    sub         = []; }
+    sub         = [];
+    args        = Nil; }
 
 (* Addr --------------------------------------------------------------------- *)
 
@@ -67,7 +68,8 @@ let breakpoint_addr : Types.cmd =
     short_desc  = "Add breakpoints on specified address";
     long_desc   = [];
     execute     = iter execute_addr;
-    sub         = []; }
+    sub         = [];
+    args        = Nil; }
 
 (* Print -------------------------------------------------------------------- *)
 
@@ -84,7 +86,8 @@ let breakpoint_print : Types.cmd =
     short_desc  = "Print all breakpoints";
     long_desc   = ["Print all breakpoints"];
     execute     = iter execute_addr;
-    sub         = []; }
+    sub         = [];
+    args        = Nil; }
 
 (* Remove ------------------------------------------------------------------- *)
 
@@ -111,7 +114,8 @@ let breakpoint_remove : Types.cmd =
     short_desc  = "Remove specified breakpoints";
     long_desc   = ["Remove specified breakpoints"];
     execute     = iter execute_remove;
-    sub         = []; }
+    sub         = [];
+    args        = Nil; }
 
 let execute_clear _args (state : Types.state) = Hashtbl.clear state.breakpoints
 
@@ -122,7 +126,8 @@ let breakpoint_clear : Types.cmd =
     short_desc  = "Remove all breakpoints";
     long_desc   = ["Remove all breakpoints"];
     execute     = execute_clear;
-    sub         = []; }
+    sub         = [];
+    args        = Nil; }
 
 (* -------------------------------------------------------------------------- *)
 
@@ -139,5 +144,6 @@ let rec breakpoint : Types.cmd =
       breakpoint_print;
       breakpoint_remove;
       breakpoint_clear;
-    ]; }
+    ];
+    args        = Nil; }
 

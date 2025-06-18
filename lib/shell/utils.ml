@@ -27,7 +27,7 @@ let get_size labels label default =
 
 let rec args_default args default =
   match args, default with
-  | [], d -> d 
+  | [], d -> d
   | a :: la, _ :: ld -> a :: args_default la ld
   | _,  _ -> assert false
 
@@ -71,9 +71,25 @@ let get_cmd (line : string) (state : state) : cmd * cmd list * string list =
     let cmd = find_cmd c state.cmds in
     get_sub_cmd cmd [cmd] a
 
+let rec get_type_next_arg args cmd_args =
+  match cmd_args, args with
+  | Nil,  _  -> None
+  | Regs, _  -> Some Regs
+  | c,    [] -> Some c
+  | Text_addr c, _ :: a | Text_size c, _ :: a
+  | Data_addr c, _ :: a | Data_size c, _ :: a -> get_type_next_arg a c
 
-let print_cmds cmds s =
+let print_auto_complete l s =
   Format.fprintf s.out_channel "\n%!";
-  List.iter (fun c -> Format.fprintf s.out_channel "%-20s" c) cmds;
+  Format.pp_open_hovbox s.out_channel 0;
+  List.iter (fun c -> Format.fprintf s.out_channel "%-18s@," c) l;
+  Format.pp_close_box s.out_channel ();
   Format.fprintf s.out_channel "\n%!"
+
+let complete s ls (i : Io.Std.t) state =
+  let cmds = List.filter (String.starts_with ~prefix:s) ls in
+  match cmds with
+  | []  -> i
+  | [c] -> { i with s = Common.Cstring.complete i.s (String.length s) c }
+  | _   -> print_auto_complete cmds state; i
 

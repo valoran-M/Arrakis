@@ -43,9 +43,15 @@ let add_text (labels : t) label addr =
   add_address labels label addr;
   Hashtbl.add labels.text_set label ()
 
+let get_all_text (labels : t) =
+  List.of_seq (Seq.map fst (Hashtbl.to_seq labels.text_set))
+
 let add_data (labels : t) label addr =
   add_address labels label addr;
   Hashtbl.add labels.data_set label ()
+
+let get_all_data (labels : t) =
+  List.of_seq (Seq.map fst (Hashtbl.to_seq labels.data_set))
 
 let get_global (labels : t) label =
   if Hashtbl.mem labels.global_set label
@@ -57,6 +63,8 @@ let set_size (labels : t) label size =
 
 let get_size     (labels : t) label = Hashtbl.find     labels.label_size label
 let get_size_opt (labels : t) label = Hashtbl.find_opt labels.label_size label
+let get_all_size (labels : t) =
+  List.of_seq (Seq.map fst (Hashtbl.to_seq labels.label_size))
 
 (* Assembly ----------------------------------------------------------------- *)
 

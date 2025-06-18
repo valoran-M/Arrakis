@@ -3,6 +3,7 @@
 (* Distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>          *)
 (******************************************************************************)
 
+open Types
 open Arch
 open Disassembler
 open Format
@@ -72,7 +73,8 @@ let info_code : Types.cmd =
     short_desc  = "Print code";
     long_desc   = ["Usage: info code <address> <offset> <negative offset>"];
     execute     = execute_info_code;
-    sub         = []; }
+    sub         = [];
+    args        = Text_addr (Text_size (Text_size Nil)); }
 
 (* Memory ------------------------------------------------------------------- *)
 
@@ -134,7 +136,8 @@ let info_memory : Types.cmd =
               "<nsize=0> Size of the chunk of memory to print (backward)";
     ];
     execute     = execute_info_memory;
-    sub         = []; }
+    sub         = [];
+    args        = Data_addr (Data_size (Data_size Nil)); }
 
 (* Regs --------------------------------------------------------------------- *)
 
@@ -195,7 +198,8 @@ let info_registers : Types.cmd =
       such as 'zero', 's0'";
     ];
     execute     = execute_info_registers;
-    sub         = []; }
+    sub         = [];
+    args        = Regs; }
 
 (* Decode ------------------------------------------------------------------- *)
 
@@ -206,5 +210,6 @@ let rec info : Types.cmd =
     short_desc  = "Print informations about CPU";
     long_desc   = [];
     execute     = (fun _ state -> Help.command info state);
-    sub         = [info_memory; info_registers; info_code]; }
+    sub         = [info_memory; info_registers; info_code];
+    args        = Nil; }
 

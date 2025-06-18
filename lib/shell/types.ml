@@ -3,6 +3,14 @@
 (* Distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>          *)
 (******************************************************************************)
 
+type args =
+  | Nil
+  | Regs
+  | Text_addr of args
+  | Text_size of args
+  | Data_addr of args
+  | Data_size of args
+
 type cmd = {
 
   (* Name to type to invoke said command *)
@@ -22,6 +30,7 @@ type cmd = {
   execute     : string list -> state -> unit;
 
   sub         : cmd list;
+  args        : args;
 }
 
 and state = {

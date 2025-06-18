@@ -37,4 +37,5 @@ let help : Types.cmd =
     short_desc  = "Get help on a command";
     long_desc   = ["Usage: help <command> <sub_command>"];
     execute     = execute;
-    sub         = []; }
+    sub         = [];
+    args        = Nil; }

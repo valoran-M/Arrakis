@@ -7,4 +7,5 @@ let quit : Types.cmd =
     short_desc  = "Exit shell";
     long_desc   = ["Exit shell"];
     execute     = (fun _ _ -> raise Shell_Exit);
-    sub         = []; }
+    sub         = [];
+    args        = Nil; }

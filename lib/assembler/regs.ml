@@ -24,3 +24,6 @@ let () =
 let of_string     = Hashtbl.find     regs
 let of_string_opt = Hashtbl.find_opt regs
 
+let all_regs =
+  List.sort String.compare ("pc" :: List.of_seq (Seq.map fst (Hashtbl.to_seq regs)))
+

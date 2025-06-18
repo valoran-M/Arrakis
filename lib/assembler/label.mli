@@ -12,9 +12,13 @@ val get_address_opt : t -> string -> int32 option
 val add_global : t -> string -> int   -> unit
 val get_global : t -> string -> int32 option
 
+val get_all_text : t -> string list
+val get_all_data : t -> string list
+
 val set_size      : t -> string -> int -> unit
 val get_size      : t -> string -> int
 val get_size_opt  : t -> string -> int option
+val get_all_size  : t -> string list
 
 val get_label_address : Program.t -> t
 

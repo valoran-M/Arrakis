@@ -85,7 +85,7 @@ let breakpoint_print : Types.cmd =
     name        = "(p)rint";
     short_desc  = "Print all breakpoints";
     long_desc   = ["Print all breakpoints"];
-    execute     = iter execute_addr;
+    execute     = execute_print;
     sub         = [];
     args        = Nil; }
 

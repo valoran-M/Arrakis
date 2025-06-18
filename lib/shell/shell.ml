@@ -48,6 +48,7 @@ let auto_completion (s : Types.state) (i : Io.Std.t) =
       match a with
       | Nil -> i
       | Regs -> Utils.complete last (Assembler.Regs.all_regs) i s
+      (* TODO *)
       | Text_addr _ -> i
       | Text_size _ -> i
       | Data_addr _ -> i

@@ -1,4 +1,13 @@
-# 1.1.0 (???)
+# 1.2.0
+
+- Greatly improved shell
+  + Add arrow
+  + History
+  + Commands auto-completion
+  + `Ctrl+L` clear
+- Fix `finish` and `next` bug
+
+# 1.1.0 (2024-29-05)
 
 - Migration to codeberg
 - Greatly improved the codebase

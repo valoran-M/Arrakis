@@ -18,18 +18,29 @@ let ( + ) = Int32.add
 type t = {
   label_size       : (string, int)   Hashtbl.t;
   label_to_address : (string, int32) Hashtbl.t;
+  address_to_label : (int32, string) Hashtbl.t;
   global_set       : (string, unit)  Hashtbl.t;
   text_set         : (string, unit)  Hashtbl.t;
   data_set         : (string, unit)  Hashtbl.t;
 }
 
 let add_address (labels : t) label addr =
+  Hashtbl.replace labels.address_to_label addr label ;
   Hashtbl.replace labels.label_to_address label addr
 
 let get_address (labels : t) label line =
   match Hashtbl.find_opt labels.label_to_address label with
   | None      -> raise (Assembler_error (line, (Error.Unknown_Label label)))
   | Some addr -> addr
+
+let get_label (labels : t) addr =
+  Hashtbl.find labels.address_to_label addr
+
+let get_label_opt (labels : t) addr =
+  Hashtbl.find_opt labels.address_to_label addr
+
+let get_labels (labels : t) addr =
+  Hashtbl.find_all labels.address_to_label addr
 
 let get_address_opt (labels : t) label =
   Hashtbl.find_opt labels.label_to_address label
@@ -111,6 +122,7 @@ let get_label_address (prog : Program.t) =
   let labels =
     { label_size       = Hashtbl.create 8;
       label_to_address = Hashtbl.create 16;
+      address_to_label = Hashtbl.create 16;
       global_set       = Hashtbl.create 16;
       text_set         = Hashtbl.create 16;
       data_set         = Hashtbl.create 16; }

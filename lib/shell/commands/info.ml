@@ -31,12 +31,21 @@ let print_addr (state : Types.state) addr pc code =
     let addr_str  = sprintf "0x%08lx" addr                     in
     let code_str  = print_code state.arch code                 in
     let linenb, _ = Assembler.Debug.get_line state.debug addr  in
+    let label =
+      match Assembler.Label.get_label_opt state.labels addr with
+      | None   -> ""
+      | Some l ->
+        if String.length l > 9
+        then String.sub l 0 8 ^ "-:"
+        else l ^ ":"
+    in
 
-    fprintf state.out_channel "%03d | %2s%2s %10s | %s\n"
+    fprintf state.out_channel "%03d | %2s%2s %10s | %10s %s\n"
       linenb
       breakpoint_str
       addr_pc
       addr_str
+      label
       code_str
 
 let info_code (state : Types.state) iaddr offset noffset =

@@ -6,6 +6,7 @@
   + Commands auto-completion
   + `Ctrl+L` clear
 - Fix `finish` and `next` bug
+- Print labels with `info code`
 
 # 1.1.0 (2024-29-05)
 

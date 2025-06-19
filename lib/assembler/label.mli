@@ -9,6 +9,10 @@ val add_address     : t -> string -> int32 -> unit
 val get_address     : t -> string -> int   -> int32
 val get_address_opt : t -> string -> int32 option
 
+val get_label     : t -> int32 -> string
+val get_label_opt : t -> int32 -> string option
+val get_labels    : t -> int32 -> string list
+
 val add_global : t -> string -> int   -> unit
 val get_global : t -> string -> int32 option
 

@@ -6,7 +6,7 @@
 open Options
 open Format
 
-let version = "1.2.0-dev"
+let version = "1.1.1"
 
 (* main *)
 let () =

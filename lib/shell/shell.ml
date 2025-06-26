@@ -85,10 +85,12 @@ let start (state : Types.state) =
     | Line (l, i) -> exec_command state l; loop (rm_string i)
     with Quit.Shell_Exit -> ()
   in
-  ignore (state.init ());
+  state.init ();
   loop empty;
-  ignore (state.exit ())
+  state.exit ()
 
 let run (state : Types.state) (args : string list) =
-  ignore (Running.run_execute args state)
+  state.init ();
+  Running.run_execute args state;
+  state.exit ()
 

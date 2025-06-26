@@ -29,7 +29,6 @@ let execute args (state : Types.state) =
     let c, _, _ = Utils.get_cmd_l args state in
     command c state
 
-
 let help : Types.cmd =
   { long_form   = "help";
     short_form  = "h";

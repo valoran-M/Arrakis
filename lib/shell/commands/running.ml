@@ -18,9 +18,9 @@ open Common.Pp
 (* Utils -------------------------------------------------------------------- *)
 
 let program_not_run (state : Types.state) =
-    Format.fprintf state.out_channel "%a Program is not running.@." info ()
+  Format.fprintf state.out_channel "%a Program is not running.@." info ()
 
-let execute_syscal (state : Types.state) =
+let execute_syscall (state : Types.state) =
   (* reset shell *)
   ignore (state.exit ());
   let r = state.ecall state.out_channel state.arch in
@@ -28,7 +28,7 @@ let execute_syscal (state : Types.state) =
   r
 
 let exec_ecall (state : Types.state) history =
-  match execute_syscal state with
+  match execute_syscall state with
   | Continue  -> state.program_run, history
   | Exit code ->
     Format.fprintf state.out_channel
@@ -54,7 +54,7 @@ let one_step (state : Types.state) =
 let rec n_step n state =
   one_step state;
   if n > 1 && state.program_run
-  then n_step (n-1) state
+  then n_step (n - 1) state
 
 (* Take one step backward *)
 let one_bstep (state : Types.state) =
@@ -110,7 +110,7 @@ let step_execute args (state : Types.state) =
     | []         -> one_step state
     | count :: _ ->
       try n_step (int_of_string count) state
-      with _ -> raise (Shell_error (Bad_Usage))
+      with _ -> eraise Bad_Usage
 
 let step : Types.cmd =
   { long_form  = "step";
@@ -132,7 +132,7 @@ let rec next_breakpoint (first : bool) (state : Types.state) =
 let rec n_next_breakpoint n state =
   next_breakpoint true state;
   if n > 1
-  then n_next_breakpoint (n-1) state
+  then n_next_breakpoint (n - 1) state
 
 let continue_execute args (state : Types.state) =
   if not state.program_run
@@ -140,10 +140,12 @@ let continue_execute args (state : Types.state) =
   else
     match args with
     | [] -> next_breakpoint true state
-    | [count]  -> (
-      try n_next_breakpoint (int_of_string count) state
-      with Failure _ -> raise (Shell_error Bad_Usage))
-    | _  -> raise (Shell_error Bad_Usage)
+    | [count]  ->
+      begin
+        try n_next_breakpoint (int_of_string count) state
+        with Failure _ -> eraise Bad_Usage
+      end
+    | _  -> eraise Bad_Usage
 
 let continue : Types.cmd =
   { long_form   = "continue";
@@ -198,7 +200,7 @@ let pre_execute args (state : Types.state) =
   | []         -> one_bstep state
   | count :: _ ->
     try n_bstep (int_of_string count) state
-    with _ -> raise (Shell_error (Bad_Usage))
+    with _ -> eraise Bad_Usage
 
 let previous : Types.cmd =
   { long_form   = "previous";
@@ -213,11 +215,13 @@ let previous : Types.cmd =
 (* Run ---------------------------------------------------------------------- *)
 
 let run_execute args (state : Types.state) =
-  if not state.program_run then (
+  let init = state.program_run in
+  if not init then (
     Simulator.Arguments.write_arguments state.arch args;
     state.program_run <- true;
-    state.history     <- History.reset state.arch state.history);
-  next_breakpoint false state
+    state.history     <- History.reset state.arch state.history
+  );
+  next_breakpoint init state
 
 let run : Types.cmd =
   { long_form   = "run";
@@ -227,6 +231,7 @@ let run : Types.cmd =
     long_desc   = [
       "Usage: run <arg1> ... <argn>";
       "Start executing the program and give <arg1> ... <argn> as arguments.";
+      "If program is already running, go to the next breakpoint.";
     ];
     execute     = run_execute;
     sub         = [];

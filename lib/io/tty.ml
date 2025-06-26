@@ -6,6 +6,7 @@
 external init  : unit -> bool = "caml_init_shell"
 external exit  : unit -> bool = "caml_exit_shell"
 external readc : unit -> int  = "caml_readc"
+
 let readc () : int option =
   match readc () with
   | -1 | -2 -> None

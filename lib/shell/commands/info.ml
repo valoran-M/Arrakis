@@ -52,8 +52,8 @@ let info_code (state : Types.state) iaddr offset noffset =
   let pc = Arch.Cpu.get_pc state.arch.cpu in
   try
     print_program_header state.out_channel;
-    for i=(-noffset) to offset-1 do
-      let addr = (iaddr + Int32.of_int i * 0x4l) in
+    for i = -noffset to offset - 1 do
+      let addr = iaddr + Int32.of_int i * 0x4l in
       if addr >= 0l then
         let code = Memory.get_int32 state.arch.memory addr in
         if code = 0l
@@ -73,7 +73,7 @@ let execute_info_code args (state : Types.state) =
       let noff = int_of_string noff in
       info_code state pc off noff
     | _ -> assert false
-  with _ -> raise (Shell_error Bad_Usage)
+  with _ -> eraise Bad_Usage
 
 let info_code : Types.cmd =
   { long_form   = "code";
@@ -114,22 +114,23 @@ let print_memory (state : Types.state) start size pointer =
   done
 
 let execute_info_memory args (state : Types.state) =
-  begin try match args with
-  | []      -> print_memory state start_default size_default start_default
-  | [start] ->
-      let start = Utils.arg_to_int32 state start in
-      print_memory state start size_default start
-  | [start; size] ->
-      let start = Utils.arg_to_int32 state start in
-      let size  = int_of_string size in
-      print_memory state start size start
-  | [start; size; nsize] ->
-      let start = Utils.arg_to_int32 state start in
-      let nsize = Int32.of_string nsize in
-      let size  = int_of_string   size  in
-      print_memory state (Int32.sub start nsize) size start
-  | _ -> raise (Shell_error Bad_Usage)
-  with _ -> raise (Shell_error Bad_Usage)
+  begin
+    try match args with
+    | []      -> print_memory state start_default size_default start_default
+    | [start] ->
+        let start = Utils.arg_to_int32 state start in
+        print_memory state start size_default start
+    | [start; size] ->
+        let start = Utils.arg_to_int32 state start in
+        let size  = int_of_string size in
+        print_memory state start size start
+    | [start; size; nsize] ->
+        let start = Utils.arg_to_int32 state start in
+        let nsize = Int32.of_string nsize in
+        let size  = int_of_string   size  in
+        print_memory state (Int32.sub start nsize) size start
+    | _ -> eraise Bad_Usage
+    with _ -> eraise Bad_Usage
   end;
   pp_print_flush state.out_channel ()
 

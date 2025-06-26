@@ -6,8 +6,6 @@
 open Types
 open Error
 
-exception Shell_invalid_arg of string list
-
 let cmd_eq (command : string) (cmd : Types.cmd) =
   cmd.long_form = command || cmd.short_form = command
 
@@ -39,7 +37,7 @@ let all_commands_string (all_commands : cmd list) =
 
 let find_cmd cmd lc =
   try  List.find (cmd_eq cmd) lc
-  with Not_found -> raise (Shell_error Cmd_Not_Found)
+  with Not_found -> eraise Cmd_Not_Found
 
 let find_cmd_opt cmd lc = List.find_opt (cmd_eq cmd) lc
 
@@ -59,14 +57,14 @@ let rec get_sub_cmd (cmd : cmd) all_cmd args =
 
 let get_cmd_l line (state : Types.state) : cmd * cmd list * string list =
   match line with
-  | []     -> raise (Shell_error Cmd_Not_Found)
+  | []     -> eraise Cmd_Not_Found
   | c :: a ->
     let cmd = find_cmd c state.cmds in
     get_sub_cmd cmd [cmd] a
 
 let get_cmd (line : string) (state : state) : cmd * cmd list * string list =
   match String.split_on_char ' ' line with
-  | []     -> raise (Shell_error Cmd_Not_Found)
+  | []     -> eraise Cmd_Not_Found
   | c :: a ->
     let cmd = find_cmd c state.cmds in
     get_sub_cmd cmd [cmd] a

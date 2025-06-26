@@ -25,8 +25,6 @@ type cmd = {
   long_desc  : string list;
 
   (* Do the actual action of the command *)
-  (* Please note that as the state contain mutable values, the execute function
-    may alter the state given as argument *)
   execute     : string list -> state -> unit;
 
   sub         : cmd list;

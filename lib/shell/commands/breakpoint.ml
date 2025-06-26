@@ -11,7 +11,7 @@ exception End_loop
 
 let iter f args (state : Types.state) =
   if List.compare_lengths args [] = 0
-  then raise (Shell_error (Bad_Usage))
+  then eraise Bad_Usage
   else List.iter (f state) args
 
 (* Line --------------------------------------------------------------------- *)

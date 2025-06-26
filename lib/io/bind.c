@@ -60,7 +60,7 @@ value caml_readc(value unit)
     unsigned char buf;
     int ret;
 
-    CAMLparam1 (unit);
+    CAMLparam1(unit);
 
     ret = read(0, &buf, 1);
     if (ret == 1)

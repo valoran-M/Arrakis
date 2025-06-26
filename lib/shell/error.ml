@@ -25,3 +25,5 @@ let cmd_bad_usage (s : Types.state) all_cmd line =
   fprintf s.out_channel "%a Try @{<fg_green>'help %s'@}.@."
   hint () all_cmd
 
+let eraise (e : t) =
+    raise @@ Shell_error e

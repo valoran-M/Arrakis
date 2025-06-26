@@ -6,6 +6,12 @@
 
 * Add more assembler directives
 * Add multi file compilation
+* `help` currently does not show the full title. `help info code` shows the help
+  title as just `code`
+* Formatting is currently unconsistent, notably on spaces in struct type
+  declaration
+* What is the expected behavior of exiting without a syscall? This should be
+  specified
 
 ### Improve shell
 

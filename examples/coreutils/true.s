@@ -1,5 +1,5 @@
 # True -------------------------------------------------------------------------
-# Do nothing with a 'success' exit status
+# Do nothing with a success exit status
 #
 # This file is part of Arrakis <https://codeberg.org/arrakis/arrakis>
 # It is distributed under the CeCILL 2.1 LICENSE <http://www.cecill.info>

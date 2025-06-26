@@ -1,6 +1,6 @@
 # TODO
 
-## 1.1.0
+## 1.2.0
 
 ### New features
 
@@ -37,7 +37,7 @@
 * Provide `arrakis` as system package for different linux distributions
 * F extensions
 * Allow using `arrakis` with multiple files
-* What happens when we run a program and it does a segfault?
+* What happens when we run a program and it segfault?
 * ELF support: Read directly an elf file instead of gnu assembly
 * If we have ELF support, we would have everything to use `arrakis` as an
   assembler directly

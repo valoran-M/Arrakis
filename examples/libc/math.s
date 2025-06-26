@@ -11,7 +11,7 @@
 #   Returns:
 #     a0 : Absolute value a0
 abs:
-  bgtz a0 0f
-  sub a0, x0, a0
-  0:
+  bgtz  a0 0f
+  sub   a0, x0, a0
+0:
   ret

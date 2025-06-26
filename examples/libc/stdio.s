@@ -9,33 +9,34 @@
 #   Parameters:
 #     a0 : null-terminated string
 fputs:
-  addi sp, sp, -4
-  sw   ra, 0(sp)
+  addi  sp, sp, -8
+  sw    ra, 0(sp)
+  sw    a0, 4(sp)
 
-  call strlen
-  mv a2, a0
+  call  strlen
+  mv    a2, a0
 
-  li a7, 64
-  li a0, 1
-  mv a1, a0
+  li    a7, 64
+  li    a0, 1
+  lw    a1, 4(sp)
   ecall
 
-  lw   ra, 0(sp)
-  addi sp, sp, 4
+  lw    ra, 0(sp)
+  addi  sp, sp, 4
   ret
 
 # Write a character to stdout
 #   Parameters:
 #     a0 : character
 putchar:
-  addi sp, sp, -4
-  sw   a0, 0(sp)
+  addi  sp, sp, -4
+  sw    a0, 0(sp)
 
-  li a7, 64
-  li a0, 1
-  mv a1, sp
-  li a2, 1
+  li    a7, 64
+  li    a0, 1
+  mv    a1, sp
+  li    a2, 1
   ecall
 
-  addi sp, sp, 4
+  addi  sp, sp, 4
   ret

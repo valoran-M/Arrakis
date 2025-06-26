@@ -21,8 +21,9 @@ static bool activate = false;
 
 value caml_init_shell(value unit)
 {
-    CAMLparam1 (unit);
     struct termios set;
+
+    CAMLparam1(unit);
 
     if (!activate) {
         if (!isatty(0))
@@ -56,14 +57,19 @@ value caml_exit_shell(value unit)
 
 value caml_readc(value unit)
 {
-    CAMLparam1 (unit);
     unsigned char buf;
     int ret;
+
+    CAMLparam1 (unit);
+
     ret = read(0, &buf, 1);
-    if (ret == 1) CAMLreturn(Val_int(buf));
-    if (ret == 0) CAMLreturn(Val_int(-1));
+    if (ret == 1)
+        CAMLreturn(Val_int(buf));
+    if (ret == 0)
+        CAMLreturn(Val_int(-1));
     if (ret == -1 && errno == EINTR)
         CAMLreturn(Val_int(-2));
+
     CAMLreturn(Val_int(-3));
 }
 

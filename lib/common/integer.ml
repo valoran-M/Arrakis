@@ -11,8 +11,8 @@ let int32_to_int i =
   | None   -> eraise (Int32_unsigned_to_int i)
 
 let int32_of_string s =
-  match Int32.of_string_opt s with
-  | Some i  -> i
+  match Int32.of_string_opt ("-" ^ s) with
+  | Some i  -> Int32.neg i
   | None    -> eraise (Int32_of_string s)
 
 let sign_extended i size =

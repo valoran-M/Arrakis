@@ -25,13 +25,13 @@ let translate_pseudo pseudo line code =
     match expr_const_prop exp with
     | None ->
       let hi, lo = hi_lo_imm exp in
-      [ Text_Instr (line, code, I (ADDI, rd, 0l, lo)) ;
+      [ Text_Instr (line, code, I (ADDI, rd, rd, lo)) ;
         Text_Instr (line, code, U (LUI,  rd,     hi)) ]
     | Some v ->
       let hi, lo = hi_lo v in
       if hi = 0l
       then [ Text_Instr (line, code, I (ADDI, rd, 0l, Imm lo)) ]
-      else [ Text_Instr (line, code, I (ADDI, rd, 0l, Imm lo)) ;
+      else [ Text_Instr (line, code, I (ADDI, rd, rd, Imm lo)) ;
              Text_Instr (line, code, U (LUI,  rd,     Imm hi)) ]
   in
 

@@ -18,7 +18,7 @@ let all_commands = [
   Quit.quit;
 ]
 
-let create arch ecall debug labels run : Types.state =
+let create arch ecall debug labels : Types.state =
   { (* Shell state *)
     init         = Io.Std.init;
     exit         = Io.Std.exit;
@@ -29,7 +29,25 @@ let create arch ecall debug labels run : Types.state =
     program_run  = false;
 
     (* Program state *)
-    history = History.create_history run;
+    history = History.create_history true;
+    arch;
+    debug;
+    labels;
+    ecall; }
+
+
+let create_run arch ecall debug labels : Types.state =
+{ (* Shell state *)
+    init         = (fun () -> ());
+    exit         = (fun () -> ());
+    input        = Io.Std.read_line;
+    out_channel  = Format.std_formatter;
+    cmds         = all_commands;
+    breakpoints  = Hashtbl.create 64;
+    program_run  = false;
+
+    (* Program state *)
+    history = History.create_history false;
     arch;
     debug;
     labels;

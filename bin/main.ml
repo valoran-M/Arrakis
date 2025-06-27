@@ -23,13 +23,11 @@ let () =
     let lb = Lexing.from_channel channel in
     let mem, labels, debug = Assembler.Assembly.assembly lb in
     let pc = Assembler.Label.get_global labels "_start" in
-
     let arch  = Arch.Riscv.init pc mem in
-    let shell = Shell.create arch syscall debug labels (Option.is_none opt.run) in
 
     match opt.run with
-    | Some args -> Shell.run   shell args
-    | None      -> Shell.start shell
+    | Some a -> Shell.run   (Shell.create_run arch syscall debug labels) a
+    | None   -> Shell.start (Shell.create     arch syscall debug labels)
   with
   | Init.Init_error e                      -> Error.init e
   | Common.Error.Common_error e            -> Error.common e

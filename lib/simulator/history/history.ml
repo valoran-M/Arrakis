@@ -20,8 +20,8 @@ type sim_change = { last_pc : int32; change : change }
 
 type t = sim_change list option
 
-let create_history (run : bool) =
-  if run then Some [] else None
+let create_history (activate : bool) =
+  if activate then Some [] else None
 
 let add_history last_pc change history =
   match history with

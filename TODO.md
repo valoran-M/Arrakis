@@ -12,6 +12,7 @@
   declaration
 * What is the expected behavior of exiting without a syscall? This should be
   specified
+* UNIX syscall may need to be called `linux`?
 
 ### Improve shell
 

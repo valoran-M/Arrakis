@@ -14,10 +14,9 @@ open Program
 *)
 
 (*
-  To obtain a terminal recursion, one inverts the generated list.
-
-  /!\ If the pseudo instruction generates several instructions, the instructions
-      must be reversed.
+  To obtain terminal recursion, the generated list will be reversed.
+  Pseudo-instructions generating several instruction must then place them in
+  reversed order.
 *)
 let translate_pseudo pseudo line code =
   let hi_lo_imm imm = Hig imm, Bop (Add, Low imm, Imm 4l) in

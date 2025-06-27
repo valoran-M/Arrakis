@@ -6,4 +6,7 @@
 type t =
   | Conversion_Failure
 
-exception Utils_error of t
+exception Common_error of t
+
+let eraise e =
+  raise (Common_error e)

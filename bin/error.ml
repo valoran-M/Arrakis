@@ -36,6 +36,13 @@ let init e =
     eprintf "I got @{<fg_red>%s@} but expected only one@." (String.concat " " inps);
     exit 10
 
+let common e =
+  let open Common.Error in
+  match e with
+  | Conversion_Failure ->
+      eprintf "%a Conversion failure@." error ();
+      exit 1
+
 let assembler line e =
   let open Assembler.Error in
   match e with

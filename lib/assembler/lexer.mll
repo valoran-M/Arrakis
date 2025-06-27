@@ -120,7 +120,7 @@ rule token = parse
   | "'\\n'"  { INT (char_to_int32 '\n', "\\n") }
   | "'\\t'"  { INT (char_to_int32 '\t', "\\t") }
   | "'\\r'"  { INT (char_to_int32 '\r', "\\r") }
-  | int as i { INT (Int32.of_string i, i)      }
+  | int as i { INT (int32_of_string i, i)      }
   | '\"'
     { str lexbuf;
       let s  = get_stored_string () in

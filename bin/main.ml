@@ -32,5 +32,6 @@ let () =
     | None      -> Shell.start shell
   with
   | Init.Init_error e                      -> Error.init e
+  | Common.Error.Common_error e            -> Error.common e
   | Assembler.Error.Assembler_error (l, e) -> Error.assembler l e
 

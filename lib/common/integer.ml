@@ -8,12 +8,21 @@ open Error
 let int32_to_int i =
   match Int32.unsigned_to_int i with
   | Some i -> i
-  | None   -> raise (Utils_error Conversion_Failure)
+  | None   -> eraise Conversion_Failure
+
+let int32_of_string s =
+  match Int32.of_string_opt s with
+  | Some i  -> i
+  | None    -> eraise Conversion_Failure
 
 let sign_extended i size =
   Int32.shift_right (Int32.shift_left i (32 - size)) (32 - size)
 
-let alignment i = Int32.sub i (Int32.rem i 4l)
+let alignment i =
+  Int32.sub i (Int32.rem i 4l)
 
-let char_to_int32 c = Int32.of_int (Char.code c)
-let char_of_int32 c = Char.chr (Int32.to_int c)
+let char_to_int32 c =
+  Int32.of_int (Char.code c)
+
+let char_of_int32 c =
+  Char.chr (Int32.to_int c)

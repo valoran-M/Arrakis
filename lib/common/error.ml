@@ -4,7 +4,8 @@
 (******************************************************************************)
 
 type t =
-  | Conversion_Failure
+  | Int32_of_string         of string
+  | Int32_unsigned_to_int   of int32
 
 exception Common_error of t
 

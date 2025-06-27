@@ -8,12 +8,12 @@ open Error
 let int32_to_int i =
   match Int32.unsigned_to_int i with
   | Some i -> i
-  | None   -> eraise Conversion_Failure
+  | None   -> eraise (Int32_unsigned_to_int i)
 
 let int32_of_string s =
   match Int32.of_string_opt s with
   | Some i  -> i
-  | None    -> eraise Conversion_Failure
+  | None    -> eraise (Int32_of_string s)
 
 let sign_extended i size =
   Int32.shift_right (Int32.shift_left i (32 - size)) (32 - size)

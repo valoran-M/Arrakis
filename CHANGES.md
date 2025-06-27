@@ -1,10 +1,11 @@
 # 1.1.2
 
-- fix issue :
-  + #20 : --run bug with bash
-  + #21 : small giltch on exemple
-  + #22 : wrong register on `i r`
-  + #23 : bad expansion of `li`
+- Bug fixes:
+  + #20: --run bug with bash
+  + #21: small giltch on exemple
+  + #22: wrong register on `i r`
+  + #23: bad expansion of `li`
+  + `run` would not go to next breakpoint
 
 # 1.1.1
 

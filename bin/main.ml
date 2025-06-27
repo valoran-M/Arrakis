@@ -17,7 +17,7 @@ let () =
     Init.colors opt;
     Init.check_root opt;
     let in_file = Init.get_input_file opt in
-    let syscall = Init.get_ecall opt in
+    let ecall = Init.get_ecall opt in
 
     let channel = open_in in_file in
     let lb = Lexing.from_channel channel in
@@ -26,8 +26,8 @@ let () =
     let arch  = Arch.Riscv.init pc mem in
 
     match opt.run with
-    | Some a -> Shell.run   (Shell.create_run arch syscall debug labels) a
-    | None   -> Shell.start (Shell.create     arch syscall debug labels)
+    | Some a -> Shell.run   (Shell.create_run arch ecall debug labels) a
+    | None   -> Shell.start (Shell.create     arch ecall debug labels)
   with
   | Init.Init_error e                      -> Error.init e
   | Common.Error.Common_error e            -> Error.common e

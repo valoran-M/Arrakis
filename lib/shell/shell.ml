@@ -35,15 +35,14 @@ let create arch ecall debug labels : Types.state =
     labels;
     ecall; }
 
-
 let create_run arch ecall debug labels : Types.state =
 { (* Shell state *)
     init         = (fun () -> ());
     exit         = (fun () -> ());
     input        = Io.Std.read_line;
     out_channel  = Format.std_formatter;
-    cmds         = all_commands;
-    breakpoints  = Hashtbl.create 64;
+    cmds         = [];
+    breakpoints  = Hashtbl.create 0;
     program_run  = false;
 
     (* Program state *)

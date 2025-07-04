@@ -19,7 +19,7 @@ open Program
   reversed order.
 *)
 let translate_pseudo pseudo line code =
-  let hi_lo_imm imm = Hig imm, Bop (Add, Low imm, Imm 4l) in
+  let hi_lo_imm imm = Uop (Hig, imm), Bop (Add, Uop (Low, imm), Imm 4l) in
 
   let li rd exp =
     match expr_const_prop exp with

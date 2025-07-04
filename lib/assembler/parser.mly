@@ -106,8 +106,8 @@ expr:
 | i=INT                { Imm (fst i), snd i }
 | i=LLABEL_F           { Lbl (label_f (fst i)), snd i }
 | i=LLABEL_B           { Lbl (label_b (fst i)), snd i }
-| HI LPAR e=expr RPAR  { Hig (fst e), sprintf "%%hi(%s)" (snd e) }
-| LO LPAR e=expr RPAR  { Low (fst e), sprintf "%%lo(%s)" (snd e) }
+| HI LPAR e=expr RPAR  { Uop (Hig, fst e), sprintf "%%hi(%s)" (snd e) }
+| LO LPAR e=expr RPAR  { Uop (Low, fst e), sprintf "%%lo(%s)" (snd e) }
 |    LPAR e=expr RPAR  { e }
 | uop=uop e=expr       { Uop (fst uop, fst e), sprintf "%s%s" (snd uop) (snd e) }
 | e1=expr bop=bop e2=expr

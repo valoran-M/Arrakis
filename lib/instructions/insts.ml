@@ -9,14 +9,14 @@ type binop =
   | Add | Sub  | Neq | Eq  | Lte | Gte | Lt | Gt
   | Lor | Land
 
-type unop = Neg | Not
+type unop =
+  | Neg | Not
+  | Hig | Low                                                  (* hi|lo(expr) *)
 
 type expr =
-  | Adr
-  | Lbl of string
+  | Adr                                                            (* Dot : . *)
   | Imm of int32
-  | Hig of expr
-  | Low of expr
+  | Lbl of string
   | Uop of unop  * expr
   | Bop of binop * expr * expr
 

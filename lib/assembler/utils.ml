@@ -27,6 +27,8 @@ let eval_unop (op : unop) n =
   match op with
   | Neg -> Int32.neg n
   | Not -> Int32.lognot n
+  | Hig -> fst (hi_lo n)
+  | Low -> snd (hi_lo n)
 
 
 let eval_binop (op : binop) n1 n2 =
@@ -55,8 +57,6 @@ let rec expr_to_int32_rel expr labels line addr =
   match expr with
   | Adr   -> addr
   | Imm i -> i
-  | Hig e -> fst (hi_lo (expr_to_int32_rel e labels line addr))
-  | Low e -> snd (hi_lo (expr_to_int32_rel e labels line addr))
   | Lbl l -> Label.get_address labels l line - addr
   | Uop (op, e)      -> eval_unop op (expr_to_int32_rel e labels line addr)
   | Bop (op, e1, e2) ->
@@ -67,8 +67,6 @@ let rec expr_to_int32 expr labels line addr =
   match expr with
   | Adr   -> addr
   | Imm i -> i
-  | Hig e -> fst (hi_lo (expr_to_int32 e labels line addr))
-  | Low e -> snd (hi_lo (expr_to_int32 e labels line addr))
   | Lbl l -> Label.get_address labels l line
   | Uop (op, e)      -> eval_unop op (expr_to_int32 e labels line addr)
   | Bop (op, e1, e2) ->
@@ -92,8 +90,8 @@ let rec expr_const_prop expr =
   match expr with
   | Adr | Lbl _ -> None
   | Imm n -> Some n
-  | Hig e -> expr_const_prop e >>= fun r -> Some (fst (hi_lo r))
-  | Low e -> expr_const_prop e >>= fun r -> Some (snd (hi_lo r))
+  (* | Hig e -> expr_const_prop e >>= fun r -> Some (fst (hi_lo r)) *)
+  (* | Low e -> expr_const_prop e >>= fun r -> Some (snd (hi_lo r)) *)
   | Uop (op, e) -> expr_const_prop e >>= fun r -> Some (eval_unop op r)
   | Bop (op, e1, e2) ->
     expr_const_prop e1 >>= fun r1 ->

@@ -1,10 +1,10 @@
 # 1.1.2
 
 - Bug fixes:
-  + #20: --run bug with bash
-  + #21: small giltch on exemple
-  + #22: wrong register on `i r`
-  + #23: bad expansion of `li`
+  + [#20](https://codeberg.org/Arrakis/arrakis/issues/20): --run bug with bash
+  + [#21](https://codeberg.org/Arrakis/arrakis/issues/21): small giltch on exemple
+  + [#22](https://codeberg.org/Arrakis/arrakis/issues/22): wrong register on `i r`
+  + [#23](https://codeberg.org/Arrakis/arrakis/issues/23): bad expansion of `li`
   + `run` would not go to next breakpoint
 
 # 1.1.1

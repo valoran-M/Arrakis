@@ -29,9 +29,9 @@ let set_int16 memory addr value =
 let get_int32 memory addr = Bytes.get_int32_le memory (int32_to_int addr)
 let set_int32 memory addr = Bytes.set_int32_le memory (int32_to_int addr)
 
-let set_32b_zero memory addr nz =
+let set_zero memory addr nz =
   Bytes.fill memory (int32_to_int addr)
-    ((int32_to_int nz) * 4) (Char.chr 0)
+    ((int32_to_int nz)) (Char.chr 0)
 
 let get_str memory adr =
   let (+) = Int32.add in

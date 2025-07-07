@@ -68,7 +68,7 @@ let loop_data mem _ labels addr (prog : data_line) =
   match prog with
   | Data_Direc d  -> exec_directive d labels addr
   | Data_Label _  -> addr
-  | Data_Zero nz  -> Memory.set_32b_zero mem addr nz; addr + 4l * nz
+  | Data_Zero nz  -> Memory.set_zero mem addr nz; addr + nz
   | Data_Ascii ls -> List.fold_left set_str  addr ls
   | Data_Asciz ls -> List.fold_left set_strz addr ls
   | Data_Bytes lb -> List.fold_left set_byte addr lb

@@ -5,6 +5,7 @@
   + [#21](https://codeberg.org/Arrakis/arrakis/issues/21): small giltch on exemple
   + [#22](https://codeberg.org/Arrakis/arrakis/issues/22): wrong register on `i r`
   + [#23](https://codeberg.org/Arrakis/arrakis/issues/23): bad expansion of `li`
+  + [#26](https://codeberg.org/Arrakis/arrakis/issues/26): .zero directive 32b -> bytes
   + `run` would not go to next breakpoint
 
 # 1.1.1

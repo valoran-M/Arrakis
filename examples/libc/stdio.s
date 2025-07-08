@@ -22,7 +22,7 @@ fputs:
   ecall
 
   lw    ra, 0(sp)
-  addi  sp, sp, 4
+  addi  sp, sp, 8
   ret
 
 # Write a character to stdout

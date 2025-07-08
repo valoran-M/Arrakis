@@ -111,7 +111,7 @@ let rec get_label_data (data : Program.data) labels addr =
   | Data_Word lw :: l ->
     let offset = 0x4l * Int32.of_int (List.length lw) in
     get_label_data l labels (addr + offset)
-  | Data_Zero nz  :: l -> get_label_data l labels (addr+4l*nz)
+  | Data_Zero nz  :: l -> get_label_data l labels (addr + nz)
   | Data_Direc d  :: l -> get_label_data l labels (get_addr_directive d addr)
   | Data_Label lb :: l ->
     add_data labels lb addr;

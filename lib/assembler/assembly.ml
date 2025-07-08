@@ -61,18 +61,18 @@ let loop_text mem debug labels addr prog  =
 let loop_data mem _ labels addr (prog : data_line) =
   let open String in
   let open Memory in
-  let set_str  a s = set_str  mem a s (length s) in
-  let set_strz a s = set_strz mem a s (length s) in
+  let set_str  a s = set_str   mem a s (length s) in
+  let set_strz a s = set_strz  mem a s (length s) in
   let set_byte a e = set_byte  mem a (expr_to_char  e labels (-1) a); a + 1l in
   let set_word a e = set_int32 mem a (expr_to_int32 e labels (-1) a); a + 4l in
   match prog with
   | Data_Direc d  -> exec_directive d labels addr
   | Data_Label _  -> addr
-  | Data_Zero nz  -> Memory.set_zero mem addr nz; addr + nz
+  | Data_Zero  nz -> Memory.set_zero mem addr nz; addr + nz
   | Data_Ascii ls -> List.fold_left set_str  addr ls
   | Data_Asciz ls -> List.fold_left set_strz addr ls
   | Data_Bytes lb -> List.fold_left set_byte addr lb
-  | Data_Word  lw -> List.fold_left set_word addr lw 
+  | Data_Word  lw -> List.fold_left set_word addr lw
 
 let assembly code =
   let open Arch.Segment in
@@ -86,7 +86,6 @@ let assembly code =
     let lbls = Label.get_label_address prog in
     ignore (List.fold_left (loop_text mem dbg lbls) text_begin prog.text);
     ignore (List.fold_left (loop_data mem dbg lbls) data_begin prog.data);
-
     mem, lbls, dbg
   with Parser.Error ->
     let pe = Parsing_error (Lexing.lexeme code) in
